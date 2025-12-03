@@ -1,0 +1,15 @@
+﻿
+    .k-invalid-msg{
+  position: relative; 
+}
+
+
+    .k-grid {
+        font-size: 10px;
+    }
+
+        .k-grid td {
+            line-height: 2em;
+        }
+
+

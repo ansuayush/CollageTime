@@ -1,0 +1,203 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Time Off Request";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+@model ExecViewHrk.WebUI.Models.TimeOffVm
+
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<script src="~/Scripts/application/AllEmp_TimeOffRequestsMatrixPartial.js"></script>
+<link href="~/Content/TimeCardPanelStyle.css" rel="stylesheet" />
+@Html.ValidationSummary(true)
+
+<div class="panel panel-info">
+    @using (Html.BeginForm("TimeOffRequests", "TimeOffRequests", FormMethod.Post, new { role = "form", id = "AllTimeOffRequestsFormDdl" }))
+    {
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Time off Requests</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+                    <h4><span class="label label-info">R- Requested, A-Approved, D-Denied</span></h4>
+                </div>
+                <div class="col-md-offset-3 col-md-2 text-center">
+                    <div class="row" style="margin-top:20px">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="formDiv" class="panel-body" style="text-align:center;">
+            <h4>Pick a date</h4>
+
+            <div id="AllTimeOffRequestscalendar" class="wrapper">
+                <div id="calendar"></div>
+            </div>
+
+            <div id="TimeOffRequestsByDate" style="display:none">
+                @*@Html.Action("RangeSelectionPartial", "TimeOffRequests")*@
+            </div>
+        </div>
+    }
+
+</div>
+@*<div class="table-responsive">
+        <table class="table">
+            @if (Model.TimeOffEmpDetailsList.Count() != 0)
+            {
+                @for (int i = 0; i < Model.TimeOffEmpDetailsList.Count(); i++)
+                {
+                    <tr>
+                        <td>@Html.TextBoxFor(m => Model.TimeOffEmpDetailsList[i].TimeOffRequestId, new { disabled = "disabled" })</td>
+                        <td>@Html.TextBoxFor(m => Model.TimeOffEmpDetailsList[i].PersonName, new { disabled = "disabled" })</td>
+                        <td>@Html.TextBoxFor(m => Model.TimeOffEmpDetailsList[i].RequestStatus, new { disabled = "disabled" })</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>*@
+
+
+
+<style>
+    /*#calendar {
+        margin: 20px 0 0 265px;
+        width: 340px;
+        text-align: center;
+    }
+    #calendar .k-content {
+        height: 300px;
+    }
+
+    #calendar {
+        width: 100%;
+    }
+
+    #calendar .k-content,
+    #calendar .k-header,
+    #calendar th,
+    #calendar .k-link,
+    #calendar .k-state-hover,
+    #calendar .k-state-selected,
+    #calendar .k-state-focused {
+        background: transparent;
+        border-color: transparent;
+        color: #000;
+        box-shadow: none;
+    }
+    #calendar .k-content .k-state-hover,
+    #calendar .k-content .k-state-focused {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    #calendar .k-state-selected, #calendar .k-state-selected.k-state-focused {
+        font-size: 24px;
+        font-weight: bold;
+    }
+    #calendar .k-content .k-link {
+        padding: 0;
+        min-height: 70px;
+        line-height: 70px;
+    }
+    #calendar th {
+        padding-top: 20px;
+        color: #8cbabf;
+    }
+    #calendar td.k-other-month .k-link {
+        color: #8cbabf;
+    }
+    #calendar th,
+    #calendar td {
+        text-align: center;
+    }*/
+    /*.k-calendar .k-content .k-link {
+        white-space: nowrap;
+     }*/
+
+    .wrapper {
+        margin: 20px auto;
+        height: 700px;
+        width: 900px;
+    }
+
+    .k-widget.k-calendar {
+        width: 100%;
+        height: 100%;
+    }
+
+        .k-widget.k-calendar .k-content tbody td {
+            width: 75px;
+            height: 90px;
+        }
+
+    .requests {
+        //background-color: #70c114;
+        background-color: aliceblue;
+        /*background: transparent;*/
+        display: inline-block;
+        /*width: 16px;*/
+        /*height: 16px;*/
+        width: 120px;
+        height: 90px;
+        vertical-align: middle;
+        margin-right: 3px;
+        /*float:left;*/
+        border: 1px solid cornflowerblue;
+        box-sizing: border-box;
+    }
+
+    /*.pending {
+         background: transparent;
+        /*display: inline-block;*/
+    /*width: 3px;
+        height: 3px;
+        vertical-align: middle;
+        margin-right: 3px;
+     }*/
+</style>
+
+@*<div id="formDiv" class="panel-body">
+            @(Html.Kendo().Scheduler<ExecViewHrk.WebUI.Models.TimeOffVm>()
+            .Name("scheduler")
+            .Date(new DateTime(2017, 6, 13))
+            .StartTime(new DateTime(2017, 6, 13, 7, 00, 00))
+            .Height(600)
+            .Views(views =>
+            {
+                //views.DayView();
+                views.WeekView(weekView => weekView.Selected(true));
+                views.MonthView();
+                views.AgendaView();
+            })
+            //.Timezone("Etc/UTC")
+            .DataSource(d => d
+                .Model(m =>
+                {
+                    m.Id(f => f.RequestId);
+                    m.Field(f => f.EmployeeId);  //.DefaultValue(1);
+                    m.Field(f => f.Title);
+                    //Set the recurrence ID field from the model:
+                    //m.Field(f => f.IsAllDay);
+                    //m.RecurrenceId(f => f.RecurrenceID);
+                })
+                .Read("Requests_Read", "TimeOffRequests")
+                 //.Create("Tasks_Create", "TimeOffRequests")
+                //.Destroy("Tasks_Destroy", "Home")
+                //.Update("Tasks_Update", "Home")
+            )
+            .BindTo(Model)
+            )
+    </div>*@

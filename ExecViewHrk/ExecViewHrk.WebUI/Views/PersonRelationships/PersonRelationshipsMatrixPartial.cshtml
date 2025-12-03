@@ -1,0 +1,217 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Person Relationship";
+    Layout = null;
+}
+
+@model ExecViewHrk.WebUI.Models.PersonRelationshipVm
+@{
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <section class="panels-wells edit-block">
+                            @Html.ValidationSummary(true)
+                            <div class="panel panel-info">
+                                <div class="panel-heading  ">
+                                    <div class="row">
+                                        <div class="col-md-6 ">
+                                            Person Relationship <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                                            <div style="color:red; font-size:x-small">* denotes required field</div>
+                                        </div>
+                                        <div class="col-md-6 ">
+
+                                            @using (Html.BeginForm("PersonRelationshipsSelectedIndexChanged", "PersonRelationships", FormMethod.Post, new { role = "form", id = "PersonRelationshipFormDdl" }))
+                                            {
+                                                <label>My Relationships</label>
+
+                                                @(Html.Kendo().DropDownListFor(model => model.PersonRelationshipId)
+                                            .Name("PersonRelationshipIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PersonRelationshipDescription")
+                                            .DataValueField("PersonRelationshipId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonRelationshipsList", "PersonRelationships").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                  });
+                                              })
+                                            .Value(@Model.PersonRelationshipId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonRelationshipDdl")
+                                                    .Select("onSelectPersonRelationshipDdl");
+                                            })
+                                                )
+                                            }
+                                            <div id="noRelationshipRecordsFound" style="color:red; font-size:x-small">no records found</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="formDiv" class="panel-body">
+
+                                    @using (Html.BeginForm("PersonRelationships", "PersonRelationships", FormMethod.Post, new { role = "form", id = "PersonRelationshipForm" }))
+                                    {
+                                        @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                                        @Html.HiddenFor(model => model.PersonRelationshipId, new { id = "hiddenPersonRelationshipId" })
+                                        <div class="row ">
+                                            <div class="row ">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-5 ">
+                                                        <div class="form-group ">
+                                                            <div>
+                                                                <label><span style="color:red">*</span>Relationship Type</label>
+                                                            </div>
+                                                            @(Html.Kendo().ComboBox()
+                                        .Name("RelationshipDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("RelationshipDescription")
+                                        .DataValueField("RelationshipTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetRelationshipTypes", "DdlRelationshipTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("Select a Relationship Type")
+                                                            )
+
+                                                            @if (!User.IsInRole("ClientEmployees"))
+                                                            {
+                                                                <button id="btnAddRelationshipType" class="btn btn-info">+</button>
+                                                            }
+                                                            <div>
+                                                                @Html.ValidationMessageFor(model => model.RelationshipDescription)
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <div>
+                                                                <label><span style="color:red">*</span>Relation Person Name</label>
+                                                            </div>
+                                                            @(Html.Kendo().ComboBox()
+                                        .Name("RelationPersonName")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("RelationPersonName")
+                                        .DataValueField("RelationPersonId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetRelationPersonsList", "PersonRelationships").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("Select a Relation Person")
+                                                            )
+                                                            <div>
+                                                                @Html.ValidationMessageFor(model => model.RelationPersonName)
+                                                            </div>
+                                                        </div>
+
+                                                        <div class=" form-group " style="margin-top:20px">
+                                                            <label style="vertical-align:middle; ">Dependent</label>
+                                                            @Html.EditorFor(x => x.Dependent, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                                                        </div>
+
+                                                        <div class=" form-group " style="margin-top:20px">
+                                                            <label style="vertical-align:middle; ">Emergency Contact</label>
+                                                            @Html.EditorFor(x => x.EmergencyContact, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                                                        </div>
+
+                                                        <div class=" form-group " style="margin-top:20px">
+                                                            <label style="vertical-align:middle; ">Garnishment</label>
+                                                            @Html.EditorFor(x => x.Garnishment, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 ">
+                                                <div class="form-group">
+
+                                                    <input id="btnSavePersonRelationshipAjax" type="button" value="Save" class="btn btn-info" />
+                                                    <input id="btnClearPersonRelationshipAjax" type="button" value="Clear" class="btn btn-info" />
+                                                    <input id="btnDeletePersonRelationshipAjax" type="button" value="Delete" class="btn btn-info" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+                                <div id="relationshipTypesWindow" style="display:none">
+                                    <div id="relationshipTypesContent">
+                                        @Html.Partial("~/Views/DdlRelationshipTypes/DdlRelationshipTypesPartial.cshtml")
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function newRelationshipWindow(title, onClose) {
+        var obj = {
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: title,
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+            close: onClose
+        }
+        return obj;
+    };
+
+    var relationshipTypesWindow = $("#relationshipTypesWindow");
+    if (!relationshipTypesWindow.data("kendoWindow")) {
+        relationshipTypesWindow.kendoWindow(
+            newRelationshipWindow("Relationship Types", onCloseRelationshipsWindow)
+        );
+    }
+
+    function onCloseRelationshipsWindow() {
+        resetKenoComboBox('RelationshipDescription');
+        resetGrid('gridDdlRelationshipType');
+    }
+
+    $("#btnAddRelationshipType").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#relationshipTypesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>

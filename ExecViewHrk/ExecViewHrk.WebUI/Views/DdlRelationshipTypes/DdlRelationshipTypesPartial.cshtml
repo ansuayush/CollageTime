@@ -1,0 +1,61 @@
+﻿@(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlRelationshipType>()
+                        .Name("gridDdlRelationshipType")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        
+
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Edit();
+                command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");
+            }).Width(170);
+            columns.Bound(c => c.Code);
+            columns.Bound(c => c.Description);
+            columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'Yes' : 'No' #");
+            columns.Bound(c => c.CobraEligible).ClientTemplate("#= CobraEligible ? 'Yes' : 'No' #");
+            columns.Bound(c => c.IsSpouse).ClientTemplate("#= IsSpouse ? 'Yes' : 'No' #");
+        })
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .Events(e => e.DataBound("gridDataBound"))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                                                    .Read(read => read.Action("DdlRelationshipTypesList_Read", "DdlRelationshipTypes"))
+                                                    .Create(create => create.Action("DdlRelationshipTypesList_Create", "DdlRelationshipTypes"))
+                                                    .Update(update => update.Action("DdlRelationshipTypesList_Update", "DdlRelationshipTypes"))
+                                                    .Destroy(destroy => destroy.Action("DdlRelationshipTypesList_Destroy", "DdlRelationshipTypes"))
+            .Model(model =>
+                    {
+                        model.Id(p => p.RelationshipTypeId);
+                        model.Field(p => p.RelationshipTypeId).Editable(false);
+                        model.Field(p => p.Code);
+                        model.Field(p => p.Description);
+                        model.Field(p => p.CobraEligible);
+                        model.Field(p => p.IsSpouse);
+                    }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+)
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+
+
+
+

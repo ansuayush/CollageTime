@@ -1,0 +1,139 @@
+﻿@model ExecViewHrk.Models.PerformanceReviewSetupVm
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Add New Performance Section</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                @using (Html.BeginForm("PerformanceProfileSaveAjax", "PerformanceReviewSetup", FormMethod.Post, new { role = "form", id = "PerformanceForm" }))
+                {
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Section Name</label>
+                            @Html.TextBoxFor(model => model.SectionName, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.SectionName)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Description</label>
+                            @Html.TextAreaFor(model => model.Header, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.Header)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Weight</label>
+                            @Html.TextBoxFor(model => model.Weight, new { @class = "form-control"})
+                            <div>
+                                @Html.ValidationMessageFor(model => model.Weight)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Position</label>
+                            @Html.TextBoxFor(model => model.Position, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.Position)
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnClosePerformance">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " onclick="PerformanceProfileSaveAjax();">Done</button>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+        $('#NumRows').val('');
+        $('#MaxCharacters').val('');
+        $('#Weight').val('');
+        $('#Position').val('');
+    });
+    function PerformanceProfileSaveAjax() {
+        var errormsg = "Please Enter the following Fields</br>";
+        if ($("#SectionName").val() == "") {
+            errormsg += "Section Name </br>";
+        }
+        if ($("#Header").val() == "") {
+            errormsg += "Description </br>";
+        }
+        if ($("#Weight").val() == "") {
+            errormsg += "Weight </br>";
+        }
+        if ($("#Position").val() == "") {
+            errormsg += "Position </br>";
+        loading(false);
+        toastr.error(errormsg);
+        return;
+        }
+        if (!ValidateForm("PerformanceForm")) {
+            loading(false);
+            return;
+        }
+        var postedData = $("#PerformanceForm").serializeArray();
+        var perprofileId = '@ViewBag.PerProfileID';
+        var sectionName = $("#SectionName").val();
+        var description = $('#Header').val();
+        var weight = $('#Weight').val();
+        var position = $('#Position').val();
+       
+        if (sectionName == "") {
+            toastr.error("Please enter Section Name");
+            return;
+        }
+
+        if (description == "") {
+            toastr.error("Please enter Description");
+            return;
+        }
+        if (weight == "") {
+            toastr.error("Please enter Weight");
+            return;
+        }
+        if (!weight.match(/\d+(\.\d\d)?$/)) {
+            toastr.error("Weight must be a number");
+            return;
+        }
+        if (position == "") {
+            toastr.error("Please enter Position");
+            return;
+        }
+        if (!position.match(/\d+(\.\d\d)?$/)) {
+            toastr.error("Position must be a number");
+            return;
+        }
+        var formURL = $("#ApplicationUrl").val() + '/PerformanceReviewSetup/PerformanceProfileSaveAjax?PerProfileID=' + perprofileId + '&SectionName=' + sectionName + '&Description=' + description + '&NumRows=' + numRows + '&MaxCharacters=' + maxCharacters + '&Weight=' + weight + '&Position=' + position;
+        $.post(formURL, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                $('#btnClosePerformance').click();
+                toastr.success('Record created successfully.');
+                resetGrid("gridPerformanceReviewSetup");
+                resetAddcontrol();
+            }
+        });
+    }
+    function resetAddcontrol() {
+        $('#SectionName').val('');
+        $('#Header').val('');
+        $('#Weight').val('');
+        $('#Position').val('');
+    }
+</script>

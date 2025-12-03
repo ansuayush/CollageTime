@@ -1,0 +1,207 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Earnings Code";
+    Layout = null;
+}
+
+@model ExecViewHrk.Models.EarningCodeVm
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Earnings Code</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("EarningsCodesSaveAjax", "EarningsCodes", FormMethod.Post, new { role = "form", id = "frmEarningsCodes" }))
+            {
+                @Html.HiddenFor(model => model.EarningsCodeId, new { @Id = "hiddenearningsCodeId" })
+                @*@Html.HiddenFor(model => model.TimeCardTypeId)*@
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Company Code</label>
+                        @Html.DropDownListFor(model => model.CompanyCodeId,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["companyCodesList"], "CompanyCodeId", "CompanyCodeDescription"), "--Select One--", new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.CompanyCodeId)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Earnings Code</label>
+                        @Html.TextBoxFor(x => x.EarningsCode, new { @class = "form-control", @maxlength = "2", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.EarningsCode)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Earnings Description</label>
+                        @Html.TextBoxFor(x => x.EarningsCodeDescription, new { @class = "form-control", @maxlength = "20", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.EarningsCodeDescription)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>ADP Field Mapping</label>
+                        @Html.DropDownListFor(model => model.ADPFieldMappingId,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["adpFieldMappingsList"], "ADPFieldMappingId", "ADPFieldMappingCode"), "--Select One--", new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.EarningsCodeDescription)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <div class="checkbox-primary">
+                            @Html.ValidationMessageFor(model => model.Active)
+
+                            @if (Model.Active == true)
+                            {
+                                <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="" checked="checked">
+                            }
+                            else
+                            {
+                                <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="">
+                            }
+
+                            <label>Active</label>
+                            @Html.HiddenFor(x => x.Active)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <div class="checkbox-primary">
+                            @Html.ValidationMessageFor(model => model.IsDefault)
+
+                            @if (Model.IsDefault == true)
+                            {
+                                <input id="@Html.NameFor(x => x.IsDefault)" type="checkbox" value="" checked="checked">
+                            }
+                            else
+                            {
+                                <input id="@Html.NameFor(x => x.IsDefault)" type="checkbox" value="">
+                            }
+
+                                <label>Is Treaty Default</label>
+                            @Html.HiddenFor(x => x.IsDefault)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Memo Code 1</label>
+                        @Html.TextBoxFor(x => x.EarningsCodeOffset, new { @class = "form-control", data_required = "N" })
+                        @Html.ValidationMessageFor(x => x.EarningsCodeOffset)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Memo Code 2</label>
+                        @Html.TextBoxFor(x => x.DeductionCodeOffset, new { @class = "form-control", data_required = "N" })
+                        @Html.ValidationMessageFor(x => x.DeductionCodeOffset)
+                    </div>
+                </div>
+                @*<div class="col-sm-3" style="padding-top:3px;">
+                    <div class="form-group">
+                        <label> Hours/Earnings Code</label><br/>
+                        @Html.RadioButtonFor(model => model.TreatyCode, true, (Model.TreatyCode == true) ? new { Checked = "checked" } : null) <label>Treaty</label>
+                        @Html.RadioButtonFor(model => model.TreatyCode, false, (Model.TreatyCode == false) ? new { Checked = "checked" } : null) <label>Non-Treaty</label>
+
+                    </div>
+                </div>*@
+                 @Html.HiddenFor(m=>m.OldEarningsCodeId)
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSubmit">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+        if ($("#IsDefault").prop('checked') == true) {
+            $("#Active").attr("disabled", "disabled");
+        }
+    });
+    $("#btnSubmit").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("frmEarningsCodes")) {
+            loading(false);
+            return;
+        }
+        if ($("#IsDefault").prop('checked') == true && $("#Active").prop('checked') == false) {
+            toastr.error("Please check the Active button");
+            loading(false);
+            return false;
+        }
+        var postData = $("#frmEarningsCodes").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "EarningsCodes/EarningsCodesSaveAjax";
+
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenEarningsCodeID = $("#hiddenearningsCodeId").val();
+                LoadMenu("EarningsCodesMatrixPartial", "EarningsCodes");
+                $("#btnSubmit").parent().find(".md-close").click();
+                if (_oldhiddenEarningsCodeID != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+    var isdefaultid = $("#IsDefault").is(":checked");
+    $("#IsDefault").change(function (e) {
+        var appBaseUrl = $("#appBaseUrl").val();
+        $.ajax({
+            url: appBaseUrl + "EarningsCodes/GetIsdefaultcount",
+            type: "Get",
+            success: function (count) {
+                var Ischecked = $("#IsDefault").is(":checked");
+                if (count > 0) {
+                    confirmDialog("OK", function () {
+                        if (Ischecked) {
+                            $("#IsDefault").prop("checked", true);
+                        }
+                        else {
+                            $("#IsDefault").prop("checked", false)
+                            var earningcodeid = $("#hiddenearningsCodeId").val();
+                            var oldearningid = $("#OldEarningsCodeId").val(earningcodeid);
+                        }
+                    }, "Cancel", function (e) {
+                        if (Ischecked) {
+                            $("#IsDefault").prop("checked", false);
+                        }
+                        else {
+                            $("#IsDefault").prop("checked", true);
+                        }
+                    }, "", "IsDefault already exists if u want to override the data will be lose")
+                }
+                else {
+                    if (Ischecked) {
+                        $("#IsDefault").prop("checked", true);
+                    }
+                    else {
+                        $("#IsDefault").prop("checked", false);
+                    }
+                }
+            }
+        });
+    });
+</script>

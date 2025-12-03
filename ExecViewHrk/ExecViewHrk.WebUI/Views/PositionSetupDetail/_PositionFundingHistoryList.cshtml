@@ -1,0 +1,63 @@
+﻿@model ExecViewHrk.WebUI.Models.PosionFundingSource
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Funding History</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="theme-grid">
+            @(Html.Kendo().Grid(Model.posionFundingSourceHistoryList)
+    .Name("PositionFundingSourceHistorylst")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.EffectiveDate).Title("Effective Date").ClientTemplate("#= EffectiveDate == null ? '' : kendo.toString(kendo.parseDate(EffectiveDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #");
+        columns.Bound(p => p.FundCodeID).Title("Code");
+        columns.Bound(p => p.Percentage).Title("Percentage");
+        columns.Bound(p => p.ChangeEffectiveDate).Title("Change Effective Date").ClientTemplate("#= ChangeEffectiveDate == null ? '' : kendo.toString(kendo.parseDate(ChangeEffectiveDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #");
+    })
+    .Pageable(pageable => pageable
+       .Input(true)
+       .Numeric(false)
+     )
+    .Sortable()
+    .Filterable()
+    .DataSource(dataSource => dataSource
+        .Ajax()
+         .Model(model =>
+         {
+             model.Field(p => p.EffectiveDate);
+             model.Field(p => p.FundCodeID);
+             model.Field(p => p.Percentage);
+             model.Field(p => p.ChangeEffectiveDate);
+         }
+                    )
+        .PageSize(5)
+        .ServerOperation(false)
+     )
+            )
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseSalaryHistoryList">Close</button>
+    @*<button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveFundAllocationList">Save</button>*@
+</div>
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+
+</script>
+
+
+
+
+
+
+

@@ -1,0 +1,129 @@
+﻿@model ExecViewHrk.EfClient.Funds
+@{
+
+    Layout = null;
+}
+
+@*@using (Html.BeginForm("FedralEINSaveAjax", "LookupTables", FormMethod.Post, new { role = "form", id = "FedralEINForm" }))
+    {*@
+
+
+@using (Html.BeginForm("UpdateFundCode", "LookupTables", FormMethod.Post, new { role = "form", id = "AddEditFundCodeForm" }))
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.ID)
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Fund</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Code</label>
+
+                            @Html.TextBoxFor(model => model.Code, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(model => model.Code)
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Description</label>
+
+                            @Html.TextBoxFor(model => model.Description, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(model => model.Description)
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Amount</label>
+                            @Html.TextBoxFor(model => model.Amount, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Amount)
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>FTE</label>
+                            @Html.TextBoxFor(model => model.FTE, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.FTE)
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Effective Start Date</label>
+                            @Html.TextBoxFor(model => model.EffectiveStartDate, "{0:MM/dd/yyyy}", new { @class = "form-control datepicker"})
+                            @Html.ValidationMessageFor(model => model.EffectiveStartDate)
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.EffectiveEndDate)
+
+                            @Html.TextBoxFor(model => model.EffectiveEndDate, "{0:MM/dd/yyyy}", new { @class = "form-control datepicker" })
+                            @Html.ValidationMessageFor(model => model.EffectiveEndDate)
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+
+
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.Active)
+                                @Html.LabelFor(model => model.Active)
+                                @Html.ValidationMessageFor(model => model.Active)
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-15 text-right">
+
+            <button type="button" class="btn btn-default waves-effect md-close m-r-15" data-dismiss="modal" id="btnCloseFundCode">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " id="btnFundCodeSave">Save</button>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+
+
+    });
+
+
+    $("#btnFundCodeSave").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("AddEditFundCodeForm")) {
+            loading(false);
+            return;
+        }
+        var postData = $("#AddEditFundCodeForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/UpdateFundCode";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                toastr.success("Record has been Saved");
+                LoadMenu("DdlFundCodeListMaintenance", "LookupTables")
+                $("#btnCloseFundCode").trigger('click');
+            }
+
+        });
+    });
+
+</script>

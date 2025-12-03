@@ -1,0 +1,68 @@
+﻿@model IList<ExecViewHrk.Models.TimeCardExportCollectionVM>
+
+@{
+    ViewBag.Title = "Export Preview Pay Period";
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-primary table-striped">
+            <table class="table table-striped table-bordered" id="Exports" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th data-class="expand">Company Code</th>
+                        <th data-hide="phone">BatchID</th>
+                        <th data-hide="phone">File Num</th>
+                        <th data-hide="phone,tablet">Reg Hours</th>
+                        <th data-hide="phone,tablet">OT Hours</th>
+                        <th data-hide="phone,tablet">Earnings3 Code</th>
+                        <th data-hide="phone,tablet">Earnings3 Amount</th>
+                        <th data-hide="phone,tablet">Earnings4 Code</th>
+                        <th data-hide="phone,tablet">Earnings4 Amount</th>
+                        <th data-hide="phone,tablet">Earnings5 Code</th>
+                        <th data-hide="phone,tablet">Earnings5 Amount</th>
+                        <th data-hide="phone,tablet,desktop">Hours3 Code</th>
+                        <th data-hide="phone,tablet,desktop">Hours3 Amount</th>
+                        <th data-hide="phone,tablet,desktop">Hours4 Code</th>
+                        <th data-hide="phone,tablet,desktop">Hours4 Amount</th>
+                        <th data-hide="phone,tablet,desktop">Hours5 Code</th>
+                        <th data-hide="phone,tablet,desktop">Hours5 Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                {
+
+                    foreach (var item in Model)
+                    {
+                <tr>
+
+                    <td><a href="#">@Html.DisplayFor(m => item.CompanyCode)</a></td>
+                    <td>@Html.DisplayFor(m => item.BatchId)</td>
+                    <td>@Html.DisplayFor(m => item.FileNumber)</td>
+                    <td>@Html.DisplayFor(m => item.RegularHours)</td>
+                    <td>@Html.DisplayFor(m => item.OverTimeHours)</td>
+                    <td>@Html.DisplayFor(m => item.Hours3Code)</td>
+                    <td>@Html.DisplayFor(m => item.Hours3Amount)</td>
+                    <td>@Html.DisplayFor(m => item.Hours4Code)</td>
+                    <td>@Html.DisplayFor(m => item.Hours4Amount)</td>
+                    <td>@Html.DisplayFor(m => item.Hours5Code)</td>
+                    <td>@Html.DisplayFor(m => item.Hours5Amount)</td>
+                    <td>@Html.DisplayFor(m => item.Earnings3Code)</td>
+                    <td>@Html.DisplayFor(m => item.Earnings3Amount)</td>
+                    <td>@Html.DisplayFor(m => item.Earnings4Code)</td>
+                    <td>@Html.DisplayFor(m => item.Earnings4Amount)</td>
+                    <td>@Html.DisplayFor(m => item.Earnings5Code)</td>
+                    <td>@Html.DisplayFor(m => item.Earnings5Amount)</td>
+
+
+                </tr>
+                    }
+
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

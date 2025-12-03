@@ -1,0 +1,120 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Segment2";
+
+}
+
+@*@model ExecViewHrk.WebUI.Models.DepartmentVm*@
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+            <div class="col-md-6 ">
+                <label>Segment2</label>
+            </div>
+
+            <div class="col-md-6 ">
+                
+            </div>
+        </div>
+    </div>
+    <div id="formDiv" class="panel-body">
+
+        <div class="row ">
+
+            <div class="row ">
+                <div class="col-md-12">
+
+
+                    <div class="form-group ">
+
+                        @(Html.Kendo().Grid<ExecViewHrk.EfClient.UserDefinedSegment2s>()
+                                        .Name("gridUserDefinedSegment2")
+                                        .Resizable(resize => resize.Columns(true))
+                                        .Filterable()
+                                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                        .ToolBar(toolbar => toolbar.Create())
+
+                                        .Columns(columns =>
+                                        {
+                                            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(170);
+                                            columns.Bound(c => c.UserDefinedSegment2Id).Title("Id").Hidden().Width(100);
+                                            columns.Bound(c => c.UserDefinedSegment2Code).Title("Code").Width(100);
+                                            columns.Bound(c => c.UserDefinedSegment2Description).Title("Description").Width(100);
+                                        })
+                                        .HtmlAttributes(new { style = "height: 480px;" })
+
+                                        .Scrollable()
+                                        .Groupable()
+                                        .Sortable()
+                                        .Selectable()
+
+                                        .Pageable(pageable => pageable
+                                            .Refresh(false)
+                                            .PageSizes(true)
+                                            .ButtonCount(5))
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+
+
+                                                    .Read(read => read.Action("UserDefinedSegment2sList_Read", "UserDefinedSegment2s"))
+                                                    .Create(create => create.Action("UserDefinedSegment2sList_Create", "UserDefinedSegment2s"))
+                                                    .Update(update => update.Action("UserDefinedSegment2sList_Update", "UserDefinedSegment2s"))
+                                                    .Destroy(destroy => destroy.Action("UserDefinedSegment2sList_Destroy", "UserDefinedSegment2s"))
+                                        .Model(model =>
+                                        {
+                                            model.Id(p => p.UserDefinedSegment2Id);
+                                            model.Field(p => p.UserDefinedSegment2Id).Editable(false);
+                                            model.Field(p => p.UserDefinedSegment2Code);
+                                            model.Field(p => p.UserDefinedSegment2Description);
+                                        }
+                                              )
+                                        .Batch(false)
+                                         .Events(events =>
+                                         {
+                                             events.Error("refreshGrid");
+                                             events.RequestEnd("gridRequestEnd");
+                                         })
+                                            )
+                        )
+
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+   
+</script>
+
+
+

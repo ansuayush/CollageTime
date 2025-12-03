@@ -1,0 +1,257 @@
+﻿@model ExecViewHrk.Models.PositionBudgetSchedulesVM
+
+
+@using (Html.BeginForm("PositionBudgetSchedulesSaveAjax", "PositionBudgetSchedules", FormMethod.Post, new { role = "form", id = "budgetScheduleForm" }))
+{
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model=>model.ScheduleType)
+    @Html.HiddenFor(model=>model.IncreaseType)
+    @Html.ValidationSummary(true)
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Budget Schedule Detail</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Schedule Type</label>
+                            <div class="col-sm-12 p-0 form-radio">
+                                <div class="radio radio-inline m-r-15">
+                                    <label>                                     
+                                         <input type="radio" id="rdSalary" name="rdScheduleType"  value="@Model.ScheduleType">                                                                               
+                                        <i class="helper"></i>Salary
+                                    </label>
+                                </div>
+                                <div class="radio radio-inline m-r-15">
+                                    <label>                               
+                                       
+                                            <input type="radio" id="rdHourly" name="rdScheduleType"  value="@Model.ScheduleType">
+                                                                              
+                                        <i class="helper"></i>Hourly
+                                    </label>
+                                </div>
+                                <div class="radio radio-inline m-r-15">
+                                    <label>
+                                       
+                                       
+                                            <input type="radio" id="rdBoth"  name="rdScheduleType" value="@Model.ScheduleType">
+                                                                              
+                                        <i class="helper"></i>Both
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Start Date</label>
+                            @Html.TextBoxFor(m => m.StartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", @data_dateformat = "mm/dd/yy", @data_type = "smalldate", data_required = "Y" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>End Date</label>
+                            @Html.TextBoxFor(m => m.EndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", @data_dateformat = "mm/dd/yy", @data_type = "smalldate", data_required = "Y" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Effective Date</label>
+                            @Html.TextBoxFor(m => m.EffectiveDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", @data_dateformat = "mm/dd/yy", @data_type = "smalldate", data_required = "Y" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Eligible Date</label>
+                            @Html.TextBoxFor(m => m.EligibleDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", @data_dateformat = "mm/dd/yy", @data_type = "smalldate", data_required = "Y" })
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Increase Type</label>
+                            <div class="col-sm-12 p-0 form-radio">
+                                <div class="radio radio-inline">
+                                    <label>                                      
+                                        <input type="radio" id="rdPercent" name="rdIncreaseType" value="@Model.IncreaseType">                                        
+                                        <i class="helper"></i>Percent
+                                    </label>
+                                </div>
+                                <div class="radio radio-inline">
+                                    <label>
+                                         <input type="radio" id="rdDollar" name="rdIncreaseType" value="@Model.IncreaseType">
+                                         <i class="helper"></i>Dollar Amount
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Increase Amount</label>
+                            @Html.TextBoxFor(m => m.IncreaseAmount, new { @class = "form-control", data_required = "Y" })                            
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Washout Rule Hourly</label>
+                            @Html.TextBoxFor(m => m.WashoutRule, new { @class = "form-control", data_required = "Y" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Washout Rule Salary</label>
+                            @Html.TextBoxFor(m => m.WashoutRuleSalary, new { @class = "form-control", data_required = "Y" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group p-t-30">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.AutoFill == true)
+                                {
+                                    <input id="@Html.NameFor(x => x.AutoFill)" type="checkbox" checked="checked" />
+                                }
+                                else
+
+                                {
+                                    <input id="@Html.NameFor(x => x.AutoFill)" type="checkbox" />
+                                }
+
+                                <label for="AutoFill">Auto Fill</label>
+                                @Html.HiddenFor(x => x.AutoFill)
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="p-15 text-right">
+            <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+            <input type="button" id="btnBudgetScheduleSave" name="Done" value="Done" class="btn btn-primary">
+        </div>
+    </div>
+}
+@*</div>*@
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $('#WashoutRuleSalary,#IncreaseAmount,#WashoutRule').keydown(function (e) { EnterOnlyDecimal(e); });
+        $("#budgetScheduleForm *").filter(':input').not("input[type=hidden]").each(function () {
+            $(this).attr("onchange", "budgetScheduleOnChange(this)");            
+            ScheduleTypeChecks();
+            IncreaseTypeChecks();
+            });
+        function ScheduleTypeChecks()
+        {
+            if ($("#ScheduleType").val() == 0) {
+                $("#rdSalary").attr("checked", "checked");
+            }
+            else if ($("#ScheduleType").val() == 1) {
+                $("#rdhourly").attr("checked", "checked");
+            }
+            else if ($("#ScheduleType").val() == 2) {
+                $("#rdBoth").attr("checked", "checked");
+            }
+        }
+        function IncreaseTypeChecks() {
+            if ($("#IncreaseType").val() == 0) {
+                $("#rdPercent").attr("checked", "checked");
+            }
+            else if ($("#IncreaseType").val() == 1) {
+                $("#rdDollar").attr("checked", "checked");
+            }           
+        }
+    });
+
+    function budgetScheduleOnChange(fldEle) {    
+        ValidateElements(fldEle.id);
+        var FiledID = fldEle.id;
+        var FieldValue = $("#" + FiledID).val();
+        switch (FiledID) {
+            case "rdSalary":
+                if ($('#rdSalary').is(':checked')) {
+                    $('#ScheduleType').val(0);
+                }
+                break;
+            case "rdHourly":
+                if ($('#rdHourly').is(':checked')) {
+                    $('#ScheduleType').val(1);
+                }
+                break;           
+            case "rdBoth":
+                if ($('#rdBoth').is(':checked')) {
+                    $('#ScheduleType').val(2);
+                }
+                break;
+            case "rdPercent":
+                if ($('#rdPercent').is(':checked')) {
+                    $('#IncreaseType').val(0);
+                }
+                break;
+            case "rdDollar":
+                if ($('#rdDollar').is(':checked')) {
+                    $('#IncreaseType').val(1);
+                }
+                break;
+             
+        }
+
+    }
+
+    $("#btnBudgetScheduleSave").click(function (e) {    
+        e.preventDefault();
+        loading(true)
+        var form = $("#budgetScheduleForm");
+        if (!ValidateForm("budgetScheduleForm")) {
+            loading(false);
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#budgetScheduleForm").serializeArray();
+        var formURL = appBaseUrl + "PositionBudgetSchedules/PositionBudgetSchedulesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+
+                if (data.succeed == false)
+                    toastr.error(data.Message);
+                else {
+                    if (data.isNewRecord == true) {
+                        LoadMenu("PositionBudgetSchedulesList", "PositionBudgetSchedules")
+                        $("#btnBudgetScheduleSave").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.saved);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    }
+                    else {
+                        var ID = { Id: data.positionBudgetSchedulesVM.ID };
+                        LoadDetailView("PositionBudgetSchedulesDetails", "PositionBudgetSchedules", ID)
+                        $("#btnBudgetScheduleSave").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.updated);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    }
+                }
+            }
+            else
+            {
+                    toastr.error(data.Message);
+            }
+        });
+    });
+</script>

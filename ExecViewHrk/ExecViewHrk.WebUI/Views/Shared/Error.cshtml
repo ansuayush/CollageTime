@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewBag.Title = "Oops!";
+    //Layout = null;
+}
+<h1 class="text-danger">Oops! an error occurs</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*@if (Model != null)
+{
+    @Html.ValueFor(model => model.Message)
+}*@
+
+@*@section TitleSectionOfHeader3
+{
+    <label>Error</label>
+}*@
+
+@*<p>
+    Please contact administrator
+</p>*@
+
+@*<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+            <div class="col-md-6 ">
+                @RenderSection("TitleSectionOfHeader2", required: false)
+            </div>
+
+            <div class="col-md-offset-4 col-md-2 ">
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="formDiv" class="panel-body">
+        @RenderBody()
+    </div>
+
+</div>*@
+
+
+
+
+
+
+
+
+
+
+@*<html>
+<head>
+    <title>Contents</title>
+    <link href="~/Content/MatrixStyles.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="header">
+        <h2> Error</h2>
+            @RenderPage("~/Views/Shared/_PositionHeader.cshtml")
+    </div>
+
+    
+    <div id="wrapper">
+        <div id="MatrixContent">
+            <p>
+                Please contact administrator
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>*@
+
+
+

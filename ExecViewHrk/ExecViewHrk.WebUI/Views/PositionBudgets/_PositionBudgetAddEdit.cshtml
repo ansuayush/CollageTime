@@ -1,0 +1,148 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionBudgetsVM
+    @{ 
+        Model.BudgetAmount = (Model.BudgetAmount == null) ? Model.BudgetAmount : Convert.ToDecimal(String.Format("{0:n2}", Model.BudgetAmount));
+        Model.FTE = (Model.FTE == null) ? Model.FTE : Convert.ToDecimal(String.Format("{0:n2}", Model.FTE));
+    }
+
+@using (Html.BeginForm("PositionBudgetSaveAjax", "PositionBudgets", FormMethod.Post, new { role = "form", id = "PositionBudgetForm" }))
+{
+    @Html.ValidationSummary(true)
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Position Budget Detail</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                <span style="color:red">*</span>Position Title
+                            </label>
+                            @Html.DropDownListFor(m => m.PositionID, new SelectList(Model.lstPositionIDs, "keyvalue", "keydescription", Model.PositionID), new { @class = "form-control input-sm" })
+                            @Html.ValidationMessageFor(x => x.PositionID)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                <span style="color:red">*</span>Month
+                            </label>
+
+                            @Html.DropDownListFor(m => m.BudgetMonth, new SelectList(Model.lstMonths, "keyvalue", "keydescription", Model.BudgetMonth), new { @class = "form-control input-sm" })
+                            @Html.ValidationMessageFor(x => x.BudgetMonth)
+                        </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>
+                                    <span style="color:red">*</span>Year
+                                </label>
+                                @Html.DropDownListFor(m => m.BudgetYear, new SelectList(Model.lstyears, "keyvalue", "keydescription", Model.BudgetYear), new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(x => x.BudgetYear)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>
+                                    <span style="color:red">*</span>Amount
+                                </label>
+                               
+                                @Html.TextBoxFor(m => m.BudgetAmount, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.BudgetAmount)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>
+                                    <span style="color:red">*</span>FTE
+                                </label>                               
+                                @Html.TextBoxFor(m => m.FTE, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>             
+               </div>
+        </div>
+        <div class="p-15 text-right">
+            <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+            <input type="button" id="btnPositionBudgetSave" name="Done" value="Done" class="btn btn-primary waves-effect myButton">
+        </div>
+        @Html.HiddenFor(m => m.ID)
+    </div>
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+        $('#BudgetAmount').keydown(function (e) { EntryOnlyInteger(e); });
+        $('#FTE').keydown(function (e) { EntryOnlyInteger(e); });
+    });
+    function EntryOnlyInteger(e) {
+        if (e.shiftKey || e.ctrlKey || e.altKey) { // if shift, ctrl or alt keys held down
+            e.preventDefault();         // Prevent character input
+        }
+        else {
+            var n = e.keyCode;
+            if (!((n == 8)              // backspace
+                    || (n == 9)
+                    || (n == 46)                // delete
+                    || (n >= 35 && n <= 40)     // arrow keys/home/end
+                    || (n >= 48 && n <= 57)     // numbers on keyboard
+                    || (n >= 96 && n <= 105) || (n == 190) || (n == 110))  // number on keypad
+                    ) {
+                e.preventDefault();
+                // alert("in if");
+                // Prevent character input
+            };
+        };
+    }
+
+    $("#btnPositionBudgetSave").click(function (e) {
+        e.preventDefault();
+        var form = $("#PositionBudgetForm");
+        //var staus = formService.getStatus();
+        //if (staus) {
+        //    return;
+        //}
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#PositionBudgetForm").serializeArray();
+        var formURL = appBaseUrl + "PositionBudgets/PositionBudgetSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                }
+                if (data.recordIsNew == true) {
+                    LoadMenu("PositionBudgetList", "PositionBudgets")
+                    $("#btnPositionBudgetSave").parent().find(".md-close").click();
+                    formService.isLoadingInProgress = true;
+                    killTimer();
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+                else {
+                    var ID = { Id: data.positionBudgetVm.ID };
+                    LoadDetailView("PositionBudgetsDetail", "PositionBudgets", ID)
+                    //  $("#btnPositionBudgetSave").parent().find(".md-close").click();
+                    $("#btnPositionBudgetSave").parent().find(".md-close").click();
+                    formService.isLoadingInProgress = true;
+                    killTimer();
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+              
+            }
+        });
+    });
+   
+</script>

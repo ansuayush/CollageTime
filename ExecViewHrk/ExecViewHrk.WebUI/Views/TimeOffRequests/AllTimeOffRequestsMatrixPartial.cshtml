@@ -1,0 +1,48 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Time Off Requests";
+    Layout = null; /*"~/Views/Shared/_Layout.cshtml";*/
+}
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+        //alert = (string)ViewBag.AlertMessage;
+    }
+}
+<script src="~/Scripts/application/AllEmp_TimeOffRequestsMatrixPartial.js"></script>
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            @using (Html.BeginForm("TimeOffRequests", "TimeOffRequests", FormMethod.Post, new { role = "form", id = "AllTimeOffRequestsFormDdl" }))
+            {
+
+                <div class="main-header col-sm-12 p-0 m-b-0 b-b-muted">
+                    <div class="col-md-8 m-b-15 p-0">
+                        <h4>Time Off Requests <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                    </div>
+                    <div class="col-md-4 text-right m-t-10">
+                        <h5><span class="label label-info">R- Requested, A-Approved, D-Denied</span></h5>
+                    </div>
+                </div>
+                    <div class="col-lg-12 col-md-12 p-0">
+                        <div class="theme-grid square-calender">
+                            <h4 class="text-center">Pick a date</h4>
+                            <div id="AllTimeOffRequestscalendar" class="wrapper">
+                                <div id="calendar" style="width:75%"></div>
+                            </div>
+                            <div id="TimeOffRequestsByDate" style="display:none">
+                                @*@Html.Action("RangeSelectionPartial", "TimeOffRequests")*@
+                            </div>
+                        </div>
+                    </div>
+            }
+        </div>
+    </div>
+</div>
+<style>
+    .k-calendar {
+        display: table-row;
+    }
+</style>

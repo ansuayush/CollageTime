@@ -1,0 +1,78 @@
+﻿@model ExecViewHrk.Models.PayPeriodVM
+@using ExecViewHrk.Domain.Helper
+@{
+
+    ViewBag.Title = "TimeReport";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+<h1>TimeReport</h1>
+<div class="card-header">
+    <h5 class="card-header-text">Time Report</h5>
+</div>
+
+@using (Html.BeginForm("PayPeriods", "PayPeriods", FormMethod.Post, new { role = "form", id = "PayPeriodForm" }))
+{
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            @Html.HiddenFor(model => model.PayPeriodId, new { id = "hiddenPayperiodId" })
+            @Html.ValidationSummary(true)
+
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>@Html.DisplayNameFor(m => m.StartDate)</label>
+                    @Html.TextBoxFor(model => model.StartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y", @id = "txtStartDate" })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>@Html.DisplayNameFor(m => m.EndDate)</label>
+                    @Html.TextBoxFor(model => model.EndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y", @id = "txtEndDate" })
+                </div>
+            </div>
+            <div class="col-sm-2" style="top:22px">
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="btnFilter">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+@Ajax.ActionLink("search", "_TimeReportList", "TimeReport", new { startDate = "123", endDate = "test" }, new AjaxOptions
+{
+    HttpMethod = "GET",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "TimeReportDiv",
+    OnBegin = "loading(true)",
+    OnComplete = "loading(false)"
+}, new { style = "display:none;", @id = "hdnTimeReportId" })
+
+
+
+
+<div id="TimeReportDiv">
+
+</div>
+<script type="text/javascript">
+            $(document).ready(function () {
+                pageSetup();
+                loading(false);
+            });
+
+            //Filter Click Event
+            $("#btnFilter").on("click", function () {
+                if ($("#txtStartDate").val() != "" && $("#txtEndDate").val() != "") {
+                    var stDate = $("#txtStartDate").val();
+                    var edDate = $("#txtEndDate").val();
+
+                    var url = $("#ApplicationUrl").val() + "TimeReport/_TimeReportList";
+                    var actUrl = url + "?startDate=" + stDate + "&endDate=" + edDate;
+
+                    $("#hdnTimeReportId").attr('href', actUrl);
+                    $("#hdnTimeReportId").trigger("click");
+                }
+            })
+
+</script>

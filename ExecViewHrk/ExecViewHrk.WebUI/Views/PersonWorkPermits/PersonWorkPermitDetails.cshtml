@@ -1,0 +1,138 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonWorkPermitVm
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Work Permit Details</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonWorkPermits", "PersonWorkPermitsSaveAjax", FormMethod.Post, new { role = "form", id = "PersonWorkPermitsDetailForm" }))
+            {
+            @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+            @Html.HiddenFor(model => model.PersonWorkPermitId, new { id = "hiddenPersonWorkPermitId" })
+            @Html.ValidationSummary(true)
+            <div class="col-sm-3">
+                <div class="form-group ">
+                    <label><span style="color:red">*</span>Country</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(Model.GetCountries, "CountryId", "Description", Model.CountryId), new { @class = "form-control input-sm", data_required = "Y" })
+                        @if (!User.IsInRole("ClientEmployees"))
+                        {
+                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'Country');">
+                        <span class="fa fa-plus"></span>
+                    </span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group ">
+                    <label>Issue Date</label>
+                    @Html.TextBoxFor(model => model.IssueDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                    <div>
+                        @Html.ValidationMessageFor(x => x.IssueDate)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Work Permit Number</label>
+                    @Html.TextBoxFor(model => model.WorkPermitNumber, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Work Permit Type</label>
+                    @Html.TextBoxFor(model => model.WorkPermitType, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Issuing Authority</label>
+                    @Html.TextBoxFor(model => model.IssuingAuthority, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Expiration Date</label>
+                    @Html.TextBoxFor(model => model.ExpirationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                    <div>
+                        @Html.ValidationMessageFor(x => x.ExpirationDate)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Extension Date</label>
+                    @Html.TextBoxFor(model => model.ExtensionDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                    <div>
+                        @Html.ValidationMessageFor(x => x.ExtensionDate)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label>Notes</label>
+                    @Html.TextAreaFor(m => m.Notes, new { @class = "form-control", @style = "height:80px;" })
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+</div>
+<input type="hidden" name="hdWorkPermitsDetail" id="hdWorkPermitsDetail" value="personWorkPermitsDetail" />
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveWorkPermitsAjax">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();    
+    });
+
+    $("#btnSaveWorkPermitsAjax").click(function (e) {
+        e.preventDefault();     
+        if (!ValidateForm("PersonWorkPermitsDetailForm")) {
+            loading(false);
+            return;
+        }
+
+        if (!CompareDates($("#IssueDate").val(), $("#ExpirationDate").val())) {          
+            toastr.error("ExpirationDate can't be less than Issue Date.");
+            $("#ExpirationDate").val('');
+            loading(false)
+            return;
+        }
+        var postData = $("#PersonWorkPermitsDetailForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonWorkPermits/PersonWorkPermitsSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldpersonWorkPermitId = $("#hiddenPersonWorkPermitId").val();
+                resetGrid("gridPersonWorkPermit");
+                $("#btnSaveWorkPermitsAjax").parent().find(".md-close").click();
+                if (_oldpersonWorkPermitId != "0") {
+                    toastr.success(formService.messages.updated);               
+                }
+                else {                  
+                    toastr.success(formService.messages.saved);               
+                }
+
+            }
+        });
+
+    });
+
+</script>
+
+
+

@@ -1,0 +1,78 @@
+﻿@model ExecViewHrk.EfClient.DdlCountry
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Country</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmCounty">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+         </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseCounty">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveCounty">Save</button>
+</div>
+<script>
+    $(document).ready(function () {
+        if ($("#hdWorkPermitsDetail").val() == "personWorkPermitsDetail")
+        {
+            $("#hdCountryActive").hide();
+        }
+    });
+    $("#btnSaveCounty").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("frmCounty")) {
+            loading(false);
+            return;
+        }
+        var postData = $("#frmCounty").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/DdlCountry_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                //formService.isSavingInProgress = false;
+                toastr.success("Record has been Saved");
+            }
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadCountyDropDown();
+                $("#btnCloseCounty").trigger('click');
+            }
+        });
+    });
+    function reloadCountyDropDown() {
+        var _selectedValue = $("#CountryId").val();
+        $.get($("#appBaseUrl").val() + "LookupTables/GetDdlCountryList", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#CountryId").empty();
+                $("#CountryId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#CountryId").append("<option value='" + list[i].CountryId + "' selected >" + list[i].Description + "</option>");
+                    } else {
+                        $("#CountryId").append("<option value='" + list[i].CountryId + "' >" + list[i].Description + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

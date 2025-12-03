@@ -1,0 +1,45 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.SalaryGradeVm>
+<div class="theme-grid">
+    @(Html.Kendo().Grid(Model)
+    .Name("SalaryGradelst")
+    .Columns(columns =>
+    {
+        columns.Command(command =>
+        {
+            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPositionSalarySourceeEdit");
+        }).Width(70);
+        columns.Bound(p => p.description).Title("Description");
+        columns.Bound(p => p.validFrom).Format("{0: dd/MM/yyyy}").Title("Valid From").ClientTemplate("#= validFrom == null ? '' : kendo.toString(validFrom, \"MM/dd/yyyy\") #");
+        columns.Bound(p => p.salaryMinimum).Title("Salary Minimum").ClientTemplate("$#= salaryMinimum !== null ? kendo.toString(salaryMinimum,'n2') : ''#");
+        columns.Bound(p => p.salaryMidpoint).Title("Salary Midpoint").ClientTemplate("$#= salaryMidpoint !== null ? kendo.toString(salaryMidpoint,'n2') : ''#");
+        columns.Bound(p => p.salaryMaximum).Title("Salary Maximum").ClientTemplate("$#= salaryMaximum !== null ? kendo.toString(salaryMaximum,'n2') : ''#");
+    })
+    .Pageable(pageable => pageable
+       .Input(true)
+       .Numeric(false)
+     )
+    .Sortable()
+    .Filterable()
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(5)
+        .ServerOperation(false)
+     )
+    )
+    
+</div>
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+   
+   
+</script>
+
+
+
+
+
+

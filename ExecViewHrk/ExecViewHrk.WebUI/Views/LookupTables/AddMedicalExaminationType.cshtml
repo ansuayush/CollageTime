@@ -1,0 +1,71 @@
+﻿@model ExecViewHrk.EfClient.DdlMedicalExaminationType
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Medical Examination Type</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmMedicalExaminationType">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseMedicalExaminationType">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveMedicalExaminationType">Save</button>
+</div>
+<script>
+    $("#btnSaveMedicalExaminationType").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmMedicalExaminationType")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmMedicalExaminationType").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "DdlMedicalExaminationTypes/DdlMedicalExaminationTypesList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadMedicalExaminationTypeDropDown();
+                $("#btnCloseMedicalExaminationType").trigger('click');
+            }
+        });
+    });
+    function reloadMedicalExaminationTypeDropDown() {
+        var _selectedValue = $("#MedicalExaminationTypeId").val();
+        $.get($("#appBaseUrl").val() + "DdlMedicalExaminationTypes/GetMedicalExaminationTypes", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#MedicalExaminationTypeId").empty();
+                $("#MedicalExaminationTypeId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#MedicalExaminationTypeId").append("<option value='" + list[i].MedicalExaminationTypeId + "' selected >" + list[i].Description + "</option>");
+                    } else {
+                        $("#MedicalExaminationTypeId").append("<option value='" + list[i].MedicalExaminationTypeId + "' >" + list[i].Description + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,6 @@
+﻿@model ExecViewHrk.WebUI.Models.ZipCodeDdlViewModel
+
+@(Html.Kendo().MaskedTextBoxFor(m => m)
+       .Name("ZipCode")
+       .Mask("00000")
+)

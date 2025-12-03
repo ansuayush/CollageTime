@@ -1,0 +1,125 @@
+﻿@model List<ExecViewHrk.WebUI.Models.DDLPartial>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">@ViewBag.Title</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmDDL">
+            <input type="hidden" name="DDL_TITLE" value="@ViewBag.Title" />
+            @foreach (var item in Model)
+            {
+                <input type="hidden" id="DDL" name="@item.DDLName" value="@item.DDLName" />
+
+                if (item.FieldID.Contains("Active") || item.FieldID.Contains("active"))
+                {
+
+                    <input id="@item.FieldID" type="hidden" name="@item.FieldID" value="true" checked="checked">
+
+                }
+                else if ((item.FieldID.ToUpper().Contains("ID")) || (item.FieldID.Contains("EEoFileStatusNbr")) || (item.FieldID.Contains("BusinessLevelTypeNbr")) || (item.FieldID.Contains("FedralEINNbr")))
+                {
+                    <input type="hidden" id="DDLPrimaryId" name="@item.FieldID" value="@item.FieldID" />
+                }
+
+                else
+                {
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>@item.Caption</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" data-required="Y" />
+                        </div>
+                    </div>
+                }
+
+            }
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseDDl">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveDDL">Save</button>
+</div>
+<script>
+    $("#btnSaveDDL").click(function (e) {
+        e.preventDefault();
+        if ($("#Code").val() == "") {
+            toastr.error("The Code field is required.");
+            return;
+        }
+        if ($("#description").val() == "" || $("#Description").val() == "") {
+            toastr.error("The Description field is required.");
+            return;
+        }
+        var postData = $("#frmDDL").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "JobSetup/DdlSave";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else if (data.Message != null) {
+                toastr.error(data.Message);
+            }
+            else {
+                reloadDDL();
+                $("#btnCloseDDl").trigger('click');
+            }
+        });
+    });
+    function reloadDDL() {
+        
+        var PrimaryID = $("#DDLPrimaryId").val();
+        $.get($("#ApplicationUrl").val() + 'JobSetup/ReloadDDL?DDLName=' + $("#DDL").val(),
+            function (data, status) {
+                var list = data;
+                if (list.length > 0) {
+                    $("#" + PrimaryID).empty();
+                    $("#" + PrimaryID).append("<option value=''>Select</option>");
+                    for (var i = 0; i < list.length; i++) {
+                        var data = list[i].Description == undefined ? list[i].description : list[i].Description;
+                        switch ($("#DDL").val()) {
+                            case "ddlJobClasses":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].jobClassID + "' > " + data + " </option>");
+                                break;
+                            case "ddlEEOJobCodes":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].eeoJobCodeID + "' > " + data + " </option>");
+                                break;
+                            case "ddlJobFamilys":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].JobFamilyId + "' > " + data + " </option>");
+                                break;
+                            case "ddlUnions":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].unionID + "' > " + data + " </option>");
+                                break;
+                            case "ddlWorkersCompensations":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].workersCompensationID + "' > " + data + " </option>");
+                                break;
+                            case "ddlEEOJobTrainingStatuses":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].eeoJobTrainingStatusID + "' > " + data + " </option>");
+                                break;
+                            case "CompanyCodes":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].CompanyCodeId + "' > " + list[i].CompanyCodeDescription + " </option>");
+                                break;
+                            case "ddlFLSAs":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].FLSAID + "' > " + data + " </option>");
+                                break;
+                            case "Locations":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].LocationId + "' > " + list[i].LocationDescription + " </option>");
+                                break;
+                            case "ddlEEOFileStatuses":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].EEoFileStatusNbr + "' > " + data + " </option>");
+                                break;
+                            case "ddlBusinessLevelTypes":
+                                $("#" + PrimaryID).append("<option  value='" + list[i].BusinessLevelTypeNbr + "' > " + data + " </option>");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            });
+    }
+</script>

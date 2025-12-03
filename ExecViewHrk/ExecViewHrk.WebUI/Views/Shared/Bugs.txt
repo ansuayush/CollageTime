@@ -1,0 +1,75 @@
+Common Problem
+-If there is single record and deleted. It gives error
+- Some of the required field if are empty still get saved without showing error.
+
+Person Education
+-Education establishment + sign not working due to foreign key used in DdlEducationEstablishment view.
+
+Employee I9 Doc
+-Displaying no record found for comboboxes Employement number and I9 Docs
+-Not displaying latest record automatically first time, need to select from comboboxes.
+-Save -> getting form invalid error
+
+Person Emergency Contacts
+-Multiple ph. no. not displaying in phone column of a grid
+-Close button to add
+
+Person Skills
+-Due to foreign key column in DdlSkills view not displaying screen of person skills.
+-DdlSkill Type page need to edit.
+
+Person Employee
+-Length of Employment
+-Hiring date < Termination date, if not display the message
+-+ signs to work properly without errors.
+
+Person Relationship
+-checkboxes data not saved in the database table.
+
+Person Address
+-Address line 2 not to be compulsory
+-Save not working
+-Clear not working
+
+Person Work Permit
+-Record not saved
+
+Person Vehicle
+-not deleteing record (Done)
+
+Person License
+-When select the value from combobox "My Vehicle" doesn't display details.
+-Clear is working but not showing Person Name "undefined"
+
+Person Innoculation
+-Update(save) is not working.
+
+Person Examination
+-Update (save) is not working
+
+Person Passport
+-While Update(save) giving error unable to get property form of undefined or null reference (Done)
+
+Person workpermit, Person Address
+-Save not working
+
+Person Relationship
+-Update checkbox not working
+-Delete giving error personRelationshipId undefined (Done)
+-Once record saved relationship should be read only.
+
+
+PersonEmployees Controller has GetRateTypes() method. No Separate Ddlcontroller is for DdlRateTypes table.
+
+E_Position
+- For EmploymentNumber dropdownlist set initial value  to display
+
+E_PositionSalaryHistories
+- Use  [DataType(DataType.Date)]
+        public DateTime? EffectiveDate { get; set; }
+
+		to display only datepicker in grid otherwise it would display datepicker and timepicker
+		Reason : EffectiveDate is of smalldatetime type in database
+		Solution: Change EffectiveDate to date in database
+		          or
+				  Create Model and use [DataType(DataType.Date)] for EffectiveDate and do necessary changes in E_PositionMatrixPartial

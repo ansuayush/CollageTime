@@ -1,0 +1,162 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionBudgetsVM
+@using (Html.BeginForm("PositionBudgetSaveAjax", "PositionBudgets", FormMethod.Post, new { role = "form", id = "PositionAddBudgetForm" }))
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(m=>m.PositionID)
+    @Html.HiddenFor(m => m.ID)
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Add Position Budget</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Year
+                        </label>
+                        @Html.DropDownListFor(m => m.BudgetYear, new SelectList(Model.YearList, "keyvalue", "keydescription", Model.BudgetYear), new { @class = "form-control input-sm" })
+                        @Html.ValidationMessageFor(x => x.PositionID)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Month
+                        </label>
+                        @Html.DropDownListFor(m => m.BudgetMonth, new SelectList(Model.MonthList, "keyvalue", "keydescription", Model.BudgetMonth), new { @class = "form-control input-sm" })
+                        @Html.ValidationMessageFor(x => x.BudgetMonth)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Amount
+                        </label>
+                        @Html.TextBoxFor(m => m.BudgetAmount, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.BudgetAmount)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            FTE
+                        </label>
+                        @Html.TextBoxFor(m => m.FTE, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" id="btnAddPositionBudgetClose" data-dismiss="modal">Close</button>
+            <button type="button" id="btnAddPositionBudgetSave" class="btn btn-primary waves-effect waves-light ">Save</button>
+        </div>
+  
+        @Html.HiddenFor(m => m.ID)
+    </div>
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+        $('#BudgetAmount').keydown(function (e) { EntryOnlyInteger(e); });
+        $('#FTE').keydown(function (e) { EntryOnlyInteger(e); });
+
+    });
+    function EntryOnlyInteger(e) {
+        if (e.shiftKey || e.ctrlKey || e.altKey) { // if shift, ctrl or alt keys held down
+            e.preventDefault();         // Prevent character input
+        }
+        else {
+            var n = e.keyCode;
+            if (!((n == 8)              // backspace
+                    || (n == 9)
+                    || (n == 46)                // delete
+                    || (n >= 35 && n <= 40)     // arrow keys/home/end
+                    || (n >= 48 && n <= 57)     // numbers on keyboard
+                    || (n >= 96 && n <= 105) || (n == 190) || (n == 110))  // number on keypad
+                    ) {
+                e.preventDefault();
+                // alert("in if");
+                // Prevent character input
+            };
+        };
+    }
+
+    $("#btnAddPositionBudgetSave").click(function (e) {
+        e.preventDefault();
+        var form = $("#PositionAddBudgetForm");
+        //var staus = formService.getStatus();
+        //if (staus) {
+        //    return;
+        //}
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = form.serializeArray();
+        var formURL = appBaseUrl + "PositionSetupDetail/SavePositionBudget";
+        loading(true);
+        $.ajax({
+            type: 'POST',
+            url: formURL,
+            data: postData,
+            success: function (data) {
+
+                if (data && data.succeed == false) {
+                    toastr.error(data.Message);
+                    loading(false);
+                    // resetcontrol();
+                } else {
+                    $('#btnAddPositionBudgetClose').click();
+                    $("#PositionBudget").html("");
+                    $("#PositionBudget").html(data);
+                    loading(false);
+                    toastr.success('Changes Saved successfully.');
+                    resetcontrol();
+                } 
+            },
+            complete: function () {
+
+            },
+            error: function (data) {
+            },
+            async: false,
+            cache: false
+        });
+    });
+
+
+    function newKendoDS(ndata) {
+        var datasource = new kendo.data.DataSource({ data: ndata });
+        datasource.read(); // In order to refresh
+        return datasource;
+    }
+    function resetSalaryGrid(grid ,positionID) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GridPositionBudgetsListRefresh", "PositionSetupDetail")',
+            data: { positionID: positionID },
+            beforeSend: function () {
+            },
+            success: function (data) {
+                var newKendoDatasource = newKendoDS(data);
+                $("#" + grid).data("kendoGrid").dataSource.data(newKendoDatasource._data);
+            },
+            complete: function () {
+            },
+            error: function (data) {
+            },
+            dataType: "json",
+            async: false,
+            traditional: true,
+            cache: false
+        });
+    }
+
+</script>
+

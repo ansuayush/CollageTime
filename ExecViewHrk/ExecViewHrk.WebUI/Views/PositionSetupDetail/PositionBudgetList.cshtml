@@ -1,0 +1,74 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.PositionBudgetsVM>
+
+@(Html.Kendo().Grid(Model)
+                .Name("grid_PositionbudgetsList")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18 myCustomEditClass'></i>").Click("gridPositionBudgetListEdit");
+                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("gridPositionBudgetDeleteFromTab");
+
+            }).Width(80);
+            columns.Bound(c => c.ID).Visible(false);
+            columns.Bound(c => c.ID).Title("Fund Allocations").ClientTemplate("<a class='fa fa-eye myCustomClass'></a>");
+            columns.Bound(c => c.PositionTitle).Title("Position");
+            columns.Bound(c => c.BudgetYear).Title("Year");
+            columns.Bound(c => c.BudgetMonthText).Title("Month");
+            columns.Bound(c => c.BudgetAmount).Title("Amount").ClientTemplate("$#= BudgetAmount !== null ? kendo.toString(BudgetAmount,'n2') : ''#"); ;
+            columns.Bound(c => c.FTE);
+        })
+
+        .Sortable()
+        .Selectable()
+        .Events(e => e.DataBound("gridDataBound"))
+         .Pageable(pageable => pageable.Refresh(false).PageSizes(false))
+        .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .PageSize(5)
+        .ServerOperation(false)
+                .Model(model =>
+                {
+                    model.Id(p => p.ID);
+                    model.Field(p => p.BudgetYear);
+                    model.Field(p => p.BudgetMonth);
+                    model.Field(p => p.BudgetAmount);
+                    model.Field(p => p.FTE);
+                }
+                        )
+                    .Batch(false)
+
+                )
+)
+
+<input type="hidden" id="Editpositionbudget_ID" name="Editpositionbudget_ID" value="" />
+<input type="hidden" id="EditFundFlag" name="EditFundFlag" value="" />
+<script>
+    $("#grid_PositionbudgetsList").on("click", ".myCustomClass", function (e) {
+        viewAllocation(e);
+    })
+   
+
+    function viewAllocation(e) {
+        e.preventDefault();
+        e.preventDefault();
+        //$('#ViewAllocationModal').modal('show');
+        var row = $(e.target).closest("tr");
+        var grid = $("#" + e.delegateTarget.id).data("kendoGrid");
+        var dataItem = grid.dataItem(row);
+        var formURL = $("#ApplicationUrl").val() + "PositionSetupDetail/PositionViewAllocationModalPartial?positionBudgetID=" + dataItem.ID;
+        if (formURL != "") {
+            $("#ViewAllocationModal .modal-content").html("");
+            $("#ViewAllocationModal .modal-content").load(formURL);
+            $("#ViewAllocationModal").modal({ show: true });
+        }
+       
+    }
+
+  
+
+
+
+</script>

@@ -1,0 +1,121 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonPropertyVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Property</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonProperties", "PersonProperties", FormMethod.Post, new { role = "form", id = "PersonPropertieForm" }))
+            {
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonPropertyTypeId, new { id = "hiddenPersonPropertiesId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Property Type</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.PropertyTypeId,
+                      new SelectList(Model.PropertyDropDownList, "keyvalue", "keydescription", Model.PropertyTypeId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'PropertyTypes');">
+                                    <span class="fa fa-plus"></span>
+                                </span> 
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.PropertyTypeDescription)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Acquired Date</label>
+                        @Html.TextBoxFor(model => model.AcquiredDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.AcquiredDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Released Date</label>
+                        @Html.TextBoxFor(model => model.ReleaseDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.ReleaseDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Estimated Value</label>
+                            @Html.TextBoxFor(x => x.EstimatedValue, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.EstimatedValue)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Asset Number</label>
+                            @Html.TextBoxFor(x => x.AssetNumber, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.AssetNumber)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Property Description</label>
+                            @Html.TextBoxFor(x => x.PropertyDescription, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.AssetNumber)
+                        </div>
+                    </div>
+                <div class="col-sm-12">
+                    <div class="form-group ">
+                        <label>Notes</label>
+                        @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                        @Html.ValidationMessageFor(x => x.Notes)
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSavePropertyAjax">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+    });
+
+
+
+    $("#btnSavePropertyAjax").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("PersonPropertieForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#PersonPropertieForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonProperties/PersonPropertiesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+             if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                 var _oldhiddenPersonInnoculationsId = $("#hiddenPersonInnoculationsId").val();
+                 resetGrid("gridPersonProperty");
+                 $("#btnSavePropertyAjax").parent().find(".md-close").click();
+                 if (_oldhiddenPersonInnoculationsId != "0") {
+                        toastr.success(formService.messages.updated);
+                }
+                else {
+                        toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>

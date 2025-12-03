@@ -1,0 +1,50 @@
+﻿@(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlEeoType>()
+            .Name("gridDdlEeoType")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridEdit");
+                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridDelete");
+            });
+            columns.Bound(c => c.Code).Title("Examination Code").Width(400).ToString().Trim();
+            columns.Bound(c => c.Description).Title("Examination Description").ToString().Trim();
+        })
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .Events(e => e.DataBound("gridDataBound"))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                                .Read(read => read.Action("DdlEeoTypesList_Read", "DdlEeoTypes"))
+                                        .Create(create => create.Action("DdlEeoTypesList_Create", "DdlEeoTypes"))
+                                            .Update(update => update.Action("DdlEeoTypesList_Update", "DdlEeoTypes"))
+                                            .Destroy(destroy => destroy.Action("DdlEeoTypesList_Destroy", "DdlEeoTypes"))
+            .Model(model =>
+            {
+                model.Id(p => p.EeoTypeId);
+                model.Field(p => p.EeoTypeId).Editable(false);
+                model.Field(p => p.Code).ToString().Trim();
+                model.Field(p => p.Description).ToString().Trim();
+            }
+                  )
+            .Batch(false)
+          .Events(events => { events.Error("errorhandlerEeoTypes"); events.RequestEnd("gridRequestEnd"); })
+        )
+)
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+
+
+
+

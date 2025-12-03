@@ -1,0 +1,22 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.SalaryGradeVm>
+<div class="theme-grid">
+    @(Html.Kendo().Grid(Model)
+    .Name("Card_SalaryGradelst")
+    .HtmlAttributes(new { style = "height:200px" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.description).Title("Desc").Width(50);
+        columns.Bound(p => p.salaryMinimum).Title("Salary Min").ClientTemplate("$#= salaryMinimum !== null ? kendo.toString(salaryMinimum,'n2') : ''#");
+        columns.Bound(p => p.salaryMidpoint).Title("Salary Mid").ClientTemplate("$#= salaryMidpoint !== null ? kendo.toString(salaryMidpoint,'n2') : ''#");
+        columns.Bound(p => p.salaryMaximum).Title("Salary Max").ClientTemplate("$#= salaryMaximum !== null ? kendo.toString(salaryMaximum,'n2') : ''#");
+    })
+    .Scrollable()
+   // .Pageable(pageable => pageable.Refresh(false).PageSizes(false))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(5)
+
+     )
+    )
+
+</div>

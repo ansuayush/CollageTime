@@ -1,0 +1,9 @@
+﻿{
+  "$schema": "http://schemastore.org/schemas/json/webjob-publish-settings.json",
+  "webJobName": "DrewUniversityJob",
+  "startTime": "2017-02-13T00:00:00-05:00",
+  "endTime": null,
+  "jobRecurrenceFrequency": "Week",
+  "interval": 1,
+  "runMode": "Scheduled"
+}

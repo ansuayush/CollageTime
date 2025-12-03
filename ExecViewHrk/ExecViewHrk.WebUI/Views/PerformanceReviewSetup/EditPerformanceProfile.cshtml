@@ -1,0 +1,149 @@
+﻿@model ExecViewHrk.Models.PerformanceReviewSetupVm
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Edit Performance Section</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                @using (Html.BeginForm("EditPerformanceProfileReview", "PerformanceReviewSetup", FormMethod.Post, new { role = "form", id = "PerformanceEditForm" }))
+                {
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Section Name</label>
+                            @Html.TextBoxFor(model => model.SectionName, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.SectionName)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Description</label>
+                            @Html.TextAreaFor(model => model.Header, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.Header)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Number of Rows</label>
+                            @Html.TextBoxFor(model => model.NumRows, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.NumRows)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Maximum Characters</label>
+                            @Html.TextBoxFor(model => model.MaxCharacters, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.MaxCharacters)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Weight</label>
+                            @Html.TextBoxFor(model => model.Weight, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.Weight)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Field Position</label>
+                            @Html.TextBoxFor(model => model.Position, new { @class = "form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.Position)
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseEditPerformance">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " onclick="UpdateRecord();">Done</button>
+        </div>
+    </div>
+</div>
+<script>
+    function UpdateRecord() {
+      
+        var postedData = $("#PerformanceEditForm").serializeArray();
+        var perprofileId = '@ViewBag.PerProfileId';
+        var sectionName = postedData["0"].value;
+        var description = postedData["1"].value;
+        var numRows = postedData["2"].value;
+        var maxCharacters = postedData["3"].value;
+        var weight = postedData["4"].value;
+        var position = postedData["5"].value;
+       
+        if (sectionName == "") {
+            toastr.error("Please enter Section Name");
+            return;
+        }
+        if (description == "") {
+            toastr.error("Please enter Description");
+            return;
+        }
+        if (numRows == "") {
+            toastr.error("Please enter Number of Rows");
+            return;
+        }
+        if (!numRows.match(/\d+(\.\d\d)?$/)) {
+            toastr.error("Number of Rows must be a number");
+            return;
+        }
+        if (maxCharacters == "") {
+            toastr.error("Please enter Maximum Characters");
+            return;
+        }
+        if (!maxCharacters.match(/\d+(\.\d\d)?$/)) {
+            toastr.error("Maximum Characters must be a number");
+            return;
+        }
+        if (weight == "") {
+            toastr.error("Please enter Weight");
+            return;
+        }
+        if (!weight.match(/\d+(\.\d\d)?$/)) {
+            toastr.error("Weight must be a number");
+            return;
+        }
+        if (position == "") {
+            toastr.error("Please enter Position");
+            return;
+        }
+        if (!position.match(/\d+(\.\d\d)?$/)) {
+            toastr.error("Position must be a number");
+            return;
+        }
+        var formURL = $("#ApplicationUrl").val() + '/PerformanceReviewSetup/updatePerformanceProfileReview?PerProfileID=' + perprofileId + '&SectionName=' + sectionName + '&Description=' + description + '&NumRows=' + numRows + '&MaxCharacters=' + maxCharacters + '&Weight=' + weight + '&Position=' + position;
+        $.post(formURL, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                $('#btnCloseEditPerformance').click();
+                toastr.success('Record updated successfully.');
+                resetGrid("gridPerformanceReviewSetup");
+                resetcontrol();
+            }
+        });
+    }
+    function resetcontrol() {
+        $('#SectionName').val('');
+        $('#Header').val('');
+        $('#NumRows').val('');
+        $('#MaxCharacters').val('')
+        $('#Weight').val('')
+        $('#Position').val('')
+    }
+</script>

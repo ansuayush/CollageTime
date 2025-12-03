@@ -1,0 +1,171 @@
+﻿@model ExecViewHrk.Models.E_PositioVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Employee Position</h5>
+    </div>
+    <div id="dvPosition" class="card-block">
+        <div class="row">
+            <div class="col-sm-12 p-0">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Position</label>
+                        <div class="drop-kendo">
+                            @(Html.Kendo().DropDownListFor(m => m.PositionId).Name("PositionId")
+                         .DataTextField("keydescription").DataValueField("keyvalue").Filter("contains")
+                         .BindTo(Model.PositionDropDownList).HtmlAttributes(new { @class = "form-control input-sm", style = "width:100%" }) )
+                            @Html.HiddenFor(m => m.Suffix)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group ">
+                    <label>Salary</label>
+                    @Html.TextBoxFor(model => model.salary, new { @class = "form-control" })
+                    <div>
+                        @Html.ValidationMessageFor(model => model.salary)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Rate Type</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.RateTypeId,
+                                     new SelectList(Model.RateTypeDropDownList, "keyvalue", "keydescription", Model.RateTypeId), new { @class = "form-control" })
+                        @*@Html.DropDownListFor(m => m.RateTypeId, new SelectList((System.Collections.IEnumerable)ViewData["RatetypeList"], "RateTypeId", "RateTypeDescription"), new { @class = "form-control", data_required = "Y" })*@
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Pay Frequency</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.PayFrequencyId,
+                                                  new SelectList(Model.PayFrequencyDropDownList, "keyvalue", "keydescription", Model.PayFrequencyId), new { @class = "form-control", @id = "ddlPayFrequency" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Rate</label>
+                    <input type="text" class="form-control" id="PayRate" />
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Hours per PayPeriod</label>
+                    <input type="text" class="form-control" id="HoursPerPayPeriod" />
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Effective Date</label>
+                    @Html.TextBoxFor(model => model.EffectiveDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", @id = "effectiveDateId" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15" id="btnCancelPositionPopup">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnAddEmployeePosition" onclick="getPositionDetail()">Submit</button>
+</div>
+
+
+<script>
+     $(document).ready(function () {
+        pageSetup();
+    });
+
+
+     //$(document).ready(function () {
+     //    var ratetypeid = 1;
+     //    $("#RateTypeId").append('<option selected=' + ratetypeid + '></option>');
+     //});
+    $("#enteredDateLabel").text(convertUTCDateToLocalDate(new Date('@Model.EnteredDate')));
+    var positionId = $("#PositionId").data("kendoDropDownList").value();
+    function getPositionDetail() {
+        var RateType = $("#RateTypeId option:selected").val();
+        var PayRate = $("#PayRate").val();
+        var EffectiveDate = $('#effectiveDateId').val();
+        var payFreq = $("#ddlPayFrequency").val();
+        var HoursPerPayPeriod = $("#HoursPerPayPeriod").val();
+        var positionId = $("#PositionId").val();
+        if (positionId == "" || positionId == 0) {
+            toastr.error("Please select Position");
+            return;
+        }
+        //if ($("#salary").val() == "") {
+        //    toastr.error("Please enter salary");
+        //    return;
+        //}
+        //var str = $("#salary").val();
+        //if (!str.match(/\d+(\.\d\d)?$/)) {
+        //    toastr.error("Salary must be a number");
+        //    return;
+        //}
+
+        //if (RateType == "" || RateType == 0) {
+        //    toastr.error("Please Select Rate Type");
+        //    return;
+        //}
+        //if ($("#ddlPayFrequency option:selected").val() == "") {
+        //    toastr.error("Please select Pay Frequency");
+        //    return;
+        //}
+        //if (PayRate == "") {
+        //    toastr.error("Please enter Pay Rate");
+        //    return;
+        //}
+        //if (!HoursPerPayPeriod.match(/\d+(\.\d\d)?$/)) {
+        //    toastr.error("Hours Per Pay Period must be a number");
+        //    return;
+        //}
+        //if (EffectiveDate == "") {
+        //    toastr.error("Please enter Effective Date");
+        //    return;
+        //}
+        //if (!isDate(EffectiveDate)) {
+        //    toastr.error("Please enter valid Effective Date");
+        //    return;
+        //}
+        var salary = $("#salary").val();
+        openPositionDetailpopup(positionId, salary, RateType, PayRate, HoursPerPayPeriod, EffectiveDate, payFreq);
+    }
+    function openPositionDetailpopup(PositionId, salary, RateType, PayRate, HoursPerPayPeriod, EffectiveDate, payFreq) {
+
+        var formURL = $("#ApplicationUrl").val() + '/E_Positions/getPositionDetails?positionId=' + PositionId + '&salary=' + salary + '&RateType=' + RateType + '&PayRate=' + PayRate + '&HoursPerPayPeriod=' + HoursPerPayPeriod + '&EffectiveDate=' + EffectiveDate + '&payFreq=' + payFreq;
+        $.post(formURL, function (data, status) {
+
+            if ((data.succeed != undefined) && data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+
+                $("#EditDetailDiv1 .md-content").html("");
+                $("#EditDetailDiv1 .md-content").html(data);
+                $('#EditDetailDiv1').toggle('slide', { direction: 'right' }, 500);
+                $('#EditDetailDiv1').addClass('md-show');
+              //  $("#btnCancelPositionPopup").trigger('click')
+
+            }
+        });
+        //debugger
+        //if ((formURL != null) && !formURL.data.succeed) {
+        //    toastr.error(formURL.data.Message);
+        //}
+        //else {
+        //    $("#EditDetailDiv1 .md-content").html("");
+        //    $("#EditDetailDiv1 .md-content").load(formURL);
+        //    $('#EditDetailDiv1').toggle('slide', { direction: 'right' }, 500);
+        //    $('#EditDetailDiv1').addClass('md-show');
+        //}
+
+    }
+</script>
+
+
+
+
+
+

@@ -1,0 +1,529 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Person Additional";
+
+}
+
+@model ExecViewHrk.WebUI.Models.PersonAdditionalVm
+
+
+@*@{
+        var id = ViewContext.RouteData.Values["id"];
+        var requestType = ViewContext.RouteData.Values["RequestType"];
+        var controller = ViewContext.RouteData.Values["controller"];
+        var action = ViewContext.RouteData.Values["action"];
+    }*@
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<script src="~/Scripts/application/PersonAdditionalsMatrixPartial.js"></script>
+
+
+@Html.ValidationSummary(true)
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+
+            <div class="col-md-6 ">
+                Person Additional <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                <div style="color:red; font-size:x-small">* denotes required field</div>
+
+            </div>
+            <div class="col-md-6 ">
+
+                @using (Html.BeginForm("PersonAdditionalsSelectedIndexChanged", "PersonAdditionals", FormMethod.Post, new { role = "form", id = "PersonAdditionalForm" }))
+                {
+                    <label>My Additionals</label>
+
+                    @(Html.Kendo().DropDownListFor(model => model.PersonAdditionalId)
+                                            .Name("PersonAdditionalIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PersonAdditionalId")
+                                            .DataValueField("PersonAdditionalId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonAdditionalsList", "PersonAdditionals").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                  });
+                                                  //.ServerFiltering(true);
+                                              })
+                                            .Value(@Model.PersonAdditionalId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonAdditionalDdl")
+                                                    .Select("onSelectPersonAdditionalDdl");
+                                            })
+                    )
+                    <input id="closeButtonDiv" type="button" value="Close" class="btn btn-danger" />
+                    @*@Html.Hidden("requestType", @requestType.ToString())*@
+                }
+
+
+                <div id="noAdditionalRecordsFound" style="color:red; font-size:x-small">no records found</div>
+
+
+            </div>
+
+        </div>
+    </div>
+    <div id="formDiv" class="panel-body">
+
+        @*need this for validation*@
+        @using (Html.BeginForm("PersonAdditionals", "PersonAdditionals", FormMethod.Post, new { role = "form", id = "personInfoForm" }))
+        {
+            @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+            @Html.HiddenFor(model => model.PersonAdditionalId, new { id = "hiddenPersonAdditionalId" })
+            <div class="row ">
+
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="col-md-5 ">
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Eeo Type</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("EeoDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("EeoDescription")
+                                        .DataValueField("EeoTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetEeoTypes", "DdlEeoTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Eeo Type")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddEeoType" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.EeoDescription)
+                                </div>
+                            </div>
+
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Eeo Type</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("ApplicantDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("ApplicantDescription")
+                                        .DataValueField("ApplicantSourceId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetApplicantSources", "DdlApplicantSources").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Applicant Source")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddApplicantSource" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.ApplicantDescription)
+                                </div>
+                            </div>
+
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Eeo Type</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("CitizenshipDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("CitizenshipDescription")
+                                        .DataValueField("CitizenshipId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetCitizenships", "DdlCitizenships").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Citizenship")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddCitizenship" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.CitizenshipDescription)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Hospital</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("HospitalDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("HospitalDescription")
+                                        .DataValueField("HospitalId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetHospitals", "DdlHospitals").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select a Hospital")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddHospitalship" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.HospitalDescription)
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="form-group">
+                                <label>CitizenshipDate</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.CitizenshipDate)
+                                        .Name("CitizenshipDate")
+                                    )
+                                </div>
+                                <div>
+                                    @Html.ValidationMessageFor(x => x.CitizenshipDate)
+                                </div>
+                            </div>
+
+                            
+
+                            <div class="form-group ">
+                                <label><span style="color:red">*</span>BirthPlace</label>
+                                @Html.TextBoxFor(x => x.BirthPlace, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.BirthPlace)
+                            </div>
+
+                            <div class="form-group ">
+                                <label><span style="color:red">*</span>Veteran</label>
+                                @Html.TextBoxFor(x => x.Veteran, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.Veteran)
+                            </div>
+
+                            <div class=" form-group " style="margin-top:20px">
+                                <label style="vertical-align:middle; ">BloodDonor</label>
+                                @Html.EditorFor(x => x.BloodDonor, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                            </div>
+
+                            <div class=" form-group " style="margin-top:20px">
+                                <label style="vertical-align:middle; ">Disabled</label>
+                                @Html.EditorFor(x => x.Disabled, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                            </div>
+
+                            <div class=" form-group " style="margin-top:20px">
+                                <label style="vertical-align:middle; ">Smoker</label>
+                                @Html.EditorFor(x => x.Smoker, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                            </div>
+
+                            <div class=" form-group " style="margin-top:20px">
+                                <label style="vertical-align:middle; ">AdvancedDirective</label>
+                                @Html.EditorFor(x => x.AdvancedDirective, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                            </div>
+
+                            <div class="form-group">
+                                <label>Early Retirement Date</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.EarlyRetirementDate)
+                                        .Name("EarlyRetirementDate")
+                                    )
+                                </div>
+                                <div>
+                                    @Html.ValidationMessageFor(x => x.EarlyRetirementDate)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Normal Retirement Date</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.NormalRetirementDate)
+                                        .Name(" NormalRetirementDate")
+                                    )
+                                </div>
+                                <div>
+                                    @Html.ValidationMessageFor(x => x.NormalRetirementDate)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Expected Retirement Date</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.ExpectedRetirementDate)
+                                        .Name("ExpectedRetirementDate")
+                                    )
+                                </div>
+                                <div>
+                                    @Html.ValidationMessageFor(x => x.ExpectedRetirementDate)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Date Of Death</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.DateOfDeath)
+                                        .Name("DateOfDeath")
+                                    )
+                                </div>
+                                <div>
+                                    @Html.ValidationMessageFor(x => x.DateOfDeath)
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-offset-1 col-md-5">
+
+                            <div>
+
+                                <div class="form-group ">
+                                    <label>Notes</label>
+                                    @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", style = "max-width:450px", rows = 10 })
+                                    @Html.ValidationMessageFor(x => x.Notes)
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered By:</label>
+                                    <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered Date:</label>
+                                    <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Modified By:</label>
+                                    <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Modified Date:</label>
+                                    <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate</label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="form-group">
+
+                        <input id="btnSavePersonAdditionalAjax" type="button" value="Save" class="btn btn-info" />
+                        <input id="btnClearPersonAdditionalAjax" type="button" value="Clear" class="btn btn-info" />
+                        <input id="btnDeletePersonAdditionalAjax" type="button" value="Delete" class="btn btn-info" />
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+
+
+
+
+    @*<div id="medicalAdditionalTypesWindow" style="display:none">
+        <div id="medicalAdditionalTypesContent">*@
+    @*@Html.Partial("~/Views/LookupTables/DdlAccommodationTypesPartial.cshtml")*@
+    @*@Html.Action("DdlMedicalAdditionalTypesPartial", "DdlMedicalAdditionalTypes")
+
+            </div>
+        </div>*@
+
+
+
+    <div id="eeoTypesWindow" style="display:none">
+        <div id="eeoTypesContent">
+            @Html.Partial("~/Views/DdlEeoTypes/DdlEeoTypesPartial.cshtml")
+        </div>
+    </div>
+
+    <div id="applicantSourcesWindow" style="display:none">
+        <div id="applicantSourcesContent">
+            @Html.Partial("~/Views/DdlApplicantSources/DdlApplicantSourcesPartial.cshtml")
+        </div>
+    </div>
+
+    <div id="citizenshipsWindow" style="display:none">
+        <div id="citizenshipsContent">
+            @Html.Partial("~/Views/DdlCitizenships/DdlCitizenshipsPartial.cshtml")
+        </div>
+    </div>
+
+    <div id="hospitalsWindow" style="display:none">
+        <div id="hospitalsContent">
+            @Html.Partial("~/Views/DdlHospitals/DdlHospitalsPartial.cshtml")
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+
+    var eeoTypesWindow = $("#eeoTypesWindow");
+    if (!eeoTypesWindow.data("kendoWindow")) {
+        eeoTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Medical Examination Types",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseEeosWindow
+        });
+    }
+
+    function onCloseEeosWindow() {
+        $("#EeoDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddEeoType").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#eeoTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+
+    var applicantSourcesWindow = $("#applicantSourcesWindow");
+    if (!applicantSourcesWindow.data("kendoWindow")) {
+        applicantSourcesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Applicant Sources",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseApplicantsWindow
+        });
+    }
+
+    function onCloseApplicantsWindow() {
+        $("#ApplicantDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddApplicantSource").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#applicantSourcesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var citizenshipsWindow = $("#citizenshipsWindow");
+    if (!citizenshipsWindow.data("kendoWindow")) {
+        citizenshipsWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Citizenships",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseCitizenshipsWindow
+        });
+    }
+
+    function onCloseCitizenshipsWindow() {
+        $("#CitizenshipDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddCitizenship").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#citizenshipsWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+

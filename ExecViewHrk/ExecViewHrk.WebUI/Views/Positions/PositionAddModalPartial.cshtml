@@ -1,0 +1,163 @@
+﻿
+@model ExecViewHrk.WebUI.Models.PositionDetailsVm
+@using (Html.BeginForm("PositionSaveAjax", "PositionSetupDetail", FormMethod.Post, new { role = "form", id = "PositionAddForm" }))
+{
+    @Html.ValidationSummary(true)
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Add Position </h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-12 p-0">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Business Level</label>
+                            @*@Html.DropDownListFor(m => m.BUCode, new SelectList(Model.ddlpositionBusinessLevels, "keyvalue", "keydescription", Model.BUCode),"--Select--", new { @class = "form-control input-sm", data_required = "Y", @id = "positionbusinesslevel" })
+                            @Html.ValidationMessageFor(x => x.BUCode)*@
+                            <div id="container" class="drop-kendo">
+                                @(Html.Kendo().DropDownListFor(m => m.BUCode).Name("BUCode")
+             .DataTextField("keydescription").DataValueField("keyvalue").Filter("contains")
+              .Popup(p => p.AppendTo("#container"))
+             .BindTo(Model.ddlpositionBusinessLevels).HtmlAttributes(new { @class = "form-control input-sm", style = "width:100%", @required = "required", @id = "positionbusinesslevel" }) )
+                                @Html.ValidationMessageFor(x => x.BUCode)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Job</label>
+                            @*@Html.DropDownListFor(m => m.JobCode, new SelectList(Model.ddlJobs, "keyvalue", "keydescription", Model.JobCode),"--Select--", new { @class = "form-control input-sm", data_required = "Y", @id = "ddljobid" })
+                            @Html.ValidationMessageFor(x => x.JobId)*@
+                            <div id="container" class="drop-kendo">
+                                @(Html.Kendo().DropDownListFor(m => m.JobCode).Name("JobCode")
+                                                      .DataTextField("keydescription").DataValueField("keyvalue").Filter("contains")
+                                                      .BindTo(Model.ddlJobs)
+                                                       .Popup(p => p.AppendTo("#container"))
+                                                      .HtmlAttributes(new { @class = "form-control input-sm", style = "width:100%", @required="required", @id = "ddljobid" }) )
+                                @Html.ValidationMessageFor(x => x.JobCode)
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Suffix</label>
+                            @Html.TextBoxFor(m => m.Suffix, new { @class = "form-control", data_required = "Y", @id = "suffixId", @maxlength = "2" })
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 p-0">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Position Code</label>
+                            @Html.TextBoxFor(m => m.PositionCode, new { @class = "form-control", data_required = "Y", @id = "positioncode", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Position Title</label>
+                            @Html.TextBoxFor(m => m.PositionDescription, new { @class = "form-control", data_required = "Y" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" id="btnAddPositionClose" data-dismiss="modal">Close</button>
+            <button type="button" id="btnAddPositionSave" class="btn btn-primary waves-effect waves-light ">Save</button>
+        </div>
+
+
+    </div>
+
+}
+<script type="text/javascript">
+    function GetPositionCode() {
+        var buCode = $("#positionbusinesslevel").val();
+        var jobCode = $("#ddljobid").val();
+        var suffix = $("#suffixId").val();
+        if ($("#suffixId").val() == '0') {
+            var modifiedsuffix = $('#suffixId').val($('#suffixId').val() + '0');
+        }
+        var code = $("#positionbusinesslevel").val() + $("#ddljobid").val() + $("#suffixId").val();
+        $("#positioncode").val(code);
+        //if (buCode != "Select" && jobCode != "Select" && suffix != "") {
+        //    var code = $("#positionbusinesslevel option:selected").val() + $("#ddljobid option:selected").val() + $("#suffixId").val();
+        //    $("#positioncode").val(code);
+        //}
+    }
+    $("#positionbusinesslevel").change(function () {
+        GetPositionCode();
+    })
+    $("#ddljobid").change(function () {
+        GetPositionCode();
+    })
+    $("#suffixId").change(function () {
+        GetPositionCode();
+    })
+
+    $("#btnAddPositionSave").click(function (e) {
+        e.preventDefault();
+        var buCode = $("#positionbusinesslevel").val();
+        var jobCode = $("#ddljobid").val();
+        if (buCode == "") {
+            toastr.error("The Business level field is Required");
+            return false;
+        }
+        if (jobCode == "") {
+            toastr.error("The Job level field is Required");
+            return false;
+        }
+        var form = $("#PositionAddForm");
+        //var staus = formService.getStatus();
+        //if (staus) {
+        //    return;
+        //}
+        //var errorMessage = formService.validate(form);
+        //if (errorMessage) {
+        //    return;
+        //}
+        if (!ValidateForm("PositionAddForm")) {
+            loading(false);
+            return;
+        }
+
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = form.serializeArray();
+        var formURL = appBaseUrl + "PositionSetupDetail/PositionSaveAjax";
+        loading(true);
+        $.ajax({
+            type: 'POST',
+            url: formURL,
+            data: postData,
+            success: function (data) {
+                if (data.succeed) {
+                    $('#btnAddPositionClose').click();
+                    toastr.success(formService.messages.saved);
+                    var Positiondata = { positionID: data.positionDetailsVm.PositionId };
+                    LoadDetailView("PositionSetupDetail", "PositionSetupDetail", Positiondata)
+                } else {
+                    toastr.error(data.Message);
+                    loading(false)
+                }
+            },
+            complete: function () {
+
+            },
+            error: function (data) {
+            },
+            async: false,
+            cache: false
+        });
+    });
+</script>
+

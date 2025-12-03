@@ -1,0 +1,166 @@
+﻿@model ExecViewHrk.Models.RetrohoursVm
+<script type="text/javascript">
+    $(document).ready(function () {   
+        $(".RetroHoursDate").each(function () {
+            var a = $(this),
+                b = a.attr("data-dateformat") || "mm/dd/yy",
+                c = a.attr("data-maxdate") || null;
+            a.datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1900:+83",
+                "dateFormat": b,
+                "prevText": '<', "nextText": '>',
+                maxDate: c
+            }),
+                a = null;
+        });
+    });
+    $("#Retrohours").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+    });
+</script>
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Retro Hours details</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("RetroHoursSaveAjx", "RetroHours", FormMethod.Post, new { role = "form", id = "RetroHoursEditForm" }))
+            {
+                @Html.HiddenFor(x => x.Id)
+                @Html.HiddenFor(x => x.CompanyCodeId, new { @id = "CompanyCodeId" })
+                @Html.HiddenFor(x => x.EmployeeId)
+                @Html.HiddenFor(x => x.PayPeriodId)
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Company Code</label>
+                        @Html.DropDownListFor(model => model.CompanyCodeId,
+                                 new SelectList((System.Collections.IEnumerable)ViewData["companyCodesList"], "CompanyCodeId", "CompanyCodeDescription"), new { @class = "form-control", data_required = "Y", disabled = "disabled" })
+                        @Html.ValidationMessageFor(x => x.CompanyCodeId)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Employee</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.PersonId,
+                                         new SelectList((System.Collections.IEnumerable)ViewData["EmployeeList"], "keyvalue", "keydescription"), new { @class = "form-control", data_required = "Y", disabled = "disabled" })
+                            @Html.ValidationMessageFor(x => x.PersonId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Retro Hour Date</label>
+                        @Html.TextBoxFor(model => model.RetroHoursDate, "{0:MM/dd/yyyy}", new { @class = "form-control RetroHoursDate", id = "RetroHoursDate" })
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Positions </label>
+                        @Html.DropDownListFor(model => model.E_PositionId,
+                                 new SelectList((System.Collections.IEnumerable)ViewData["PositionList"], "E_PositionId", "PositionDescription"), new {id = "EditPositionsListID", @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.E_PositionId)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Retro Hours</label>
+                        @Html.TextBoxFor(x => x.Retrohours, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Retrohours)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Hours Code </label>
+                        @Html.DropDownListFor(model => model.HoursCodeId,
+                                 new SelectList((System.Collections.IEnumerable)ViewData["HoursCodeList"], "HoursCodeId", "HoursCodeCode"), new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.HoursCodeId)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Pay periods </label>
+                        @Html.DropDownListFor(model => model.PayPeriodId,
+                                 new SelectList((System.Collections.IEnumerable)ViewData["PayPeriodsList"], "PayPeriodId", "PayPeriod"), new { @class = "form-control", data_required = "Y", disabled = "disabled" })
+                        @Html.ValidationMessageFor(x => x.PayPeriodId)
+                    </div>
+                </div>
+            }
+
+        </div>   
+    </div>
+    
+    </div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-closeHour ">Cancel</button>
+    <button type="button" id="EmployeeHourEditSaveAjx" class="btn btn-primary">Done</button>
+</div>
+
+<script type="text/javascript">
+    $(".md-closeHour").click(function (e) {
+        e.preventDefault();
+        if ((_lookUpTablesObject.grid) && (_lookUpTablesObject.grid.dataSource.hasChanges()) && $('#LookupTablesDiv').hasClass("md-show")) {
+            _lookUpTablesObject.grid.cancelChanges();
+            //_lookUpTablesObject.grid.read();
+            _lookUpTablesObject.grid.dataSource.sync()
+        }
+        $(this).parents(".EditSlideRight").toggle('slide', { direction: 'right' }, 500).removeClass("md-show");
+    });
+
+    $("#EmployeeHourEditSaveAjx").click(function (e) {
+        e.preventDefault();  
+        var PostData = $("#RetroHoursEditForm").serializeArray();     
+        var formURL = $("#ApplicationUrl").val() + "RetroHours/RetroHoursSaveAjx";
+        $.post(formURL, PostData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);           
+            }
+            else {
+                toastr.success(formService.messages.saved);             
+                $("#EmployeeHourEditSaveAjx").parent().find(".md-closeHour").click();
+                resetGrid("gridRetroGrid");
+            }
+        });
+    });  
+    $(function () {        
+        $('#RetroHoursDate').change(function () {    
+            var value = $('#RetroHoursDate').val();
+            if (value == '') return;
+            var RetrohourDate = value;
+            var employeeId = $("#EmployeeId").val();
+            var companyCodeId = $("#CompanyCodeId").val();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetEmployeePositionList", "RetroHours")',
+                data: { companyCodeId: companyCodeId, employeeId: employeeId, RetrohourDate: RetrohourDate },
+                cache: false,
+                success: function (data) {
+
+                    $("#EditPositionsListID").empty();
+                    $.each(data, function (key, value) {
+       
+                        var newOption = $('<option/>');
+                        newOption.attr('value', value.E_PositionId).text(value.PositionDescription);
+                        $('#EditPositionsListID').append(newOption);
+                    });  
+                    //$("#PositionsListID").empty();
+                    // ddl = $("#PositionsListID").kendoDropDownList({
+                    //    autoBind: false,
+                    //    dataTextField: "PositionDescription",
+                    //    dataValueField: "E_PositionId",
+                    //}).data("kendoDropDownList");                    
+                    //ddl.setDataSource(data);
+                },
+                error: function (ex) {
+                }
+            });
+           
+        });
+    });
+    
+</script>

@@ -1,0 +1,95 @@
+﻿
+@{
+    ViewBag.Title = "Reset Treaty Limit";
+    Layout = "";
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-15 b-b-muted">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Reset Treaty Limit<span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0 m-t-15">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="card p-15">
+                            <div class="card-block p-0" id="ValidAdmin" style="display:none;">
+                                <div class="col-sm-12">
+                                    <p><strong>Client</strong> : @User.Identity.GetEmployerName()</p>
+                                </div>
+
+                                <div class="col-sm-12 m-t-30">
+                                    <button type="button" class="btn btn-primary" id="btnPartialReset">Reset Data</button>
+                                    <br />
+                                    <p>This will erase treaty limit,used amount,amount columns data from employees.</p>
+                                    <p>The data will be back up in Treatylimithistories table.</p>
+                                </div>                                
+                            </div>
+                            <div class="card-block p-0" id="InValidAdmin" style="display:block;">
+
+                                <div class="col-sm-4">&nbsp;</div>
+                                <div class="col-sm-4 m-t-30 text-center">
+                                    <input type="text" id="txtPass" name="txtPass" style="text-align: center;" class="form-control" placeholder="Enter Admin Password" />
+                                    <button type="button" class="btn btn-primary m-t-10" id="btnValidateAdmin">Validate Admin</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+    });
+
+    $("#btnValidateAdmin").click(function (e) {
+        e.preventDefault();
+        var postData = $("#InValidAdmin").serializeArray();
+        var txt = $("#txtPass").val()
+        if (txt == null || txt == "")
+        {
+            toastr.error("Admin Password Required.");
+            return true;
+        }
+        var formURL = $("#ApplicationUrl").val() + "HrkAdmin/ValidateAdmin?name=" + txt; 
+        loading(true);
+        $.post(formURL, postData, function (data, status) {
+            loading(false);
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+                $("#ValidAdmin").hide();
+                $("#InValidAdmin").show();
+            }
+            else {
+                toastr.success("Admin Validated");
+                $("#InValidAdmin").hide();
+                $("#ValidAdmin").show();
+            }
+        });
+
+    });
+
+    $("#btnPartialReset").click(function (e) {
+        e.preventDefault();
+        var msg = "Are you sure you want to erase treaty limit,used amount,amount data from employee screen.";
+        var formURL = $("#ApplicationUrl").val() + "HrkAdmin/PartialReset";
+        confirmDialog("", function () {
+            loading(true);
+            $.post(formURL, function (data, status) {
+                loading(false);
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                }
+                else {
+                    toastr.success("Data Cleared Successfully");
+                }
+            });
+        }, '', '', '', msg);
+    });    
+</script>

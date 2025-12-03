@@ -1,0 +1,21 @@
+﻿
+@model string
+@{ 
+   ViewBag.Title = "Create Role";
+   Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+<h2>Create Role</h2>
+@Html.ValidationSummary(false)
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        <label>Name</label>
+        <input name="name" value="@Model" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Create</button>
+    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-default" })
+}
+
+
+
+

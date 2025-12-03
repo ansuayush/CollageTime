@@ -1,0 +1,134 @@
+﻿@model ExecViewHrk.WebUI.Models.TimeCardUnApprovedReportVM
+@{
+    ViewBag.Title = "Time Card Unapproved Report";
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Time Card Unapproved Report<span class="pull-right icon-edit-block m-l-30"> <i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="row" style="@(User.IsInRole("HrkAdministrators") || User.IsInRole("ClientManagers") || User.IsInRole("ClientAdministrators") ? "display:block" : "display:none")">
+                <div class="col-md-12">
+                    <div class="col-md-12 b-b-muted b-t-muted m-b-10 p-0">
+                        <div class="row">
+                            <div class="col-md-3 p-t-5">
+                                <div class="form-group">
+                                    <label>Company Codes: </label>
+                                    @(Html.Kendo().DropDownListFor(model => model.CompanyCodeId)
+                                                                                                                                                    .HtmlAttributes(new { id = "CompanyCodeIdDdl", @class = "form-control" })
+                                                                                                                                                    .DataTextField("CompanyCodeDescription")
+                                                                                                                                                    .DataValueField("CompanyCodeId")
+                                                                                                                                                    .Filter(FilterType.Contains)
+                                                                                                                                                        .DataSource(source =>
+                                                                                                                                                        {
+                                                                                                                                                            source.Read(read =>
+                                                                                                                                                            {
+                                                                                                                                                                read.Action("GetCompanyCodes", "LookupTables").Type(HttpVerbs.Post);
+                                                                                                                                                            })
+                                                                                                                                                            .ServerFiltering(true);
+                                                                                                                                                        })
+                                                                                                                                                    .Value(@Model.CompanyCodeId.ToString())
+                                    )
+                                    @Html.ValidationMessageFor(model => model.CompanyCodeId)
+                                </div>
+                            </div>
+                            <div class="col-md-3 p-t-5">
+                                <div class="form-group">
+                                    <label>Pay Period: </label>
+                                    @(Html.Kendo().DropDownListFor(model => model.PayPeriodId)
+.HtmlAttributes(new { id = "PayPeriodIdDdl", @class = "form-control" })
+.DataTextField("PayPeriod")
+.DataValueField("PayPeriodId")
+.Filter(FilterType.Contains)
+.DataSource(source =>
+                                                                                                                                                                {
+                                                                                                                                                                    source.Read(read =>
+                                                                                                                                                                    {
+                                                                                                                                                                        //read.Action("GetPayPeriodsList", "TimeCardUnApprovedReport").Data("filterDepartmentsByCompanyCode_SuummaryReport").Type(HttpVerbs.Post);
+                                                                                                                                                                        read.Action("GetGlobalPayPeriodsList", "TimeCardUnApprovedReport").Type(HttpVerbs.Post);
+                                                                                                                                                                    })
+                                                                                                                                                                    .ServerFiltering(true);
+                                                                                                                                                                })
+                                                                                                                                                                .AutoBind(true)
+                                                                                                                                                                .CascadeFrom("CompanyCodeIdDdl")
+                                                                                                                                                                .Value(@Model.PayPeriodId.ToString())
+                                                                                                                                                                .OptionLabel("- select one -")
+                                                                                                                                                                .Events(e => e.Change("OnChange_SummaryReport"))
+                                    )
+                                    @Html.ValidationMessageFor(model => model.PayPeriodId)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="row" style="margin-top:20px">
+                    <div class="col-md-12 ">
+                        <div class="col-md-offset-7 col-md-5">
+                            <form class="form-horizontal">
+                                <div class="form-group row">
+                                    <div class="col-md-offset-1 col-md-1 text-center">
+                                        <div class="row" style="margin-top:20px">
+                                            <input id="exportButtonDiv" type="button" value="Export" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>*@
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.TimeCardUnApprovedReportVM>()
+                                                                                                              .Name("GridPayPeriodSummaryReport")
+                                                                                                              .Pageable(pageable => pageable
+                                                                                                              .Refresh(false)
+                                                                                                              .PreviousNext(true))
+                                                                                                              .Sortable()
+                                                                                                              .Columns(columns =>
+                                                                                                              {
+                                                                                                                  columns.Command(command =>
+                                                                                                                  {
+                                                                                                                      command.Custom("ViewDetails").Text("<i class='fa fa-eye m-0 txt-warning f-18'></i>").Click("ViewTimecardDetails");
+                                                                                                                  }).Width(30);
+                                                                                                                  columns.Bound(c => c.EmployeeId).Hidden(true);
+                                                                                                                  columns.Bound(c => c.EmployeeName).Title("Employee Name").Width(100);
+                                                                                                                  columns.Bound(c => c.FileNumber).Title("File Number").Width(100);
+                                                                                                                  columns.Bound(c => c.DepartmentId).Hidden(true);
+                                                                                                                  columns.Bound(c => c.DepartmentCode).Title("Department Code").Width(100);
+                                                                                                                  columns.Bound(c => c.DepartmentDescription).Title("Department Description").Width(100);
+                                                                                                                  columns.Bound(c => c.UnApprovedHours).Title("UnApproved").Width(100);
+                                                                                                                  columns.Bound(c => c.ApprovedHours).Title("Approved").Width(100);
+                                                                                                                  columns.Bound(c => c.DepartmentTotalHours).Title("Department").Width(100);
+                                                                                                                  columns.Bound(c => c.PayPeriodHours).Title("PayPeriod").Width(100);
+                                                                                                              }).ToolBar(tools => tools.Excel())
+.Excel(excel => excel.AllPages(true).FileName("TimeCardUnapprovedReport.xlsx"))
+
+.DataSource(dataSource => dataSource
+.Ajax()
+.Read(read => read.Action("TimeCardSummaryList_ReadUnApproved", "TimeCardUnApprovedReport").Data("filterTimeCardRecords_SummaryReport").Type(HttpVerbs.Post))
+.Model(model =>
+{
+    model.Id(p => p.EmployeeId);
+})
+)
+.Filterable()
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style type="text/css">
+        .form-control {
+            width: 100% !important;
+        }
+    </style>
+</div>

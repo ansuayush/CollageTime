@@ -1,0 +1,191 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Time Card Session InOut";
+}
+
+
+
+@{
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+@model IList<ExecViewHrk.Models.TimeCardSessionInOutConfigsVm>
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Timecard Session InOut Configuration <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+               
+            </div>
+            @*<div>
+             Session : <input type="radio" name="Toogle" id="Insession" style="margin-left:25px;"> In   <input type="radio" name="Toogle" id="outsession" style="margin-left:25px;"> Out
+            </div>*@
+            <div class="col-lg-12 col-md-12 p-0" style="margin-top:20px">
+                <div class="row">
+                    <div class="col-lg-12 col-md-8">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.TimeCardSessionInOutConfigsVm>()
+              .Name("gridTimeCardSession")
+              .Resizable(resize => resize.Columns(true))
+              .Filterable()
+
+             .Editable(editable =>
+             {
+                 editable.Mode(GridEditMode.InCell);
+             })
+             .ToolBar(toolbar =>
+             {
+
+                 toolbar.Save();
+
+             })
+              //.ToolBar(toolbar => toolbar.Create())
+
+              .Columns(columns =>
+              {
+                  columns.Command(command =>
+                  {
+                      // command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridTimeCardSessionConfigEdit");
+                  }).Width(50);                
+                            columns.Bound(o=>o.Toggle).Width(100)
+                .ClientTemplate("<input type='radio' name='Toggle' value='#= Toggle #' # if (Toggle) { # checked='checked' # } # onclick='radioBoxClick(this)' />");                  
+                  columns.Bound(c => c.TimeCardSessionId).Visible(false).Width(100);                  
+                  columns.Bound(c => c.Session).Title("Session");
+                  columns.Bound(c => c.MaxHours).Title("Max Hours");
+              })
+
+                .Sortable()
+                .Selectable()            
+                .Scrollable()
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                             .Read(read => read.Action("TimeCardsessionList_Read", "TimeCardSessionInOutConfig"))
+                             .ServerOperation(true)
+                             .Update(update => update.Action("TimeCardSessionInOut_Update", "TimeCardSessionInOutConfig"))
+
+                    .Model(model =>
+                    {
+                        model.Id(p => p.TimeCardSessionId);
+
+                    }
+                          )
+                    .Batch(true)
+                    .Events(events =>
+                    {
+
+                        events.Error("refreshGrid");
+                        events.RequestEnd("timecardgridsessionRequestEnd");
+
+                    })
+                )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .k-grid {
+        font-size: 11px;
+    }
+
+        .k-grid td {
+            line-height: 2em;
+        }
+
+    .form-control {
+        width: 100% !important;
+    }
+
+    .k-grid .k-button {
+        text-transform: capitalize;
+    }
+
+    .k-grid-content {
+        height: 100% !important;
+    }
+
+    /**************** Kendo buttons********************/
+    .k-button {
+        color: #fff;
+        border-color: #1a3a59;
+        background-color: #1a3a59;
+    }
+
+
+    /**************** Kendo buttons********************/
+    .k-button {
+        color: #fff;
+        border-color: #1a3a59;
+        background-color: #1a3a59;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        font-size: 13px;
+    }
+
+        .k-button:hover {
+            background-color: #252723;
+            border-color: #252723;
+            color: #fff;
+        }
+
+        .k-button:focus {
+            background-color: #6e6f66;
+            border-color: #6e6f66;
+            color: #fff;
+        }
+
+        .k-button.k-button-icontext .k-icon, .k-button.k-button-icontext .k-image {
+            background-image: url('assets/images/sprite-white.png');
+            opacity: 1;
+        }
+</style>
+<script type="text/javascript">
+    var displayColumns = @Html.Raw(Json.Encode(Model));
+    if (displayColumns[0].Toggle == true)
+        $("#Insession").prop("checked", true);
+    if (displayColumns[1].Toggle == true)
+        $("#outsession").prop("checked", true);
+
+    function radioBoxClick(e) {
+       
+        var grid = $("#gridTimeCardSession").data().kendoGrid;
+        var elementCount = grid.dataSource._data.length;
+        var dataItem = grid.dataItem($(e).closest('tr'));
+        var model = grid.dataSource.get(dataItem.TimeCardSessionId);
+        model.set("Toggle", e.checked ? 1 : 0);
+        for (var i = 0; i < elementCount; i++) {
+            var elem = grid.dataSource._data[i];
+            if (elem.TimeCardSessionId != model.TimeCardSessionId)
+                elem.set("Toggle", 0);
+        }
+    }
+
+    $('input[type=radio][name=Toogle]').change(function () {
+      
+        var data = $("#gridTimeCardSession").data("kendoGrid").dataSource._data;
+        if ($("#Insession").is(':checked'))
+            data[0].Toggle = true
+        else
+            data[0].Toggle = false
+        if ($("#outsession").is(':checked'))
+            data[1].Toggle = true
+        else
+            data[1].Toggle = false        
+    });
+ 
+</script>

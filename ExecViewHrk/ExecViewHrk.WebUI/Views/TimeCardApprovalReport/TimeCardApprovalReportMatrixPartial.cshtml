@@ -1,0 +1,201 @@
+﻿@model ExecViewHrk.WebUI.Models.TimeCardApprovalReportVm
+
+@{
+    ViewBag.Title = "Time Card Approval Report";
+}
+
+@Html.ValidationSummary(true)
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Time Card Approval Report<span class="pull-right icon-edit-block m-l-30"> <i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-t-muted">
+                </div>
+            </div>
+            @*<div id="TimeCardApprovalReportFormDdl">*@
+            @using (Html.BeginForm("TimeCardApprovalReport", "TimeCardApprovalReport", FormMethod.Post, new { role = "form", id = "TimeCardApprovalReportFormDdl" }))
+            {
+                <div class="row" style="@(User.IsInRole("HrkAdministrators") || User.IsInRole("ClientManagers") || User.IsInRole("ClientAdministrators") ? "display:block" : "display:none")">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 ">
+                                <label>Company Codes</label>
+                                @(Html.Kendo().DropDownListFor(model => model.CompanyCodeId)
+                                        .HtmlAttributes(new { id = "CompanyCodeIdDdl", style = "width:300px" })
+                                        .DataTextField("CompanyCodeDescription")
+                                        .DataValueField("CompanyCodeId")
+                                        .Filter(FilterType.Contains)
+                                            .DataSource(source =>
+                                            {
+                                                source.Read(read =>
+                                                {
+                                                    read.Action("GetCompanyCodes", "LookupTables").Type(HttpVerbs.Post);
+                                                })
+                                                .ServerFiltering(true);
+                                            })
+                                        .Value(@Model.CompanyCodeId.ToString())
+                                        .OptionLabel("- select one -")
+                                )
+                                @Html.ValidationMessageFor(model => model.CompanyCodeId)
+                            </div>
+
+                            @*<div class="col-md-offset-1 col-md-3 ">
+                                <label>Departments</label>
+                                @(Html.Kendo().DropDownListFor(model => model.DepartmentId)
+                                        .HtmlAttributes(new { id = "DepartmentIdDdl", style = "width:300px" })
+                                        .DataTextField("CompCode_DeptCode_DeptDescription")
+                                        .DataValueField("DepartmentId")
+                                        .Filter(FilterType.Contains)
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                                read.Action("GetDepartmentsList", "LookupTables").Data("filterDepartmentsByCompanyCode_ApprovalReport").Type(HttpVerbs.Post);
+                                            })
+                                            .ServerFiltering(true);
+                                        })
+                                        .AutoBind(true)
+                                        .CascadeFrom("CompanyCodeIdDdl")
+                                        .Value(@Model.DepartmentId.ToString())
+                                        .OptionLabel("- select one -")
+                                        .Events(e => e.Change("OnChangeDepartments"))
+                                )
+                                @Html.ValidationMessageFor(model => model.DepartmentId)
+                            </div>*@
+
+                            <div class="col-md-offset-1 col-md-3">
+                                <label>Pay Period</label>
+                                @(Html.Kendo().DropDownListFor(model => model.PayPeriodId)
+                                                    .HtmlAttributes(new { id = "PayPeriodIdDdl", style = "width:300px" })
+                                                    .DataTextField("PayPeriod")
+                                                    .DataValueField("PayPeriodId")
+                                                    .Filter(FilterType.Contains)
+                                                    .DataSource(source =>
+                                                    {
+                                                        source.Read(read =>
+                                                        {
+                                                            //read.Action("GetPayPeriodsList", "TimeCardApprovalReport").Data("filterDepartmentsByCompanyCode_ApprovalReport").Type(HttpVerbs.Post);
+                                                            read.Action("GetGlobalPayPeriodsList", "TimeCardApprovalReport").Type(HttpVerbs.Post);
+                                                        })
+                                                        .ServerFiltering(true);
+                                                    })
+                                                    .AutoBind(true)
+                                                    .CascadeFrom("CompanyCodeIdDdl")
+                                                    .Value(@Model.PayPeriodId.ToString())
+                                                    .OptionLabel("- select one -")
+                                                    .Events(e => e.Change("OnChange_ApprovalReport"))
+                                )
+
+                                @Html.ValidationMessageFor(model => model.PayPeriodId)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row" style="margin-top:20px">
+                    <div class="col-md-12 ">
+                        <div class="col-md-offset-7 col-md-5">
+                            <form class="form-horizontal">
+                                <div class="form-group row">
+                                    @*<div class="col-md-offset-1 col-md-3" style="margin-top:20px">
+                                            @if (User.IsInRole("HrkAdministrators") || User.IsInRole("ClientManagers") || User.IsInRole("ClientAdministrators"))
+                                            {
+                                                @Html.CheckBoxFor(m => m.Approved, new { @id = "Approved_status",@disabled= "disabled" })
+                                                <label style="vertical-align:middle;">Approved</label>
+                                            }
+                                        </div>*@
+
+                                    <div class="col-md-offset-1 col-md-1 text-center">
+                                        <div class="row" style="margin-top:20px">
+                                            <input id="exportButtonDiv" type="button" value="Export" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+
+                                    @*<div class="col-md-offset-1 col-md-1 text-center">
+                                            <div class="row" style="margin-top:20px">
+                                                <input id="closeButtonDiv" type="button" value="Close" class="btn btn-danger" onclick="Export_TimeCardApprovalReport()" />
+                                            </div>
+                                        </div>*@
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row " style="margin-top:10px;">
+                    <div class="col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.TimeCardApprovalReportVm>()
+                                 .Name("GridPayPeriodApprovalReport")
+                                 .Columns(columns =>
+                                 {
+                                     //columns.ForeignKey(c => c.EmployeeId, (System.Collections.IEnumerable)ViewData["employeesList"], "EmployeeId", "PersonName")
+                                     //            .Title("Employee").Width(200);
+                                     columns.Bound(c => c.PersonName).Title("Employee").Width(200);
+                                 columns.Bound(c => c.RegularHours).Title("Regular").Width(100).Filterable(false);
+                                 columns.Bound(c => c.OverTime).Title("Over Time").Width(100).Filterable(false);
+                                 columns.Bound(c => c.CodedHours).Title("Coded").Width(100).Filterable(false);
+                                 columns.Bound(c => c.Emp_PayPeriodTotal).Title("Total").Width(100).Filterable(false);
+                                 columns.Bound(c => c.Approved).Title("Approved").Width(100).Template
+                                                        (@<text></text>).ClientTemplate("<input type='checkbox' disabled='disabled' #= Approved ? checked='checked':'' # class='chkbx' />");
+                                     })
+
+                                            .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            .Read(read => read.Action("Emp_PayPeriodTotalList_Read", "TimeCardApprovalReport").Data("filterTimeCardRecords_ApprovalReport").Type(HttpVerbs.Post))
+                                            .Model(model =>
+                                            {
+                                                model.Id(p => p.EmployeeId);
+                                            })
+                                        )
+                                        .Filterable()
+                            )
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#exportButtonDiv").click(function (e) {
+        $.validator.unobtrusive.parse("#TimeCardApprovalReportFormDdl");
+        var appBaseUrl = $("#appBaseUrl").val();
+
+        var form = $("#TimeCardApprovalReportFormDdl");
+        var serialized_Object = form.serializeObject();
+
+        $.ajax({
+            url: appBaseUrl + "TimeCardApprovalReport/ExportTimeCardApprovalReportByDept_Ajax",
+            type: "POST",
+            data: {
+                timeCardApprovalReportVm: serialized_Object,
+            },
+            success: function (response) {
+                if (response.succeed == false)
+                    toastr.error("Please select company, department and pay period");
+                else if (response.fileName)
+                    document.location = appBaseUrl + "TimeCardApprovalReport/Download?fileName=" + response.fileName;
+                else
+                    toastr.error("No employees record exist.");
+                return;
+            },
+            error: function (response) {
+                toastr.error("error!");
+            }
+        });
+    });
+
+</script>

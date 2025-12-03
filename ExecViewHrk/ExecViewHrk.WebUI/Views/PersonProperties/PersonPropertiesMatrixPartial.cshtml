@@ -1,0 +1,368 @@
+﻿@{
+    ViewBag.Title = "Person Property";
+    Layout = null;
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-3 p-0">
+                        <h4>
+                            Property
+                        </h4>
+                    </div>
+                    <div class="col-md-9 p-0 text-right">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton" onclick="addProperty()">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.PersonPropertyVm>()
+                                    .Name("gridPersonProperty")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+
+                                    .Columns(columns =>
+                                    {
+                                        columns.Command(command =>
+                                        {
+                                            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPersonPropertyEdit");
+                                            command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridPersonPropertyDelete");
+                                        }).Width(70);
+                                        columns.Bound(c => c.PersonPropertyTypeId).Visible(false);
+                                        columns.Bound(c => c.PropertyTypeDescription).Title("Property Type");
+                                        columns.Bound(c => c.AcquiredDate).Title("Acquired Date").ClientTemplate("#= kendo.toString(AcquiredDate, \"MM/dd/yyyy\") #");
+                                        columns.Bound(c => c.ReleaseDate).Title("Released Date").ClientTemplate("#= ReleaseDate == null ? '' : kendo.toString(ReleaseDate, \"MM/dd/yyyy\") #");
+                                        columns.Bound(c => c.EstimatedValue).Title("Estimated Value");
+                                        columns.Bound(c => c.AssetNumber).Title("Asset Number");
+                                        columns.Bound(c => c.PropertyDescription).Title("Property Description");
+                                    })
+                                    .Sortable()
+                                    .Selectable()
+                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                    .Events(e => e.DataBound("gridDataBound"))
+                                    .DataSource(dataSource => dataSource.Ajax()
+                                                    .Read(read => read.Action("PersonPropertyList_Read", "PersonProperties"))
+
+                                                    .Model(model =>
+                                                    {
+                                                        model.Id(p => p.PersonPropertyTypeId);
+                                                        model.Field(p => p.PersonPropertyTypeId);
+                                                        model.Field(p => p.PropertyTypeDescription);
+                                                        model.Field(p => p.AcquiredDate);
+                                                        model.Field(p => p.ReleaseDate);
+                                                        model.Field(p => p.EstimatedValue);
+                                                        model.Field(p => p.AssetNumber);
+                                                        model.Field(p => p.PropertyDescription);
+                                                    }
+                                                )
+                                                .PageSize(10)
+                                        .Batch(false)
+                                        .Events(events =>
+                                        {
+                                            events.Error("refreshGrid");
+                                            events.RequestEnd("gridRequestEnd");
+                                        })
+                                    )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <section class="panels-wells edit-block">
+                            @Html.ValidationSummary(true)
+
+                            <div class="panel panel-info">
+
+                                <div class="panel-heading  ">
+
+                                    <div class="row">
+
+                                        <div class="col-md-6 ">
+                                            Person Property <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                                            <div style="color:red; font-size:x-small">* denotes required field</div>
+
+                                        </div>
+                                        <div class="col-md-6 ">
+
+                                            @using (Html.BeginForm("PersonPropertySelectedIndexChanged", "PersonProperties", FormMethod.Post, new { role = "form", id = "PersonPropertyFormDdl" }))
+                                            {
+                                                <label>My Properties</label>
+
+                                                @(Html.Kendo().DropDownListFor(model => model.PersonPropertyTypeId)
+                                            .Name("PersonPropertyTypeIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PropertyDescription")
+                                            .DataValueField("PersonPropertyTypeId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonPropertiesList", "PersonProperties").Type(HttpVerbs.Post);
+
+                                                  });
+                                              })
+                                                    .Value(@Model.PersonPropertyTypeId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonPropertyDdl")
+                                                    .Select("onSelectPersonPropertyDdl");
+                                            })
+                                                )
+
+                                            }
+
+
+                                            <div id="noPropertyRecordsFound" style="color:red; font-size:x-small">no records found</div>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="formDiv" class="panel-body">
+
+                                    @using (Html.BeginForm("PersonProperties", "PersonProperties", FormMethod.Post, new { role = "form", id = "PersonPropertyForm" }))
+                                    {
+                                        @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                                        @Html.HiddenFor(model => model.PersonPropertyTypeId, new { id = "hiddenPersonPropertyTypeId" })
+                                        <div class="row ">
+
+                                            <div class="row ">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-5 ">
+                                                        <div class="form-group ">
+                                                            <div>
+                                                                <label><span style="color:red">*</span>Property Type</label>
+                                                            </div>
+                                                            @(Html.Kendo().ComboBox()
+                                        .Name("PropertyTypeDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("PropertyDescription")
+                                        .DataValueField("PropertyTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetPropertyTypes", "DdlPropertyTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(false);
+                                          })
+                                        .Placeholder("Select a Property Type")
+                                                            )
+
+                                                            @if (!User.IsInRole("ClientEmployees"))
+                                                            {
+                                                                <button id="btnAddPropertyType" class="btn btn-info">+</button>
+                                                            }
+
+
+                                                            <div>
+                                                                @Html.ValidationMessageFor(model => model.PropertyTypeDescription)
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="form-group">
+                                                            <label>Acquired Date</label>
+                                                            <div>
+                                                                @(Html.Kendo().DatePickerFor(x => x.AcquiredDate)
+                                        .Name("AcquiredDate")
+                                        .Min(new DateTime(1900, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+
+                                                                )
+                                                                @Html.ValidationMessageFor(x => x.AcquiredDate)
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label>Release Date</label>
+                                                            <div>
+                                                                @(Html.Kendo().DatePickerFor(x => x.ReleaseDate)
+                                                  .Name("ReleaseDate")
+                                                                )
+                                                            </div>
+                                                            <div>
+                                                                @Html.ValidationMessageFor(x => x.ReleaseDate)
+                                                            </div>
+                                                        </div>
+
+                                                        <div>
+                                                            <label>Estimated Value</label>
+                                                            <div>
+                                                                @Html.Kendo().NumericTextBoxFor(x => x.EstimatedValue).Min(0)
+                                                                @Html.ValidationMessageFor(x => x.EstimatedValue)
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group ">
+                                                            <label>AssetNumber</label>
+                                                            @Html.TextBoxFor(x => x.AssetNumber, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(x => x.AssetNumber)
+                                                        </div>
+
+                                                        <div class="form-group ">
+                                                            <label>PropertyDescription</label>
+                                                            @Html.TextBoxFor(x => x.PropertyDescription, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(x => x.PropertyDescription)
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="col-md-offset-1 col-md-5">
+
+                                                        <div>
+
+                                                            <div class="form-group ">
+                                                                <label>Notes</label>
+                                                                @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                                                @Html.ValidationMessageFor(x => x.Notes)
+                                                            </div>
+
+                                                            <div class=" form-group ">
+                                                                <label style="width:100px">Entered By:</label>
+                                                                <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                                            </div>
+
+                                                            <div class=" form-group ">
+                                                                <label style="width:100px">Entered Date:</label>
+                                                                <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                                                            </div>
+
+                                                            <div class=" form-group ">
+                                                                <label style="width:100px">Modified By:</label>
+                                                                <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                                            </div>
+
+                                                            <div class=" form-group ">
+                                                                <label style="width:100px">Modified Date:</label>
+                                                                <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate</label>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12 ">
+                                                <div class="form-group">
+
+                                                    <input id="btnSavePersonPropertyAjax" type="button" value="Save" class="btn btn-info" />
+                                                    <input id="btnClearPersonPropertyAjax" type="button" value="Clear" class="btn btn-info" />
+                                                    <input id="btnDeletePersonPropertyAjax" type="button" value="Delete" class="btn btn-info" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+
+                                </div>
+
+                                <div id="propertyTypesWindow" style="display:none">
+                                    <div id="propertyTypesContent">
+                                        @Html.Partial("~/Views/DdlPropertyTypes/DdlPropertyTypesPartial.cshtml")
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+
+
+<script>
+    function newKendoWindow(title, onClose) {
+        var obj = {
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: title,
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+            close: onClose
+        }
+        return obj;
+    };
+
+    var propertyTypesWindow = $("#propertyTypesWindow");
+    if (!propertyTypesWindow.data("kendoWindow")) {
+        propertyTypesWindow.kendoWindow(
+            newKendoWindow("Property Types", onClosePropertiesWindow)
+        );
+    }
+
+    function onClosePropertiesWindow() {
+        resetKenoComboBox('PropertyTypeDescription');
+        resetGrid('gridDdlPropertyType');
+    }
+
+    $("#btnAddPropertyType").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#propertyTypesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

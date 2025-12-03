@@ -1,0 +1,889 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Person ADA";
+    
+}
+
+@model ExecViewHrk.WebUI.Models.PersonAdaVm
+
+@{int xxx = 5;}
+
+
+@{
+    var id = ViewContext.RouteData.Values["id"];
+    var requestType = ViewContext.RouteData.Values["RequestType"];
+    var controller = ViewContext.RouteData.Values["controller"];
+    var action = ViewContext.RouteData.Values["action"];
+}
+
+
+@*@if (!User.IsInRole("ClientEmployees") && (ViewContext.RouteData.Values["RequestType"] == null || ViewContext.RouteData.Values["RequestType"].ToString() == "NSS"))
+{
+    <div>
+        <div class="row">
+            <div class="col-md-6 ">
+                @Html.Partial("PersonDdlPartial")
+
+            </div>
+        </div>
+    </div>
+}*@
+
+
+
+    @Html.ValidationSummary(true)
+
+    <div class="panel panel-info">
+
+        <div class="panel-heading  ">
+            
+            <div class="row">
+
+                <div class="col-md-6 ">
+                    Person ADA  <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                    <div style ="color:red; font-size:x-small">* denotes required field</div>
+                </div>
+                <div class="col-md-6 ">
+                    @using (Html.BeginForm("PersonAdaSelectedIndexChanged", "PersonalInfo", FormMethod.Post, new { role = "form", id = "adaSelectedIndexForm" }))
+                    {
+                        <label>My Accommodations</label>
+                        
+                        @(Html.Kendo().DropDownListFor(model => model.PersonAdaId)
+                                            .Name("PersonAdaIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PersonAdaDescription") 
+                                            .DataValueField("PersonAdaId") 
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonAdaList", "PersonalInfo").Type(HttpVerbs.Post).Data("additionalData"); 
+
+                                                  });
+                                                  //.ServerFiltering(true); 
+                                              })
+                                            .Value(@Model.PersonAdaId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.Change("onSelectedIndexChangedAdaRecord").DataBound("onDataBoundPersonAdaDdl")
+                                                    .Select("onSelectPersonAdaDdl");
+                                            })
+                        )
+                        
+                        @Html.Hidden("requestType", @requestType.ToString())
+                    }
+                    
+                        <div id="noAdaRecordsFound" style="color:red; font-size:x-small">no records found</div>
+                        
+                    
+                </div>
+                
+            </div>
+        </div>
+        <div id="formDiv" class="panel-body">
+
+
+            @using (Html.BeginForm("PersonAda", "PersonalInfo", FormMethod.Post, new { role = "form", id = "personInfoForm" }))
+            {
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonAdaId, new { id = "hiddenPersonAdaId" })
+                <div class="row ">
+
+                    <div class="row ">
+                        <div class="col-md-12">
+                            <div class="col-md-5 ">
+                                <div class="form-group ">
+                                    <div>
+                                        <label><span style="color:red">*</span>Accommodation Type</label>
+                                    </div>
+                                    @(Html.Kendo().ComboBox()
+                                        .Name("AccommodationDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("AccommodationDescription") 
+                                        .DataValueField("AccommodationTypeId") 
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetAccommodationTypes", "LookupTables").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true); 
+                                          })
+                                        .Placeholder("select an Accommodation Type")
+                                    )
+
+                                    @if (!User.IsInRole("ClientEmployees"))
+                                    {
+                                        <button id="btnAddAccommodationType" class="btn btn-info">+</button>
+                                    }
+                                    
+
+                                    <div>
+                                        @Html.ValidationMessageFor(model => model.AccommodationDescription)
+                                    </div>
+                                </div>
+
+                                <div class="form-group ">
+                                    <div>
+                                        <label><span style="color:red">*</span>Associated Disability</label>
+                                    </div>
+                                    @(Html.Kendo().ComboBox()
+                                        .Name("AssociatedDisabilityDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("AssociatedDisabilityDescription")
+                                        .DataValueField("AssociatedDisabilityTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetDisabilityTypes", "LookupTables").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true); //If true the DataSource will not filter the data on the client.
+                                          })
+                                        .Placeholder("select a Disability Type")
+                                    )
+
+                                    @if (!User.IsInRole("ClientEmployees"))
+                                    {
+                                        <button id="btnAddDisabilityType" class="btn btn-info">+</button>
+                                    }
+                                    
+                                    <div>
+                                        @Html.ValidationMessageFor(model => model.AssociatedDisabilityDescription)
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>Requested Date</label>
+                                    <div>
+                                        @(Html.Kendo().DatePickerFor(x => x.RequestedDate)
+                                        .Name("RequestedDate") 
+                                        .Min(new DateTime(1915, 1, 1)) 
+                                        .Max(new DateTime(2099, 12, 31)) 
+
+                                        )
+                                        @Html.ValidationMessageFor(x => x.RequestedDate)
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Provided Date</label>
+                                    <div>
+                                        @(Html.Kendo().DatePickerFor(x => x.ProvidedDate)
+                                                .Name("ProvidedDate")
+                                        )
+                                    </div>
+                                    <div>
+                                        @Html.ValidationMessageFor(x => x.ProvidedDate)
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label>Estimated Cost</label>
+                                    <div>
+                                        @Html.Kendo().NumericTextBoxFor(x => x.EstimatedCost)
+                                        @Html.ValidationMessageFor(x => x.EstimatedCost)
+                                    </div>
+
+                                </div>
+
+
+                                <div class=" form-group " style="margin-top:20px">
+                                    <label style="vertical-align:middle; ">Accommodation Provided</label>
+                                    @*@{ bool testVar = (Model.AccommodationProvided == null ? false : true);}*@
+                                    @Html.EditorFor(x => x.AccommodationProvided, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-offset-1 col-md-5">
+
+                                <div>
+                                   
+
+                                    <div class="form-group ">
+                                        <label>Notes</label>
+                                        @*@Html.TextAreaFor(x => x.Notes, new { @class = "form-control", style = "max-width:450px", rows = 10 })*@
+                                        @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", style = "max-width:450px", rows = 10 })
+                                        @Html.ValidationMessageFor(x => x.Notes)
+                                    </div>
+
+                                    <div class=" form-group ">
+                                        <label style="width:100px">Entered By:</label>
+                                        <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                    </div>
+
+                                    <div class=" form-group ">
+                                        <label style="width:100px">Entered Date:</label>
+                                        @if (Model.EnteredDate != null)
+                                        {
+                                            <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate.Value.ToString("d")</label>
+                                        }
+                                    </div>
+
+                                    <div class=" form-group ">
+                                        <label style="width:100px">Modified By:</label>
+                                        <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                    </div>
+
+                                    <div class=" form-group ">
+                                        <label style="width:100px">Modified Date:</label>
+                                        @if (Model.ModifiedDate != null)
+                                        {
+                                            <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate.Value.ToString("d")</label>
+                                        }
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <div class="form-group">
+                            <input name="submit" id="Save" type="submit" value="Save" class="btn btn-info" />
+                            <input name="submit" id="Clear" type="submit" value="Clear" class="btn btn-info" />
+                            <input id="btnSaveAjax" type="button" value="Save Ajax" class="btn btn-info" />
+                            <input id="btnClearAjax" type="button" value="Clear Ajax" class="btn btn-info" />
+                            <input id="btnDeleteAjax" type="button" value="Delete" class="btn btn-info" />
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+    
+
+    <div id="accommodationTypesWindow" style="display:none">
+        <div id="accomodationTypesContent">
+            @Html.Partial("~/Views/LookupTables/DdlAccommodationTypesPartial.cshtml")
+
+        </div>
+    </div>
+
+    <div id="disabilityTypesWindow" style="display:none">
+        <div id="disabilityTypesContent">
+            @Html.Partial("~/Views/LookupTables/DdlDisabilityTypesPartial.cshtml")
+
+        </div>
+    </div>
+</div>
+
+
+@{
+    
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<script>
+
+    $(document).ready(function () {
+        //debugger;
+
+
+        (function($){
+            $.fn.serializeObject = function(){
+
+                var self = this,
+                    json = {},
+                    push_counters = {},
+                    patterns = {
+                        "validate": /^[a-zA-Z][a-zA-Z0-9_]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/,
+                        "key":      /[a-zA-Z0-9_]+|(?=\[\])/g,
+                        "push":     /^$/,
+                        "fixed":    /^\d+$/,
+                        "named":    /^[a-zA-Z0-9_]+$/
+                    };
+
+
+                this.build = function(base, key, value){
+                    base[key] = value;
+                    return base;
+                };
+
+                this.push_counter = function(key){
+                    if(push_counters[key] === undefined){
+                        push_counters[key] = 0;
+                    }
+                    return push_counters[key]++;
+                };
+
+                $.each($(this).serializeArray(), function(){
+
+                    // skip invalid keys
+                    if(!patterns.validate.test(this.name)){
+                        return;
+                    }
+
+                    var k,
+                        keys = this.name.match(patterns.key),
+                        merge = this.value,
+                        reverse_key = this.name;
+
+                    while((k = keys.pop()) !== undefined){
+
+                        // adjust reverse_key
+                        reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
+
+                        // push
+                        if(k.match(patterns.push)){
+                            merge = self.build([], self.push_counter(reverse_key), merge);
+                        }
+
+                            // fixed
+                        else if(k.match(patterns.fixed)){
+                            merge = self.build([], k, merge);
+                        }
+
+                            // named
+                        else if(k.match(patterns.named)){
+                            merge = self.build({}, k, merge);
+                        }
+                    }
+
+                    json = $.extend(true, json, merge);
+                });
+
+                return json;
+            };
+        })(jQuery);
+
+
+        $("#btnSaveAjax").click(function (e) {
+            e.preventDefault();
+
+            debugger;
+
+            var form = $("#personInfoForm");
+
+            form.validate();
+            if (!form.valid())
+            {
+                alert("form is invalid");
+                return;
+            }
+
+            var serialized_Object = form.serializeObject();
+            serialized_Object.AccommodationProvided = $('input[name=AccommodationProvided]').val(); // for some reason checkboxes are always set to false
+
+            // these x lines work
+            @*var personAdaVm = @Html.Raw(Json.Encode(Model));
+            personAdaVm.AccomodationTypeDescription =  $("#AccommodationDescription").data("kendoComboBox").value();
+            personAdaVm.RequestedDate = $("#RequestedDate").data("kendoDatePicker").value();
+            personAdaVm.ProvidedDate = $("#ProvidedDate").data("kendoDatePicker").value();
+            personAdaVm.EstimatedCost = $("#EstimatedCost").data("kendoNumericTextBox").value();
+            personAdaVm.AccommodationProvided = $('input[name=AccommodationProvided]').val();*@
+
+
+
+            var requestType = $("#requestType").val();
+            //var personId = $("#hiddenPersonId").val();
+
+            $.ajax({
+
+                url: "@Url.Action("PersonAdaSaveAjax", "PersonalInfo")",
+
+                type: "POST",
+
+                data: { personAdaVm: serialized_Object, requestType : requestType },
+                //data: { personAdaVm: personAdaVm, requestType : requestType },
+
+                success: function (response) {
+                    debugger;
+
+                    refreshFormData(response);
+                    return;
+
+                    $("#hiddenPersonId").val(response.PersonId);
+                    $("#hiddenPersonAdaId").val(response.PersonAdaId);
+
+                    var dropdownlist = $("#PersonAdaIdDdl").data("kendoDropDownList");
+                    if (response.PersonAdaId != 0)
+                    {
+                        dropdownlist.refresh();
+                        dropdownlist.dataSource.read();
+                        dropdownlist.value(response.PersonAdaId);
+                    }
+                    else {
+                        dropdownlist.select(0);
+                    }
+
+                    $(".validation-summary-errors").empty();
+
+                    if ($("#hiddenPersonAdaId").val() > 0)
+                    {
+                        var form = $("#personInfoForm");
+
+                        form.validate();
+                        if (!form.valid())
+                            alert("form is invalid");
+                    }
+
+                    return;
+                }
+
+            });
+
+        });
+
+        $("#btnClearAjax").click(function (e) {
+            e.preventDefault();
+
+            var requestType = $("#requestType").val();
+            var personId = $("#hiddenPersonId").val();
+
+            $.ajax({
+
+                url: "@Url.Action("PersonAdaIndexChangedAjax", "PersonalInfo")",
+
+                type: "POST",
+
+                data: {
+
+                    personAdaIdDdl : 0,
+                    personId: personId,
+                    requestType : requestType
+                },
+
+                success: function (response) {
+                    debugger;
+
+                    refreshFormData(response);
+                    return;
+
+                    $("#hiddenPersonId").val(response.PersonId);
+                    $("#hiddenPersonAdaId").val(response.PersonAdaId);
+                    $("#formDiv input:text").val("");
+                    $('#formDiv input[type=radio]').prop('checked', false);
+                    $('#formDiv input:checkbox').prop('checked', false);
+
+                    if (response.AccommodationDescription != null)
+                        $("#AccommodationDescription").data("kendoComboBox").value(response.AccommodationTypeId);
+
+                    if (response.AssociatedDisabilityDescription != null)
+                        $("#AssociatedDisabilityDescription").data("kendoComboBox").value(response.AssociatedDisabilityTypeId);
+
+                    if (response.RequestedDate != null) {
+                        var date = new Date(parseInt(response.RequestedDate.substr(6)));
+                        $("#RequestedDate").val(date.toLocaleDateString());
+                        var datepicker = $("#RequestedDate").data("kendoDatePicker");
+                        datepicker.value(date);
+                    }
+
+                    if (response.ProvidedDate != null) {
+                        var date2 = new Date(parseInt(response.ProvidedDate.substr(6)));
+                        $("#ProvidedDate").val(date2.toLocaleDateString());
+                        var datepicker2 = $("#ProvidedDate").data("kendoDatePicker");
+                        datepicker2.value(date2);
+                    }
+
+                    if (response.EstimatedCost != null)
+                        $("#EstimatedCost").data("kendoNumericTextBox").value(response.EstimatedCost);
+
+                    $('input[name=AccommodationProvided]').val([response.AccommodationProvided]);
+
+                    $("#enteredByLabel").text(response.EnteredBy == null ? "" : response.EnteredBy);
+
+                    if (response.EnteredDate != null) {
+                        var date = new Date(parseInt(response.EnteredDate.substr(6)));
+                        $("#enteredDateLabel").text(date.toLocaleString());
+                    }
+                    else
+                        $("#enteredDateLabel").text("");
+
+
+                    $("#modifiedByLabel").text(response.ModifiedBy == null ? "" : response.ModifiedBy);
+
+                    if (response.ModifiedDate != null) {
+                        var date = new Date(parseInt(response.ModifiedDate.substr(6)));
+                        $("#modifiedDateLabel").text(date.toLocaleString());
+                    }
+                    else
+                        $("#modifiedDateLabel").text("");
+
+                    $("#personNameLabel").html(" - " + response.PersonName);
+
+                    if (response.PersonAdaId != 0)
+                    {
+                        $("#PersonAdaIdDdl").data("kendoDropDownList").refresh();
+                        $("#PersonAdaIdDdl").data("kendoDropDownList").dataSource.read();
+                        var dropdownlist2 = $("#PersonAdaIdDdl").data("kendoDropDownList");
+                        dropdownlist2.value(response.PersonAdaId)
+                    }
+                    else {
+                        var dropdownlist = $("#PersonAdaIdDdl").data("kendoDropDownList");
+                        dropdownlist.select(0);
+                    }
+
+                    $(".validation-summary-errors").empty();
+
+                    if ($("#hiddenPersonAdaId").val() > 0)
+                    {
+                        var form = $("#personInfoForm");
+
+                        form.validate();
+                        if (!form.valid())
+                            alert("form is invalid");
+                    }
+
+                    return;
+                }
+
+            });
+
+        });
+
+        $("#btnDeleteAjax").click(function (e) {
+
+            //e.preventDefault();
+
+            var requestType = $("#requestType").val();
+            var personId = $("#hiddenPersonId").val();
+            var personAdaId = $("#hiddenPersonAdaId").val();
+
+            $.ajax({
+
+                url: "@Url.Action("PersonAdaDeleteAjax", "PersonalInfo")",
+
+                type: "POST",
+
+                data: {
+                    personAdaIdDdl : personAdaId,
+                    personId: personId,
+                    requestType : requestType
+                },
+
+                success: function (response) {
+                    debugger;
+
+                    if (response == "The person Ada Record does not exist")
+                    {
+                        alert(response);
+                        return;
+                    }
+                   
+                    refreshFormData(response);
+                    return;
+                }
+            });
+        });
+
+        
+
+        var accommodationTypesWindow = $("#accommodationTypesWindow");
+        if (!accommodationTypesWindow.data("kendoWindow")) {
+            accommodationTypesWindow.kendoWindow({
+                width: "900px",
+                height: "400px",
+                position: { top: 300, left: 120 },
+                title: "Accommodation Types",
+                actions: [
+                    "Maximize",
+                    "Close"
+                ],
+                scrollable: true,
+                modal: true,
+
+                close: onCloseAccommodationsWindow
+            });
+        }
+
+        function onCloseAccommodationsWindow() {
+            $("#AccommodationDescription").data("kendoComboBox").dataSource.read();
+        }
+
+        $("#btnAddAccommodationType").click(function (e) {
+            e.preventDefault();
+            var kendoWindow = $("#accommodationTypesWindow").data("kendoWindow");
+            kendoWindow.center();
+            kendoWindow.open();
+        });
+
+        var disabilityTypesWindow = $("#disabilityTypesWindow");
+        if (!disabilityTypesWindow.data("kendoWindow")) {
+            disabilityTypesWindow.kendoWindow({
+                width: "900px",
+                height: "400px",
+                position: { top: 300, left: 120 },
+                title: "Disability Types",
+                actions: [
+                    "Maximize",
+                    "Close"
+                ],
+                scrollable: true,
+                modal: true,
+
+                close: onCloseDisabilityWindow
+            });
+        }
+
+        function onCloseDisabilityWindow() {
+            $("#AssociatedDisabilityDescription").data("kendoComboBox").dataSource.read();
+        }
+
+        $("#btnAddDisabilityType").click(function (e) {
+            e.preventDefault();
+            var kendoWindow = $("#disabilityTypesWindow").data("kendoWindow");
+            kendoWindow.center();
+            kendoWindow.open();
+        });
+
+        var jsAlert = '@alert';
+        if (jsAlert.length > 0)
+            alert(jsAlert);
+
+
+        
+
+
+
+    });
+
+    function onSelectPersonAdaDdl(e) {
+        debugger;
+        var dataItem = this.dataItem(e.item.index());
+
+        var ddlSelectedPersonAdaId = dataItem.PersonAdaId == "" ? 0 : dataItem.PersonAdaId;
+
+        var requestType = $("#requestType").val();
+        var personId = $("#hiddenPersonId").val();
+
+        $.ajax({
+
+            url: "@Url.Action("PersonAdaIndexChangedAjax", "PersonalInfo")",
+
+            type: "POST",
+
+        data: {
+
+            personAdaIdDdl : ddlSelectedPersonAdaId,
+            personId: personId,
+            requestType : requestType
+        },
+
+        success: function (response) {
+            debugger;
+
+            refreshFormData(response);
+            return;
+
+            $("#hiddenPersonId").val(response.PersonId);
+            $("#hiddenPersonAdaId").val(response.PersonAdaId);
+            $("#formDiv input:text").val("");
+            $('#formDiv input[type=radio]').prop('checked', false);
+            $('#formDiv input:checkbox').prop('checked', false);
+
+            if (response.AccommodationDescription != null)
+                $("#AccommodationDescription").data("kendoComboBox").value(response.AccommodationTypeId);
+
+            if (response.AssociatedDisabilityDescription != null)
+                $("#AssociatedDisabilityDescription").data("kendoComboBox").value(response.AssociatedDisabilityTypeId);
+
+            if (response.RequestedDate != null) {
+                var date = new Date(parseInt(response.RequestedDate.substr(6)));
+                $("#RequestedDate").val(date.toLocaleDateString());
+                var datepicker = $("#RequestedDate").data("kendoDatePicker");
+                datepicker.value(date);
+            }
+
+            if (response.ProvidedDate != null) {
+                var date2 = new Date(parseInt(response.ProvidedDate.substr(6)));
+                $("#ProvidedDate").val(date2.toLocaleDateString());
+                var datepicker2 = $("#ProvidedDate").data("kendoDatePicker");
+                datepicker2.value(date2);
+            }
+
+            if (response.EstimatedCost != null)
+                $("#EstimatedCost").data("kendoNumericTextBox").value(response.EstimatedCost);
+
+            $('input[name=AccommodationProvided]').val([response.AccommodationProvided]);
+
+            $("#enteredByLabel").text(response.EnteredBy == null ? "" : response.EnteredBy);
+
+            if (response.EnteredDate != null) {
+                var date = new Date(parseInt(response.EnteredDate.substr(6)));
+                $("#enteredDateLabel").text(date.toLocaleString());
+            }
+            else
+                $("#enteredDateLabel").text("");
+
+
+            $("#modifiedByLabel").text(response.ModifiedBy == null ? "" : response.ModifiedBy);
+
+            if (response.ModifiedDate != null) {
+                var date = new Date(parseInt(response.ModifiedDate.substr(6)));
+                $("#modifiedDateLabel").text(date.toLocaleString());
+            }
+            else
+                $("#modifiedDateLabel").text("");
+
+            $("#personNameLabel").html(" - " + response.PersonName);
+
+            if (response.PersonAdaId != 0)
+            {
+                $("#PersonAdaIdDdl").data("kendoDropDownList").refresh();
+                $("#PersonAdaIdDdl").data("kendoDropDownList").dataSource.read();
+            }
+
+
+            $(".validation-summary-errors").empty();
+
+            if ($("#hiddenPersonAdaId").val() > 0)
+            {
+                var form = $("#personInfoForm");
+
+                form.validate();
+                if (!form.valid())
+                    alert("form is invalid");
+            }
+
+            return;
+        }
+
+    });
+    }
+
+    // use this for normal submit; no ajax
+    function onSelectedIndexChangedAdaRecord(e)
+    {
+        //$("#adaSelectedIndexForm").submit();
+    }
+
+    function onDataBoundPersonAdaDdl(e) {
+        var ds = this.dataSource.data();
+        if (ds.length > 0)
+            $('#noAdaRecordsFound').hide();
+        else
+            $('#noAdaRecordsFound').show();
+    }
+
+    function additionalData() {
+        //debugger;
+        return {
+            requestType : '@requestType'
+        }
+
+    }
+
+
+    function error_handler(e) {
+        //debugger;
+        if (e.errors) {
+            //var message = "Errors:\n";
+            //$.each(e.errors, function (key, value) {
+            //    if ('errors' in value) {
+            //        $.each(value.errors, function () {
+            //            message += this + "\n";
+            //        });
+            //    }
+            //});
+            alert(e.errors);
+
+            //$('#grid').data('kendoGrid').dataSource.read();
+            //$('#grid').data('kendoGrid').refresh();
+        }
+    }
+
+    function refreshFormData(response) {
+        $("#hiddenPersonId").val(response.PersonId);
+        $("#hiddenPersonAdaId").val(response.PersonAdaId);
+        $("#formDiv input:text").val("");
+        $('#formDiv input[type=radio]').prop('checked', false);
+        $('#formDiv input:checkbox').prop('checked', false);
+
+        if (response.AccommodationDescription != null)
+            $("#AccommodationDescription").data("kendoComboBox").value(response.AccommodationTypeId);
+
+        if (response.AssociatedDisabilityDescription != null)
+            $("#AssociatedDisabilityDescription").data("kendoComboBox").value(response.AssociatedDisabilityTypeId);
+
+        if (response.RequestedDate != null) {
+            var date = new Date(parseInt(response.RequestedDate.substr(6)));
+            $("#RequestedDate").val(date.toLocaleDateString());
+            var datepicker = $("#RequestedDate").data("kendoDatePicker");
+            datepicker.value(date);
+        }
+
+        if (response.ProvidedDate != null) {
+            var date2 = new Date(parseInt(response.ProvidedDate.substr(6)));
+            $("#ProvidedDate").val(date2.toLocaleDateString());
+            var datepicker2 = $("#ProvidedDate").data("kendoDatePicker");
+            datepicker2.value(date2);
+        }
+
+        if (response.EstimatedCost != null)
+            $("#EstimatedCost").data("kendoNumericTextBox").value(response.EstimatedCost);
+
+        $('input[name=AccommodationProvided]').val([response.AccommodationProvided]);
+
+        $("#enteredByLabel").text(response.EnteredBy == null ? "" : response.EnteredBy);
+
+        if (response.EnteredDate != null) {
+            var date = new Date(parseInt(response.EnteredDate.substr(6)));
+            $("#enteredDateLabel").text(date.toLocaleString());
+        }
+        else
+            $("#enteredDateLabel").text("");
+
+        $("#modifiedByLabel").text(response.ModifiedBy == null ? "" : response.ModifiedBy);
+
+        if (response.ModifiedDate != null) {
+            var date = new Date(parseInt(response.ModifiedDate.substr(6)));
+            $("#modifiedDateLabel").text(date.toLocaleString());
+        }
+        else
+            $("#modifiedDateLabel").text("");
+
+        $("#personNameLabel").html(" - " + response.PersonName);
+
+        $("#Notes").val(response.Notes);
+
+        var dropdownlist = $("#PersonAdaIdDdl").data("kendoDropDownList");
+        if (response.PersonAdaId != 0) {
+            dropdownlist.refresh();
+            dropdownlist.dataSource.read();
+            dropdownlist.value(response.PersonAdaId);
+        }
+        else {
+            dropdownlist.select(0);
+        }
+
+        $(".validation-summary-errors").empty();
+
+        if ($("#hiddenPersonAdaId").val() > 0) {
+            var form = $("#personInfoForm");
+
+            form.validate();
+            if (!form.valid())
+                alert("form is invalid");
+        }
+
+        return;
+    }
+
+</script>
+
+
+
+

@@ -1,0 +1,79 @@
+﻿@model ExecViewHrk.Models.PerformanceReviewSetupVm
+@{
+    Layout = null;
+    ViewBag.Title = "PerformanceReviewSetupList";
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Performance Review Setup List <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-9 p-0">
+                        <button type="button" onclick="addPerformanceProfile()" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Performance Profile</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.PerformanceReviewSetupVm>()
+                .Name("gridPerformanceProfile")
+                .Resizable(resize => resize.Columns(true))
+                .Filterable()
+
+                .Columns(columns =>
+                {
+                    columns.Command(command =>
+                    {
+                        command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPerformanceProfileEdit");
+                        command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("gridPerformanceProfileDelete");
+                    }).Width(70);
+                    columns.Bound(c => c.PerProfileId).Visible(false);
+                    columns.Bound(c => c.Code).Title("Code");
+                    columns.Bound(c => c.Description).Title("Description");
+                    columns.Bound(c => c.Active).Title("Active").ClientTemplate("#= Active ? 'Yes' : 'No' #"); ;
+                })
+                                .Sortable().Scrollable()
+                                .Selectable()
+                                .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                .Events(e => e.DataBound("gridDataBound"))
+                                .DataSource(dataSource => dataSource.Ajax()
+                                                .Read(read => read.Action("PerformanceProfileList_Read", "PerformanceReviewSetup"))
+
+                                                .Model(model =>
+                                                {
+                                                    model.Id(p => p.PerProfileId);
+                                                    model.Field(p => p.PerProfileId);
+                                                    model.Field(p => p.Code);
+                                                    model.Field(p => p.Description);
+                                                    model.Field(p => p.Active);
+                                                }
+                                            )
+                                            .PageSize(10)
+                                    .Batch(false)
+                                    .Events(events =>
+                                    {
+                                        events.Error("refreshGrid");
+                                        events.RequestEnd("gridRequestEnd");
+                                    })
+                                )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

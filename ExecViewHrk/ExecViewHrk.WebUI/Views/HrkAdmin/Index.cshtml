@@ -1,0 +1,222 @@
+﻿@{
+                /**/
+
+                ViewBag.Title = "Home";
+                Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+<div class="container-fluid p-b-0">
+    <div class="row p-t-15">
+        <div class="col-md-12 m-t-20">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Welcome to HR Next
+                        </div>
+                        <div class="card-block m-height">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @if (User.IsInRole("ClientEmployees"))
+                                    {
+                                        <p class="f-13" id="navScreen">
+                                            <a href='@Url.Action("Index","MobileHome")' class="txt-primary f-13"><u>Click here</u></a> to navigate to the Mobile Home Screen to Clock In/Out.
+                                        </p>
+                                    }
+                                </div>
+                                <!-- end of col-sm-8 -->
+                            </div>
+                            <!-- end of row -->
+                        </div>
+                    </div>
+                    <!-- end of card -->
+                </div>
+                <!-- end of col-sm-6 -->
+
+            </div>
+            <br /><br />
+        </div>
+    </div>
+</div>
+@*<div id="matrix" class="container-fluid" style="background-color:black; border-width:3px; border-color:red; border-style:solid">
+
+    <div class="row" style="margin-top:10px; margin-bottom:10px">
+
+            <div id="employeeInfoDiv" class="col-md-4 " style="display:none">
+                <a style="margin:5px; padding-top:5px"
+                   href="@Url.Content("~/")EmploymentInfo/ActionMatrix/NSS">
+                    <img class="center-block" src="~/images/MainBlocks/EmployeeInfo.png" style=" width:300px; height:220px; margin-top:5px; margin-bottom:5px;" />
+                </a>
+
+            </div>
+
+            <div id="timecardDiv" class="col-md-4 " style="display:none">
+                <a style="margin:5px; padding-top:5px"
+                   href="@Url.Content("~/")TimeAndAttendance/TimeCardMatrix/NSS">
+                    <img class="center-block" src="~/images/MainBlocks/TimeandAttendance.png" style="  width:300px; height:220px; margin-top:5px; margin-bottom:5px;" />
+                </a>
+
+            </div>
+
+            <div id="benefitDiv" class="col-md-4 " style="display:none">
+                <a style="margin:5px; padding-top:5px"
+                   href="@Url.Content("~/")Benefits/BenefitsMatrix/NSS">
+                    <img class="center-block" src="~/images/MainBlocks/Benefits.png" style="width:300px; height:220px; margin-top:5px; margin-bottom:5px;" />
+                </a>
+
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:10px; margin-bottom:10px">
+            <div id="positionDiv" class="col-md-4 " style="display:none">
+                <a style="margin:5px; padding-top:5px"
+                   href="@Url.Content("~/")Position/PositionMatrix/NSS">
+                    <img class="center-block" src="~/images/MainBlocks/Positions.png" style="width:300px; height:220px; margin-top:5px; margin-bottom:5px;" />
+                </a>
+
+            </div>
+
+            <div id="ListDiv" class="col-md-4 " style="display:none">
+                <a style="margin:5px; padding-top:5px"
+                   href="@Url.Content("~/")List/ListMatrix/NSS">
+                    <img class="center-block" src="~/images/MainBlocks/LookupTables.png" style="width:300px; height:220px; margin-top:5px; margin-bottom:5px;" />
+                </a>
+
+            </div>
+        </div>
+
+
+    </div>*@
+
+<div id="FormEntryDiv">
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        
+        var showHideIsStudent = '@Session["isStudent"]';
+        if (showHideIsStudent === "True") {
+            $('#navScreen').show();
+        }
+        else {
+            $('#navScreen').hide();
+        }
+
+        $('#employeeInfoDiv').show(1500);
+
+        $('#timecardDiv').show(1500);
+
+        $('#benefitDiv').show(1500);
+
+        $('#positionDiv').show(1500);
+
+        $('#ListDiv').show(1500);
+
+        //$('#empTimecard_Div').show(1500);
+
+        var formEntryDiv = $("#FormEntryDiv");
+
+
+
+
+        $("#matrix a").click(function (e) {
+            //e.preventDefault();
+            $('#matrix').hide(1500);
+            $('#closeButtonDiv').show(1500);
+            $('#FormEntryDiv').show(1500);
+
+        });
+
+        $("#closeButtonDiv").click(function (e) {
+            e.preventDefault();
+            $('#matrix').show(1500);
+            $('#closeButtonDiv').hide(1500);
+            $('#FormEntryDiv').hide(1500);
+        });
+
+        // this works if the button is in the partial view
+        $(document).on("click", "#closeButtonDiv", function (e) {
+            e.preventDefault();
+            $('#matrix').show(1500);
+            $('#closeButtonDiv').hide(1500);
+            $('#FormEntryDiv').hide(1500);
+        });
+
+
+
+        // this definition will fire ok
+        //$(document).on("change", "#personImageInput", function (e) {
+        //
+        //    //e.preventDefault();
+        //    var formData = new FormData();
+        //    var totalFiles = document.getElementById("personImageInput").files.length;
+        //});
+
+
+        // this is the event for the link under the person image to upload pic on the PersonDdlPartialMatrix.cshtml
+        $("#personImageInput").change(function () {
+            //
+            var formData = new FormData();
+            var totalFiles = document.getElementById("personImageInput").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("personImageInput").files[i];
+
+                formData.append("personImageInput", file);
+            }
+
+            var ddlPerson = $("#ddlPersonId").data("kendoDropDownList");
+            var personId = ddlPerson.value();
+
+            formData.append("personId", personId);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UploadPersonImage", "Person")",
+                data: formData ,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert('success!!');
+
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("GetBase64Image", "Person")",
+
+                        success: function (response) {
+                            //
+                            $('#personImageDiv').html('<img width="100" height="100" src="data:image/jpg;base64,' + response.base64image + '"/>');
+                        },
+                        error: function (error) {
+                            alert("errror");
+                        }
+                    });
+                },
+                error: function (error) {
+                    alert("errror");
+                }
+            });
+        });
+
+    });
+
+    function OnBeginAjax() {
+
+    }
+
+    function OnSuccessAjax(data) {
+
+        //alert("Got to On Success Ajax");
+    }
+
+    function OnFailureAjax(request, error) {
+        //alert("Got to On Failure Ajax");
+    }
+
+    function OnCompleteAjax(request, status) {
+        //alert("Got to On Complete Ajax");
+    }
+
+</script>
+

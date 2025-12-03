@@ -1,0 +1,160 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionFundsVm
+@using (Html.BeginForm("SavePositionBudgetAllocation", "PositionSetupDetail", FormMethod.Post, new { role = "form", id = "PositionBudgetAllocationForm" }))
+{
+    @Html.ValidationSummary(true)
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="CloseAllocation">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Fund Allocation</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>
+                            Fund Code
+                        </label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(m => m.FundID, new SelectList(Model.FundCodes, "keyvalue", "keyDescription", Model.FundID), new { @class = "form-control input-sm" })
+                            @Html.ValidationMessageFor(x => x.FundID)
+                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal"  onclick="gridFundDefinitionAdd(event)">
+                                <span class="fa fa-plus"></span>
+                            </span>
+                        </div>
+                    </div>
+                   
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>
+                            Dollar Amount
+                        </label>
+                        @Html.TextBoxFor(m => m.Amount, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Amount)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    &nbsp;
+                </div>
+
+                <div class="col-sm-12">
+                    &nbsp;
+                </div>
+                @Html.HiddenFor(m => m.PositionBudgetID)
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" id="btnABudgetAllocationClose" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSavePositionBudgetAllocation">Save</button>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+        $('#BudgetAmount').keydown(function (e) { EntryOnlyInteger(e); });
+        $('#FTE').keydown(function (e) { EntryOnlyInteger(e); });
+        
+        if ($("#EditFundFlag").val() == "True")
+        {
+            $("#FundID").attr("disabled", 'disabled');
+            
+        }
+
+    });
+    function EntryOnlyInteger(e) {
+        if (e.shiftKey || e.ctrlKey || e.altKey) { // if shift, ctrl or alt keys held down
+            e.preventDefault();         // Prevent character input
+        }
+        else {
+            var n = e.keyCode;
+            if (!((n == 8)              // backspace
+                    || (n == 9)
+                    || (n == 46)                // delete
+                    || (n >= 35 && n <= 40)     // arrow keys/home/end
+                    || (n >= 48 && n <= 57)     // numbers on keyboard
+                    || (n >= 96 && n <= 105) || (n == 190) || (n == 110))  // number on keypad
+                    ) {
+                e.preventDefault();
+                // alert("in if");
+                // Prevent character input
+            };
+        };
+    }
+
+    $("#btnSavePositionBudgetAllocation").click(function (e) {
+        
+        e.preventDefault();
+        var form = $("#PositionBudgetAllocationForm");
+        //var staus = formService.getStatus();
+        //if (staus) {
+        //    return;
+        //}
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = form.serializeArray();
+        var formURL = appBaseUrl + "PositionSetupDetail/SavePositionBudgetAllocation";
+        loading(true);
+        $.ajax({
+            type: 'POST',
+            url: formURL,
+            data: postData,
+            success: function (data) {
+                if (data && data.succeed == false) {
+                    toastr.error(data.Message);
+                    loading(false);
+                   // resetcontrol();
+                } else {
+                    $("#EditFundFlag").val("False");
+                    $('#btnABudgetAllocationClose').click();
+                    gridPositionBudgetListEditRefresh();
+                    toastr.success(formService.messages.saved);
+                    loading(false);
+                   
+                }
+            },
+            complete: function () {
+
+            },
+            error: function (data) {
+                loading(false);
+            },
+            async: false,
+            cache: false
+        });
+    });
+
+
+    function newKendoDS(ndata) {
+        var datasource = new kendo.data.DataSource({ data: ndata });
+        datasource.read(); // In order to refresh
+        return datasource;
+    }
+    function resetAllocationGrid(grid, positionBudgetID) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GridPositionBudgetFundAllocationRead", "PositionSetupDetail")',
+            data: { positionBudgetID: positionBudgetID },
+            beforeSend: function () {
+            },
+            success: function (data) {
+                var newKendoDatasource = newKendoDS(data);
+                $("#" + grid).data("kendoGrid").dataSource.data(newKendoDatasource._data);
+            },
+            complete: function () {
+            },
+            error: function (data) {
+            },
+            dataType: "json",
+            async: false,
+            traditional: true,
+            cache: false
+        });
+    }
+
+</script>

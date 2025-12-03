@@ -1,0 +1,7 @@
+﻿@model ExecViewHrk.WebUI.Models.PhoneNumberDdlViewModel
+
+@(Html.Kendo().MaskedTextBoxFor(m => m)
+       .Name("PhoneNumber")
+       .Mask("(000) 000-0000")
+        //.Mask("0000000000")
+)

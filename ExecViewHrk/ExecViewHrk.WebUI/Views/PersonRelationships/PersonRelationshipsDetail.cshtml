@@ -1,0 +1,325 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonRelationshipVm
+@{
+    Layout = null;
+    var phoneListCount = 0;
+    var addressListCount = 0;
+}
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Relationships Detail</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonRelationships", "PersonRelationships", FormMethod.Post, new { role = "form", id = "PersonRelatioshipForm" }))
+            {
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Relationship Type</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.RelationshipTypeId,
+                                                                 new SelectList(Model.lstDdlPersonRelationshipsType, "keyvalue", "keydescription", Model.RelationshipTypeId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'PersonRelationShipTypes');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Relation Person Name</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.RelationPersonId,
+                                                                 new SelectList(Model.lstRelationPersonsList, "keyvalue", "keydescription", Model.RelationPersonId), new { @class = "form-control", data_required = "Y" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group p-t-30">
+                        <div class="checkbox-color checkbox-primary">
+
+                            @if (Model.EmergencyContact == true)
+                            {
+                                <input id="@Html.NameFor(x => x.EmergencyContact)" type="checkbox" value="@Model.EmergencyContact" checked="checked" />
+                            }
+                            else
+                            {
+                                <input id="@Html.NameFor(x => x.EmergencyContact)" value="@Model.EmergencyContact" type="checkbox" />
+                            }
+                            <label for="EmergencyContact"> Emergency Contact</label>
+                            @Html.HiddenFor(x => x.EmergencyContact)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2" style="margin-left: -89px;">
+                    <div class="form-group p-t-30">
+                        <div class="checkbox-color checkbox-primary">
+
+                            @if (Model.Garnishment == true)
+                            {
+                                <input id="@Html.NameFor(x => x.Garnishment)" type="checkbox" checked="checked" value="@Model.Garnishment" />
+                            }
+                            else
+                            {
+                                <input id="@Html.NameFor(x => x.Garnishment)" type="checkbox" value="@Model.Garnishment" />
+                            }
+                            <label for="Garnishment"> Garnishment</label>
+                            @Html.HiddenFor(x => x.Garnishment)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2" style="margin-left: -38px;">
+                    <div class="form-group p-t-30">
+                        <div class="checkbox-color checkbox-primary">
+                            @if (Model.Dependent == true)
+                            {
+                                <input id="@Html.NameFor(x => x.Dependent)" type="checkbox" value="@Model.Dependent" checked="checked" />
+                            }
+                            else
+                            {
+                                <input id="@Html.NameFor(x => x.Dependent)" type="checkbox" value="@Model.Dependent" />
+                            }
+                            <label for="Dependent"> Dependent</label>
+                            @Html.HiddenFor(x => x.Dependent)
+
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-sm-3" style="margin-right: -166px;margin-top: 21px;">
+                    <div class="form-group">
+                        <h5 class="card-header-text"><i class="fa fa-phone f-20 m-r-5"></i> Phone</h5>
+                    </div>
+                </div>
+                <div class="card-block p-t-0">
+                    <div class="row p-t-10">
+                        <div class="col-sm-12 col-md-12 p-0">
+                            <div class="col-sm-12 col-md-12">
+                                @if (Model.personPhoneNumberVm != null && Model.personPhoneNumberVm.Count > 0)
+                                {
+                                    foreach (var item in Model.personPhoneNumberVm)
+                                    {
+                                        if (phoneListCount <= 5)
+                                        {
+                                            <div class="col-sm-3" style="margin-right: -157px;">
+                                                <div class="form-group">
+                                                    <label>Phone Type</label>
+                                                    <span class="f-13 block f-w-600">@item.PhoneTypeDescription</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-right: -125px;">
+                                                <div class="form-group">
+                                                    <label>Phone Number</label>
+                                                    <span class="f-13 block f-w-600">@item.PhoneNumber</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Extension</label>
+                                                    <span class="f-13 block f-w-600">@item.Extension</span>
+                                                </div>
+                                            </div>
+                                            phoneListCount = phoneListCount + 1;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="col-sm-3" style="margin-right: -157px;">
+                                        <div class="form-group">
+                                            <label>Phone Type</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="margin-right: -125px;">
+                                        <div class="form-group">
+                                            <label>Phone Number</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Extension</label>
+                                        </div>
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <h5 class="card-header-text"><i class="fa fa-map-marker f-20 m-r-5"></i> Address</h5>
+                    </div>
+                </div>
+                <div class="card-block p-t-0">
+                    <div class="row p-t-10">
+                        <div class="col-sm-12 col-md-12 p-0">
+                            <div class="col-sm-12 col-md-12">
+                                @if (Model.personAddressVm != null && Model.personAddressVm.Count > 0)
+                                {
+                                    foreach (var item in Model.personAddressVm)
+                                    {
+                                        if (addressListCount <= 5)
+                                        {
+                                            <div class="col-sm-3" style="margin-right: -145px;">
+                                                <div class="form-group">
+                                                    <label>Address Type</label>
+                                                    <span class="f-13 block f-w-600">@item.AddressDescription</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-right: -189px;">
+                                                <div class="form-group">
+                                                    <label>State</label>
+                                                    <span class="f-13 block f-w-600">@item.StateTitle</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-right: -181px;">
+                                                <div class="form-group">
+                                                    <label>Country</label>
+                                                    <span class="f-13 block f-w-600">@item.CountryDescription</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-right: -148px;">
+                                                <div class="form-group">
+                                                    <label>Address Line 1</label>
+                                                    <span class="f-13 block f-w-600">@item.AddressLineOne</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-right: -139px;">
+                                                <div class="form-group">
+                                                    <label>Address Line 2</label>
+                                                    <span class="f-13 block f-w-600">@item.AddressLineTwo</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-right: -185px;">
+                                                <div class="form-group">
+                                                    <label>City</label>
+                                                    <span class="f-13 block f-w-600">@item.City</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-right: -176px;">
+                                                <div class="form-group">
+                                                    <label>Zip code</label>
+                                                    <span class="f-13 block f-w-600">@item.ZipCode</span>
+                                                </div>
+                                            </div>
+                                            addressListCount = addressListCount + 1;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="col-sm-3" style="margin-right: -145px;">
+                                        <div class="form-group">
+                                            <label>Address Type</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="margin-right: -189px;">
+                                        <div class="form-group">
+                                            <label>State</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="margin-right: -181px;">
+                                        <div class="form-group">
+                                            <label>Country</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="margin-right: -148px;">
+                                        <div class="form-group">
+                                            <label>Address Line 1</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="margin-right: -139px;">
+                                        <div class="form-group">
+                                            <label>Address Line 2</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="margin-right: -185px;">
+                                        <div class="form-group">
+                                            <label>City</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="margin-right: -176px;">
+                                        <div class="form-group">
+                                            <label>Zip code</label>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonRelationshipId, new { id = "hiddenPersonRelationshipId" })
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSavePersonRelationshipAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+    });
+    $(".btnPhoneDetail").click(function () {
+        openPhonePopup($("#SelectedPersonID").val());
+    })
+    $(".btnAddressDetail").click(function () {
+        openAddressPopup($("#SelectedPersonID").val());
+    })
+    function openPhonePopup(_personId) {
+        var formURL = $("#ApplicationUrl").val() + '/PersonPhoneNumbers/PersonPhoneNumbersListMatrixPartial';
+
+        $("#EditDetailDiv1 .md-content").html("");
+        $("#EditDetailDiv1 .md-content").load(formURL);
+
+        $('#EditDetailDiv1').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv1').addClass('md-show');
+
+    }
+    function openAddressPopup(_personId) {
+        var formURL = $("#ApplicationUrl").val() + '/PersonAddresses/PersonAddressesMatrixPartial';
+        $("#EditDetailDiv1 .md-content").html("");
+        $("#EditDetailDiv1 .md-content").load(formURL);
+        $('#EditDetailDiv1').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv1').addClass('md-show');
+
+    }
+    $("#btnSavePersonRelationshipAjax").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("PersonRelatioshipForm")) {
+            loading(false);
+            return;
+        }
+        var postData = $("#PersonRelatioshipForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonRelationships/PersonRelationshipsSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonTestId = $("#hiddenPersonTestId").val();
+                $("#btnSavePersonRelationshipAjax").parent().find(".md-close").click();
+                LoadMenu("PersonRelationshipsList", "PersonRelationships")
+
+                if (_oldhiddenPersonTestId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>

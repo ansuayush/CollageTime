@@ -1,0 +1,72 @@
+﻿
+@model ExecViewHrk.EfClient.DdlAccommodationType
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Accomodation</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmAccomodation">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseAccomodation">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveAccomodation">Save</button>
+</div>
+<script>
+    $("#btnSaveAccomodation").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmAccomodation")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmAccomodation").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/DdlAccommodationTypesList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadAccommodationDropDown();
+                $("#btnCloseAccomodation").trigger('click');
+            }
+        });
+    });
+    function reloadAccommodationDropDown() {
+        var _selectedValue = $("#AccommodationTypeId").val();
+        $.get($("#appBaseUrl").val() + "LookupTables/GetAccommodationTypes", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#AccommodationTypeId").empty();
+                $("#AccommodationTypeId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#AccommodationTypeId").append("<option value='" + list[i].AccommodationTypeId + "' selected >" + list[i].AccommodationDescription + "</option>");
+                    } else {
+                        $("#AccommodationTypeId").append("<option value='" + list[i].AccommodationTypeId + "' >" + list[i].AccommodationDescription + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

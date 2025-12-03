@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "PositionHierachy";
+}
+<script>
+    function onSelect(e) {
+        var data = $('#treeview').data('kendoTreeView').dataItem(e.node);
+    }
+</script>
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Position Hierarchy <span class="pull-right icon-edit-block m-l-30">@*<i class="fa fa-question-circle f-26 m-r-10"></i>*@ <i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="card">
+                            <div class="card-block">
+                                <div class="table-primary table-striped">
+                                    <div class="theme-grid">
+                                        @(Html.Kendo().TreeView()
+                                            .Name("treeview")
+                                            .DataTextField("Title")
+                                            .DataSource(dataSource => dataSource.Model(model => model.Id("PositionId")
+                                            .HasChildren("hasChildren"))
+                                                .Read(read => read
+                                                    .Action("GetAllRootLevelsWithBusUnitName", "PositionBudgetSchedules")
+                                                )).Events(events => events.Expand("onSelect"))
+                                        )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

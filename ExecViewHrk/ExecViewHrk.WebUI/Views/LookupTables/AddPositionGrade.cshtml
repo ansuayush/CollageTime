@@ -1,0 +1,66 @@
+﻿@model ExecViewHrk.WebUI.Models.SalaryGradeHistoryListVm
+<div id="dvPositionGrade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">Position Grade</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <form id="frmPositionGrade">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Description</label>
+                        @Html.TextBoxFor(x => x.description, new { @class = "form-control", @readonly = true })
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Valid From</label>
+                        @Html.TextBoxFor(x => x.validFrom, "{0:MM/dd/yyyy}", new { @class = "form-control", @readonly = true })
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Salary Minimum</label>
+                        @Html.TextBoxFor(x => x.salaryMinimum, new { @class = "form-control", @readonly = true })
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Salary Midpoint</label>
+                        @Html.TextBoxFor(x => x.salaryMidpoint, new { @class = "form-control", @readonly = true })
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Salary Maximum</label>
+                        @Html.TextBoxFor(x => x.salaryMaximum, new { @class = "form-control", @readonly = true })
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnClosePositionGrade">Close</button>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+       // reloadPositionGradeDropDown();
+    });
+    function reloadPositionGradeDropDown() {
+        
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/GetDdlPositionGradeList";
+        $.post(formURL, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                var $modal = $('#dvPositionGrade');
+                $modal.html(data);
+                $modal.modal("show");
+            }
+        });
+    }
+</script>

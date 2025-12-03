@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Contract Report";
+    Layout = null;
+}
+<script>
+
+    function excelExport(e) {
+        var sheet = e.workbook.sheets[0];
+        for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+            var sheet = e.workbook.sheets[0];
+            for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+                var row = sheet.rows[rowIndex];
+                row.cells[6].format = "$#.00"
+                row.cells[10].format = "$#.00"
+                row.cells[11].format = "$#.00"
+            }
+        }
+    }
+</script>
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Contract Report <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.ContractReportVM>()
+                            .Name("gridEmployeeReports")
+                            .Resizable(resize => resize.Columns(true))
+                            .Filterable()
+                            .Editable(editable => editable.Mode(GridEditMode.InLine))
+                            .Columns(columns =>
+                            {
+                                columns.Bound(c => c.EmployeeName).Title("Employee Name");
+                                columns.Bound(c => c.FileNumber).Title("File Number");
+                                columns.Bound(c => c.PositionCode).Title("Position Code");
+                                columns.Bound(c => c.PositionDescription).Title("Position Description");
+                                columns.Bound(c => c.ContractStartDate).Title("Contract Start Date").ClientTemplate("#= ContractStartDate == null ? '' : kendo.toString(ContractStartDate, \"MM/dd/yyyy\") #"); ;
+                                columns.Bound(c => c.ContractEndDate).Title("Contract End Date").ClientTemplate("#= ContractEndDate == null ? '' : kendo.toString(ContractEndDate, \"MM/dd/yyyy\") #"); ;
+                                columns.Bound(c => c.RemainingBalance).Title("Remaining Balance").Format("{0:c2}");
+                                columns.Bound(c => c.GLCode).Title("GL Code");
+                                columns.Bound(c => c.NoofPayPeriods).Title("No of PayPeriods");
+                                columns.Bound(c => c.EarningCode).Title("Earning Code");
+                                columns.Bound(c => c.ContractAmount).Title("ContractAmount").Format("{0:c2}");
+                                columns.Bound(c => c.OutsidePaymentAdjustment).Title("Outside Payment Adjustment").Format("{0:c2}"); 
+                                columns.Bound(c => c.Semester);
+                                columns.Bound(c => c.Notes);
+                            })
+                            .ToolBar(tools => { tools.Excel(); tools.Pdf(); })
+                            .Pdf(pdf => pdf
+                            .AllPages()
+                            .Landscape()
+                            .FileName("Contract Report.pdf")
+                            )
+                            .Sortable()
+                            .Events(e => e.ExcelExport("excelExport"))
+                            .Excel(excel => excel.AllPages(true)
+                            .FileName("Contract Report.xlsx")
+                            .Filterable(true))
+                            .Selectable()
+                            .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                            .DataSource(dataSource => dataSource.Ajax()
+                            .Read(read => read.Action("ContractReport_Read", "Reports"))
+                            .Model(model =>
+                            {
+                                model.Id(p => p.PositionCode);
+                            }
+                                                      )
+                            .Batch(false)
+                            .Events(events =>
+                            {
+                                events.Error("refreshGrid");
+                                events.RequestEnd("gridRequestEnd");
+                            })
+                            )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .k-grid-header th.k-header {
+        min-width: 150px;
+    }
+
+    .k-grid {
+        overflow-x: scroll;
+    }
+
+    .k-pdf-export .k-grid-toolbar,
+    .k-pdf-export .k-pager-wrap {
+        display: none;
+    }
+
+    .k-grid-toolbar, .k-pager-wrap {
+        background: transparent !important;
+        border: 0;
+    }
+
+    .k-footer-template td {
+        font-weight: 700 !important;
+    }
+</style>

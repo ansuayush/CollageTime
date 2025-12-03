@@ -1,0 +1,239 @@
+﻿
+@using ExecViewHrk.WebUI.Infrastructure
+@model ExecViewHrk.WebUI.Models.PersonBasicVm
+
+
+
+@Html.ValidationSummary(true)
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+        <h5>Personal Info  <span id="personNameLabel" >@(" - "+@Model.LastName + ", " + @Model.FirstName+"   ")</span>
+            <span class="pull-right" style="color:red">* denotes required field</span>
+        </h5>
+    </div>
+    <div id="formDiv" class="panel-body">
+
+        @using (Html.BeginForm("PersonBasicInfoAdmin", "PersonalInfo", FormMethod.Post, new {  role = "form", id = "personInfoForm" }))
+        {
+            @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+            <div class="row ">
+
+                    <div class="row ">
+                        <div class="col-md-12">
+
+                            <div class="col-md-5 ">
+                                <div class="form-group ">
+                                    <label ><span style="color:red">*</span>SSN</label>
+                                    @Html.TextBoxFor(x => x.Ssn, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.Ssn)
+                                </div>
+                                <div class="form-group">
+                                    <label ><span style="color:red">*</span>Last Name</label>
+                                    @Html.TextBoxFor(x => x.LastName, new { @class = "form-control " })
+                                    @Html.ValidationMessageFor(x => x.LastName)
+                                </div>
+                                <div class="form-group">
+                                    <label ><span style="color:red">*</span>First Name</label>
+                                    @Html.TextBoxFor(x => x.FirstName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.FirstName)
+                                </div>
+                                <div class="form-group">
+                                    <label >Middle Name</label>
+                                    @Html.TextBoxFor(x => x.MiddleName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.MiddleName)
+                                </div>
+                                <div class="form-group">
+                                    <label >Preferred Name</label>
+                                    @Html.TextBoxFor(x => x.PreferredName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.PreferredName)
+                                </div>
+                                <div class="form-group">
+                                    <label >Maiden Name</label>
+                                    @Html.TextBoxFor(x => x.MaidenName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.MaidenName)
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered By:</label>
+                                    <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered Date:</label>
+                                    @if (Model.EnteredDate != null)
+                                    {
+                                        <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate.Value.ToString("d")</label>
+                                    }
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-offset-1 col-md-5">
+
+                                <div>
+
+                                    <div class="form-group">
+                                        <label ><span style="color:red">*</span>Email</label>
+                                        @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(x => x.Email)
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label >Alternate Email</label>
+                                        @Html.TextBoxFor(x => x.AlternateEmail, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(x => x.AlternateEmail)
+                                    </div>
+
+
+
+                                    <div class=" form-group ">
+                                        <label >Marital Status</label>
+                                        <div class="editor-field">
+                                            @(Html.Kendo().DropDownList()
+                                        .Name("MaritalStatusId")
+                                        .HtmlAttributes(new { style = "width:280px" })
+                                        .DataTextField("Description")
+                                        .DataValueField("MaritalStatusId")
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                                read.Action("GetDdlMaritalStatusList", "LookupTables");
+                                            });
+
+                                        })
+                                        .SelectedIndex(Model.MaritalStatusId == null ? 0 : Convert.ToInt32(Model.MaritalStatusId))
+                                        .OptionLabel("Select a Marital Status")
+
+                                            )
+                                        </div>
+                                        @Html.ValidationMessageFor(x => x.MaritalStatusId)
+                                    </div>
+
+
+                                    <div class=" form-group ">
+                                        <label >Suffix</label>
+                                        <div class="editor-field">
+                                            @(Html.Kendo().DropDownList()
+                                        .Name("SuffixId")
+                                        .HtmlAttributes(new { style = "width:280px" })
+                                        .DataTextField("Description")
+                                        .DataValueField("SuffixId")
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                                read.Action("GetDdlSuffixList", "LookupTables");
+                                            });
+
+                                        })
+                                        .SelectedIndex(Model.SuffixId == null ? 0 : Convert.ToInt32(Model.SuffixId))
+                                        .OptionLabel("Select a Suffix")
+
+                                            )
+                                        </div>
+                                        @Html.ValidationMessageFor(x => x.SuffixId)
+                                    </div>
+                                    <div class=" form-group ">
+                                        <label >Prefix</label>
+                                        <div class="editor-field">
+                                            @(Html.Kendo().DropDownList()
+                                    .Name("PrefixId")
+                                    .HtmlAttributes(new { style = "width:280px" })
+                                    .DataTextField("Description")
+                                    .DataValueField("PrefixId")
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetDdlPrefixList", "LookupTables");
+                                        });
+
+                                    })
+                                    .SelectedIndex(Model.SuffixId == null ? 0 : Convert.ToInt32(Model.PrefixId))
+                
+                                    .OptionLabel("Select a Prefix")
+
+                                            )
+                                        </div>
+                                        @Html.ValidationMessageFor(x => x.PrefixId)
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label >Date of Birth</label>
+                                        @(Html.Kendo().DatePickerFor(x => x.DateOfBirth)
+                                        .Name("DateOfBirth") //The name of the datepicker is mandatory. It specifies the "id" attribute of the widget.
+                
+
+                                        )
+                                        <div>
+                                            @Html.ValidationMessageFor(x => x.DateOfBirth)
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <label >Gender</label>
+                                    <div style="margin-left:35px">
+                                        @Html.RadioButtonFor(x => x.GenderId, 1, new { Gender_1 = 1 })
+                                        <label>Female</label>
+                                        @Html.RadioButtonFor(x => x.GenderId, 2, new { Gender_2 = 2 })
+                                        <label>Male</label>
+
+                                        @Html.ValidationMessageFor(model => model.GenderId)
+                                    </div>
+
+                                    <div class=" form-group ">
+                                        <label style="vertical-align:middle">Is Dependent</label>
+                                        @*@{ bool IsDependent = (Model.IsDependent == true ? true : false);}*@
+                                        @Html.EditorFor(x => x.IsDependent, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+
+                                    </div>
+
+                                    
+
+                                    <div class=" form-group ">
+                                        <label style="width:100px">Modified Date:</label>
+                                        @if (Model.ModifiedDate != null)
+                                        {
+                                            <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate.Value.ToString("d")</label>
+                                        }
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <div class="form-group">
+                            <input name="submit" id="Save" type="submit" value="Save" class="btn btn-info" />
+                        </div>
+                    </div>
+                </div>
+        }
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+

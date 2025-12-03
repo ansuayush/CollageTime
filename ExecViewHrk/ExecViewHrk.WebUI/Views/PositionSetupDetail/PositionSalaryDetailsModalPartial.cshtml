@@ -1,0 +1,170 @@
+﻿<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Salary Details</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="Modelsalary_description" />
+                            @*<select name="Modelsalary_description" id="Modelsalary_description" class="form-control"></select>*@
+                            @*@if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="">
+                                <span class="fa fa-plus"></span>
+                                </span>
+                            }*@
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Valid From
+                        </label>
+                        <input type="date" class="form-control" id="Modelsalary_Valid" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Salary Minimum
+                        </label>
+                        <input type="number" class="form-control" id="Modelsalary_salaryMin" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Salary Midpoint
+                        </label>
+                        <input type="number" class="form-control" id="Modelsalary_salary_mid" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Salary Maximum
+                        </label>
+                        <input type="number" class="form-control" id="Modelsalary_salary_max" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseSalaryGrade">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " onclick="SalaryDetails();">Add</button>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        //filldescription();
+    });
+    function filldescription() {
+        var currentSelect = $('#Modelsalary_description');
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("FillSalaryDescription", "PositionSetupDetail")',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                
+                for (i = 0; i < data.length; i++) {
+                    currentSelect.append('<option value="' + data[i].keyvalue + '">' + data[i].keydescription + '</option>');
+                }
+            },
+            complete: function () {
+            },
+            error: function (data) {
+            },
+            dataType: "json",
+            async: false,
+            traditional: true,
+            cache: false
+        });
+    }
+    function SalaryDetails() {
+        var postData = { description: $("#Modelsalary_description").val(), validDate: $('#Modelsalary_Valid').val(), salaryMin: $('#Modelsalary_salaryMin').val(), salaryMid: $('#Modelsalary_salary_mid').val(), salaryMax: $('#Modelsalary_salary_max').val() }
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("SaveSalaryGrade", "PositionSetupDetail")',
+            data: postData,
+            success: function (data) {
+                if ($.isNumeric(data)) {
+                    $('#btnCloseSalaryGrade').click();
+                    resetSalaryGrid('SalaryGradelst');
+                    toastr.success('Record created successfully.');
+                    resetcontrol();
+                } else {
+                    toastr.error("Changes rejected.");
+                }
+            },
+            complete: function () {
+
+            },
+            error: function (data) {
+            },
+            async: false,
+            cache: false
+        });
+    }
+    function resetcontrol() {
+        $('#Modelsalary_Valid').val('');
+        $('#Modelsalary_salaryMin').val('');
+        $('#Modelsalary_salary_mid').val('')
+        $('#Modelsalary_salary_max').val('')
+
+    }
+    function newKendoDS(ndata) {
+        var datasource = new kendo.data.DataSource({ data: ndata });
+        datasource.read(); // In order to refresh
+        return datasource;
+    }
+    function resetSalaryGrid(grid) {
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("RefreshSalaryGradeHistoryList", "PositionSetupDetail")',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                var newKendoDatasource = newKendoDS(data);
+                $("#"+grid).data("kendoGrid").dataSource.data(newKendoDatasource._data);
+            },
+            complete: function () {
+            },
+            error: function (data) {
+            },
+            dataType: "json",
+            async: false,
+            traditional: true,
+            cache: false
+        });
+    }
+    function resetSalaryGradHistoryGrid(grid) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("RelodPositionSalaryGradeHistoryList", "PositionSetupDetail")',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                var newKendoDatasource = newKendoDS(data);
+                $("#" + grid).data("kendoGrid").dataSource.data(newKendoDatasource._data);
+            },
+            complete: function () {
+            },
+            error: function (data) {
+            },
+            dataType: "json",
+            async: false,
+            traditional: true,
+            cache: false
+        });
+    }
+</script>

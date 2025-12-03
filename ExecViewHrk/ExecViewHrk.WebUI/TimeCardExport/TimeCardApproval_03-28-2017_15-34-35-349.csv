@@ -1,0 +1,2 @@
+CompanyCode,BatchId,FileNumber,Reg Hours,OverTimeHours,Hours3Code,Hours3Amount,Hours4Code,Hours4Amount,Hours5Code,Hours5Amount,Earnings3Code,Earnings3Amount,Earnings4Code, Earnings4Amount, Earnings5Code, Earnings5Amount
+ExecViewHrk.SqlData.Models.TimeCardApprovalReportCollection

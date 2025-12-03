@@ -1,0 +1,71 @@
+﻿@model ExecViewHrk.EfClient.DdlRegionalChapter
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Regional chapter</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmRegionalChapter">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseRegionalChapter">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveRegionalChapter">Save</button>
+</div>
+<script>
+    $("#btnSaveRegionalChapter").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmRegionalChapter")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmRegionalChapter").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "DdlRegionalChapters/DdlRegionalChaptersList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadRegionalChapterDropDown();
+                $("#btnCloseRegionalChapter").trigger('click');
+            }
+        });
+    });
+    function reloadRegionalChapterDropDown() {
+        var _selectedValue = $("#RegionalChapterId").val();
+        $.get($("#appBaseUrl").val() + "DdlRegionalChapters/GetRegionalChapters", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#RegionalChapterId").empty();
+                $("#RegionalChapterId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#RegionalChapterId").append("<option value='" + list[i].RegionalChapterId + "' selected >" + list[i].Description + "</option>");
+                    } else {
+                        $("#RegionalChapterId").append("<option value='" + list[i].RegionalChapterId + "' >" + list[i].Description + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

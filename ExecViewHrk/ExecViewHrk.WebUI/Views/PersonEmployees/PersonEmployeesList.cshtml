@@ -1,0 +1,140 @@
+﻿
+@model ExecViewHrk.Models.PersonEmployeeVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Employee</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonEmployeesList", "PersonEmployees", FormMethod.Post, new { role = "form", id = "PersonEmployeeForm" }))
+            {
+                @Html.HiddenFor(model => model.EmployeeId, new { id = "hiddenemployeeId" })
+                @Html.ValidationSummary(true)
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Person</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.PersonId,
+                                     new SelectList(Model.PersonsList, "keyvalue", "keydescription", Model.PersonId), new { @class = "form-control" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'PersonsList');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.PersonsList)
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Business Level</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.BusinessLevelNbr,
+                                     new SelectList(Model.BusinessLevelCodeList, "keyvalue", "keydescription"), new { @class = "form-control" })                           
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.BusinessLevelNbr)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Company Code</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.CompanyCodeId,
+                                     new SelectList(Model.CompanyCodeList, "keyvalue", "keydescription"), new { @class = "form-control" })                           
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.CompanyCodeId)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red"> *</span>Hire Date </label>
+                        @Html.TextBoxFor(model => model.HireDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.HireDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red"> *</span>File Number</label>
+                        @Html.TextBoxFor(x => x.FileNumber, new { @class = "form-control", @type = "number" })
+                        @Html.ValidationMessageFor(x => x.FileNumber)
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveEmployeeAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+        $("#HireDate").val('');
+        $("#EmploymentNumber").val('');
+    });
+
+    $("#btnSaveEmployeeAjax").click(function (e) {
+        e.preventDefault();
+        var errormsg = "Please Enter the following Fields</br>";
+        if ($("#PersonId").val() == "") {
+            errormsg += " Person </br>";
+        }
+        if ($("#BusinessLevelNbr").val() == "" || $("#BusinessLevelNbr").val() == "Select") {
+            errormsg += "Business Level </br>";
+        }
+        if ($("#HireDate").val() == "") {
+            errormsg += "Hire Date </br>";
+        }
+        if ($("#FileNumber").val() == "") {
+            errormsg += "File Number </br>";
+        }
+
+        if ($("#PersonId").val() == "" || $("#PersonId").val() == "Select" || $("#BusinessLevelNbr").val() == "" || $("#BusinessLevelNbr").val() == "Select" || $("#HireDate").val() == "" || $("#FileNumber").val() == "") {
+            loading(false);
+            toastr.error(errormsg);
+            return;
+        }
+        if (!ValidateForm("PersonEmployeeForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#PersonEmployeeForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonEmployees/PersonEmployeesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonTestId = $("#hiddenemployeeId").val();
+                //resetGrid("gridPersonTest");
+                $("#SelectedPersonID").val(data.PersonId);
+                LoadMenu("PersonEmployeesMatrixPartial", "PersonEmployees");
+
+                $("#btnSaveEmployeeAjax").parent().find(".md-close").click();
+
+                if (_oldhiddenPersonTestId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>
+

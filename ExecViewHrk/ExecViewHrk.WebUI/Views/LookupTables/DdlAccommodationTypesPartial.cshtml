@@ -1,0 +1,56 @@
+﻿<div class="theme-grid">
+    
+    @(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlAccommodationType>()
+            .Name("gridDdlAccommodationType")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridEdit");
+                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridDelete");
+            }).Width(70);
+            columns.Bound(c => c.AccommodationTypeId).Visible(false);
+            columns.Bound(c => c.Code);
+            columns.Bound(c => c.Description);
+            columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'Yes' : 'No' #");
+        })
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .Events(e => e.DataBound("gridDataBound"))
+        .DataSource(dataSource => dataSource.Ajax()
+                    .Read(read => read.Action("DdlAccommodationTypesList_Read", "LookupTables"))
+                    .Create(create => create.Action("DdlAccommodationTypesList_Create", "LookupTables"))
+                    .Update(update => update.Action("DdlAccommodationTypesList_Update", "LookupTables"))
+                    .Destroy(destroy => destroy.Action("DdlAccommodationTypesList_Destroy", "LookupTables"))
+                    .Model(model =>
+                    {
+                        model.Id(p => p.AccommodationTypeId);
+                        model.Field(p => p.AccommodationTypeId).Editable(false);
+                        model.Field(p => p.Code);
+                        model.Field(p => p.Description);
+                    }
+                    )
+            .PageSize(5)
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+)
+</div>
+<script type="text/javascript">
+
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+

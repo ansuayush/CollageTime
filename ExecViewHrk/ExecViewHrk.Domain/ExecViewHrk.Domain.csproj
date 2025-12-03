@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{77E9CD44-9B45-4143-AE1B-EECE9427896B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ExecViewHrk.Domain</RootNamespace>
+    <AssemblyName>ExecViewHrk.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.2\lib\net45\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ExecViewHrk.EfAdmin">
+      <HintPath>..\ExecViewHrk.EfAdmin\bin\Debug\ExecViewHrk.EfAdmin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TakeIo.Spreadsheet">
+      <HintPath>..\ExecViewHrk.WebUI\DllFiles\TakeIo.Spreadsheet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Base\IBaseRepository.cs" />
+    <Compile Include="Base\RepositoryBase.cs" />
+    <Compile Include="Interface\IClientConfigurationRepository.cs" />
+    <Compile Include="Interface\IDepartmetsRepository.cs" />
+    <Compile Include="Interface\IDesignatedSupervisorRepository.cs" />
+    <Compile Include="Interface\IEarningsCodeRepository.cs" />
+    <Compile Include="Interface\IEmployeeForecast.cs" />
+    <Compile Include="Interface\IEmployeeRetroHours.cs" />
+    <Compile Include="Interface\IFinancialRepository.cs" />
+    <Compile Include="Interface\IHoursCodesRepository.cs" />
+    <Compile Include="Interface\IHrkAdminRepository.cs" />
+    <Compile Include="Interface\ILookupTablesRepository.cs" />
+    <Compile Include="Interface\DataSourceRequestAttribute.cs" />
+    <Compile Include="Interface\IManagerDepartmentRepository.cs" />
+    <Compile Include="Interface\IPerformanceRepository.cs" />
+    <Compile Include="Interface\IPayPeriodRepository.cs" />
+    <Compile Include="Interface\IPersonAddress.cs" />
+    <Compile Include="Interface\IPersonEmployeeRepository.cs" />
+    <Compile Include="Interface\IEPositionRepository.cs" />
+    <Compile Include="Interface\IPersonLicenseRepository.cs" />
+    <Compile Include="Interface\IPersonPassportRepository.cs" />
+    <Compile Include="Interface\IPersonPhoneNumbersRepository.cs" />
+    <Compile Include="Interface\IPersonVehicleRepository.cs" />
+    <Compile Include="Interface\IPositionImportRepository.cs" />
+    <Compile Include="Interface\ISalaryComponent.cs" />
+    <Compile Include="Interface\IPersonRepository.cs" />
+    <Compile Include="Interface\IPositionBudgetSchedulesRepository.cs" />
+    <Compile Include="Interface\IReportRepository.cs" />
+    <Compile Include="Interface\ITestRepository.cs" />
+    <Compile Include="Interface\ITimeCardArchiveRerpository.cs" />
+    <Compile Include="Interface\ITimeCardApprovalReportRepository.cs" />
+    <Compile Include="Interface\ITimeCardAuditsRepository.cs" />
+    <Compile Include="Interface\ITimeCardConfigurationsRepository.cs" />
+    <Compile Include="Interface\ITimeCardMatrixReposotory.cs" />
+    <Compile Include="Interface\ITimeCardSessionInOutRepository.cs" />
+    <Compile Include="Interface\ITimeCardsMobileRepository.cs" />
+    <Compile Include="Interface\ITimeCardsRepository.cs" />
+    <Compile Include="Interface\ITimeCardUnApprovedReportRepository.cs" />
+    <Compile Include="Interface\ITimeOffEmployeesAllowedTakenRepository.cs" />
+    <Compile Include="Interface\ITimeOffRequestsRepository.cs" />
+    <Compile Include="Interface\ITimeReportRepository.cs" />
+    <Compile Include="Models\ADPAccNumberVM.cs" />
+    <Compile Include="Models\ADPFieldMappingVM.cs" />
+    <Compile Include="Models\BudgetToActualsReportVM.cs" />
+    <Compile Include="Models\ClientConfigurationVM.cs" />
+    <Compile Include="Models\CompanyCodeVM.cs" />
+    <Compile Include="Models\ContractEarnBurnReport.cs" />
+    <Compile Include="Models\ContractReportVM.cs" />
+    <Compile Include="Models\ContractsReportVM.cs" />
+    <Compile Include="Models\DdlEducationEstablishmentViewModel.cs" />
+    <Compile Include="Models\DdlPerformancePotentialVm.cs" />
+    <Compile Include="Models\DdlRelationshipTypeVm.cs" />
+    <Compile Include="Models\DepartmentVm.cs" />
+    <Compile Include="Models\DesignatedSupervisorDM.cs" />
+    <Compile Include="Models\DropDownModel.cs" />
+    <Compile Include="Models\EarningCodeVm.cs" />
+    <Compile Include="Models\EmployeeClassVm.cs" />
+    <Compile Include="Models\EmployeeForecastVm.cs" />
+    <Compile Include="Models\EmployeeStatusReportVM.cs" />
+    <Compile Include="Models\EmployeesVM.cs" />
+    <Compile Include="Models\E_PositionSalaryHistorVm.cs" />
+    <Compile Include="Models\E_PositionVm.cs" />
+    <Compile Include="Models\FinancialCustomVm.cs" />
+    <Compile Include="Models\HoursCodeDropDownVM.cs" />
+    <Compile Include="Models\HoursCodeVm.cs" />
+    <Compile Include="Models\JobsVM.cs" />
+    <Compile Include="Models\ManagerDepartmentVM.cs" />
+    <Compile Include="Models\ManagerLockoutsVM.cs" />
+    <Compile Include="Models\ManagersPositionsVm.cs" />
+    <Compile Include="Models\ManagerVm.cs" />
+    <Compile Include="Models\NonStandardSalaryPayment.cs" />
+    <Compile Include="Models\PayPeriodVM.cs" />
+    <Compile Include="Models\PerformanceProfileVm.cs" />
+    <Compile Include="Models\PerformanceReviewSetupVm.cs" />
+    <Compile Include="Models\PersonAddressVm.cs" />
+    <Compile Include="Models\PersonEmployeeVm.cs" />
+    <Compile Include="Models\OpenPositionReportVM.cs" />
+    <Compile Include="Models\PersonLicenseVm.cs" />
+    <Compile Include="Models\PersonPassportVm.cs" />
+    <Compile Include="Models\PersonPhoneNumberVm.cs" />
+    <Compile Include="Models\PersonProfileVm.cs" />
+    <Compile Include="Models\PersonTestVm.cs" />
+    <Compile Include="Models\PersonVehicleVm.cs" />
+    <Compile Include="Models\PositionsVM.cs" />
+    <Compile Include="Models\RetrohoursVm.cs" />
+    <Compile Include="Models\SalaryComponentViewModel.cs" />
+    <Compile Include="Models\PersonVm.cs" />
+    <Compile Include="Models\PositionBudgetSchedulesVM.cs" />
+    <Compile Include="Models\PositionClosedReportVM.cs" />
+    <Compile Include="Models\PositionReportsVM.cs" />
+    <Compile Include="Models\PositionsInUseReportVM.cs" />
+    <Compile Include="Models\SalaryFringeReport.cs" />
+    <Compile Include="Models\AddDesignatedSupervisorDM.cs" />
+    <Compile Include="Models\StduentPositionsVM.cs" />
+    <Compile Include="Models\TimeCardApprovalReportCollectionVm.cs" />
+    <Compile Include="Models\TimeCardAuditsVM.cs" />
+    <Compile Include="Models\TimeCardCollectionVm.cs" />
+    <Compile Include="Models\TimeCardDisplayColumnVM.cs" />
+    <Compile Include="Models\TimeCardInAndOutVm.cs" />
+    <Compile Include="Models\TimeCardMobileVm.cs" />
+    <Compile Include="Models\TimeCardPayload.cs" />
+    <Compile Include="Models\TimeCardsArchiveVM.cs" />
+    <Compile Include="Models\TimeCardSessionInOutConfigsVm.cs" />
+    <Compile Include="Models\TimeCardsNotesVM.cs" />
+    <Compile Include="Models\TimeCardUnApprovedReportDM.cs" />
+    <Compile Include="Models\TimeCardSummaryVm.cs" />
+    <Compile Include="Models\TimeCardTypeVM.cs" />
+    <Compile Include="Models\TimeCardVm.cs" />
+    <Compile Include="Models\TimeCardWeekTotalCollectionVm.cs" />
+    <Compile Include="Models\TimeCradsNotesArchiveVM.cs" />
+    <Compile Include="Models\TimeOffEmpDetailsVM.cs" />
+    <Compile Include="Models\TimeOffEmployeesAllowedTakenVM.cs" />
+    <Compile Include="Models\TimeOffRequestStatusVM.cs" />
+    <Compile Include="Models\TimeOffRequestVM.cs" />
+    <Compile Include="Models\TimeoffSummaryVM.cs" />
+    <Compile Include="Models\TimeOffTotalRequestsVM.cs" />
+    <Compile Include="Models\TimeOffVM.cs" />
+    <Compile Include="Models\TimeReportVm.cs" />
+    <Compile Include="Models\TreatylimithistoriesVm.cs" />
+    <Compile Include="Models\TreatyNonTreatyTrackingStatusVm.cs" />
+    <Compile Include="Models\TreatyReportVm.cs" />
+    <Compile Include="Models\WorkStudylimitVm.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\ClientConfigurationRepository.cs" />
+    <Compile Include="Repositories\DepartmetsRepository.cs" />
+    <Compile Include="Repositories\DesignatedSupervisorRepository.cs" />
+    <Compile Include="Repositories\EarningsCodeRepository.cs" />
+    <Compile Include="Repositories\EmployeeForecastRepository.cs" />
+    <Compile Include="Repositories\EmployeeRetroHoursRepository.cs" />
+    <Compile Include="Repositories\EPositionRepository.cs" />
+    <Compile Include="Repositories\FinancialRepository.cs" />
+    <Compile Include="Repositories\HoursCodesRepository.cs" />
+    <Compile Include="Repositories\HrkAdminRepository.cs" />
+    <Compile Include="Repositories\LookupTablesRepository.cs" />
+    <Compile Include="Repositories\ManagerDepartmentRepository.cs" />
+    <Compile Include="Repositories\PerformanceRepository.cs" />
+    <Compile Include="Repositories\PayPeriodRepository.cs" />
+    <Compile Include="Repositories\PersonAddressRepository.cs" />
+    <Compile Include="Repositories\PersonEmployeeRepository.cs" />
+    <Compile Include="Repositories\PersonLicenseRepository.cs" />
+    <Compile Include="Repositories\PersonPassportRepository.cs" />
+    <Compile Include="Repositories\PersonPhoneNumbersRepository.cs" />
+    <Compile Include="Repositories\PersonVehicleRepository.cs" />
+    <Compile Include="Repositories\PositionImportRepository.cs" />
+    <Compile Include="Repositories\SalaryComponenRepository.cs" />
+    <Compile Include="Repositories\PersonRepository.cs" />
+    <Compile Include="Repositories\PositionBudgetSchedulesRepository.cs" />
+    <Compile Include="Repositories\ReportRepository.cs" />
+    <Compile Include="Repositories\TestRepository.cs" />
+    <Compile Include="Repositories\TimeCardApprovalReportRepository.cs" />
+    <Compile Include="Repositories\TimeCardArchiveRerpository.cs" />
+    <Compile Include="Repositories\TimeCardAuditsRepository.cs" />
+    <Compile Include="Repositories\TimeCardConfigurationsRepository.cs" />
+    <Compile Include="Repositories\TimeCardMatrixReposotory.cs" />
+    <Compile Include="Repositories\TimeCardSessionInOutRepository.cs" />
+    <Compile Include="Repositories\TimeCardsMobileRepository.cs" />
+    <Compile Include="Repositories\TimeCardsRepository.cs" />
+    <Compile Include="Repositories\TimeCardUnApprovedReportRepository.cs" />
+    <Compile Include="Repositories\TimeOffEmployeesAllowedTakenRepository.cs" />
+    <Compile Include="Repositories\TimeOffRequestsRepository.cs" />
+    <Compile Include="Repositories\TimeReportRepository.cs" />
+    <Compile Include="TimeCardExportCollectionVM.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExecViewHrk.EfClient\ExecViewHrk.EfClient.csproj">
+      <Project>{204a73c1-953c-4ef7-a567-8ea7e7e54cb4}</Project>
+      <Name>ExecViewHrk.EfClient</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

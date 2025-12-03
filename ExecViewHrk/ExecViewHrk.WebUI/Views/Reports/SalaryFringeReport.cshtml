@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Salary & Fringe Report";
+    Layout = null;
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Salary & Fringe Report <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>           
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.SalaryFringeReport>()
+        .Name("grdSalaryFringeReport")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+
+            
+            //public decimal Salary { get; set; }
+            //public decimal FICA { get; set; }
+            //public decimal C401K { get; set; }
+            //public decimal Medical { get; set; }
+            //public decimal Dental { get; set; }
+            //public decimal C403b { get; set; }
+            //public decimal LifeIns { get; set; }
+            //public decimal Disability { get; set; }
+            //public decimal TotalEmployerCost { get; set; }
+
+            columns.Bound(c => c.BudgetCenter).Title("Budget Center");
+            columns.Bound(c => c.BudgetCenterDescription).Title("Budget Center Description");
+            columns.Bound(c => c.FundingSource).Title("Funding Source");
+            columns.Bound(c => c.FundingSourceDescription).Title("Funding Source Description");
+            columns.Bound(c => c.Resource).Title("Resource");
+            columns.Bound(c => c.PeriodStart).Title("Period Start").ClientTemplate("#= PeriodStart == null ? '' : kendo.toString(PeriodStart, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.PeriodEnd).Title("Period End").ClientTemplate("#= PeriodEnd == null ? '' : kendo.toString(PeriodEnd, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.Hours).Title("Hours");
+            columns.Bound(c => c.Salary).Title("Salary").Format("{0:c2}");
+            columns.Bound(c => c.FICA).Title("FICA").Format("{0:c2}");
+            columns.Bound(c => c.C401K).Title("401K").Format("{0:c2}");
+            columns.Bound(c => c.Medical).Title("Medical").Format("{0:c2}");
+            columns.Bound(c => c.Dental).Title("Dental").Format("{0:c2}");
+            columns.Bound(c => c.C403b).Title("403b").Format("{0:c2}");
+            columns.Bound(c => c.LifeIns).Title("Life Ins.").Format("{0:c2}");
+            columns.Bound(c => c.Disability).Title("Disability").Format("{0:c2}");
+            columns.Bound(c => c.TotalEmployerCost).Title("Total Employer Cost").Format("{0:c2}");
+
+
+        })
+        .ToolBar(tools => { tools.Excel(); tools.Pdf(); })
+        .Pdf(pdf => pdf
+            .AllPages()
+            .Landscape()
+            .FileName("Salary Fringe Report.pdf")
+        )
+        .Sortable()
+        .Excel(excel => excel.AllPages(true)
+        .FileName("Salary Fringe Report.xlsx")
+        .Filterable(true))
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .DataSource(dataSource => dataSource.Ajax()
+        .Read(read => read.Action("SalaryFringeReport_Read", "Reports"))
+            .Model(model =>
+            {
+                model.Id(p => p.BudgetCenter);
+            }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .k-grid-header th.k-header {
+        min-width: 180px;
+    }
+
+    .k-grid {
+        overflow-x: scroll;
+    }
+
+    .k-pdf-export .k-grid-toolbar,
+    .k-pdf-export .k-pager-wrap {
+        display: none;
+    }
+    .k-grid-toolbar, .k-pager-wrap {
+        background: transparent !important;
+        border: 0;
+    }
+    .k-footer-template td {
+        font-weight: 700 !important;
+    }
+</style>

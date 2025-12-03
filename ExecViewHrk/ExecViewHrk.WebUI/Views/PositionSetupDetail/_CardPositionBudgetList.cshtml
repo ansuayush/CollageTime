@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.PositionBudgetsVM>
+<div class="theme-grid">
+    @(Html.Kendo().Grid(Model)
+    .Name("CardPositionBudgetlst")
+    .HtmlAttributes(new { style = "height:270px" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.BudgetYear).Title("Year");
+        columns.Bound(p => p.BudgetMonth).Title("Month");
+        columns.Bound(p => p.BudgetAmount).Title("Amount").ClientTemplate("$#= BudgetAmount !== null ? kendo.toString(BudgetAmount,'n2') : ''#");
+        columns.Bound(p => p.FTE).Title("FTE");
+    })
+     .Scrollable()
+    //.Pageable(pageable => pageable.Refresh(false).PageSizes(false))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+         .Model(model =>
+         {
+             model.Field(p => p.BudgetYear);
+             model.Field(p => p.BudgetMonth);
+             model.Field(p => p.BudgetAmount);
+             model.Field(p => p.FTE);
+         }
+        )
+     )
+    )
+</div>
+

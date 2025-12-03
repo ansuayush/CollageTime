@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "Person Examination";
+    Layout = null;
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-3 p-0">
+                        <h4>
+                            Medical Examinations
+                        </h4>
+                    </div>
+                    <div class="col-md-9 p-0 text-right">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton" onclick="addMedicalExamination()">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.PersonExaminationVm>()
+                                    .Name("gridPersonExamination")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+
+                                    .Columns(columns =>
+                                    {
+                                        columns.Command(command =>
+                                        {
+                                            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPersonExaminationEdit");
+                                            command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridPersonExaminationDelete");
+                                        }).Width(70);
+                                        columns.Bound(c => c.PersonExaminationId).Visible(false);
+                                        columns.Bound(c => c.MedicalExaminationDescription).Title("Medical Examination Type");
+                                        columns.Bound(c => c.ExaminationDate).Title("Examination Date").ClientTemplate("#= kendo.toString(ExaminationDate, \"MM/dd/yyyy\") #");
+                                        columns.Bound(c => c.Examiner).Title("Examiner");
+                                        columns.Bound(c => c.NextScheduledExamination).Title("Next Scheduled Examination").ClientTemplate("#= NextScheduledExamination == null ? '' : kendo.toString(NextScheduledExamination, \"MM/dd/yyyy\") #");
+                                    })
+                                    .Sortable()
+                                    .Selectable()
+                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                    .Events(e => e.DataBound("gridDataBound"))
+                                    .DataSource(dataSource => dataSource.Ajax()
+                                                    .Read(read => read.Action("PersonExaminationList_Read", "PersonExaminations"))
+
+                                                    .Model(model =>
+                                                    {
+                                                        model.Id(p => p.PersonExaminationId);
+                                                        model.Field(p => p.PersonExaminationId);
+                                                        model.Field(p => p.MedicalExaminationDescription);
+                                                        model.Field(p => p.ExaminationDate);
+                                                        model.Field(p => p.Examiner);
+                                                        model.Field(p => p.NextScheduledExamination);
+                                                    }
+                                                )
+                                                .PageSize(10)
+                                        .Batch(false)
+                                        .Events(events =>
+                                        {
+                                            events.Error("refreshGrid");
+                                            events.RequestEnd("gridRequestEnd");
+                                        })
+                                    )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

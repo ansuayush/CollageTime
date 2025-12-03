@@ -1,0 +1,207 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Person Vehicle";
+    Layout = null;
+}
+@model ExecViewHrk.Models.PersonsVehicleVm
+
+@{
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Vehicle</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonVehicles", "PersonVehicles", FormMethod.Post, new { role = "form", id = "PersonVehicleForm" }))
+            {
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonVehicleId, new { id = "hiddenPersonVehicleId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>State</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.StateId,
+                  new SelectList(Model.StateDropDownList, "keyvalue", "keydescription", Model.StateId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'State');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.StateId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Acquisition Date</label>
+                        @Html.TextBoxFor(model => model.AcquisitionDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.AcquisitionDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Sold Date</label>
+                        @Html.TextBoxFor(model => model.SoldDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.SoldDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Make</label>
+                        @Html.TextBoxFor(model => model.Make, new { @class = "form-control" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.Make)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Model</label>
+                        @Html.TextBoxFor(model => model.Model, new { @class = "form-control" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.Model)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Color</label>
+                        @Html.TextBoxFor(model => model.Color, new { @class = "form-control" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.Color)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Vehicle License Number</label>
+                        @Html.TextBoxFor(x => x.LicenseNumber, new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.LicenseNumber)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+
+                    <div class="form-group ">
+                        <label>Notes</label>
+                        @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                        @Html.ValidationMessageFor(x => x.Notes)
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="statesWindow" style="display:none">
+    <div id="statesContent">
+        @Html.Partial("~/Views/DdlStates/DdlStatesPartial.cshtml")
+
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSavePersonVehicleAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+    });
+    $("#btnSavePersonVehicleAjax").click(function (e) {
+        e.preventDefault();
+        var SoldDate = $("#SoldDate").val();
+        var AcquisitionDate = $("#AcquisitionDate").val();
+        if (SoldDate != '' && AcquisitionDate != '') {
+            if (Date.parse(AcquisitionDate) > Date.parse(SoldDate)) {
+                $("#SoldDate").val('');
+                toastr.error("Sold Date can't be less than Acquisition Date.");
+                return false;
+            }
+        }
+        var str = $("#LicenseNumber").val();
+        if (!str.match("^[a-zA-Z0-9]*$")) {
+            toastr.error("do not enter fractions in vehicle license number");
+            return;
+        }
+
+        if (!ValidateForm("PersonVehicleForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#PersonVehicleForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonVehicles/PersonVehiclesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonVehicleId = $("#hiddenPersonVehicleId").val();
+                resetGrid("gridPersonVehicle");
+                $("#btnSavePersonVehicleAjax").parent().find(".md-close").click();
+                if (_oldhiddenPersonVehicleId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+    var medicalExaminationTypesWindow = $("#statesWindow");
+    if (!medicalExaminationTypesWindow.data("kendoWindow")) {
+        medicalExaminationTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "States",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseStatesWindow
+        });
+    }
+
+    function onCloseStatesWindow() {
+        $("#StateTitle").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddState").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#statesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+</script>

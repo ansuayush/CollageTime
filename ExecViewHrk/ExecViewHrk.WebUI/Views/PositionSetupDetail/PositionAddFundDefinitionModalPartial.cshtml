@@ -1,0 +1,168 @@
+﻿@model ExecViewHrk.WebUI.Models.FundHistoryVm
+@using (Html.BeginForm("SaveFundHistory", "PositionSetupDetail", FormMethod.Post, new { role = "form", id = "PositionFundDefinitionForm" }))
+{
+
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Fund Definition</h4>
+        </div>
+        <div class="modal-body">
+
+           <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Fund Code</label>
+                        @Html.TextBoxFor(m => m.FundCode, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.FundCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Description</label>
+                        @Html.TextBoxFor(m => m.FundDescription, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.FundDescription)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                        @Html.ValidationMessageFor(x => x.Amount)
+                    </div>
+                </div>
+                
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Effective Date</label>
+                        @*@Html.TextBoxFor(m => m.EffectiveDate, new { @class = "form-control" })*@
+                        @Html.TextBoxFor(m => m.EffectiveDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control ", @data_dateformat = "mm/dd/yy", @data_type = "smalldate" })
+                        @Html.ValidationMessageFor(x => x.EffectiveDate)
+                    </div>
+                </div>
+               
+            </div>
+
+
+
+            <div class="row">
+
+                <div class="col-md-12 m-t-20">
+                    <div class="card-header p-l-0">
+                        <h5 class="card-header-text">Fund Definition History</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                @Html.Partial("PositionFundDefinitionList",Model.FundDefinitionList)
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" id="btnFundModalClose" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveFundHistory">Save</button>
+        </div>
+    </div>
+</div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+        $('#Amount').keydown(function (e) { EntryOnlyInteger(e); });
+        $('#FTE').keydown(function (e) { EntryOnlyInteger(e); });
+
+    });
+    function EntryOnlyInteger(e) {
+        if (e.shiftKey || e.ctrlKey || e.altKey) { // if shift, ctrl or alt keys held down
+            e.preventDefault();         // Prevent character input
+        }
+        else {
+            var n = e.keyCode;
+            if (!((n == 8)              // backspace
+                    || (n == 9)
+                    || (n == 46)                // delete
+                    || (n >= 35 && n <= 40)     // arrow keys/home/end
+                    || (n >= 48 && n <= 57)     // numbers on keyboard
+                    || (n >= 96 && n <= 105) || (n == 190) || (n == 110))  // number on keypad
+                    ) {
+                e.preventDefault();
+                // alert("in if");
+                // Prevent character input
+            };
+        };
+    }
+
+    $("#btnSaveFundHistory").click(function (e) {
+        e.preventDefault();
+        var form = $("#PositionFundDefinitionForm");
+        //var staus = formService.getStatus();
+        //if (staus) {
+        //    return;
+        //}
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = form.serializeArray();
+        var formURL = appBaseUrl + "PositionSetupDetail/SaveFundHistory";
+        loading(true); 
+        $.ajax({
+            type: 'POST',
+            url: formURL,
+            data: postData,
+            success: function (data) {
+                if ($.isNumeric(data)) {
+                    $('#btnFundModalClose').click();
+                    $('#btnAddPositionBudgetAllocation').click();
+                    toastr.success(formService.messages.saved);
+                    loading(false);
+                  //  resetcontrol();
+                } else {
+                    toastr.error("Changes rejected.");
+                    loading(false);
+                }
+            },
+            complete: function () {
+
+            },
+            error: function (data) {
+                loading(false);
+            },
+            async: false,
+            cache: false
+        });
+    });
+
+
+    function newKendoDS(ndata) {
+        var datasource = new kendo.data.DataSource({ data: ndata });
+        datasource.read(); // In order to refresh
+        return datasource;
+    }
+    function resetFundHistoryGrid(grid) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GridPositionFundHistoryRead", "PositionSetupDetail")',
+           // data: { positionBudgetID: positionBudgetID },
+            beforeSend: function () {
+            },
+            success: function (data) {
+                var newKendoDatasource = newKendoDS(data);
+                $("#" + grid).data("kendoGrid").dataSource.data(newKendoDatasource._data);
+            },
+            complete: function () {
+            },
+            error: function (data) {
+            },
+            dataType: "json",
+            async: false,
+            traditional: true,
+            cache: false
+        });
+    }
+
+</script>

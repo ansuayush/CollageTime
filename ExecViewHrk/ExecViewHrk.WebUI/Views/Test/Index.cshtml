@@ -1,0 +1,52 @@
+﻿@{
+
+    Layout = null;
+}
+<div>
+    <b>Empoyee Import</b>
+    <br />
+    @using (Html.BeginForm("Index", "Test", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="postedFile" />
+        <input type="submit" value="Import To Temporary Table" />
+    }
+
+
+    @using (Html.BeginForm("UpdateDB", "Test", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="text" name="count" />
+        <input type="submit" value="Import To System" />
+    }
+
+</div>
+<br /><br /><hr /><br /><br />
+<div>
+    <b>Budget Import</b>
+    <br />
+    @using (Html.BeginForm("Budget", "Test", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="postedFile" />
+        <input type="submit" value="Import To Temporary Table" />
+    }
+
+
+    @using (Html.BeginForm("UpdateBudgetToDB", "Test", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="text" name="count" />
+        <input type="submit" value="Import Budget To DB" />
+    }
+
+</div>
+<br /><br /><hr /><br /><br />
+<div>
+    <b>Generate User Logins</b>
+    <br />
+ 
+
+    @using (Html.BeginForm("GenerateUserLogins", "Test", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+       
+        <input type="submit" value="Generate User Logins" />
+    }
+
+</div>

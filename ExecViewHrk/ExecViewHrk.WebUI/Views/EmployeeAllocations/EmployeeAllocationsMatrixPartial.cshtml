@@ -1,0 +1,120 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Employee Allocation";
+
+}
+
+@*@model ExecViewHrk.WebUI.Models.DepartmentVm*@
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+            <div class="col-md-6 ">
+                <label>Employee Allocations</label>
+            </div>
+
+            <div class="col-md-6 ">
+                
+            </div>
+        </div>
+    </div>
+    <div id="formDiv" class="panel-body">
+
+        <div class="row ">
+
+            <div class="row ">
+                <div class="col-md-12">
+
+
+                    <div class="form-group ">
+
+                        @(Html.Kendo().Grid<ExecViewHrk.EfClient.EmployeeAllocation>()
+                                        .Name("gridEmployeeAllocation")
+                                        .Resizable(resize => resize.Columns(true))
+                                        .Filterable()
+                                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                        .ToolBar(toolbar => toolbar.Create())
+
+                                        .Columns(columns =>
+                                        {
+                                            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(170);
+                                            columns.Bound(c => c.EmployeeAllocationId).Width(100);
+                                            columns.ForeignKey(c => c.EmployeeId, (System.Collections.IEnumerable)ViewData["employeesList"], "EmployeeId", "PersonName")
+                                            .Title("Employee").Width(100);
+                                            columns.ForeignKey(c => c.DepartmentId, (System.Collections.IEnumerable)ViewData["departmentsList"], "DepartmentId", "CompCode_DeptCode_DeptDescription")
+                                            .Title("CompanyCode-DepartmentCode-Department").Width(100);
+                                            columns.Bound(c => c.AllocationPercent).Format("{0:N}").Width(100);
+                                        })
+                                        .HtmlAttributes(new { style = "height: 480px;" })
+
+                                        .Scrollable()
+                                        .Groupable()
+                                        .Sortable()
+                                        .Selectable()
+
+                                        .Pageable(pageable => pageable
+                                            .Refresh(false)
+                                            .PageSizes(true)
+                                            .ButtonCount(5))
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                                .Read(read => read.Action("EmployeeAllocationsList_Read", "EmployeeAllocations"))
+                                                .Create(create => create.Action("EmployeeAllocationsList_Create", "EmployeeAllocations"))
+                                                .Update(update => update.Action("EmployeeAllocationsList_Update", "EmployeeAllocations"))
+                                                .Destroy(destroy => destroy.Action("EmployeeAllocationsList_Destroy", "EmployeeAllocations"))
+                                        .Model(model =>
+                                        {
+                                            model.Id(p => p.EmployeeAllocationId);
+                                            model.Field(p => p.EmployeeAllocationId).Editable(false);
+                                            model.Field(p => p.EmployeeId).DefaultValue(0);
+                                            model.Field(p => p.DepartmentId).DefaultValue(0);
+                                        }
+                                              )
+                                        .Batch(false)
+                                        .Events(events =>
+                                        {
+                                            events.Error("refreshGrid");
+                                            events.RequestEnd("gridRequestEnd");
+                                        })
+                                        )
+                        )
+
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+    
+</script>
+
+
+

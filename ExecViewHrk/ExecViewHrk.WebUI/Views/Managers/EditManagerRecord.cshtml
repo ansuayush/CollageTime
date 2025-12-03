@@ -1,0 +1,108 @@
+﻿@model ExecViewHrk.Models.ManagerVm
+@Scripts.Render("~/bundles/Common")
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Edit Manager Positions : </h5> <span id="spnName" style="font-weight:bold;">@Model.PersonName</span>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("Managers", "Managers", FormMethod.Post, new { role = "form", id = "EditManagerForm" }))
+            {
+                @Html.HiddenFor(model => model.ID, new { id = "hiddenId" })
+                @Html.ValidationSummary(true)
+                <ul class="nav nav-tabs nav-tabs-new md-tabs m-0 p-0" role="tablist">
+                    <li class="nav-item nav-item-new">
+                        <a class="nav-link f-w-600 active" data-toggle="tab" href="#edit" role="tab"><i class="fa fa-list f-14"></i>Positions</a>
+                        <div class="slide"></div>
+                    </li>
+                    <li class="nav-item nav-item-new">
+                        <a class="nav-link f-w-600" data-toggle="tab" href="#Department" role="tab"><i class="fa fa-list-alt"></i>Department</a>
+                        <div class="slide"></div>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="edit" role="tabpanel">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Positions not managing</label>
+                                <select id="Managerslocked" class="form-control list-multiple" multiple="multiple" style="height:200px; overflow:auto;scrollbar-highlight-color:aquamarine;">
+                                    @foreach (var item in ViewBag.PositionsList)
+                                    {
+                                        <option value="@item.keyvalue">@item.keydescription</option>
+                                    }
+                                </select>
+                                @Html.HiddenFor(m => m.managerslockedlist, new { @id = "hdnmanagerslocked" })
+                            </div>
+                        </div>
+                        <div class="col-sm-1" style="text-align:center; padding-top:80px;">
+                            <a href="#" class="btn btn-inverse-default m-b-15" id="right"><i class="fa fa-angle-right f-w-600" style="font-size:22px;"></i></a><br />
+                            <a href="#" class="btn btn-inverse-default" id="left"><i class="fa fa-angle-left f-w-600" style="font-size:22px;"></i></a>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Positions managing</label>
+                                @if (Model.PositionID == 0)
+                                {
+                                    <select id="Managersnotlocked" class="form-control list-multiple" multiple="multiple" style="height:200px; overflow:auto;scrollbar-highlight-color:aquamarine;"></select>
+                                }
+                                else
+                                {
+                                    <select id="Managersnotlocked" class="form-control list-multiple" multiple="multiple" style="height:200px; overflow:auto;scrollbar-highlight-color:aquamarine;">
+                                        @foreach (var item in Model.PositionsList)
+                                        {
+                                            <option value="@item.keyvalue">@item.keydescription</option>
+                                        }
+                                    </select>
+                                }
+                                @Html.HiddenFor(m => m.managersnotlockedlist, new { @id = "hdnmanagersnotlocked" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="Department" role="tabpanel">
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Departments not managing</label>
+                                <select id="Departmentlocked" class="form-control list-multiple" multiple="multiple" style="height:200px; overflow:auto;scrollbar-highlight-color:aquamarine;">
+                                    @foreach (var item in ViewBag.DepartmentList)
+                                    {
+                                        <option value="@item.keyvalue">@item.keydescription</option>
+                                    }
+                                </select>
+                                @Html.HiddenFor(m => m.Departmentlockedlist, new { @id = "hdnDepartmentlockedlist" })
+                            </div>
+                        </div>
+                        <div class="col-sm-1" style="text-align:center; padding-top:80px;">
+                            <a href="#" class="btn btn-inverse-default m-b-15" id="rightDepartment"><i class="fa fa-angle-right f-w-600" style="font-size:22px;"></i></a><br />
+                            <a href="#" class="btn btn-inverse-default" id="leftDepartment"><i class="fa fa-angle-left f-w-600" style="font-size:22px;"></i></a>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Departments managing</label>
+                                @if (Model.DepartmentID == 0)
+                                {
+                                    <select id="Departmentnotlocked" class="form-control list-multiple" multiple="multiple" style="height:200px; overflow:auto;scrollbar-highlight-color:aquamarine;"></select>
+                                }
+                                else
+                                {
+                                    <select id="Departmentnotlocked" class="form-control list-multiple" multiple="multiple" style="height:200px; overflow:auto;scrollbar-highlight-color:aquamarine;">
+                                        @foreach (var item in Model.DepartmentList)
+                                        {
+                                            <option value="@item.keyvalue">@item.keydescription</option>
+                                        }
+                                    </select>
+                                }
+                                @Html.HiddenFor(m => m.Departmentnotlockedlist, new { @id = "hdnDepartmentnotlockedlist" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15" id="btnCloseManagerReview">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveManagers" onclick="UpdateRecord();">Done</button>
+</div>
+

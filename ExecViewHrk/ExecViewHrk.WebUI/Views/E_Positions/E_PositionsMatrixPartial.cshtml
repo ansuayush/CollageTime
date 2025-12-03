@@ -1,0 +1,185 @@
+﻿@model ExecViewHrk.Models.E_PositioVm
+@{
+    ViewBag.Title = "Employee Positions";
+    Layout = null;
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<script>
+    function empno() {
+        
+        return {
+
+             empno: $("#EmployeeId option:selected").val()
+        }
+    }
+</script>
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("EmployeeRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-3 p-0">
+                        <h4>
+                            Employee Position
+                        </h4>
+                    </div>
+                    <div class="col-md-9 p-0 text-right">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton" onclick="addEmployeePosition()">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Assign New Position</span>
+                        </button>
+                        <span class="m-l-10">Employment Number</span>
+                        @Html.DropDownList("EmployeeId", ViewData["EmployeeId"] as IEnumerable<SelectListItem>)                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.E_PositioVm>()
+                                    .Name("gridEmployeePosition")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+
+                                    .Columns(columns =>
+                                    {
+                                        columns.Command(command =>
+                                        {
+                                            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridEmployeePositionEdit");
+                                            command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridEmployeePositionDelete");
+                                            command.Custom("View Salary").Text("<i class='fa fa-eye m-0 txt-warning f-18'></i>").Click("ViewSalaryDetail");
+                                        }).Width(100);
+                                        columns.Bound(c => c.E_PositionId).Visible(false);
+                                        columns.Bound(c => c.PositionDescription).Title("Position");
+                                        columns.Bound(c => c.PayFrequencyDescription).Title("Pay Frequency");
+                                        columns.Bound(c => c.PositionTypeDesc).Title("Position Type");
+                                        columns.Bound(c => c.StartDate).Title("Start Date").ClientTemplate("#= StartDate == null ? '' : kendo.toString(StartDate, \"MM/dd/yyyy\") #");
+                                        columns.Bound(c => c.actualEndDate).Title("End Date").ClientTemplate("#= actualEndDate == null ? '' : kendo.toString(actualEndDate, \"MM/dd/yyyy\") #");
+                                        columns.Bound(c => c.PrimaryPosition).Title("Primary Position");
+                                    })
+                            .Sortable()
+                            .Selectable()
+                            .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                            .Events(e => e.DataBound("gridDataBound"))
+                            .DataSource(dataSource => dataSource.Ajax()
+                            .Read(read => read.Action("ePositionList_Read", "E_Positions").Data("empno"))
+
+                            .Model(model =>
+                            {
+                                model.Id(p => p.E_PositionId);
+                                model.Field(p => p.E_PositionId);
+                                model.Field(p => p.PositionDescription);
+                                model.Field(p => p.PayFrequencyDescription);
+                                model.Field(p => p.PositionTypeDesc);
+                                model.Field(p => p.StartDate);
+                                model.Field(p => p.actualEndDate);
+                                model.Field(p => p.PrimaryPosition);
+                            }
+                            )
+                            .PageSize(10)
+                            .Batch(false)
+                            .Events(events =>
+                            {
+                                events.Error("refreshGrid");
+                                events.RequestEnd("gridRequestEnd");
+                            })
+                            )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ViewSalaryModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" style="display: none;" aria-hidden="true">
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            @*<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title">View Salary</h4>
+            </div>*@
+            <div class="modal-body">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title">View Salary</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="table-primary table-striped">
+                                        <div role="grid" id="DraftItems1_wrapper" class="dataTables_wrapper form-inline no-footer">
+                                            <table class="table table-striped table-bordered dataTable no-footer" id="DraftItems1" style="width: 100%" aria-describedby="DraftItems1_info">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th data-class="expand" class="sorting_asc" tabindex="0" aria-controls="DraftItems1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rate Type: activate to sort column ascending">Rate Type</th>
+                                                        <th class="sorting" tabindex="0" aria-controls="DraftItems1" rowspan="1" colspan="1" aria-label="Rate: activate to sort column ascending">Rate</th>
+                                                        <th data-hide="phone" class="sorting" tabindex="0" aria-controls="DraftItems1" rowspan="1" colspan="1" aria-label="Hours per Pay Period: activate to sort column ascending">Hours per Pay Period</th>
+                                                        <th data-hide="phone,tablet" class="sorting" tabindex="0" aria-controls="DraftItems1" rowspan="1" colspan="1" aria-label="Annual Salary: activate to sort column ascending">Annual Salary</th>
+                                                        <th data-hide="phone,tablet" class="sorting" tabindex="0" aria-controls="DraftItems1" rowspan="1" colspan="1" aria-label="Effective Date: activate to sort column ascending">Effective Date</th>
+                                                        <th data-hide="phone,tablet" class="sorting" tabindex="0" aria-controls="DraftItems1" rowspan="1" colspan="1" aria-label="Actual End Date: activate to sort column ascending">End Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="salaryDetail"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+    
+</div>
+<script>
+    $(document).ready(function () {
+        $("#EmployeeId").on("change", function () {
+
+            var employeeID = $('#EmployeeId').val();
+
+            $.ajax({
+                url: $("#ApplicationUrl").val() + 'E_Positions/GetEmployeeId?empNo=' + employeeID,
+                type: "GET",
+                data: "",
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    var EmpID = data;
+                    $.ajax({
+                        url: $("#ApplicationUrl").val() + 'E_Positions/E_PositionsMatrixPartial?employeeID=' + EmpID,
+                        type: "POST",
+                        data: "",
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            resetGrid("gridEmployeePosition");
+                        },
+                        error: function () {
+                        }
+                    });
+                },
+                error: function () {
+                }
+            });
+        });
+    });
+</script>

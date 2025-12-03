@@ -1,0 +1,262 @@
+﻿
+@model ExecViewHrk.Models.SalaryComponentViewModel
+@using (Html.BeginForm("SaveSalaryComponent", "SalaryComponent", FormMethod.Post, new { role = "form", id = "SalaryComponentForm" }))
+{
+    @Html.HiddenFor(model => model.employeeID)
+    @Html.HiddenFor(model => model.id)
+    @Html.ValidationSummary(true)
+    <div id="SelectPopup" class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Salary Component</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Salary Component</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.SelectSalaryComponentID, new SelectList(Model.SalaryComponentsList, "SalaryComponentID", "description", Model.SelectSalaryComponentID), new { @class = "form-control input-sm" })
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'Disability');">
+                                        <span class="fa fa-plus"></span>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-15 text-right">
+                <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+                <input type="button" id="BtnSalaryComponentDropdownSave" name="Done" value="Done" class="btn btn-primary">
+            </div>
+        </div>
+    </div>
+    <div id="SalaryDetail" class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Salary Component Detail</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Salary Component</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.SalaryComponentID, new SelectList(Model.SalaryComponentsList, "SalaryComponentID", "description", Model.SalaryComponentID), new { @class = "form-control input-sm", data_required = "Y" })
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'SalaryComponent');">
+                                        <span class="fa fa-plus"></span>
+                                    </span>
+                                }
+                                @Html.ValidationMessageFor(x => x.SalaryComponentID)
+                            </div>
+                        </div>
+                    </div>   
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Pay Frequency</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.PayFrequencyId, new SelectList(Model.PayFrequencyList, "PayFrequencyId", "description", Model.PayFrequencyId), new { @class = "form-control input-sm", data_required = "Y" })
+                                @Html.ValidationMessageFor(x => x.PayFrequencyId)
+                            </div>
+                        </div>
+                    </div>  
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Pay Type</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.payTypeID, new SelectList(Model.PayTypeyList, "payTypeID", "description", Model.payTypeID), new { @class = "form-control input-sm" })
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'payType');">
+                                        <span class="fa fa-plus"></span>
+                                    </span>
+                                }
+                                @Html.ValidationMessageFor(x => x.payTypeID)
+                            </div>
+                        </div>
+                    </div>                             
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Salary Component Type</label>
+                            @Html.TextBoxFor(m => m.salaryComponentTypeID, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Amount</label>
+                            @Html.TextBoxFor(m => m.amount, new { @class = "form-control" })
+                        </div>
+                    </div>  
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            @Html.TextBoxFor(m => m.startDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control ", @data_dateformat = "mm/dd/yy", @data_type = "smalldate" })
+                        </div>
+                    </div>  
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Expiration Date</label>
+                            @Html.TextBoxFor(m => m.expirationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control ", @data_dateformat = "mm/dd/yy", @data_type = "smalldate" })
+                        </div>
+                    </div>  
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.Base == true)
+                                {
+                                    <input id="@Html.NameFor(x => x.Base)" type="checkbox" value="@Model.Base" checked="checked">
+                                }
+                                else
+
+                                {
+                                    <input id="@Html.NameFor(x => x.Base)" type="checkbox" value="@Model.Base">
+                                }
+                                @Html.LabelFor(x => x.Base)
+                                @Html.HiddenFor(x => x.Base)
+                            </div>
+                        </div>
+                    </div>   
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.benefits == true)
+                                {
+                                    <input id="@Html.NameFor(x => x.benefits)" type="checkbox" value="@Model.benefits" checked="checked">
+                                }
+                                else
+
+                                {
+                                    <input id="@Html.NameFor(x => x.benefits)" type="checkbox" value="@Model.benefits">
+                                }
+                                @Html.LabelFor(x => x.benefits)
+                                @Html.HiddenFor(x => x.benefits)
+                            </div>
+                        </div>
+                    </div>      
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.total == true)
+                                {
+                                    <input id="@Html.NameFor(x => x.total)" type="checkbox" value="@Model.total" checked="checked">
+                                }
+                                else
+
+                                {
+                                    <input id="@Html.NameFor(x => x.total)" type="checkbox" value="@Model.total">
+                                }
+                                @Html.LabelFor(x => x.total)
+                                @Html.HiddenFor(x => x.total)
+                            </div>
+                        </div>
+                    </div>
+              
+                  
+                </div>
+
+            </div>
+            <div class="p-15 text-right">
+                <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+                <input type="button" id="BtnSalaryComponentSave" name="Done" value="Done" class="btn btn-primary">
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $("#SalaryComponentForm *").filter(':input').not("input[type=hidden]").each(function () {
+            $(this).attr("onchange", "SalaryComponentFieldValueOnchange(this)");
+        });
+        $('#SalaryComponentID option[description=' + @Model.SalaryComponentID +']').prop('selected', true);
+        $('#PayFrequencyId option[value=' + @Model.PayFrequencyId +']').prop('selected', true);
+        $('#payTypeID option[value=' + @Model.payTypeID +']').prop('selected', true); 
+        if ($('#Flag').val() == "New")
+        {
+            $('#SalaryDetail').hide();
+        }
+        else {
+            $('#SelectPopup').hide();
+        }
+    });
+    $("#BtnSalaryComponentDropdownSave").click(function (e) {
+        $('#SalaryDetail').show();
+        $('#SelectPopup').hide();
+    });
+    function SalaryComponentFieldValueOnchange(fldEle) {
+        ValidateElements(fldEle.id);
+        var FiledID = fldEle.id; // Element ID
+        var FieldValue = $("#" + FiledID).val(); // Element Value
+        switch (FiledID) {       
+            case "SelectSalaryComponentID":
+                $('#SalaryComponentID').val($('#SelectSalaryComponentID').val());
+                GetValues();
+                return;
+                break;
+
+            default: break;
+
+        }
+    }
+    $("#BtnSalaryComponentSave").click(function (e) {
+        e.preventDefault();
+        loading(true)
+        var form = $("#SalaryComponentForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            loading(false)
+            return;
+        }
+        if (!ValidateForm("SalaryComponentForm")) {
+            loading(false);
+            return;
+        }
+
+        //if (!CompareDates($("#RequestedDate").val(), $("#ProvidedDate").val())) {
+        //    toastr.error("Provided Date should greater than Requested Date");
+        //    loading(false)
+        //    return;
+        //}
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#SalaryComponentForm").serializeArray();
+
+        var formURL = appBaseUrl + "SalaryComponent/SaveSalaryComponent";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                if (data.succeed == false)
+                    toastr.error(data.Message);
+                else {
+                    var Empid = { EmpId:  $("#HdSelectedEmpid").val() };
+                    LoadContents("SalaryComponentList", "SalaryComponent", Empid)
+                        $("#BtnSalaryComponentSave").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.saved);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    
+                }
+            }
+            else {
+                toastr.error(data.Message);
+            }
+        });
+    });
+    function GetValues()
+    {
+        $.get($("#appBaseUrl").val() + "SalaryComponent/GetValues", { id: $('#SelectSalaryComponentID').val() }, function (data, status) {
+            $("#PayFrequencyId").val(data.PayFrequencyCode);
+            $("#payTypeID").val(data.payTypeID);
+            $("#Base").val(data.Base);
+            $("#benefits").val(data.benefits);
+            $("#Total").val(data.Total);
+        });
+    }
+</script>

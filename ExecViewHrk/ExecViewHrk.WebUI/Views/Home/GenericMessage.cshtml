@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewBag.Title = "Generic Message";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@if (TempData["message"] != null)
+{
+    <h3 style="margin-top:50px">@TempData["message"]</h3>
+}
+

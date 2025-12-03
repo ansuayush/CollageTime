@@ -1,0 +1,98 @@
+﻿
+@{
+    ViewBag.Title = "TimeCardsAudits";
+    Layout = null;
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Time Card Audits<span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+
+            <div class="col-md-offset-1 col-md-1 text-center">
+                <div class="row" style="margin-top:20px">
+                    <input id="exportButtonDiv" type="button" value="Export" class="btn btn-primary" />
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.TimeCardAuditsVM>()
+                                                                    .Name("timeCardsAuditgrid")
+                                                                    .Resizable(s => s.Columns(true))
+                                                                    .Filterable()
+                                                                    .Columns(columns =>
+                                                                    {
+                                                                        columns.Bound(c => c.TimeCardId).Width(80);
+                                                                        columns.Bound(c => c.FileNumber).Width(80);
+                                                                        columns.Bound(c => c.EmployeeFullName).Title("Employee").Width(150);
+                                                                        columns.Bound(c => c.Position).Width(230);
+                                                                        columns.Bound(c => c.CompanyCodeDescription).Width(230);
+                                                                        columns.Bound(c => c.ActualDate).Width(110);
+                                                                        columns.Bound(c => c.TimeIn).Format("{0: hh:mm tt}").Width(80);
+                                                                        columns.Bound(c => c.TimeOut).Format("{0: hh:mm tt}").Width(80);
+                                                                        columns.Bound(c => c.AuditType).Width(80);
+                                                                        //columns.Bound(c => c.AuditRecType);
+                                                                        columns.Bound(c => c.AuditUserId).Width(150);
+                                                                        columns.Bound(c => c.AuditDate).Format("{0:MM-dd-yyyy hh:mm tt}").Width(150);
+                                                                    })
+                                                                    //.ToolBar(tools => tools.Excel())
+                                                                    //.Excel(excel => excel.AllPages(true).FileName("Time Audits Report.xlsx"))
+                                                                    .HtmlAttributes(new { style = "height: 470px;" })
+                                                                    .Scrollable()
+                                                                    //.Groupable()
+                                                                    .Sortable()
+                                                                    .Pageable(pageable => pageable
+                                                                    .Refresh(true)
+                                                                    .PageSizes(true)
+                                                                    .ButtonCount(5))
+                                                                    .DataSource(dataSource => dataSource
+                                                                    .Ajax()
+                                                                    .Read(read => read.Action("TimecardAudits_Read", "TimeCardAudits"))
+                                                                    .PageSize(20)
+                                                                    )
+                            )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+</style>
+
+<script>
+    $("#exportButtonDiv").click(function (e) {
+
+        var appBaseUrl = $("#appBaseUrl").val();
+
+        //var form = $("#TimeCardApprovalReportFormDdl");
+        //var serialized_Object = form.serializeObject();
+
+        $.ajax({
+            url: appBaseUrl + "TimeCardAudits/ExportAuditreport",
+            type: "POST",
+            success: function (d) {
+                if (d.fileName) {
+                    document.location = appBaseUrl + "TimeCardAudits/Download?fileName=" + d.fileName;
+                }
+                else
+                    toastr.error("No record exists.");
+                return;
+            },
+            error: function (response) {
+                toastr.error("error!");
+            }
+        });
+    });
+
+</script>

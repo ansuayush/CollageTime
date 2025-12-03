@@ -1,0 +1,342 @@
+﻿@model ExecViewHrk.Models.PayPeriodVM
+@using ExecViewHrk.Domain.Helper
+<style>
+    /*select {
+            font-family: 'Times New Roman';
+        }
+
+            select option {
+                background-color: #FFFF00;
+                color: #FF0000;
+            }*/
+</style>
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Pay Period</h5>
+    </div>
+    <div class="card-block">
+        @using (Html.BeginForm("PayPeriods", "PayPeriods", FormMethod.Post, new { role = "form", id = "PayPeriodForm" }))
+        {
+            <div class="row">
+                @Html.HiddenFor(model => model.PayPeriodId, new { id = "hiddenPayperiodId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>@Html.DisplayNameFor(m => m.PayFrequencyId)</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.PayFrequencyId,
+                                             new SelectList(Model.PayFrequencyDropdown, "keyvalue", "keydescription", Model.PayFrequencyId), new { @class = "form-control", data_required = "Y" })
+
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.PayFrequencyId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>@Html.DisplayNameFor(m => m.CompanyCodeId)</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.CompanyCodeId,
+                                             new SelectList(Model.CompanyCodeDropdown, "keyvalue", "keydescription", Model.CompanyCodeId), new { @class = "form-control", data_required = "Y" })
+
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.CompanyCodeId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>@Html.DisplayNameFor(m => m.StartDate)</label>
+                        @if (Model.StartDate.ToShortDateString() == "1/1/0001")
+                        {
+                            @Html.TextBoxFor(m => m.StartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y", @id = "txtStartDate" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(model => model.StartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y", @id = "txtStartDate" })
+                        }
+                        <div>
+                            @Html.ValidationMessageFor(x => x.StartDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>@Html.DisplayNameFor(m => m.EndDate)</label>
+                        @if (Model.EndDate.ToShortDateString() == "1/1/0001")
+                        {
+                            Model.EndDate = System.DateTime.Now;
+                        }
+                        @Html.TextBoxFor(model => model.EndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y", @id = "txtEnddate", @readonly = "readonly" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.EndDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 p-0">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Managers Locked Out</label>
+                            <select id="Managerslocked" class="form-control list-multiple" multiple="multiple" style="height:250px; overflow:auto;">
+                                @foreach (var item in Model.ManagersList)
+                                {
+                                    <option value="@item.PersonId">@item.ManagerUserName</option>
+                                }
+
+                            </select>
+                            @Html.HiddenFor(m => m.managerslockedlist, new { @id = "hdnmanagerslocked" })
+                        </div>
+                    </div>
+
+                    <div class="col-sm-1" style="text-align:center; padding-top:50px;">
+                        <a href="#" class="btn btn-inverse-default m-b-15" id="leftall"><i class="fa fa-angle-double-left f-w-600" style="font-size:22px;"></i></a><br />
+                        <a href="#" class="btn btn-inverse-default m-b-15" id="left"><i class="fa fa-angle-left f-w-600" style="font-size:22px;"></i></a><br />
+                        <a href="#" class="btn btn-inverse-default m-b-15" id="right"><i class="fa fa-angle-right f-w-600" style="font-size:22px;"></i></a> <br />
+                        <a href="#" class="btn btn-inverse-default m-b-15" id="rightall"><i class="fa fa-angle-double-right f-w-600" style="font-size:22px;"></i></a>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Managers Dont have a Lock</label>
+                            <select id="Nolockmanagers" class="form-control list-multiple" multiple="multiple" style="height:250px; overflow:auto;">
+                                @foreach (var item in Model.ManagersdonthaveLockeList)
+                                {
+                                    <option value="@item.PersonId">@item.ManagerUserName</option>
+                                }
+
+                            </select>
+                            @*<select id="Nolockmanagers" multiple="multiple" style="width:100%; height:200px; overflow:auto;"></select>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 p-0">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.LockoutEmployees)" type="checkbox" value="@Model.LockoutEmployees" @(Model.LockoutEmployees ? "checked='checked'" : string.Empty)>
+                                <label for="LockoutEmployees">@Html.DisplayNameFor(m => m.LockoutEmployees)</label>
+                                @Html.HiddenFor(x => x.LockoutEmployees)
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.LockoutManagers)" type="checkbox" value="@Model.LockoutManagers" @(Model.LockoutManagers ? "checked='checked'" : string.Empty)>
+                                <label for="LockoutManagers">@Html.DisplayNameFor(m => m.LockoutManagers)</label>
+                                @Html.HiddenFor(x => x.LockoutManagers)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <div class="checkbox-color checkbox-primary">
+                            <input id="@Html.NameFor(x => x.IsPayPeriodActive)" type="checkbox" value="@Model.IsPayPeriodActive" @(Model.IsPayPeriodActive ? "checked='checked'" : string.Empty)>
+                            <label for="IsPayPeriodActive">@Html.DisplayNameFor(m => m.IsPayPeriodActive)</label>
+                            @Html.HiddenFor(x => x.IsPayPeriodActive)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Pay Group Code</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(model => model.PayGroupCode,
+            new SelectList(Model.PayPeriodDropdown, "keyvalue", "keydescription", Model.PayPeriodDropdown), "Select", new { @class = "form-control", data_required = "N" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Pay Period Number</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.PayPeriodNumber, new { @class = "form-control", data_required = "N" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Pay Date </label>
+                            @Html.TextBoxFor(model => model.PayDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(x => x.PayDate)
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSavepayperiodAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+        SetStyle();
+        if ($("#hiddenPayperiodId").val() == "0") {
+            $("#txtStartDate").val("");
+            $("#txtEnddate").val("");
+        }
+    });
+
+    $("#leftall").on('click', function () {
+        var array = $("#Nolockmanagers option");
+        for (i = 0; i < array.length; i++) {
+            $("#Managerslocked").append("<option value='" + array[i].value + "'>" + array[i].text + "</option>");
+        }
+        $("#Nolockmanagers option").remove();
+        SetStyle();
+    });
+
+    $("#left").on('click', function () {
+        var array = $("#Nolockmanagers").find('option:selected');
+        for (i = 0; i < array.length; i++) {
+
+            $("#Managerslocked").append("<option value='" + array[i].value + "'>" + array[i].text + "</option>");
+        }
+        $("#Nolockmanagers").find('option:selected').remove();
+        SetStyle();
+    });
+
+    $("#rightall").on('click', function () {
+        var array = $("#Managerslocked option");
+        for (i = 0; i < array.length; i++) {
+            $("#Nolockmanagers").append("<option value='" + array[i].value + "'>" + array[i].text + "</option>");
+        }
+        $("#Managerslocked option").remove();
+        SetStyle();
+    });
+
+    $("#right").on('click', function () {
+        var array = $("#Managerslocked").find('option:selected');
+        for (i = 0; i < array.length; i++) {
+            $("#Nolockmanagers").append("<option value='" + array[i].value + "'>" + array[i].text + "</option>");
+        }
+        $("#Managerslocked").find('option:selected').remove();
+        SetStyle();
+    });
+
+    $("#txtStartDate").change(function () {
+        calculateenddate();
+    })
+
+    $("#PayFrequencyId").on('change', function () {
+
+        $("#txtStartDate").val("");
+        $('#txtEnddate').val("");
+        $('#txtEnddate').attr('readonly', true);
+        //calculateenddate();
+    })
+
+    function SetStyle() {
+        $('#Managerslocked option, #Nolockmanagers option').removeAttr('style');
+        $('#Managerslocked option:even, #Nolockmanagers option:even').css({ 'background-color': '#eeeeee' });
+    }
+
+    function calculateenddate() {
+        //debugger;
+        var payfreq = $("#PayFrequencyId").find('option:selected').text();
+        var startdate = $("#txtStartDate").val();
+        if (startdate != "") {
+            var d = new Date(startdate);
+            if (payfreq == '@PayFrequency.Weekly') {
+                d.setDate(d.getDate() + 6);
+                $('#txtEnddate').val((d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear());
+            }
+            else if (payfreq == '@PayFrequency.BiWeekly') {
+                d.setDate(d.getDate() + 13);
+                $('#txtEnddate').val((d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear());
+            }
+            else if (payfreq == '@PayFrequency.SemiMonthly') {
+                d.setDate(d.getDate() + 14);
+                $('#txtEnddate').val((d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear());
+            }
+            else if (payfreq == '@PayFrequency.Monthly')
+            {
+                var date = new Date(), y = d.getFullYear(),
+                    m = d.getMonth();
+                var lastDay = new Date(y, m + 1, 0);
+                if (d.getDate() == 1) {
+                    var lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+                    var Ld = new Date(lastDay);
+                    if (Ld.getMonth() + 1 > 12)
+                    {
+                        var month = Ld.getMonth() + 1 - 12;
+                        $('#txtEnddate').val((month) + '/' + (Ld.getDate()) + '/' + Ld.getFullYear());
+                    }
+                    else
+                    {
+                        $('#txtEnddate').val((Ld.getMonth() + 1) + '/' + (Ld.getDate()) + '/' + Ld.getFullYear());
+                    }
+                }
+                else {
+                    if (d.getMonth() + 2 > 12)
+                    {
+                        var month = d.getMonth()+ 2 - 12;
+                        $('#txtEnddate').val((month) + '/' + (d.getDate() - 1) + '/' + d.getFullYear());
+                    }
+                    else {
+                        $('#txtEnddate').val((d.getMonth() + 2) + '/' + (d.getDate() - 1) + '/' + d.getFullYear());
+                    }
+                }
+                var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+                var firstDate = new Date(startdate);
+                var secondDate = new Date($('#txtEnddate').val());
+                var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
+            }
+            else {
+                //$.isNumeric(payfreq)
+                //{
+                //    d.setDate(d.getDate() + Number(payfreq));
+                //    $('#txtEnddate').val((d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear());
+                //}
+                $('#txtEnddate').val("");
+                $('#txtEnddate').attr('readonly', false);
+            }
+        }
+    }
+
+    $("#btnSavepayperiodAjax").click(function (e) {
+        e.preventDefault();
+        calculateenddate();
+        if (!ValidateForm("PayPeriodForm")) {
+            loading(false);
+            return;
+        }
+        var objManagersListarray = [];
+        var objMaangersList = null;
+        var array = $("#Managerslocked option");
+        var arraystring;
+        for (i = 0; i < array.length; i++) {
+            if (i == 0) {
+                arraystring = array[i].text;
+            }
+            else {
+                arraystring += ";" + array[i].text;
+            }
+        }
+        $("#hdnmanagerslocked").val(arraystring);
+        var postData = $("#PayPeriodForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PayPeriods/Save";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                //debugger;
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonTestId = $("#hiddenPayperiodId").val();
+                resetGrid("gridPayPeriod");
+                $("#btnSavepayperiodAjax").parent().find(".md-close").click();
+                if (_oldhiddenPersonTestId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>

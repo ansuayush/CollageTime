@@ -1,0 +1,81 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.PositionBudgetFundAllocationVm>
+<script>
+    $("#grid_Fund_Allocation_List").on("click", ".myCustomClass1", function (e) {
+        gridPositionFundEdit099(e);
+    })
+    function gridPositionFundEdit099(e)
+    {
+    
+            e.preventDefault();
+            var grid = this;
+            var row = $(e.currentTarget).closest("tr");
+            var data = grid.dataItem(row);
+            var formURL = "";
+            $("#EditFundFlag").val("True");
+            formURL = $("#ApplicationUrl").val() + 'PositionSetupDetail/EditPositionFund?FundCode=' + data.FundCode+'&PositionBudgetID='+data.PositionFundID;
+            if (formURL != "") {
+                $("#EditFund .modal-content").html("");
+                $("#EditFund .modal-content").load(formURL);
+                $("#EditFund").modal({ show: true });
+            }
+    }
+</script>
+<div id="Allocation">
+    <div class="col-sm-12">
+        <div class="theme-grid">
+            @(Html.Kendo().Grid(Model)
+          .Name("grid_Fund_Allocation_List")
+
+          .Resizable(resize => resize.Columns(true))
+          .Filterable()
+          .Columns(columns =>
+          {
+              columns.Command(command =>
+              {
+                  command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18 myCustomEditClass1'></i>").Click("gridPositionFundEdit099");
+                  command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("gridDelete");
+
+              }).Width(70);
+              columns.Bound(c => c.PositionFundID).Visible(false);
+              columns.Bound(c => c.FundCode).Title("Fund Code");
+              columns.Bound(c => c.TotalFund).Title("Total Fund").ClientTemplate("$#= TotalFund !== null ? kendo.toString(TotalFund,'n2') : ''#");
+              columns.Bound(c => c.PositionAllocation).Title("Position Allocation").ClientTemplate("$#= PositionAllocation !== null ? kendo.toString(PositionAllocation,'n2') : ''#");
+              columns.Bound(c => c.TotalAllocation).Title("Total Allocation").ClientTemplate("$#= TotalAllocation !== null ? kendo.toString(TotalAllocation,'n2') : ''#");
+          })
+
+          .Sortable()
+          .Selectable()
+            .Editable(editable => editable.Mode(GridEditMode.InLine))
+          .Pageable(pageable => pageable.Refresh(false).PageSizes(false))
+
+          .DataSource(dataSource => dataSource
+              .Ajax()
+                .Destroy(destroy => destroy.Action("FundAllocationList_Destroy", "PositionSetupDetail"))
+              .Model(model =>
+              {
+                  model.Id(p => p.PositionFundID);
+                  model.Field(p => p.FundCode);
+                  model.Field(p => p.TotalFund);
+                  model.Field(p => p.PositionAllocation);
+                  model.Field(p => p.TotalAllocation);
+              }
+
+              ).Events(events =>
+              {
+                  events.Error("refreshGrid");
+                  events.RequestEnd("gridRequestEnd");
+              })
+          ))
+        </div>
+    </div>
+</div>
+<style>
+    
+    .ui-dialog {
+        position: fixed;
+        padding: .2em;
+        width: 300px;
+        overflow: hidden;
+    }
+</style>
+

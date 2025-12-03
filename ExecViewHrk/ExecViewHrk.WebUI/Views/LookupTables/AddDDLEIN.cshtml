@@ -1,0 +1,223 @@
+﻿
+@model ExecViewHrk.WebUI.Models.FedralEinVM
+@{
+
+    Layout = null;
+}
+
+@using (Html.BeginForm("FedralEINSaveAjax", "LookupTables", FormMethod.Post, new { role = "form", id = "FedralEINForm" }))
+{
+    
+    @Html.ValidationSummary(true)
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Federal EIN Detail</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                EIN
+                            </label>
+                            @Html.TextBoxFor(m => m.EIN, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.EIN)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Description
+                            </label>
+
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.Description)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Address Line One
+                            </label>
+                            @Html.TextBoxFor(m => m.addressLineOne, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Address Line Two
+                            </label>@Html.TextBoxFor(m => m.addressLineTwo, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                City
+                            </label>
+                            @Html.TextBoxFor(m => m.city, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                State
+                            </label>
+                            @Html.DropDownListFor(m => m.stateID, new SelectList(Model.lstStates, "keyvalue", "keydescription", Model.stateID), new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Zip Code
+                            </label>
+                            @Html.TextBoxFor(m => m.zipCode, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Country
+                            </label>
+                            @Html.DropDownListFor(m => m.countryID, new SelectList(Model.lstCountries, "keyvalue", "keydescription", Model.countryID), new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Phone Number
+                            </label>
+                            @Html.TextBoxFor(m => m.phoneNumber, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Fax Number
+                            </label>
+                            @Html.TextBoxFor(m => m.faxNumber, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                EEO File Status
+                            </label>
+                            @Html.DropDownListFor(m => m.EEOFileStatusID, new SelectList(Model.lstEEOFileStatuses, "keyvalue", "keydescription", Model.EEOFileStatusID), new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                   
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Notes</label>
+                            @Html.TextAreaFor(m=> m.notes,new { @class = "form-control" })
+                            @*<textarea name="@item.FieldID" id="@item.FieldID" class="form-control" style="height:auto;"></textarea>*@
+                        </div>
+                    </div>
+                    @Html.HiddenFor(m => m.FedralEINNbr)
+                    @Html.HiddenFor(m => m.Active)
+                </div>
+            </div>
+        </div>
+
+        <div class="p-15 text-right">
+           
+            <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseDDl">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " id="btnFedralEINSave">Save</button>
+        </div>
+    </div>
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+        $('#faxNumber,#phoneNumber,#zipCode').keydown(function (e) { EntryOnlyInteger(e); });
+        $('#faxNumber,#phoneNumber,#zipCode').attr('maxlength', '10');
+      
+    });
+
+    function EntryOnlyInteger(e) {
+        if (e.shiftKey || e.ctrlKey || e.altKey) {
+            e.preventDefault();
+        }
+        else {
+            var n = e.keyCode;
+            if (!((n == 8)
+                    || (n == 9)
+                    || (n == 46)
+                    || (n >= 35 && n <= 40)
+                    || (n >= 48 && n <= 57)
+                    || (n >= 96 && n <= 105))
+                    ) {
+                e.preventDefault();
+            };
+        };
+    }
+    $("#btnFedralEINSave").click(function (e) {
+        e.preventDefault();
+        if ($("#EIN").val() == "") {
+            toastr.error("The EIN field is required.");
+            return;
+        }
+        if ($("#description").val() == "" || $("#Description").val() == "" || ($("#LocationDescription").val() == "")) {
+            toastr.error("The Description field is required.");
+            return;
+        }
+        var form = $("#FedralEINForm");
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+       
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#FedralEINForm").serializeArray();
+        for (var i = 0; i < postData.length; i++) {
+            if (postData[i].name == 'Active') {
+                postData[i].value = 'true';
+            }
+        }
+        var formURL = appBaseUrl + "LookupTables/FedralEINSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                if (data.Errors != null) {
+                    toastr.error(data.Errors[""].errors[0]);
+                }
+                else {
+                    reloadDDL();
+                    $("#btnCloseDDl").trigger('click');
+                }
+            }
+        });
+    });
+     function reloadDDL() {
+         var PrimaryID = "FedralEINNbr";
+         var DDL = "ddlEINs";
+         $.get($("#appBaseUrl").val() + 'BusinessLevels/ReloadDDL?DDLName=' + DDL,
+            function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#" + PrimaryID).empty();
+                $("#" + PrimaryID).append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    var data = list[i].Description == undefined ? list[i].description : list[i].Description;
+                    switch (DDL) {
+                    
+                        case "ddlEINs":
+                            //$("#" + PrimaryID).append("<option  value='" + list[i].FedralEINNbr + "' > " + data + " </option>");
+                            $("#" + PrimaryID).append("<option  value='" + list[i].FedralEINNbr + "' > " + list[i].description + " </option>");
+                            break;
+                        
+                        default:
+                            break;
+                    }
+                }
+            }
+        });
+    }
+</script>

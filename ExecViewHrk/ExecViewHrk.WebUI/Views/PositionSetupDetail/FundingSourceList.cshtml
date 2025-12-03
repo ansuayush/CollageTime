@@ -1,0 +1,67 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.PosionFundingSourceListVM>
+<div class="col-lg-12 col-md-12 m-t-20">
+    <script>
+        function deleteFundSource(e) {
+            
+            e.preventDefault();
+            var grid = this;
+            var row = $(e.currentTarget).closest("tr");
+            var data = grid.removeRow(row);
+
+        }
+    </script>
+    <div class="theme-grid">
+        @(Html.Kendo().Grid(Model)
+        .Name("PositionFundingSourceDetails")
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("deleteFundSource");
+            }).Width(70);
+            columns.Bound(p => p.ID).Visible(false);
+            columns.Bound(p => p.FundCodeID).Visible(false);
+            columns.Bound(p => p.PositionId).Visible(false);
+            columns.Bound(p => p.FundCode).Title("Fund Code");
+            columns.Bound(p => p.EffectiveDate).Title("Effective Date")
+            .ClientTemplate("#= EffectiveDate == null ? '' : kendo.toString(kendo.parseDate(EffectiveDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #");
+            columns.Bound(p => p.FundPercentage).Title("Percentage");
+        })
+
+
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(model =>
+        {
+            model.Field(p => p.ID);
+            model.Field(p => p.EffectiveDate);
+            model.Field(p => p.FundPercentage);
+            model.Field(p => p.FundCode);
+            model.Field(p => p.FundCodeID);
+            model.Field(p => p.PositionId);
+        }
+                )
+                //.Group(groups => groups.Add(p => p.EffectiveDate))
+                .PageSize(5)
+                .ServerOperation(false)
+             )
+      )
+
+    </div>
+</div>
+
+<script>
+    function AddFundSelection(e) {
+        e.preventDefault();
+        var formURL = "@Url.Action("PositionFundSelectionModalPartial", "PositionSetupDetail")";//$("#ApplicationUrl").val() + "PositionSetupDetail/PositionBudgetAddRecordModalPartial";
+        if (formURL != "") {
+            // $('#Editpositionbudget_ID').val(lstitem);
+            $("#FundSelectionModal").html("");
+            $("#FundSelectionModal").load(formURL);
+            $("#FundSelectionModal").modal({ show: true });
+        }
+
+    }
+</script>
+
+

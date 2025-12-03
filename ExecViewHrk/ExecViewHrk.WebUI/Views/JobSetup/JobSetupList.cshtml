@@ -1,0 +1,155 @@
+﻿@model ExecViewHrk.WebUI.Models.JobSetupDetail
+@{
+    Layout = null;
+    ViewBag.Title = "Postions";
+
+}
+
+<script type="text/javascript">
+    function gridDeleteJob(e) {
+        e.preventDefault();
+        var grid = this;
+        var row = $(e.currentTarget).closest("tr");
+        var data = grid.dataItem(row);
+        var postData = { Jobid: data.Jobid };
+        var formURL = $("#ApplicationUrl").val() + "JobSetup/JobList_Destroy";
+        confirmDialog("", function () {
+            $.post(formURL, postData, function (data, status) {
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                } else {
+                    toastr.success('Record deleted successfully.');
+                    resetGrid("gridPosition");
+                }
+            });
+        });
+    }
+</script>
+<div class="container-fluid">
+        <div class="row p-t-15">
+            <div class="col-lg-12 col-md-12">
+                <div class="main-header col-sm-12 p-0 m-b-0">
+                    <div class="col-md-9 m-b-15 p-0">
+                        <h4>Job Setup List <span class="pull-right icon-edit-block m-l-30">@*<i class="fa fa-question-circle f-26 m-r-10"></i>*@ <i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 p-0">
+                    <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                        <div class="col-md-9 p-0">
+                            <button type="button" onclick="gridJobSetuptNew()" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal">
+                                <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 p-0">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="theme-grid">
+                                @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.JobSetupDetail>()
+                                            .Name("grid_JobSetup")
+                                            .Resizable(resize => resize.Columns(true))
+                                            .Filterable()
+                                            .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                            .HtmlAttributes(new { @class = "table table-striped table-bordered" })
+                                            .Columns(columns =>
+                                            {
+                                                columns.Command(command =>
+                                                {
+                                                    command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridJobSetuptEdit");
+                                                    //command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("gridDelete");
+                                                    command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("gridDeleteJob");
+                                                }).Width(90);
+                                                columns.Bound(c => c.title).Width(200).Title("Title");
+                                                columns.Bound(c => c.JobCode).Width(200).Title("Code");
+                                                columns.Bound(c => c.jobClassIDDescription).Width(200).Title("Job Class");
+                                                columns.Bound(c => c.eeoJobCodeIDDescription).Width(200).Title("EEO Job Code");
+                                                columns.Bound(c => c.eeoJobTrainingStatusIDDescription).Width(200).Title("EEO Job Training");
+                                                columns.Bound(c => c.workersCompensationIDDescription).Width(200).Title("Worker Compensation");
+                                            })
+
+                                            .Sortable()
+                                            .Selectable()
+                                            .ClientDetailTemplateId("template")
+                                            .Pageable(pageable => pageable
+                                                .Refresh(false)
+                                                .PageSizes(true)
+                                                .ButtonCount(5))
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+
+
+                                            .Read(read => read.Action("JobList_Read", "JobSetUp"))
+                                            .Create(create => create.Action("JobList_Create", "JobSetUp"))
+                                            .Update(update => update.Action("JobList_Update", "JobSetUp"))
+                                            .Destroy(destroy => destroy.Action("JobList_Destroy", "JobSetUp"))
+                                            .Model(model =>
+                                            {
+                                                model.Id(p => p.Jobid);
+                                                model.Field(p => p.title);
+                                                model.Field(p => p.JobDescription);
+                                                model.Field(p => p.createdDate);
+                                                model.Field(p => p.eeoJobCodeID);
+                                                model.Field(p => p.eeoJobTrainingStatusID);
+                                                model.Field(p => p.endDate);
+                                                model.Field(p => p.enteredBy);
+                                                model.Field(p => p.enteredDate);
+                                                model.Field(p => p.FLSAID);
+                                                model.Field(p => p.jobClassID);
+                                                model.Field(p => p.unionID);
+                                                model.Field(p => p.workersCompensationID);
+                                                model.Field(p => p.salaryRange);
+                                                model.Field(p => p.requirements);
+                                                model.Field(p => p.Notes);
+                                                model.Field(p => p.lastEvaluationDate);
+                                            }
+                                                  )
+                                              .Batch(false)
+                                              .Events(events =>
+                                              {
+                                                  events.Error("refreshGrid");
+                                                  events.RequestEnd("gridRequestEnd");
+                                              })
+                                            )
+                                )
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<div id="searchResults"></div>
+
+<script id="template" type="text/kendo-tmpl">
+    <div class='Job-details'>
+        <ul>
+            <li><label>Job Family: </label> #= JobFamilyIdDescription == null ? "" : JobFamilyIdDescription #</li>
+            <li><label>FLSA: </label> #= FLSAIDDescription == null ? "" : FLSAIDDescription #</li>
+            <li><label>Unions: </label> #= unionIDDescription == null ? "" : unionIDDescription #</li>
+            <li><label>Created Date: </label> #= createdDate == null ? "" : kendo.toString(kendo.parseDate(createdDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #</li>
+            <li><label>Last Evaluation Date: </label> #= lastEvaluationDate == null ? "" : kendo.toString(kendo.parseDate(lastEvaluationDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #</li>
+            <li><label>Job Description: </label> #= JobDescription == null ? "" : JobDescription #</li>
+            <li><label>Qualification Requirements: </label> #= requirements == null ? "" : requirements #</li>
+            <li><label>Salary: </label> #= salaryRange == null ? "" : salaryRange #</li>
+            <li><label>Notes: </label> #= Notes == null ? "" : Notes #</li>
+        </ul>
+    </div>
+</script>
+<script>
+    function dataBound() {
+        this.expandRow(this.tbody.find("tr.k-master-row").first());
+    }
+</script>
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+

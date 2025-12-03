@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "Department Manager";
+    Layout = null;
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Departments Managers<span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-5 p-l-0 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-9 p-0">
+                        <button type="button" onclick="addManagerDepartment()" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton btn-sm-addN">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+                    <div class="col-md-3 pull-right text-right">
+                        <div class="form-group row m-b-0">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.ManagerDepartmentVM>()
+                                                .Name("gridManagerDepartment")
+                                                .Resizable(resize => resize.Columns(true))
+                                                .Filterable()
+                                                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                                //.ToolBar(toolbar => toolbar.Create())
+                                                .Columns(columns =>
+                                                {
+                                                    columns.Command(command =>
+                                                    {
+                                                        command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridManagerDepartmentEdit");
+                                                        command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridManagerDepartmentDelete");
+                                                    }).Width(100);
+                                                    columns.ForeignKey(c => c.ManagerId, (System.Collections.IEnumerable)ViewData["managersList"], "ManagerId", "PersonName")
+                                                    .Title("Manager").Width(400);
+                                                    columns.ForeignKey(c => c.DepartmentId, (System.Collections.IEnumerable)ViewData["departmentsList"], "DepartmentId", "CompCode_DeptCode_DeptDescription")
+                                                    .Title("CompanyCode-DepartmentCode-Department");
+                                                })
+                                                .HtmlAttributes(new { style = "height: 480px;" })
+                                                .Scrollable()
+                                                .Groupable()
+                                                .Sortable()
+                                                .Selectable()
+                                                .Pageable(pageable => pageable.Refresh(false).PageSizes(true).ButtonCount(5))
+                                                .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                                    .Read(read => read.Action("ManagerDepartmentsList_Read", "ManagerDepartments"))
+                                                //.Create(create => create.Action("ManagerDepartmentsList_Create", "ManagerDepartments"))
+                                                //.Update(update => update.Action("ManagerDepartmentsList_Update", "ManagerDepartments"))
+                                                //.Destroy(destroy => destroy.Action("ManagerDepartmentsList_Destroy", "ManagerDepartments"))
+                                                .Model(model =>
+                                                {
+                                                    model.Id(p => p.ManagerDepartmentId);
+                                                    model.Field(p => p.ManagerDepartmentId).Editable(false);
+                                                    model.Field(p => p.ManagerId).DefaultValue(0);
+                                                    model.Field(p => p.DepartmentId).DefaultValue(0);
+                                                }
+                                                      )
+                                                .Batch(false)
+                                                 .Events(events =>
+                                                 {
+                                                     events.Error("refreshGrid");
+                                                     events.RequestEnd("gridRequestEnd");
+                                                 })
+                                                    )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+
+
+

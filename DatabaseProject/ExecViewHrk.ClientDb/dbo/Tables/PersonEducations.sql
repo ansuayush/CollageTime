@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[PersonEducations] (
+    [PersonEducationId]        INT           IDENTITY (1, 1) NOT NULL,
+    [PersonId]                 INT           NOT NULL,
+    [QualificationTypeId]      INT      NULL,
+    [MajorId]                  INT      NULL,
+    [MinorId]                  INT      NULL,
+    [LevelAchievedId]          INT       NULL,
+    [Grade]                    VARCHAR (10)  NULL,
+    [Gpa]                      VARCHAR (10)  NULL,
+    [CreditsEarned]            VARCHAR (10)  NULL,
+    [PlannedStart]             DATETIME NULL,
+    [PlannedCompletion]        DATETIME NULL,
+    [ActualCompletion]         DATETIME NULL,
+    [EducationEstablishmentId] INT           NULL,
+    [Notes]                    TEXT          NULL,
+    [EnteredBy]                VARCHAR (50)  NULL,
+    [EnteredDate]              DATETIME NULL,
+    [ModifiedBy]               VARCHAR (50)  NULL,
+    [ModifiedDate]             DATETIME NULL,
+    CONSTRAINT [PK_pEducation] PRIMARY KEY CLUSTERED ([PersonEducationId] ASC),
+    CONSTRAINT [FK_PersonEducations_DdlDegreeTypes] FOREIGN KEY ([MajorId]) REFERENCES [dbo].[DdlDegreeTypes] ([DegreeTypeId]),
+    CONSTRAINT [FK_PersonEducations_DdlDegreeTypes1] FOREIGN KEY ([MinorId]) REFERENCES [dbo].[DdlDegreeTypes] ([DegreeTypeId]),
+    CONSTRAINT [FK_PersonEducations_DdlEducationEstablishments] FOREIGN KEY ([EducationEstablishmentId]) REFERENCES [dbo].[DdlEducationEstablishments] ([EducationEstablishmentId]),
+    CONSTRAINT [FK_PersonEducations_DdlEducationLevels] FOREIGN KEY ([LevelAchievedId]) REFERENCES [dbo].[DdlEducationLevels] ([EducationLevelId]),
+    CONSTRAINT [FK_PersonEducations_DdlQualificationTypes] FOREIGN KEY ([QualificationTypeId]) REFERENCES [dbo].[DdlQualificationTypes] ([QualificationTypeId]),
+    CONSTRAINT [FK_PersonEducations_Persons] FOREIGN KEY ([PersonId]) REFERENCES [dbo].[Persons] ([PersonId])
+);
+

@@ -1,0 +1,389 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionBudgetsVM
+@using (Html.BeginForm("PositionBudgetSaveAjax", "PositionBudgets", FormMethod.Post, new { role = "form", id = "PositionEditBudgetForm" }))
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(m => m.PositionID)
+    @Html.HiddenFor(m => m.ID, new { id = "PositionBudgetID" })
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Edit Position Budget</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Year
+                            </label>
+                            @if (Model.BudgetFundAllocations.Count() > 0)
+                    {
+                    <span class="f-13 block f-w-600"> @Model.BudgetYear </span>
+                    @Html.HiddenFor(m => m.BudgetYear)
+                    }
+                    else
+                    {
+                    @Html.DropDownListFor(m => m.BudgetYear, new SelectList(Model.YearList, "keyvalue", "keydescription", Model.BudgetYear), new {@class = "form-control input-sm"})
+                    @Html.ValidationMessageFor(x => x.PositionID)
+                    }
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Month
+                            </label>
+                            @if (Model.BudgetFundAllocations.Count() > 0)
+                    {
+                    <span class="f-13 block f-w-600"> @Model.BudgetMonthText </span>
+                    @Html.HiddenFor(m => m.BudgetMonth)
+                    }
+                    else
+                    {
+                    @Html.DropDownListFor(m => m.BudgetMonth, new SelectList(Model.MonthList, "keyvalue", "keydescription", Model.BudgetMonth), new {@class = "form-control input-sm"})
+                    @Html.ValidationMessageFor(x => x.BudgetMonth)
+                    }
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Amount
+                            </label>
+                            @Html.TextBoxFor(m => m.BudgetAmount, new {@class = "form-control", @onblur = "budgetAmountChanged(event)"})
+                            @Html.HiddenFor(m => m.BudgetAmount, new {@id = "Hidden_" + @Model.BudgetMonth})
+                            @Html.ValidationMessageFor(x => x.BudgetAmount)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                FTE
+                            </label>
+                            @Html.TextBoxFor(m => m.FTE, new {@class = "form-control"})
+                        </div>
+                    </div>
+                </div>
+              
+                    <div class="col-sm-12">
+                        <div class="card-header p-l-0">
+                            <h5 class="card-header-text">Month Allocation</h5>
+                        </div>
+                        @foreach (var thisMonth in Model.BudgetMonthList)
+                        {
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>
+                                        @thisMonth.Month
+                                    </label>
+
+                                    <div id="span_@thisMonth.Month" class="f-13  f-w-600">
+                                        <span id="spanInner_@thisMonth.Month">@string.Format("{0:$0.00}", thisMonth.BudgetAmount) </span>
+                                        &nbsp;
+                                        <i class='fa fa-pencil  f-18' onclick="editAmount('@thisMonth.Month')" onblur=""></i>
+                                    </div>
+
+                                    <div id="text_span_@thisMonth.Month" class="f-13  f-w-600" style="display: none">
+                                        @Html.TextBoxFor(a => thisMonth.BudgetAmount, new
+                               {
+                                   @class = "form-control custum-amt-edit-input",
+                                   @name = thisMonth.Month,
+                                   @id = thisMonth.Month,
+                                   @onblur = "saveAmont(event)"
+                               }) &nbsp;
+                                        <i class='fa fa-close txt-danger f-18 myCustomEditClass' onclick="cancelEditBox('@thisMonth.Month')"></i>
+                                    </div>
+                                    @Html.HiddenFor(x => thisMonth.ID, new { @id = "hiddenID" + thisMonth.Month })
+                                </div>
+                            </div>
+                        }
+                        <div class="col-sm-12 text-right">
+                            <div class="checkbox-color checkbox-primary">
+                                <input type="checkbox" onchange="adjustAmount(event)" id="chkAdJustAllocation" checked="checked" readonly="readonly" />
+                                <label for="chkAdJustAllocation">Adjust your Allocation</label>
+                            </div>
+                        </div>
+
+
+                    </div>
+          
+
+
+                <div class="col-sm-12">
+
+                    <div class="card-header p-l-0">
+                        <h5 class="card-header-text">Fund Allocation</h5>
+                    </div>
+                    <div class="row">
+                        <div class="card-title">
+                            <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" data-toggle="modal" id="btnAddPositionBudgetAllocation" onclick="addPositionBudgetAllocation(event)">
+                                <i class="fa fa-plus"></i><span class="m-l-10">Add Allocations</span>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                @Html.Partial("PositionAddAllocationPartial", Model.BudgetFundAllocations)
+
+            </div>
+        </div>
+    </div>
+
+}
+<input type="hidden" id="Editpositionbudget_GridID" name="Editpositionbudget_GridID" value="" />
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="closePositionBudgetModel">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " onclick="UpdatePositionBudgetModel();">Save</button>
+</div>
+<style>
+    .custum-amt-edit-input {
+        width: 79%;
+        height: 20px;
+        padding: 0;
+        margin: 0;
+        display: inline;
+
+    }
+   
+</style>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $('#BudgetAmount').keydown(function (e) { EntryOnlyInteger(e); });
+        $('#FTE').keydown(function (e) { EntryOnlyInteger(e); });
+        resetCheckBox();
+    });
+    var isAutoAdjustNeeded = false;
+    var isBudgetAmountChanged = false;
+    var isMonthAmountChanged = false;
+    var monthlyAmountChangedValue ={
+        Jan:0.00,Feb:0.00,Mar:0.00,Apr:0.00,May:0.00,Jun:0.00,Jul:0.00,Aug:0.00
+        ,Sep:0.00,Oct:0.00,Nov:0.00,Dec:0.00
+    };
+    var monthlyDefaultValue = {
+        Jan: 0.00, Feb: 0.00, Mar: 0.00, Apr: 0.00, May: 0.00, Jun: 0.00, Jul: 0.00, Aug: 0.00
+        , Sep: 0.00, Oct: 0.00, Nov: 0.00, Dec: 0.00
+    };
+    var totalMonthChangedAmount = 0.00;
+    var totalYearlyAmountChangedValue = 0.00;
+    var totalMonthValue = 0.00;
+    var adjustedMessage = "Monthly allocation ($";
+    var adjustedMessage1 = ") do not add up to yearly allocation of ($";
+    var adjustedMessage2 = "), Can not save ,Please adjust your allocation";
+    var allocatingMessage = "Monthly allocation rounded to the nearest two decimal number.";
+
+    function editAmount(name) {
+        var val = $('#spanInner_' + name).text().replace("$", '').trim();;
+        $('#span_' + name).hide();
+        $('#text_span_' + name).show();
+        $('#' + name).val('');
+        $('#'+name).focus();
+        $('#' + name).val(val);
+
+    }
+    function saveAmont(e) {
+        var prevValue = $('#spanInner_' + e.currentTarget.id).text();
+        var budgetAmount = $('#BudgetAmount').val();
+
+        // Formatted
+        prevValue = prevValue.replace("$", '').trim();
+        prevValue = parseFloat(prevValue);
+        prevValue = isNaN(prevValue) ? 0.00 : prevValue;
+        budgetAmount = parseFloat(budgetAmount.trim());
+        //Updated Value;
+        var UpdatedValue = isNaN(parseFloat(e.currentTarget.value.trim())) ? 0.00 : parseFloat(e.currentTarget.value.trim());
+
+        //Change
+        var increment = parseFloat((UpdatedValue - prevValue));
+        monthlyAmountChangedValue[e.currentTarget.id] = (Math.round(increment * 100)) / 100;
+        totalMonthChangedAmount = totalMonthChangedAmount + increment;
+        var updatedBudgetValue = parseFloat((budgetAmount + increment));
+        $('#text_span_' + e.currentTarget.id).hide();
+      //  $('#BudgetAmount').val(updatedBudgetValue.toFixed(2));
+        $('#spanInner_' + e.currentTarget.id).text('$' + ((Math.round(UpdatedValue * 100)) / 100).toFixed(2));
+        $('#span_' + e.currentTarget.id).show();
+        enableCheckBox();
+    }
+
+    function adjustAmount(e) {
+        toastr.warning(allocatingMessage);
+        // On Monthly Budget Cganged
+        var budgetAmount = $('#BudgetAmount').val();
+        budgetAmount = parseFloat(budgetAmount.trim());
+        var monthlyBudgetAmountVal = (monthlyAmountChangedValue.Jan + monthlyAmountChangedValue.Feb +
+            monthlyAmountChangedValue.Mar + monthlyAmountChangedValue.Apr + monthlyAmountChangedValue.May +
+            monthlyAmountChangedValue.Jun + monthlyAmountChangedValue.Jul + monthlyAmountChangedValue.Aug +
+            monthlyAmountChangedValue.Sep + monthlyAmountChangedValue.Oct + monthlyAmountChangedValue.Nov +
+            monthlyAmountChangedValue.Dec)
+        var updatedBudgetValue = isNaN(budgetAmount) ? budgetAmount : (totalMonthChangedAmount + budgetAmount);
+        $('#BudgetAmount').val(((Math.round(updatedBudgetValue * 100)) / 100).toFixed(2));
+        //Reset Amount Changed
+        monthlyBudgetAmountVal = monthlyDefaultValue;
+
+        // On YearlyBudgetChanged
+        var monthNames = moment.monthsShort();
+        var AmountToAdd = totalYearlyAmountChangedValue;
+        for (var i = 0; i < monthNames.length ; i++) {
+            var spn = $('#spanInner_' + monthNames[i]).text().replace("$", '').trim();
+            var txt = $('#' + monthNames[i]).val().trim();
+            var spanValue = isNaN(spn) ? 0.00 : (parseFloat(txt) + AmountToAdd);
+            var textValue = ((Math.round(spanValue * 100)) / 100).toFixed(2);
+            textValue = textValue == 'NaN' ? 0.00 : textValue;
+            textValue = ((Math.round(textValue * 100)) / 100).toFixed(2);
+            $('#spanInner_' + monthNames[i]).text('$' + textValue);
+            // $('#' + monthNames[i]).val(textValue.toFixed(2));
+        }
+         totalMonthValue = getTotalMonthlyAllocation();
+        if (budgetAmount != totalMonthValue)
+        {
+            var Diffrence = budgetAmount - totalMonthValue;
+            var value = $('#spanInner_Dec').text().replace("$", "");
+            value= parseFloat(value) + parseFloat(Diffrence);
+            value = ((Math.round(value * 100)) / 100).toFixed(2);
+            $('#spanInner_Dec').text(value);
+        }
+        disableCheckBox();
+
+
+    }
+    function budgetAmountChanged(e) {
+        var prevValue = $('#Hidden_' + $('#BudgetMonth').val()).val();
+        var budgetAmount = e.currentTarget.value;
+
+        // Formatted
+        prevValue = parseFloat(prevValue);
+        prevValue = isNaN(prevValue) ? 0.00 : prevValue;
+
+        //Updated Value;
+        var UpdatedValue = isNaN(parseFloat(budgetAmount.trim())) ? 0.00 : parseFloat(budgetAmount.trim());
+
+        //Change
+        var increment = parseFloat((UpdatedValue - prevValue));
+        var AmountToAdd = parseFloat(increment / 12);//.toFixed(2);
+        AmountToAdd = (Math.round(AmountToAdd* 100)) / 100;
+        totalYearlyAmountChangedValue = parseFloat(AmountToAdd);
+        // Short Month Array
+        var monthNames = moment.monthsShort();
+        $('#BudgetAmount').val( (Math.round(UpdatedValue * 100) / 100).toFixed(2));
+        enableCheckBox();
+    }
+
+
+    function cancelEditBox(name) {
+        $('#text_span_' + name).hide();
+        $('#span_' + name).show();
+    }
+
+
+    function getTotalMonthlyAllocation() {
+        totalMonthValue = 0.00;
+        var BudgetMonthList = [];
+        var monthNames = moment.monthsShort();
+        for (var i = 0; i < monthNames.length ; i++) {
+            var budgetAmount = $('#spanInner_' + monthNames[i]).text().replace("$", '').trim();
+            totalMonthValue = totalMonthValue + parseFloat(budgetAmount);
+        }
+        return totalMonthValue;
+    }
+
+    function UpdatePositionBudgetModel()
+    {
+     
+         totalMonthValue = getTotalMonthlyAllocation();
+        
+        var BudgetAmount = parseFloat($('#BudgetAmount').val());
+        BudgetAmount = (Math.round(BudgetAmount * 100) / 100);
+        totalMonthValue = (Math.round(totalMonthValue * 100) / 100);
+        if (totalMonthValue != BudgetAmount) {
+                toastr.error(adjustedMessage + totalMonthValue + adjustedMessage1 + BudgetAmount + adjustedMessage2);
+                return;
+        }
+        var form = $("#PositionEditBudgetForm");
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var data = form.serializeObject();
+        // Get Updated
+        data.BudgetAmount = $('#BudgetAmount').val();
+        data.FTE = $('#FTE').val();
+        //Monthly Budget Details
+        var monthNames = moment.monthsShort();
+        var BudgetMonthList = [];
+        for (var i = 0; i < monthNames.length ; i++) {
+            var id = $('#hiddenID' + monthNames[i]).val().trim()
+            var month = monthNames[i];
+            var budgetAmount = $('#spanInner_' + monthNames[i]).text().replace("$", '').trim()
+            BudgetMonthList.push({ ID: parseInt(id), BudgetAmount: parseFloat(budgetAmount), Month: month });
+        }
+      //  postData.BudgetMonthList = BudgetMonthList;
+        var postData = { positionBudgetsVM: data, positionBudgetMonthsVM: BudgetMonthList };
+        loading(true);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("SavePositionBudget", "PositionSetupDetail")',
+            data:  postData,
+            success: function (data) {
+                if (data && data.succeed == false) {
+                    toastr.error(data.Message);
+                    loading(false);
+                    // resetcontrol();
+                } else {
+                    $('#closePositionBudgetModel').click();
+                    $("#PositionBudget").html("");
+                    $("#PositionBudget").html(data);
+                    loading(false);
+                    toastr.success('Changes Saved successfully.');
+                    resetcontrol();
+                }
+            },
+            complete: function () {
+
+            },
+            error: function (data) {
+                loading(false);
+            },
+            async: false,
+            cache: false
+        });
+    }
+
+    function EntryOnlyInteger(e) {
+        if (e.shiftKey || e.ctrlKey || e.altKey) {
+            e.preventDefault();
+        }
+        else {
+            var n = e.keyCode;
+            if (!((n == 8)
+                    || (n == 9)
+                    || (n == 46)
+                    || (n >= 35 && n <= 40)
+                    || (n >= 48 && n <= 57)
+                    || (n >= 96 && n <= 105) || (n == 190) || (n == 110))
+                    ) {
+                e.preventDefault();
+            };
+        };
+    }
+    function resetCheckBox() {
+        $("#chkAdJustAllocation").prop("checked", false);
+        $("#chkAdJustAllocation").prop("disabled", true);
+    }
+    function disableCheckBox() {
+        $("#chkAdJustAllocation").prop("disabled", true);
+    }
+    function enableCheckBox() {
+        $("#chkAdJustAllocation").removeAttr('disabled');
+        $("#chkAdJustAllocation").prop("disabled", false);
+        $("#chkAdJustAllocation").prop("checked", false);
+    }
+</script>
+

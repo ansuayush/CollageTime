@@ -1,0 +1,214 @@
+﻿
+@{
+    ViewBag.Title = "FormTemplate";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+@*@model ExecViewHrk.WebUI.Models.FormTemplateVm*@
+
+<h2>Form/Workflows and Permissions</h2>
+
+
+<div>
+
+
+    @(Html.Kendo().Grid<ExecViewHrk.EfClient.FormTemplateWorkflow>()
+            .Name("gridFormTemplateWorkflows")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .ToolBar(toolbar => toolbar.Create())
+
+        .Columns(columns =>
+        {
+            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(170);
+            columns.Bound(m => m.FormTemplateWorkflowId).Title("").Width(150).Groupable(false).Filterable(false);
+            columns.Bound(c => c.FormTemplateWorkflowId).Width(100);
+            columns.Bound(c => c.FormTemplateWorkflowName).Width(400);
+            columns.ForeignKey(p => p.FormTemplateId, (System.Collections.IEnumerable)ViewData["FormTemplateList"], "FormTemplateId", "FormTemplateName").Width(150);
+            columns.ForeignKey(p => p.WorkflowId, (System.Collections.IEnumerable)ViewData["WorkflowList"], "WorkflowId", "WorkflowName").Width(150); 
+
+        })
+        .HtmlAttributes(new { style = "height: 480px;" })
+
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .ClientDetailTemplateId("fieldPermissionsTemplate")
+        .Selectable()
+        
+        .Pageable(pageable => pageable
+            .Refresh(false)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                    .Read(read => read.Action("FormTemplateWorkflows_Read", "Form"))
+                                    .Create(create => create.Action("FormTemplateWorkflow_Create", "Form"))
+                                    .Update(update => update.Action("FormTemplateWorkflow_Update", "Form"))
+                                    .Destroy(destroy => destroy.Action("FormTemplateWorkflow_Destroy", "Form"))
+                    .Model(model =>
+                            {
+                                model.Id(p => p.FormTemplateWorkflowId);
+                                model.Field(p => p.FormTemplateWorkflowId).Editable(false);
+                                model.Field(p => p.FormTemplateWorkflowName);
+                                model.Field(p => p.FormTemplateId).DefaultValue(ViewData["defaultFormTemplateId"]);
+                                model.Field(p => p.WorkflowId).DefaultValue(ViewData["defaultWorkflowId"]);
+                            }
+                          )
+            .Batch(false)
+            .Events(events => events.Error("error_handler"))
+            
+        )
+    )
+
+
+    <script id="fieldPermissionsTemplate" type="text/kendo-tmpl">
+
+                @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.FormWorkflowFieldPermissionVm>()
+        .Name("grid_#=FormTemplateWorkflowId#")
+        .Columns(columns =>
+        {
+            columns.Bound(x => x.FormWorkflowFieldPermissionId).Width(110);
+            columns.Bound(x => x.WorkflowMemberName);
+            columns.Bound(x => x.FieldName);
+            columns.Bound(x => x.CanView).Width(110);
+            columns.Bound(x => x.CanEdit).Width(110);
+        })
+        .ToolBar(toolbar =>
+        {
+            toolbar.Save();
+        })
+        .HtmlAttributes(new { @style = "width:90%" })
+        
+        .Editable(editable => editable.Mode(GridEditMode.InCell))
+        .Pageable()
+        .Navigatable()
+        .Sortable()
+        .Selectable()
+        .Scrollable()
+                .Events(events => events.DataBound("onDataBound"))
+
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Batch(true)
+            .PageSize(20)
+            .ServerOperation(false)
+                    .Events(events => events.Error("error_handler").RequestEnd("requestEnd_Handler"))
+                    .Model(model =>
+                        {
+                            model.Id(x => x.FormWorkflowFieldPermissionId);
+                            model.Field(x => x.FormWorkflowFieldPermissionId).Editable(false);
+                            model.Field(x => x.FormTemplateWorkflowId).Editable(false);
+                            model.Field(x => x.WorkflowMemberName).Editable(false);
+                            model.Field(x => x.FieldName).Editable(false);
+                            model.Field(x => x.FormTemplateFieldId).Editable(false);
+                            model.Field(x => x.WorkflowMemberId).Editable(false);
+                            model.Field(x => x.CanView);
+                            model.Field(x => x.CanEdit);
+                        }
+                        )
+            
+            .Read(read => read.Action("FormWorkflowFieldPermissions_Read", "Form", new { formTemplateWorkflowId = "#=FormTemplateWorkflowId#" }))
+            .Update(update => update.Action("FormWorkflowFieldPermissions_Update", "Form"))
+                        
+            )
+
+                .ToClientTemplate()
+                )
+
+    </script>
+</div>
+
+@*$("#Grid").on("mousedown", ".k-grid-cancel-changes", function (e) {
+
+    //custom logic
+
+});*@
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+    $(document).on("click", ".k-grid-cancel-changes", function (e) { // this is the class on the cancel changes button
+        
+        // this works - it will collapse the row being edited
+        var grid = $("#gridFormTemplateWorkflows").data("kendoGrid");
+        grid.collapseRow(grid.tbody.find(' > tr.k-master-row').not(e.masterRow));
+    });
+    
+
+    var _currentFormTemplateWorkflowId = "0";
+
+    function error_handler(e) {
+        //
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+
+            $('#gridFormTemplateWorkflows').data('kendoGrid').dataSource.read();
+            $('#gridFormTemplateWorkflows').data('kendoGrid').refresh();
+        }
+    }
+
+    function requestEnd_Handler(e) {
+        //
+        
+        var id = _currentFormTemplateWorkflowId;
+        
+        if ((e.type == "create" || e.type == "update" || e.type == "destroy") &&  id != "0") {
+
+            // these 3 lines work but only if there is something in the sub grid which should always be the case ; 
+            // need to know the id of the subgrid by using the FormTemplatWorkflowId
+            //var id = e.response.Data[0][0].FormTemplateWorkflowId;
+            //$('#grid_'+id).data('kendoGrid').dataSource.read();
+            //$('#grid_' + id).data('kendoGrid').refresh();
+
+            // this works - it will collapse the row being edited
+            var grid = $("#gridFormTemplateWorkflows").data("kendoGrid");
+            grid.collapseRow(grid.tbody.find(' > tr.k-master-row').not(e.masterRow));
+            
+
+            $('#'+id).data('kendoGrid').dataSource.read();
+            $('#' + id).data('kendoGrid').refresh();
+
+            alert("Permissions Saved");
+        }
+    }
+    
+    function onDataBound(e) {
+        //
+
+        _currentFormTemplateWorkflowId = e.sender.element[0].id;   
+    }
+
+    //function oonRequestEndBatch(e) {
+    //    
+
+    //    _currentFormTemplateWorkflowId = e.sender.element[0].id;
+    //}
+
+    //function onSaveChanges(e) {
+    //    
+
+    //    _currentFormTemplateWorkflowId = e.sender.element[0].id;
+    //}
+
+    //function onCancelPermissionsEdit(e) {
+    //    
+
+    //    var grid = $("#gridFormTemplateWorkflows").data("kendoGrid");
+
+    //    // this works - it will collapse the row being edited
+    //    grid.collapseRow(grid.tbody.find(' > tr.k-master-row').not(e.masterRow));
+
+    //}
+</script>

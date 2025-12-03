@@ -1,0 +1,171 @@
+﻿
+@model ExecViewHrk.Models.DdlEducationEstablishmentViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "EducationEstablishment";
+}
+@using (Html.BeginForm("DdlEducationEstablishmentSaveAjax", "LookupTables", FormMethod.Post, new { role = "form", id = "EducationEstablishmentForm" }))
+{
+
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label><span style="color:red">*</span>Code</label>
+            @Html.TextBoxFor(m => m.Code, new { @class = "form-control", data_required = "Y" })
+            @Html.ValidationMessageFor(x => x.Code)
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label><span style="color:red">*</span>Description</label>
+            @Html.TextBoxFor(m => m.Description, new { @class = "form-control", data_required = "Y" })
+            @Html.ValidationMessageFor(x => x.Description)
+        </div>
+    </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>State</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.StateId,
+                  new SelectList(Model.StateDropDownList, "keyvalue", "keydescription", Model.StateId), new { @class = "form-control" })
+                        @if (!User.IsInRole("ClientEmployees"))
+                        {
+                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'State');">
+                                <span class="fa fa-plus"></span>
+                            </span>
+                        }
+                    </div>
+                    @Html.ValidationMessageFor(x => x.StateId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Country</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.CountryId,
+                  new SelectList(Model.CountryDropDownList, "keyvalue", "keydescription", Model.CountryId), new { @class = "form-control", data_required = "Y" })
+                        @if (!User.IsInRole("ClientEmployees"))
+                        {
+                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'Country');">
+                                <span class="fa fa-plus"></span>
+                            </span>
+                        }
+                    </div>
+
+                    @Html.ValidationMessageFor(x => x.CountryId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Education</label>
+                    @Html.TextBoxFor(m => m.EducationTypeId, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.EducationTypeId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>ZipCode</label>
+                    @Html.TextBoxFor(m => m.ZipCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.ZipCode)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>PhoneNumber</label>
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.PhoneNumber)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>AddressLineOne</label>
+                    @Html.TextBoxFor(m => m.AddressLineOne, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.AddressLineOne)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>AddressLineTwo</label>
+                    @Html.TextBoxFor(m => m.AddressLineTwo, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.AddressLineTwo)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>City</label>
+                    @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.City)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>FaxNumber</label>
+                    @Html.TextBoxFor(m => m.FaxNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.FaxNumber)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>AccountNumber</label>
+                    @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.AccountNumber)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Contact</label>
+                    @Html.TextBoxFor(m => m.Contact, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.Contact)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>WebAddress</label>
+                    @Html.TextBoxFor(m => m.WebAddress, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.WebAddress)
+                </div>
+            </div>
+}
+<div class="p-20 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveEducationAjax">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+    });
+    $("#btnSaveEducationAjax").click(function (e) {
+        e.preventDefault();
+        var form = $("#EducationEstablishmentForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            return;
+        }
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var postData = $("#EducationEstablishmentForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/DdlEducationEstablishmentsList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _hdnEducationEstablishmentId = $("#hdnEducationEstablishmentId").val();
+                //resetGrid("gridPersonTest");
+                //$("#SelectedPersonID").val(data.PersonId);
+                //LoadMenu("DdlEducationEstablishmentsList", "LookupTables");
+
+                $("#btnSaveEducationAjax").parent().find(".md-close").click();
+
+                if (_hdnEducationEstablishmentId != "0") {
+                    toastr.success("Record has been updated");
+                }
+                else {
+                    toastr.success("Record has been saved");
+                }
+            }
+        });
+    });
+</script>

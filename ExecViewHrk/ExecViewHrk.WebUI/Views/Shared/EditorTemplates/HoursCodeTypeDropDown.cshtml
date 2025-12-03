@@ -1,0 +1,22 @@
+﻿@model object
+
+@*@model IList<ExecViewHrk.Models.HoursCodeVm>*@
+
+@(
+ Html.Kendo().DropDownListFor(m => m)
+        .DataValueField("HoursCodeId")
+        .DataTextField("HoursCodeCode")
+        //.Filter(FilterType.Contains)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {
+                read.Action("ValidHourCodes", "TimeCards").Data("filterDepartmentsByCompanyCode");
+
+            })
+            .ServerFiltering(true);
+        })
+        .OptionLabel("- select one -")
+        .ValuePrimitive(true)
+)
+

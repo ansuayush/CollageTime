@@ -1,0 +1,149 @@
+﻿@*@(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlEducationEstablishment>()*@
+@(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.DdlEducationEstablishmentViewModel>()
+                .Name("gridDdlEducationEstablishment")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EducationEstablishmentPopUpEditor").Window(w => w.Width(700)))
+
+        .ToolBar(toolbar => toolbar.Create())
+
+        .Columns(columns =>
+        {
+        columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete"); }).Width(170);
+        columns.Bound(c => c.EducationEstablishmentId).Width(100);
+        columns.Bound(c => c.Code).Width(400);
+        columns.Bound(c => c.Description).Width(100);
+        columns.ForeignKey(c => c.StateId, (System.Collections.IEnumerable)ViewData["statesList"], "StateId", "Title")
+        .Title("State").Width(200);
+        columns.Bound(c => c.ZipCode).EditorTemplateName("Maskedzipcode").Width(150);
+
+        //columns.Bound(c => c.PhoneNumber).ClientTemplate("#= maskedTextBox(PhoneNumber) #").Width(150);
+        //columns.Bound(c => c.PhoneNumber);
+        columns.Bound(c => c.PhoneNumber).EditorTemplateName("MaskedPhoneNumber").Width(150);
+        columns.ForeignKey(c => c.CountryId, (System.Collections.IEnumerable)ViewData["countriesList"], "CountryId", "Description").EditorTemplateName("KendoComboBoxForeignKey")
+        .Title("Country").Width(150);
+
+        //columns.ForeignKey(c => c.CountryId, Model.DdlEducationEstablishments, "CountryId", "Description").EditorTemplateName("KendoComboBoxForeignKey")
+        //.Title("Country").Filterable(false).Width(150);
+
+        columns.ForeignKey(c => c.EducationTypeId, (System.Collections.IEnumerable)ViewData["educationTypesList"], "EducationTypeId", "Description").EditorTemplateName("KendoComboBoxForeignKey")
+         .Title("Education Type").Width(150);
+
+        //columns.ForeignKey(c => c.CountryId, CountryDdlEntryViewModel, "CountryId", "Description").EditorTemplateName("KendoComboBoxCountries").Width(150);
+        //columns.Bound(c => c.CountryId).ClientTemplate("#=KendoComboBoxCountries#").Width(150);
+        @*columns.Bound(c => c.PhoneNumber).Template(@<text>
+                        @Html.Kendo().MaskedTextBox()
+                             .Name("maskedtextbox")
+                             .Mask("(000) 000-0000")
+            </text>);*@
+
+
+            columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'yes' : 'no' #");
+            columns.Bound(c => c.AddressLineOne).Width(100);
+            columns.Bound(c => c.AddressLineTwo).Width(100);
+            columns.Bound(c => c.City).Width(100);
+            columns.Bound(c => c.FaxNumber).Width(100);
+            columns.Bound(c => c.AccountNumber).Width(100);
+            columns.Bound(c => c.Contact).Width(100);
+            columns.Bound(c => c.WebAddress).Width(100);
+            columns.Bound(c => c.Notes).Width(100);
+        })
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .Events(e => e.DataBound("gridDataBound"))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                                .Read(read => read.Action("DdlEducationEstablishmentsList_Read", "DdlEducationEstablishments"))
+                                .Create(create => create.Action("DdlEducationEstablishmentsList_Create", "DdlEducationEstablishments"))
+                                .Update(update => update.Action("DdlEducationEstablishmentsList_Update", "DdlEducationEstablishments")
+                             
+                                )
+                                        .Destroy(destroy => destroy.Action("DdlEducationEstablishmentsList_Destroy", "DdlEducationEstablishments"))
+                .Model(model =>
+                {
+                    model.Id(p => p.EducationEstablishmentId);
+                    model.Field(p => p.EducationEstablishmentId);
+                    model.Field(p => p.Code);
+                    model.Field(p => p.Description);
+                    model.Field(p => p.StateId).DefaultValue(0);
+                    model.Field(p => p.CountryId).DefaultValue(0);
+                    model.Field(p => p.EducationTypeId).DefaultValue(0);
+                    model.Field(p => p.ZipCode);
+                    model.Field(p => p.PhoneNumber);
+                    model.Field(p => p.AddressLineOne);
+                    model.Field(p => p.AddressLineTwo);
+                    model.Field(p => p.City);
+                    model.Field(p => p.FaxNumber);
+                    model.Field(p => p.AccountNumber);
+                    model.Field(p => p.Contact);
+                    model.Field(p => p.WebAddress);
+                    model.Field(p => p.Notes);
+                })
+.Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+)
+
+<script type="text/javascript">
+    function onSave(e) {
+        if (!e.model.StateId) {
+            e.model.StateId = 0;
+            var currentlySelectedValue = $(e.container.find('[data-role=dropdownlist]')[0]).data.kendoDropDownList.value();
+            //var currentlySelectedValue = $("#StateId").data.key.value();
+            e.model.set('StateId', currentlySelectedValue);
+        }
+    }
+</script>
+
+<style>
+    .k-grid {
+        font-size: 11px;
+    }
+
+    .k-grid {
+        line-height: 2em;
+    }
+    /*.k-edit-form-container{
+            width: auto
+        }*/
+</style>
+
+
+
+<script type="text/javascript">
+    function getPhoneNumber() {
+        var phoneNumber = $("#MaskedPhoneNumber").val();
+        var state = $("#State").val();
+        //var phoneNumber = $("#phoneNumber").value();
+        return {
+            PhoneNumber: phoneNumber,
+            StateId: state
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function maskedTextBox(PhoneNumber) {
+        var phone = $("#PhoneNumber").kendoMaskedTextBox({
+            mask: "(000) 000-0000"
+        });
+        return phone;
+    }
+</script>
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+
+
+

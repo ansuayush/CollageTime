@@ -1,0 +1,275 @@
+﻿@model ExecViewHrk.Models.E_PositioVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Employee Position</h5>
+    </div>
+    <div id="dvPositionDetails" class="row">
+        @using (Html.BeginForm("E_Positions", "E_Positions", FormMethod.Post, new { role = "form", id = "E_PositionForm" }))
+    {
+        @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+        @Html.HiddenFor(model => model.PersonName)
+        @Html.HiddenFor(model => model.E_PositionId, new { id = "hiddenE_PositionId" })
+        @Html.HiddenFor(m => m.PositionCode)
+        @Html.HiddenFor(m=>m.Suffix)
+        @Html.ValidationSummary(true)
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Position Title</label>
+                @Html.TextBoxFor(model => model.PositionDescription, new { @class = "form-control", @readonly = true })
+                <div>
+                    @Html.ValidationMessageFor(model => model.PositionDescription)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Business Level</label>
+                @Html.TextBoxFor(model => model.BusinessLevel, new { @class = "form-control", @readonly = true })
+                @Html.ValidationMessageFor(model => model.BusinessLevel)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Job</label>
+                @Html.TextBoxFor(model => model.Job, new { @class = "form-control", @readonly = true })
+                @Html.ValidationMessageFor(model => model.Job)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label><span style="color:red">*</span>Start Date</label>
+                @Html.TextBoxFor(model => model.StartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.StartDate)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Projected End Date</label>
+                @Html.TextBoxFor(model => model.projectedEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.ProjectEndDate)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Actual End Date</label>
+                @Html.TextBoxFor(model => model.actualEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessage("actualenddate")
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Position Grade</label>
+                <div class="input-group">
+                    @if (Model != null)
+                {
+                    @Html.DropDownListFor(model => model.PositionGradeID,
+        new SelectList(Model.PositionGradeDropDownList, "keyvalue", "keydescription", Model.PositionGradeID), new { @class = "form-control" })
+            }
+            else
+            {
+                @Html.DropDownList("PositionGradeID", new SelectList(ViewBag.PositionGrade, "keyvalue", "keydescription"), new { @class = "form-control" })
+        }
+                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" id="spPositionGradeID">
+                        <span class="fa fa-info"></span>
+                    </span>
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.PositionGradeID)
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-sm-3 p-t-30">
+            <div class="form-group ">
+                @Html.EditorFor(model => model.PrimaryPosition, new { @class = "checkbox-color checkbox-primary" })
+                <label>Primary</label>
+                @Html.ValidationMessageFor(x => x.PrimaryPosition)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label><span style="color:red">*</span>Pay Frequency</label>
+                <div class="input-group">
+                    @if (Model != null)
+                {
+                    @Html.DropDownListFor(model => model.PayFrequencyId,
+                     new SelectList(Model.PayFrequencyDropDownList, "keyvalue", "keydescription", Model.PayFrequencyId), new { @class = "form-control" })
+            }
+            else
+            {
+                @Html.DropDownList("PayFrequencyId", new SelectList(ViewBag.PayFrequency, "keyvalue", "keydescription"), new { @class = "form-control" })
+        }
+                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'PayFrequency');">
+                        <span class="fa fa-plus"></span>
+                    </span>
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.PayFrequencyId)
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>FTE</label>
+                @Html.TextBoxFor(model => model.FTE, null, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.FTE)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Position Category</label>
+                <div class="input-group">
+                    @if (Model != null)
+                {
+                    @Html.DropDownListFor(model => model.PositionCategoryID,
+        new SelectList(Model.PositionCategoryDropDownList, "keyvalue", "keydescription", Model.PositionCategoryID), new { @class = "form-control" })
+            }
+            else
+            {
+                @Html.DropDownList("PositionCategoryID", new SelectList(ViewBag.PositionCategory, "keyvalue", "keydescription"), new { @class = "form-control" })
+        }
+                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'PositionCategory');">
+                        <span class="fa fa-plus"></span>
+                    </span>
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.PositionCategoryID)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Position Type</label>
+                <div class="input-group">
+                    @if (Model != null)
+                {
+                    @Html.DropDownListFor(model => model.PositionTypeID,
+        new SelectList(Model.PositionTypeDropDownList, "keyvalue", "keydescription", Model.PositionTypeID), new { @class = "form-control" })
+            }
+            else
+            {
+                @Html.DropDownList("PositionTypeID", new SelectList(ViewBag.PositionTypes, "keyvalue", "keydescription"), new { @class = "form-control" })
+        }
+                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'PositionType');">
+                        <span class="fa fa-plus"></span>
+                    </span>
+                </div>
+                @*<div>
+                    @Html.ValidationMessageFor(model => model.PositionTypeID)
+                </div>*@
+            </div>
+        </div>
+}
+        <div class="col-sm-12">
+            <div id="payFrequenciesWindow">
+                <div id="payFrequenciesContent">
+                    @Html.Partial("~/Views/E_Positions/SalaryGridEditPartial.cshtml", Model)
+                </div>
+            </div>
+        </div>
+
+        @*<div class="col-sm-12">
+            <div id="payFrequenciesWindow" >
+                <div id="payFrequenciesContent">
+                    @Html.Partial("~/Views/DdlPayFrequencies/DdlPayFrequenciesPartial.cshtml")
+                </div>
+            </div>
+        </div>*@
+    </div>
+</div>
+<div id="dvSubmit" class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15" id="btnCancelEmployeePositionAjax">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveEmployeePositionAjax">Save</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $('#spPositionGradeID').click(function (e) {
+            var salaryGradeID = $('#PositionGradeID').val();
+            formURL = $("#ApplicationUrl").val() + "LookupTables/AddPositionGrade?salaryGradeID=" + salaryGradeID;
+            if (formURL != "") {
+                $("#QuickAddModal .modal-content").html("");
+                $("#QuickAddModal .modal-content").load(formURL);
+                $("#QuickAddModal").modal({ show: true });
+            }
+        });
+    });
+
+    $("#btnCancelEmployeePositionAjax").click(function (e) {
+        $("#btnCancelPositionPopup").trigger('click');
+        //$('#gridEmployeePosition').data('kendoGrid').dataSource.read();
+    });
+
+    $("#btnSaveEmployeePositionAjax").click(function (e) {
+        e.preventDefault();
+        var form = $("#E_PositionForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            return;
+        }
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        if ($("#PayFrequencyId option:selected").val() == "") {
+            toastr.error("Please select Pay Frequency");
+            return;
+        }
+        //if ($("#PositionTypeID option:selected").val() == "") {
+        //    toastr.error("Please select Position Type");
+        //    return;
+        //}
+        //if ($("#PositionCategoryID option:selected").val() == "") {
+        //    toastr.error("Please select Position Category");
+        //    return;
+        //}
+        if ($("#StartDate").val() == "") {
+            toastr.error("Please enter Start Date.");
+            return;
+        }
+        //if ($("#actualEndDate").val() == "") {
+        //    toastr.error("Please enter Actual End Date.");
+        //    return;
+        //}
+        var postData = $("#E_PositionForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "E_Positions/E_PositionsSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                formService.isSavingInProgress = false;
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenE_PositionId = $("#hiddenE_PositionId").val();
+                resetGrid("gridEmployeePosition");
+                $("#btnSaveEmployeePositionAjax").parent().find(".md-close").click();
+                $("#btnAddEmployeePosition").parent().find(".md-close").click();
+                $("#btnCancelPositionPopup").parent().find(".md-close").click();
+                formService.isLoadingInProgress = true;
+                killTimer();
+                if (_oldhiddenE_PositionId != "0") {
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+                else {
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,89 @@
+﻿@model List<ExecViewHrk.Models.FinancialCustomVm>
+<script>
+    function GetReportList() {
+        return {
+            startDate: $("#txtStartDate").val(),
+            endDate: $("#txtEndDate").val()
+        }
+    }
+
+    function excelExport(e) {
+        var sheet = e.workbook.sheets[0];
+        for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+            var sheet = e.workbook.sheets[0];
+            for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+                var row = sheet.rows[rowIndex];
+                row.cells[4].format = "MM-dd-yy hh:mm:ss"
+                row.cells[5].format = "MM-dd-yy hh:mm:ss"
+                row.cells[6].format = "MM-dd-yy hh:mm:ss"
+                row.cells[7].format = "MM-dd-yy hh:mm:ss"
+                row.cells[8].format = "MM-dd-yy hh:mm:ss"
+                row.cells[9].format = "#.00"
+            }
+        }
+    }
+</script>
+
+<div class="row p-t-15">
+    <div class="col-lg-12 col-md-12">
+        <div class="col-lg-12 col-md-12 p-0">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="theme-grid">
+                        @(Html.Kendo().Grid<ExecViewHrk.Models.FinancialCustomVm>()
+                                            .Name("gridFinancialCustoms")
+                                            .Resizable(resize => resize.Columns(true))
+                                            .Filterable()
+                                            //.Editable(editable => editable.Mode(GridEditMode.InLine))
+                                            .Columns(columns =>
+                                            {
+                                                columns.Bound(c => c.PositionCode).Title("Position Code").Width(70);
+                                                columns.Bound(c => c.Lastname).Title("Last name").Width(90);
+                                                columns.Bound(c => c.Firstname).Title("First name").Width(70);
+                                                columns.Bound(c => c.JobTitleCode).Title("Job Title Code").Width(70);
+                                                columns.Bound(c => c.Description).Title("Suffix").Width(70);
+                                                columns.Bound(c => c.SSN).Title("SSN").Width(100);
+                                                columns.Bound(c => c.payperidenddate).Format("{0: MM/dd/yyyy}").Title("pay period end date").Width(70);
+                                                columns.Bound(c => c.RegularRatePaid).Title("Regular Rate Paid").Width(70);
+                                                columns.Bound(c => c.weeknumber).Title("Week Number").Width(70);
+                                                columns.Bound(c => c.GrossPay).Title("Gross Pay").Width(70);
+                                                columns.Bound(c => c.DailyHours).Title("Total Hours").Width(300).Format("{0:n2}").Width(70);
+                                            })
+                                            .ToolBar(tools => { tools.Excel(); })
+                                            .Events(e => e.ExcelExport("excelExport"))
+                                            .Sortable()
+                                            .Excel(excel => excel.AllPages(true)
+                                            .FileName("Time Report.xlsx")
+                                            .Filterable(true))
+                                            .Selectable()
+                                            .Scrollable(a => a.Height(400))
+                                            .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                            .DataSource(dataSource => dataSource.Ajax()
+                                            .Read(read => read.Action("_FinancialAidList_Read", "FinancialAidCustomReport").Data("GetReportList"))
+                                            .Model(model =>
+                                            {
+                                                model.Id(p => p.UserId);
+                                                model.Id(p => p.Firstname);
+                                                model.Id(p => p.Lastname);
+                                                model.Id(p => p.EmployeeId);
+                                                model.Id(p => p.ActualDate);
+                                                model.Id(p => p.TimeIn);
+                                                model.Id(p => p.TimeOut);
+                                                model.Id(p => p.LunchOut);
+                                                model.Id(p => p.LunchBack);
+                                            }
+                                            )
+                                            .Batch(false)
+                                            .Events(events =>
+                                            {
+                                                events.Error("refreshGrid");
+                                                events.RequestEnd("gridRequestEnd");
+                                            })
+                                            )
+                        )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,145 @@
+﻿@model ExecViewHrk.Models.PersonTestVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Test</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonTests", "PersonTests", FormMethod.Post, new { role = "form", id = "PersonTestForm" }))
+            {
+
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonTestId, new { id = "hiddenPersonTestId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Evaluation Test</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.EvaluationTestId,
+                                                        new SelectList(Model.EvaluationTestDropDownList, "keyvalue", "keydescription", Model.EvaluationTestId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'EvaluationTest');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.EvaluationTestDescription)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Examination Date</label>
+                        @Html.TextBoxFor(model => model.TestDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.TestDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Score</label>
+                        @Html.TextBoxFor(x => x.Score, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Score)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Grade</label>
+                        @Html.TextBoxFor(x => x.Grade, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Grade)
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Administrator</label>
+                        @Html.TextBoxFor(x => x.Administrator, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Administrator)
+                    </div>
+
+                </div>
+                <div class="col-sm-12">
+
+                    <div class="form-group ">
+                        <label>Notes</label>
+                        @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                        @Html.ValidationMessageFor(x => x.Notes)
+                    </div>
+                </div>
+                @*<div class="col-sm-3">
+                        <div class=" form-group ">
+                            <label>Entered By:</label>
+                            <label id="enteredByLabel">@Model.EnteredBy</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class=" form-group ">
+                            <label>Entered Date:</label>
+                            <label id="enteredDateLabel"></label>
+                        </div>
+                    </div>*@
+            }
+            <div class="col-sm-12">
+
+
+                <div id="evaluationTestsWindow" style="display:none">
+                    <div id="evaluationTestsContent">
+                        @Html.Partial("~/Views/DdlEvaluationTests/DdlEvaluationTestsPartial.cshtml")
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSavePersonTestAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+    });
+
+    $("#btnSavePersonTestAjax").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("PersonTestForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#PersonTestForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonTests/Save";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonTestId = $("#hiddenPersonTestId").val();
+                resetGrid("gridPersonTest");
+                $("#btnSavePersonTestAjax").parent().find(".md-close").click();
+                if (_oldhiddenPersonTestId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+
+            }
+        });
+
+    });
+</script>

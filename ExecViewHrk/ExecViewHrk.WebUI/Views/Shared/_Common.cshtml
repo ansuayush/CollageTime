@@ -1,0 +1,100 @@
+﻿
+<div id="dialog-confirm"></div>
+
+<div id="LookupTablesDiv" class="EditSlideRight">
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Lookup Table</h5>
+            </div>
+            <div class="card-block">
+                <div class="row" id="frmLookupCommon">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Code</label>
+                            <input type="text" class="form-control" id="txtLookUpTableCode" data-required = "Y" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Description</label>
+                            <input type="text" class="form-control" id="txtLookUpTableDescription" data-required = "Y" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+                            <div class="">
+                                <input id="chkLookUpTableActive" type="checkbox">
+                                <label for="checkbox2" id="lblLookUpTableActive" >
+                                    Active
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-15 text-right">
+            <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+            <button type="button" class="btn btn-primary waves-effect" id="LookupDivSave">Done</button>
+        </div>
+    </div>
+</div>
+
+<div id="EditDetailDiv" class="EditSlideRight">
+    <div class="md-content p-10">
+    </div>
+</div>
+<div id="EditDetailDiv1" class="EditSlideRight">
+<div class="md-content p-10">
+</div>
+</div>
+<div class="modal fade" id="PhoneDetailAddModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="PhoneAddressDetailAddModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="QuickAddModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DDLAddModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DDLBusinesslevelModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="EditFund" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<div id="enlarge" style="margin: 0; padding: 0; position: fixed; right: 0px; top: 0px; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); z-index: 30001;display: none;">
+    <div id="fade"></div>
+    <div class="k-loading-mask" style="color: White; width: 80px; height: 80px; position:absolute; margin: auto; right: 0; left: 0; top: 45%; z-index: 30002">
+        <img src="~/assets/images/block-loading.gif" />
+    </div>
+</div>
+<div class="md-overlay"></div>

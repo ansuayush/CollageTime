@@ -1,0 +1,101 @@
+﻿@model ExecViewHrk.Models.PositionBudgetSchedulesVM
+
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Budget Schedules<span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-9 p-0">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" onclick="AddNewBudgetSchedule()">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.PositionBudgetSchedulesVM>()
+                                            .Name("gridPositionBudgetSchedules")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+                                    .Columns(columns =>
+                                    {
+                                        columns.Command(command =>
+                                        {
+                                            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPositionBudgetSchedulesEdit");
+                                            command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("gridPositionBudgetSchedulesDelete");
+                                        }).Width(80);
+                                        columns.Bound(c => c.ID).Visible(false);
+                                       // columns.Bound(c => c.EffectiveDate).ClientTemplate("#= EffectiveDate == null ? '' : kendo.toString(EffectiveDate, \"MM/dd/yyyy\") #"); 
+                                        columns.Bound(c => c.StartDate).ClientTemplate("#= StartDate == null ? '' : kendo.toString(StartDate, \"MM/dd/yyyy\") #");
+                                        columns.Bound(c => c.EndDate).ClientTemplate("#= EndDate == null ? '' : kendo.toString(EndDate, \"MM/dd/yyyy\") #");
+                                     //   columns.Bound(c => c.EligibleDate).ClientTemplate("#= EligibleDate == null ? '' : kendo.toString(EligibleDate, \"MM/dd/yyyy\") #");
+                                        columns.Bound(c => c.IncreaseTypeText).Title("Increase Type");
+                                        // columns.Bound(c => c.IncreaseAmount).Format("{0:c2}");
+                                        columns.Bound(c => c.IncreaseAmount).ClientTemplate("#= IncreaseType == 0 ? kendo.toString(IncreaseAmount/100,'p').replace(' ',''):kendo.toString(IncreaseAmount,'c2')#");
+                                        columns.Bound(c => c.WashoutRule).Title("Washout Hourly").Format("{0:c2}");
+                                        columns.Bound(c => c.WashoutRuleSalary).Title("Washout Salary").Format("{0:c2}");
+                                        columns.Bound(c => c.AutoFillYesNo).Title("Auto Fill");
+                                        columns.Bound(c => c.ScheduleTypeText).Title("Schedule Type");
+                                    })
+                                    .Sortable()
+                                    .Selectable()
+                                    .ClientDetailTemplateId("template")
+                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                    .Events(e => e.DataBound("gridDataBound"))
+                                    .DataSource(dataSource => dataSource
+                                                .Ajax()
+
+
+                                            .Read(read => read.Action("PositionBudgetSchedulesList_Read", "PositionBudgetSchedules")).Model(model =>
+                                            {
+                                                model.Id(p => p.ID);
+                                            }
+                                                  )
+                                              .Batch(false)
+                                              .Events(events =>
+                                              {
+                                                  events.Error("refreshGrid");
+                                                  events.RequestEnd("gridRequestEnd");
+                                              })
+                                            )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script id="template" type="text/kendo-tmpl">
+    <div class="k-detail-column">
+        <ul>
+            @*<li><label>Schedule Type: </label> #= ScheduleTypeText == null ? "" : ScheduleTypeText #</li>
+            <li><label>Start Date: </label> #= StartDate == null ? "" : kendo.toString(kendo.parseDate(StartDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #</li>
+            <li><label>End Date: </label> #= EndDate == null ? "" : kendo.toString(kendo.parseDate(EndDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #</li>*@
+            <li><label>Eligible Date: </label> #= EligibleDate == null ? "" : kendo.toString(kendo.parseDate(EligibleDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #</li>
+            <li><label>Effective Date: </label> #= EffectiveDate == null ? "" : kendo.toString(kendo.parseDate(EffectiveDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #</li>
+            @*<li><label>Increase Type: </label> #= IncreaseTypeText == null ? "" : IncreaseTypeText #</li>
+            <li><label>Increase Amount: </label> $#= IncreaseAmount == null ? "" : kendo.toString(IncreaseAmount,"n2") #</li>
+            <li><label>Washout Hourly : </label> $#= WashoutRule == null ? "" : kendo.toString(WashoutRule,"n2") #</li>
+            <li><label>Washout Salary : </label> $#= WashoutRuleSalary == null ? "" : kendo.toString(WashoutRuleSalary,"n2") #</li>*@
+        </ul>
+    </div>
+</script>
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+</script>
+
+

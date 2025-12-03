@@ -1,0 +1,27 @@
+﻿
+<!DOCTYPE html>
+
+@{
+    ViewBag.Title = "Matrix";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";    
+}
+
+<html>
+<head>   
+    <title>Contents</title>
+    <link href="~/Content/MatrixStyles.css" rel="stylesheet" />
+</head>
+<body>
+    @*<div id="header">
+        @RenderPage("~/Views/Shared/_PositionHeader.cshtml")
+    </div>*@
+    
+        @RenderSection("TitleSection", required: false)  
+    <div id="wrapper">  
+        <div id="MatrixContent">
+            @RenderBody()
+        </div>
+    </div>
+</body>
+</html>
+

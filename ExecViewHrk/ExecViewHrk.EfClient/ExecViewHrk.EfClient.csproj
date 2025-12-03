@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{204A73C1-953C-4EF7-A567-8EA7E7E54CB4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ExecViewHrk.EfClient</RootNamespace>
+    <AssemblyName>ExecViewHrk.EfClient</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ADPAccNumber.cs" />
+    <Compile Include="ADPFieldMapping.cs" />
+    <Compile Include="AspNetRole.cs" />
+    <Compile Include="AspNetUser.cs" />
+    <Compile Include="AspNetUserClaim.cs" />
+    <Compile Include="AspNetUserLogin.cs" />
+    <Compile Include="AspNetUserRole.cs" />
+    <Compile Include="BenefitDeductionCode.cs" />
+    <Compile Include="BenefitExpansionField.cs" />
+    <Compile Include="BenefitGroup.cs" />
+    <Compile Include="BenefitOESchedule.cs" />
+    <Compile Include="BenefitOption.cs" />
+    <Compile Include="BenefitProvider.cs" />
+    <Compile Include="BusinessUnit.cs" />
+    <Compile Include="ClientDbContext.cs" />
+    <Compile Include="CompanyCode.cs" />
+    <Compile Include="Contracts.cs" />
+    <Compile Include="C__MigrationHistory.cs" />
+    <Compile Include="DdlAccommodationType.cs" />
+    <Compile Include="DdlAddressType.cs" />
+    <Compile Include="DdlApplicantSource.cs" />
+    <Compile Include="DdlBusinessLevelTypes.cs" />
+    <Compile Include="DdlCitizenship.cs" />
+    <Compile Include="DdlCountry.cs" />
+    <Compile Include="DdlDegreeType.cs" />
+    <Compile Include="DdlDisabilityType.cs" />
+    <Compile Include="DdlEducationEstablishment.cs" />
+    <Compile Include="DdlEducationLevel.cs" />
+    <Compile Include="DdlEducationType.cs" />
+    <Compile Include="DdlEEOFileStatuses.cs" />
+    <Compile Include="ddlEEOJobCodes.cs" />
+    <Compile Include="ddlEEOJobTrainingStatuses.cs" />
+    <Compile Include="DdlEeoType.cs" />
+    <Compile Include="DdlEINs.cs" />
+    <Compile Include="DdlEmployeeType.cs" />
+    <Compile Include="DdlEmploymentStatus.cs" />
+    <Compile Include="DdlEvaluationTest.cs" />
+    <Compile Include="ddlFLSAs.cs" />
+    <Compile Include="DdlGLCodes.cs" />
+    <Compile Include="DdlPayGroup.cs" />
+    <Compile Include="DdlHospital.cs" />
+    <Compile Include="DdlI9DocumentTypes.cs" />
+    <Compile Include="DdlInnoculationType.cs" />
+    <Compile Include="ddlJobClasses.cs" />
+    <Compile Include="ddlJobFamilys.cs" />
+    <Compile Include="DdlLicenseType.cs" />
+    <Compile Include="DdlMajor.cs" />
+    <Compile Include="DdlMaritalStatus.cs" />
+    <Compile Include="DdlGender.cs" />
+    <Compile Include="DdlMedicalExaminationType.cs" />
+    <Compile Include="DdlPayFrequency.cs" />
+    <Compile Include="ddlPayTypes.cs" />
+    <Compile Include="DdlPerformancePotentials.cs" />
+    <Compile Include="DdlPhoneType.cs" />
+    <Compile Include="DdlPositionCategory.cs" />
+    <Compile Include="DdlPositionGrade.cs" />
+    <Compile Include="DdlPositionType.cs" />
+    <Compile Include="DdlPositionTypes.cs" />
+    <Compile Include="DdlPrefix.cs" />
+    <Compile Include="DdlProfessionalBody.cs" />
+    <Compile Include="DdlPropertyType.cs" />
+    <Compile Include="DdlQualificationType.cs" />
+    <Compile Include="DdlRateType.cs" />
+    <Compile Include="DdlRegionalChapter.cs" />
+    <Compile Include="DdlRelationshipType.cs" />
+    <Compile Include="ddlSalaryComponents.cs" />
+    <Compile Include="DdlSalaryGradeHistory.cs" />
+    <Compile Include="DdlSalaryGrades.cs" />
+    <Compile Include="ddlSemister.cs" />
+    <Compile Include="DdlSkill.cs" />
+    <Compile Include="DdlSkillLevel.cs" />
+    <Compile Include="DdlSkillType.cs" />
+    <Compile Include="DdlState.cs" />
+    <Compile Include="DdlSuffix.cs" />
+    <Compile Include="DdlSupplier.cs" />
+    <Compile Include="DdlTimeCardType.cs" />
+    <Compile Include="DdlTrainingCours.cs" />
+    <Compile Include="DdlTrainingCoursesGroup.cs" />
+    <Compile Include="ddlUnions.cs" />
+    <Compile Include="DdlUnit.cs" />
+    <Compile Include="ddlWorkersCompensations.cs" />
+    <Compile Include="Department.cs" />
+    <Compile Include="DesignatedManagerDepartment.cs" />
+    <Compile Include="DesignatedPositions.cs" />
+    <Compile Include="DesignatedSupervisors.cs" />
+    <Compile Include="EarningsCode.cs" />
+    <Compile Include="Employee.cs" />
+    <Compile Include="EmployeeActuals.cs" />
+    <Compile Include="EmployeeAllocation.cs" />
+    <Compile Include="EmployeeClass.cs" />
+    <Compile Include="EmployeeI9Documents.cs" />
+    <Compile Include="EmployeeRetroHours.cs" />
+    <Compile Include="employeeSalaryComponents.cs" />
+    <Compile Include="EmployeesAllowedTaken.cs" />
+    <Compile Include="ExternalUserClient.cs" />
+    <Compile Include="E_Positions.cs" />
+    <Compile Include="E_PositionSalaryHistories.cs" />
+    <Compile Include="FormTemplate.cs" />
+    <Compile Include="FormTemplateField.cs" />
+    <Compile Include="FormTemplateFieldType.cs" />
+    <Compile Include="FormTemplateSelectionGroup.cs" />
+    <Compile Include="FormTemplateSelectionItem.cs" />
+    <Compile Include="FormTemplateWorkflow.cs" />
+    <Compile Include="FormWorkflowFieldPermission.cs" />
+    <Compile Include="FTPBannerFileStatus.cs" />
+    <Compile Include="Funds.cs" />
+    <Compile Include="HoursCode.cs" />
+    <Compile Include="Job.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="Manager.cs" />
+    <Compile Include="ManagerDepartment.cs" />
+    <Compile Include="ManagersPositions.cs" />
+    <Compile Include="ManagerLockouts.cs" />
+    <Compile Include="PayPeriod.cs" />
+    <Compile Include="PayPeriodsExportedLogs.cs" />
+    <Compile Include="PerformanceProfiles.cs" />
+    <Compile Include="PerformanceProfileSections.cs" />
+    <Compile Include="Person.cs" />
+    <Compile Include="PersonADA.cs" />
+    <Compile Include="PersonAdditional.cs" />
+    <Compile Include="PersonAddress.cs" />
+    <Compile Include="PersonDisability.cs" />
+    <Compile Include="PersonEducation.cs" />
+    <Compile Include="PersonExamination.cs" />
+    <Compile Include="PersonImage.cs" />
+    <Compile Include="PersonInnoculation.cs" />
+    <Compile Include="PersonLicens.cs" />
+    <Compile Include="PersonMembership.cs" />
+    <Compile Include="PersonPassport.cs" />
+    <Compile Include="PersonPhoneNumber.cs" />
+    <Compile Include="PersonProperty.cs" />
+    <Compile Include="PersonRelationship.cs" />
+    <Compile Include="PersonSkill.cs" />
+    <Compile Include="PersonTest.cs" />
+    <Compile Include="PersonTraining.cs" />
+    <Compile Include="PersonVehicle.cs" />
+    <Compile Include="PersonWorkPermit.cs" />
+    <Compile Include="Position.cs" />
+    <Compile Include="PositionBudgetMonths.cs" />
+    <Compile Include="PositionBudgets.cs" />
+    <Compile Include="PositionBudgetSchedules.cs" />
+    <Compile Include="PositionBusinessLevels.cs" />
+    <Compile Include="PositionClassification.cs" />
+    <Compile Include="PositionFund.cs" />
+    <Compile Include="PositionFundingSource.cs" />
+    <Compile Include="PositionFundingSourceHistories.cs" />
+    <Compile Include="PositionHistory.cs" />
+    <Compile Include="PositionImportVM.cs" />
+    <Compile Include="Positions.cs" />
+    <Compile Include="PositionSalaryGrades.cs" />
+    <Compile Include="PositionSalaryGradeSourceHistories.cs" />
+    <Compile Include="PositionsFundHistory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers.cs" />
+    <Compile Include="TimeCard.cs" />
+    <Compile Include="TimeCardApproval.cs" />
+    <Compile Include="TimeCardDisplayColumn.cs" />
+    <Compile Include="TimeCardNotes.cs" />
+    <Compile Include="TimeCardNotesArchive.cs" />
+    <Compile Include="TimeCardsArchive.cs" />
+    <Compile Include="TimeCardsAudits.cs" />
+    <Compile Include="TimeCardSessionInOutConfigs.cs" />
+    <Compile Include="TimeOffRequest.cs" />
+    <Compile Include="Treatylimithistories.cs" />
+    <Compile Include="TreatyNonTreatyTrackingStatus.cs" />
+    <Compile Include="UserCompany.cs" />
+    <Compile Include="UserDefinedSegment1s.cs" />
+    <Compile Include="UserDefinedSegment2s.cs" />
+    <Compile Include="UserNamesPerson.cs" />
+    <Compile Include="Workflow.cs" />
+    <Compile Include="WorkflowMember.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

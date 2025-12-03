@@ -1,0 +1,337 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonExaminationVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Examination</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>Job Code</label>
+                    <input type="text" class="form-control" />
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <input type="text" class="form-control" />
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>Job Class</label>
+                    <select class="form-control" name="">
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                    </select>
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>EEO Job Code</label>
+                    <select class="form-control" name="">
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                    </select>
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>EEO Job Training</label>
+                    <select class="form-control" name="">
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                    </select>
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>Worker's Compensation</label>
+                    <select class="form-control" name="">
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                    </select>
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>Job Family</label>
+                    <select class="form-control" name="">
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                    </select>
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>FLSA</label>
+                    <select class="form-control" name="">
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                    </select>
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>Unions</label>
+                    <select class="form-control" name="">
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                        <option></option>
+                    </select>
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>Created Date</label>
+                    <input class="form-control" type="date" value="2017-10-05" id="example-date-input">
+                </div>
+            </div>*@
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input class="form-control" type="date" value="2017-10-05" id="example-date-input">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Last Evaluation Date</label>
+                    <input class="form-control" type="date" value="2017-10-05" id="example-date-input">
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Job Description</label>
+                    <textarea name="" cols="" rows="4" class="form-control" style="height:auto;"></textarea>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Qualification Requirements</label>
+                    <textarea name="" rows="4" class="form-control" style="height:auto;"></textarea>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Salary Range</label>
+                    <input type="text" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Upload Job</label>
+                    <div class="md-group-add-on">
+                        <span class="md-add-on-file">
+                            <button class="btn btn-success waves-effect waves-light">File</button>
+                        </span>
+                        <div class="md-input-file">
+                            <input type="file" class="">
+                            <input type="text" class="md-form-control md-form-file">
+                            <label class="md-label-file">Upload File</label>
+                            <span class="md-line"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea name="" cols="" rows="4" class="form-control" style="height:auto;"></textarea>
+                </div>
+            </div>*@
+
+            @Html.ValidationSummary(true)
+
+            <div id="formDiv" class="panel-body">
+               @using (Html.BeginForm("PersonExaminations", "PersonExaminations", FormMethod.Post, new { role = "form", id = "PersonExaminationForm" }))
+               {
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonExaminationId, new { id = "hiddenPersonExaminationId" })
+                <div class="row ">
+
+                    <div class="row ">
+                        <div class="col-md-12">
+                            <div class="col-md-5 ">
+                                <div class="form-group ">
+                                    <div>
+                                        <label><span style="color:red">*</span>Medical Examination Type</label>
+                                    </div>
+                                    @(Html.Kendo().ComboBox()
+                                        .Name("MedicalExaminationDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("Description")
+                                        .DataValueField("MedicalExaminationTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetMedicalExaminationTypes", "DdlMedicalExaminationTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Examination Type")
+                                    )
+
+                                    @if (!User.IsInRole("ClientEmployees"))
+                                    {
+                                        <button id="btnAddMedicalExaminationType" class="btn btn-info">+</button>
+                                    }
+
+
+                                    <div>
+                                        @Html.ValidationMessageFor(model => model.MedicalExaminationDescription)
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>Examination Date</label>
+                                    <div>
+                                        @(Html.Kendo().DatePickerFor(x => x.ExaminationDate)
+                                        .Name("ExaminationDate")
+                                        .Min(new DateTime(1900, 1, 1))
+                                        .Max(new DateTime(2100, 12, 31))
+
+                                        )
+                                        @Html.ValidationMessageFor(x => x.ExaminationDate)
+                                    </div>
+                                </div>
+
+                                <div class="form-group ">
+                                    <label>Examiner</label>
+                                    @Html.TextBoxFor(x => x.Examiner, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.Examiner)
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Next Scheduled Examination</label>
+                                    <div>
+                                        @(Html.Kendo().DatePickerFor(x => x.NextScheduledExamination)
+                                     .Name("NextScheduledExamination")
+                                     .Min(new DateTime(1900, 1, 1))
+                                     .Max(new DateTime(2100, 12, 31))
+                                        )
+                                    </div>
+                                    <div>
+                                        @Html.ValidationMessageFor(x => x.NextScheduledExamination)
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-offset-1 col-md-5">
+
+                                <div>
+
+                                    <div class="form-group ">
+                                        <label>Notes</label>
+                                        @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                        @Html.ValidationMessageFor(x => x.Notes)
+                                    </div>
+
+                                    @*<div class=" form-group ">
+                                        <label style="width:100px">Entered By:</label>
+                                        <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                    </div>
+
+                                    <div class=" form-group ">
+                                        <label style="width:100px">Entered Date:</label>
+                                        <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                                    </div>
+
+                                    <div class=" form-group ">
+                                        <label style="width:100px">Modified By:</label>
+                                        <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                    </div>
+
+                                    <div class=" form-group ">
+                                        <label style="width:100px">Modified Date:</label>
+                                        <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate</label>
+                                    </div>*@
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <div class="form-group">
+
+                            <input id="btnSavePersonExaminationAjax" type="button" value="Save" class="btn btn-info" />
+                            <input id="btnClearPersonExaminationAjax" type="button" value="Clear" class="btn btn-info" />
+                            <input id="btnDeletePersonExaminationAjax" type="button" value="Delete" class="btn btn-info" />
+                        </div>
+                    </div>
+                </div>
+               }
+            </div>
+            <div id="medicalExaminationTypesWindow" style="display:none">
+                <div id="medicalExaminationTypesContent">
+                    @Html.Partial("~/Views/DdlMedicalExaminationTypes/DdlMedicalExaminationTypesPartial.cshtml")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary waves-effect" id="btnSave">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+    });
+    $("#enteredDateLabel").text(convertUTCDateToLocalDate(new Date('@Model.EnteredDate')));
+    var medicalExaminationTypesWindow  = $("#medicalExaminationTypesWindow");
+    if (!medicalExaminationTypesWindow .data("kendoWindow")) {
+        medicalExaminationTypesWindow .kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Medical Examination Types",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseMedicalExaminationsWindow
+        });
+    }
+
+    function onCloseMedicalExaminationsWindow() {
+        resetKenoComboBox('MedicalExaminationDescription');
+        resetGrid('gridDdlMedicalExaminationType');
+    }
+
+    $("#btnAddMedicalExaminationType").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#medicalExaminationTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>

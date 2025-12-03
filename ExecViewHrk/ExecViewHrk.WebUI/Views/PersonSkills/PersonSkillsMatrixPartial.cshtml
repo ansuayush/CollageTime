@@ -1,0 +1,346 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Person Skill";
+    Layout = null;
+}
+
+@model ExecViewHrk.WebUI.Models.PersonSkillVm
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <section class="panels-wells edit-block">
+
+                            @Html.ValidationSummary(true)
+
+                            <div class="panel panel-info">
+
+                                <div class="panel-heading  ">
+
+                                    <div class="row">
+
+                                        <div class="col-md-6 ">
+                                            Person Skill <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                                            <div style="color:red; font-size:x-small">* denotes required field</div>
+
+                                        </div>
+                                        <div class="col-md-6 ">
+
+                                            @using (Html.BeginForm("PersonSkillsSelectedIndexChanged", "PersonSkills", FormMethod.Post, new { role = "form", id = "PersonSkillFormDdl" }))
+                {
+                <label>My Skills</label>
+
+                @(Html.Kendo().DropDownListFor(model => model.PersonSkillId)
+                                            .Name("PersonSkillIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PersonSkillDescription")
+                                            .DataValueField("PersonSkillId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonSkillsList", "PersonSkills").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                  });
+                                              })
+                                            .Value(@Model.PersonSkillId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonSkillDdl")
+                                                    .Select("onSelectPersonSkillDdl");
+                                            })
+                )
+
+                }
+
+
+                                            <div id="noSkillRecordsFound" style="color:red; font-size:x-small">no records found</div>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="formDiv" class="panel-body">
+
+                                    @using (Html.BeginForm("PersonSkills", "PersonSkills", FormMethod.Post, new { role = "form", id = "PersonSkillForm" }))
+        {
+        @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+        @Html.HiddenFor(model => model.PersonSkillId, new { id = "hiddenPersonSkillId" })
+        <div class="row ">
+
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="col-md-5 ">
+                        <div class="form-group ">
+                            <div>
+                                <label><span style="color:red">*</span>Skill</label>
+                            </div>
+                            @(Html.Kendo().ComboBox()
+                                        .Name("SkillDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("SkillDescription")
+                                        .DataValueField("SkillId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetSkills", "DdlSkills").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select a Skill")
+                            )
+
+                            @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                <button id="btnAddSkill" class="btn btn-info">+</button>
+                                }
+
+
+                            <div>
+                                @Html.ValidationMessageFor(model => model.SkillDescription)
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <div>
+                                <label><span style="color:red"></span>Skill Level</label>
+                            </div>
+                            @(Html.Kendo().ComboBox()
+                                        .Name("SkillLevelDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("SkillLevelDescription")
+                                        .DataValueField("SkillLevelId")
+                                        .Filter(FilterType.Contains)
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                                read.Action("GetSkillLevels", "DdlSkillLevels").Type(HttpVerbs.Post);
+
+                                            })
+                                            .ServerFiltering(true);
+                                        })
+                                        .Placeholder("select a Skill Level")
+                            )
+
+                            @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                <button id="btnAddSkillLevel" class="btn btn-info">+</button>
+                                }
+
+
+                            <div>
+                                @Html.ValidationMessageFor(model => model.SkillLevelDescription)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Attained Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.AttainedDate)
+                                        .Name("AttainedDate")
+                                        .Min(new DateTime(1915, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+                                )
+                                @Html.ValidationMessageFor(x => x.AttainedDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Expiration Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.ExpirationDate)
+                                        .Name("ExpirationDate")
+                                        .Min(new DateTime(1915, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+                                )
+                                @Html.ValidationMessageFor(x => x.ExpirationDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Last Used Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.LastUsedDate)
+                                            .Name("LastUsedDate")
+                                            .Min(new DateTime(1915, 1, 1))
+                                            .Max(new DateTime(2099, 12, 31))
+                                )
+                                @Html.ValidationMessageFor(x => x.LastUsedDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Effective Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.EffectiveDate)
+                                            .Name("EffectiveDate")
+                                            .Min(new DateTime(1915, 1, 1))
+                                            .Max(new DateTime(2099, 12, 31))
+                                )
+                                @Html.ValidationMessageFor(x => x.EffectiveDate)
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-offset-1 col-md-5">
+
+                        <div>
+
+                            <div class="form-group ">
+                                <label>Notes</label>
+                                @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                @Html.ValidationMessageFor(x => x.Notes)
+                            </div>
+
+                            <div class=" form-group ">
+                                <label style="width:100px">Entered By:</label>
+                                <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                            </div>
+
+                            <div class=" form-group ">
+                                <label style="width:100px">Entered Date:</label>
+                                <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <div class="form-group">
+
+                    <input id="btnSavePersonSkillAjax" type="button" value="Save" class="btn btn-info" />
+                    <input id="btnClearPersonSkillAjax" type="button" value="Clear" class="btn btn-info" />
+                    <input id="btnDeletePersonSkillAjax" type="button" value="Delete" class="btn btn-info" />
+                </div>
+            </div>
+        </div>
+        }
+
+
+                                </div>
+
+                                <div id="skillsWindow" style="display:none">
+                                    <div id="skillsContent">
+                                        @Html.Partial("~/Views/DdlSkills/DdlSkillsPartial.cshtml")
+                                    </div>
+                                </div>
+
+                                <div id="skillLevelsWindow" style="display:none">
+                                    <div id="skillLevelsContent">
+                                        @Html.Partial("~/Views/DdlSkillLevels/SkillLevelsPartial.cshtml")
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var skillsWindow = $("#skillsWindow");
+    if (!skillsWindow.data("kendoWindow")) {
+        skillsWindow.kendoWindow({
+            width: "1000px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Skills",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseSkillsWindow
+        });
+    }
+
+    function onCloseSkillsWindow() {
+        $("#SkillDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddSkill").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#skillsWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var skillLevelsWindow = $("#skillLevelsWindow");
+    if (!skillLevelsWindow.data("kendoWindow")) {
+        skillLevelsWindow.kendoWindow({
+            width: "1000px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Skill Levels",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseSkillLevelsWindow
+        });
+    }
+
+    function onCloseSkillLevelsWindow() {
+        $("#SkillLevelDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddSkillLevel").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#skillLevelsWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+

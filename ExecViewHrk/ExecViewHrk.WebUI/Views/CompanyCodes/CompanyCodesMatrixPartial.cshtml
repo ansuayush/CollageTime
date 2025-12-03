@@ -1,0 +1,123 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Company Codes";
+
+}
+
+@*@model ExecViewHrk.WebUI.Models.DepartmentVm*@
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+            <div class="col-md-6 ">
+                <label>Company Codes</label>
+            </div>
+
+            <div class="col-md-6 ">
+                
+            </div>
+        </div>
+    </div>
+    <div id="formDiv" class="panel-body">
+
+            <div class="row ">
+
+                <div class="row ">
+                    <div class="col-md-12">
+
+
+                        <div class="form-group ">
+
+                            @(Html.Kendo().Grid<ExecViewHrk.EfClient.CompanyCode>()
+                                        .Name("gridCompanyCode")
+                                        .Resizable(resize => resize.Columns(true))
+                                        .Filterable()
+                                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                        .ToolBar(toolbar => toolbar.Create())
+
+                                        .Columns(columns =>
+                                        {
+                                            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(170);
+                                            columns.Bound(c => c.CompanyCodeId).Width(100);
+                                            columns.Bound(c => c.CompanyCodeCode).Width(400);
+                                            columns.Bound(c => c.CompanyCodeDescription);
+                                            columns.Bound(c => c.IsCompanyCodeActive).ClientTemplate("#= IsCompanyCodeActive ? 'yes' : 'no' #"); ;
+                                        })
+                                        .HtmlAttributes(new { style = "height: 480px;" })
+
+                                        .Scrollable()
+                                        .Groupable()
+                                        .Sortable()
+                                        .Selectable()
+
+                                        .Pageable(pageable => pageable
+                                            .Refresh(false)
+                                            .PageSizes(true)
+                                            .ButtonCount(5))
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+
+
+                                                    .Read(read => read.Action("CompanyCodesList_Read", "CompanyCodes"))
+                                                    .Create(create => create.Action("CompanyCodesList_Create", "CompanyCodes"))
+                                                    .Update(update => update.Action("CompanyCodesList_Update", "CompanyCodes"))
+                                                    .Destroy(destroy => destroy.Action("CompanyCodesList_Destroy", "CompanyCodes"))
+                                        .Model(model =>
+                                        {
+                                            model.Id(p => p.CompanyCodeId);
+                                            model.Field(p => p.CompanyCodeId).Editable(false);
+                                            model.Field(p => p.CompanyCodeCode);
+                                            model.Field(p => p.CompanyCodeDescription);
+                                        }
+                                              )
+                                        .Batch(false)
+                                         .Events(events =>
+                                         {
+                                             events.Error("refreshGrid");
+                                             events.RequestEnd("gridRequestEnd");
+                                         })
+                                            )
+                            )
+
+   
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+    </div>
+
+</div>
+
+
+
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+      
+</script>
+
+
+

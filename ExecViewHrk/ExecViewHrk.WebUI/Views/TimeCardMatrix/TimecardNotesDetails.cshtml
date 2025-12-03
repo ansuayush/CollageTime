@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "Timecard Notes";
+    Layout = null;
+}
+
+@model ExecViewHrk.Models.TimeCardsNotesVM
+
+
+
+<div class="row">
+    @using (Html.BeginForm("TimecardNotes_SaveAjax", "TimeCardMatrix", FormMethod.Post, new { role = "form", id = "frmtimecardNotes" }))
+    {
+        @Html.HiddenFor(model => model.TimeCardsNotesId, new { @Id = "hiddenTimeCardsNotesId" })
+        @Html.HiddenFor(model => model.CompanyCodeId)
+        @Html.HiddenFor(model => model.EmployeeId)
+        @Html.HiddenFor(model => model.TimeCardId)
+        @Html.HiddenFor(model => model.FileNumber)
+        @Html.ValidationSummary(true)
+        <dvi class="col-sm-12">
+            <div class="col-sm-3 col-sm-offset-3">
+                <div class="form-group ">
+                    <label for="ActualDate">Actual Date: </label>
+                    @Html.TextBoxFor(x => x.ActualDate, "{0:MM/dd/yyyy}", new { @class = "form -control", @readonly = "readonly" })
+                </div>
+            </div>
+        </dvi>
+        <div class="col-sm-12">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="form-group">
+                    <label for="Notes">Notes: </label>
+                    @Html.TextAreaFor(m => m.Notes, 3, 50, new { @height = "110px" ,@id="txtAreaNotes"})
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+
+    $(document).ready(function () {      
+        var isstudent = $("#hdnIsStudent").val();
+        if ($("#hdnApprovalStatus").prop("value") == "Disapprove" || isstudent == "True") {
+            $("#txtAreaNotes").attr('disabled', 'disabled');
+        } else {
+            $("#txtAreaNotes").removeAttr("disabled");
+        }
+    });
+
+
+
+    $("#btnSubmit").unbind().click(function (e) {
+        e.preventDefault();
+        var form = $("#frmtimecardNotes");
+        var postData = form.serializeObject();
+        var formURL = $("#ApplicationUrl").val() + "TimeCardMatrix/TimecardNotes_SaveAjax";
+            if (postData.Notes.trim() != "") {
+                $.ajax({
+                    url: formURL,
+                    type: "POST",
+                    async: true,
+                    data: { timeCardsNotesVM: postData },
+                    success: function (data) {
+                        if (data == false) {
+                            //toastr.error("Error or no change in Notes");
+                            if (hiddenTimeCardsNotesId.value != "0") {
+                                toastr.success(formService.messages.updated);
+                                $("#timecardNotesModal").modal('hide');
+                            }
+                        }
+                        else {
+                            if (hiddenTimeCardsNotesId.value != "0") {
+                                toastr.success(formService.messages.updated);
+                            }
+                            else {
+                                toastr.success(formService.messages.saved);
+                            }
+                            $("#timecardNotesModal").modal('hide');
+                        }
+                    }
+                });
+            }
+            else {
+                toastr.error("Please enter Notes.");
+                return false;
+        }
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

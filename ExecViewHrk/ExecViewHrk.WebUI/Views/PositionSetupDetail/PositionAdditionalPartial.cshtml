@@ -1,0 +1,182 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionDetailsVm
+<div class="row">
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Location</label>
+                @Html.DropDownListFor(m => m.LocationId, new SelectList(Model.LocationList, "LocationId", "LocationDescription", Model.LocationId), new { @class = "form-control input-sm" })
+                @Html.ValidationMessageFor(x => x.LocationId)
+                @Html.HiddenFor(x => x.BusinessLevelNbr)
+                @Html.HiddenFor(x => x.JobId)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Department</label>
+                @Html.DropDownListFor(m => m.DepartmentId, new SelectList(Model.DepartmentList, "DepartmentId", "DepartmentDescription", Model.DepartmentId), new { @class = "form-control input-sm" })
+                @Html.ValidationMessageFor(x => x.DepartmentId)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Division</label>
+                @Html.TextBoxFor(m => m.Division, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Division)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Shift</label>
+                @Html.TextBoxFor(m => m.Shift, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Shift)
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Group 2</label>
+                @Html.TextBoxFor(m => m.Group2, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Group2)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Group 3</label>
+                @Html.TextBoxFor(m => m.Group3, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Group3)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Group 4</label>
+                @Html.TextBoxFor(m => m.Group4, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Group4)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Group 5</label>
+                @Html.TextBoxFor(m => m.Group5, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Group5)
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Travel Percent</label>
+                @Html.TextBoxFor(m => m.TravPercent, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.TravPercent)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Incumbent ADP ID</label>
+                @Html.TextBoxFor(m => m.IncumbentADPID, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.IncumbentADPID)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Requisition Number</label>
+                @Html.TextBoxFor(m => m.Requisitno, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Requisitno)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Account Number</label>
+                @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.AccountNumber)
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Performance Profile</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(m => m.PerProfileID, new SelectList(Model.performanceProfiles, "PerProfileID", "Description", Model.PerProfileID), new { @class = "form-control input-sm" })                  
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Approved By</label>
+                <div class="input-group">
+                    
+                    @Html.DropDownListFor(m => m.AuthorizedByID, new SelectList(Model.EmployeeList, "keyvalue", "keydescription", Model.AuthorizedByID), new { @class = "form-control input-sm" })  
+                    @Html.ValidationMessageFor(x => x.AuthorizedByID)                
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Reason</label>
+                <div class="col-sm-12 p-0 form-radio">
+                    <div class="radio radio-inline">
+                        <label>
+                            <input type="radio" id="Radio1" onclick="PositionReasonOnChange(1)" ><i class="helper"></i>New
+                        </label>
+                    </div>
+                    <div class="radio radio-inline">
+                        <label>
+                            <input type="radio" id="Radio2"><i  onclick="PositionReasonOnChange(2)" class="helper"></i>Temp
+                        </label>
+                    </div>
+                    <div class="radio radio-inline">
+                        <label>
+                            <input type="radio" id="Radio3"><i onclick="PositionReasonOnChange(3)" class="helper"></i>Replacement
+                        </label>
+                    </div>
+                    @Html.HiddenFor(m => m.PositReason)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Probation Period</label>
+                @Html.TextBoxFor(m => m.ProbationPeriod, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                @Html.ValidationMessageFor(x => x.ProbationPeriod)
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();      
+        PositionReasonValue();
+    });
+    function PositionReasonValue()
+    {
+        if ($("#PositReason").val() == "New") {
+            $("#Radio1").attr("checked", "checked");
+        }
+        else if ($("#PositReason").val() == "Temp") {
+            $("#Radio2").attr("checked", "checked");
+        }
+        else if ($("#PositReason").val() == "Replacement") {
+            $("#Radio3").attr("checked", "checked");
+        }
+    }
+    function PositionReasonOnChange(element)
+    {
+        if (element==1)
+        {
+            $("#PositReason").val("New");
+            $("#Radio2").removeAttr("checked");
+            $("#Radio3").removeAttr("checked");
+        }
+       else if (element == 2) {
+           $("#PositReason").val("Temp");
+            $("#Radio1").removeAttr("checked");
+            $("#Radio3").removeAttr("checked");
+       }
+       else if (element == 3) {
+           $("#PositReason").val("Replacement");
+           $("#Radio1").removeAttr("checked");
+           $("#Radio2").removeAttr("checked");
+       }
+    }
+</script>

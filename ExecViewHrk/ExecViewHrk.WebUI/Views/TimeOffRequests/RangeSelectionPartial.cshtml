@@ -1,0 +1,139 @@
+﻿@*@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Time Card";
+
+}*@
+@model ExecViewHrk.Models.TimeOffRequestVM
+@*@using (Html.BeginForm("TimeOffRequests", "TimeOffRequests", FormMethod.Post, new { role = "form", id = "RangeSelectionFormDdl" }))
+{*@
+
+<script src="~/Scripts/application/TimeOffRequestsMatrixPartial.js"></script>
+@Html.ValidationSummary(true)
+
+@*<script id="RangeSelection" type="text/x-kendo-template">
+    <div>
+        <h4>Start date:</h4>
+        @(Html.Kendo().DatePicker()
+                  .Name("start")
+                  .Value("01/01/2017")
+                  .Max("10/10/2018")
+                //.Events(e => e.Change("startChange"))
+                  .HtmlAttributes(new { style = "width: 40%" })
+        )
+
+        <h4 style="margin-top: 2em">End date:</h4>
+        @(Html.Kendo().DatePicker()
+                  .Name("end")
+                  .Value("01/01/2017")
+
+                  .Max("10/10/2018")
+                //.Events(e => e.Change("endChange"))
+                  .HtmlAttributes(new { style = "width: 40%" })
+        )        
+    </div>
+
+    <div>
+        <button id="save" class="k-button">Save</button>
+        <button class="k-button close-button">Close</button>
+    </div>
+</script>*@
+
+@*@using (Html.BeginForm("AddTimeOffRequest_Ajax", "TimeOffRequests", FormMethod.Post, new { role = "form", id = "RangeSelectionFormDdl" }))*@
+@using (Html.BeginForm("TimeOffRequests", "TimeOffRequests", FormMethod.Post, new { role = "form", id = "RangeSelectionFormDdl" }))
+{
+
+@*<form id="RangeSelectionFormDdl">*@
+<form id="RangeSelection">
+    <div class="form-group" style="margin-top: 1em">
+        <label for="start">Start date:</label>
+        <div>
+            @(Html.Kendo().DatePickerFor(m => m.start)
+                              .Name("start")
+                              //.Value("01/01/2017")
+                              //.Max("10/10/2018")
+                              //.Events(e => e.Change("startChange"))
+                              .HtmlAttributes(new { style = "width: 40%" })
+            )
+        </div>
+    </div>
+
+    <div class="form-group" style="margin-top: 1em">
+        <label for="start">End date:</label>
+        <div>
+            @(Html.Kendo().DatePickerFor(m => m.end)
+                              .Name("end")
+                              //.Value("01/01/2017")
+
+                              //.Max("10/10/2018")
+                              //.Events(e => e.Change("endChange"))
+                              .HtmlAttributes(new { style = "width: 40%" })
+            )
+            @Html.ValidationMessageFor(model => model.end, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group" style="margin-top: 1em">
+        <label>Hours Code:</label>
+        <div>
+            @(Html.Kendo().DropDownListFor(model => model.HoursCodeId)
+                                                        .HtmlAttributes(new { id = "hoursCodeIdDdl", @class = "form-control", style = "width: 61%" })
+                                                        .DataTextField("HoursCodeCode")
+                                                        .DataValueField("HoursCodeId")
+                                                        .Filter(FilterType.Contains)
+                                                            .DataSource(source =>
+                                                            {
+                                                                source.Read(read =>
+                                                                {
+                                                                    read.Action("ValidHourCodes", "LookupTables").Type(HttpVerbs.Post);  //.Data("additionalData");
+                                                                })
+                                                                .ServerFiltering(true);
+                                                            })
+                                                              .AutoBind(true)
+                                                        .Value(@Model.HoursCodeId.ToString())
+                                                        .OptionLabel("- select one -")
+            )
+            @Html.ValidationMessageFor(model => model.HoursCodeId)
+        </div>
+    </div>
+
+    <div class="form-group" style="margin-top: 1em">
+        <label for="start">Timeoff Hours:</label>
+        <div>
+            @(Html.Kendo().NumericTextBoxFor(m => m.TimeOfftHours)
+                              .Name("TimeOfftHours")
+                              .HtmlAttributes(new { style = "width: 61%" })
+            )
+            @Html.ValidationMessageFor(model => model.TimeOfftHours, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @*<div style="margin-top: 2em">
+            test:
+            <input type="text" name="test">
+        </div>*@
+
+    @*<div style="margin-top: 2em">*@
+    @*<input type="submit" value="Save"  class="btn-default"/>*@
+
+    <div class="panel" style="margin-top: 2em">
+        <div class="panel-footer">
+            @*<div class="form-group" style="margin-top: 2em">*@
+
+            <input type="button" value="Delete" onclick=DeleteTimeOffRequest() class="btn btn-default pull-left" />
+
+            <div class='btn-toolbar pull-right'>
+                <div class='btn-group'>
+                    <input type="button" value="Submit" onclick=AddTimeOffRequest() class="btn btn-default" />
+                    <input type="button" value="Cancel" onclick=onCloseRangeSelectionWindow() class="btn btn-default" id="btn_closeRangeSelection" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@*</form>*@
+}
+
+
+
+

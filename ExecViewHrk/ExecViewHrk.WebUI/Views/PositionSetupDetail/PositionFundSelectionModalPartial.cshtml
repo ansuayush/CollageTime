@@ -1,0 +1,298 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionFundingSourceGroupVM
+@using (Html.BeginForm("SavepositionFundingSource", "PositionSetupDetail", FormMethod.Post, new { role = "form", id = "SavePositionFundSourceForm" }))
+{
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Fund Selection</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Effective Date</label>
+                            @Html.HiddenFor(x=>x.PositionId)
+                          @Html.TextBoxFor(m => m.EditEffectiveDate, "{0:MM/dd/yyyy}", new {@id= "positionfundEffectiveDate", @class = "datepicker form-control ", @data_dateformat = "mm/dd/yy", @data_type = "smalldate" })
+                        @Html.ValidationMessageFor(x => x.EditEffectiveDate)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Fund Code</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.EditFundCodeID, new SelectList(Model.FundCodes, "keyvalue", "keyDescription", Model.EditFundCodeID),new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(x => x.EditFundCodeID)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Percentage</label>
+                            @Html.TextBoxFor(m => m.EditPercentage, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                            @Html.ValidationMessageFor(x => x.EditPercentage)
+                        </div>
+                    </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary waves-effect waves-light " onclick="Addingrid();">Add</button>
+                        </div>
+                </div>
+
+
+
+                <div class="row">
+
+                    <div class="col-md-12 m-t-20">
+                        <div class="card-header p-l-0">
+                            <h5 class="card-header-text">Fund Definition History</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.Partial("FundingSourceList", Model.EditposionFundingSourceList)
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnpositionfundingsource">Cancel</button>
+                <button type="button" class="btn btn-primary waves-effect waves-light " onclick="savepositionFundsource();">Save</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script>
+
+    function Addingrid() {
+        
+        var form = $("#SavePositionFundSourceForm");
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var data = form.serializeObject();
+        var entityGrid = $("#PositionFundingSourceDetails").data("kendoGrid");
+        var dataItem = entityGrid.dataSource._data;
+        var dataList = []
+        var percentage = 0;
+        for (var i = 0; i < dataItem.length; i++) {
+            dataList.push({
+                ID: dataItem[i].ID, FundCode: dataItem[i].FundCode,
+                EffectiveDate: dataItem[i].EffectiveDate, FundPercentage: dataItem[i].FundPercentage,
+                FundCodeID: dataItem[i].FundCodeID, PositionId: dataItem[i].PositionId
+            });
+            percentage = percentage + parseFloat(dataItem[i].FundPercentage);
+        }
+
+        var totalPercantage = percentage + parseFloat(data.EditPercentage);
+        if (100 < totalPercantage) {
+            toastr.error("Percantage of allocation must be 100%.");
+            return;
+        }
+        var postData = { sources: dataList, pFSG: data };
+        loading(true);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("AddNewFundingSource", "PositionSetupDetail")',
+            data: postData,
+            success: function (data) {
+                if (data && data.succeed == false) {
+                    toastr.error(data.Message);
+                    loading(false);
+                    // resetcontrol();
+                } else {
+                    // $('#btnpositionfundingsource').click();
+                    $("#FundSelectionModal").html("");
+                    $("#FundSelectionModal").html(data);
+
+                    loading(false);
+                    toastr.success('Changes Saved successfully.');
+                    resetcontrol();
+                }
+            },
+            complete: function () {
+
+            },
+            error: function (data) {
+                loading(false);
+            },
+            async: false,
+            cache: false
+        });
+    }
+
+
+    function savepositionFundsource() {
+        
+        var form = $("#SavePositionFundSourceForm");
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var data = form.serializeObject();
+        var entityGrid = $("#PositionFundingSourceDetails").data("kendoGrid");
+        var dataItem = entityGrid.dataSource._data;
+        var dataList = []
+        var percentage = 0;
+        for (var i = 0; i < dataItem.length; i++) {
+            dataList.push({
+                ID: dataItem[i].ID, FundCode: dataItem[i].FundCode,
+                EffectiveDate: dataItem[i].EffectiveDate, FundPercentage: dataItem[i].FundPercentage,
+                FundCodeID: dataItem[i].FundCodeID, PositionId: dataItem[i].PositionId
+            });
+            percentage = percentage + parseFloat(dataItem[i].FundPercentage);
+            EditEffectiveDate = moment(dataItem[i].EffectiveDate, "MM/DD/YYYY").format('MM/DD/YYYY');
+        }
+
+        var totalPercantage = percentage + parseFloat(data.EditPercentage);
+        if (100 < totalPercantage) {
+            toastr.error("Percantage of allocation must be 100%.");
+            return;
+        }
+        var postData = { sources: dataList, effectiveDate:EditEffectiveDate };
+        $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SavepositionFundingSource", "PositionSetupDetail")',
+                    data: postData,
+                    success: function (data) {
+                        if ($.isNumeric(data)) {
+                            // resetPositionFundcontrol();
+                        } else {
+                            toastr.error("Changes rejected.");
+                        }
+                    },
+                    complete: function () {
+
+                    },
+                    error: function (data) {
+                    },
+                    async: false,
+                    cache: false
+                });
+            }
+
+            //resetpositionfundingGrid('PositionFundingSourcelst');
+            //toastr.success('Record created successfully.');
+            //$('#btnpositionfundingsource').click();
+        
+
+
+    $(document).ready(function () {
+        // fillpositionFundCodefundCode();
+        $("#positionfundEffectiveDate").datepicker();
+    });
+    @*function resetFundingGrid() {
+        $("#AddNewPositionFundingSourcelst").kendoGrid({
+            columns: [
+                {
+                    command: [{ name: "edit", template: "<span class='fa fa-pencil txt-primary' onclick='Editfunding(event);'></span>" },
+                              { name: "destroy", template: "<span class='fa fa-trash-o m-0 txt-danger' onclick='deletefunding(event);'></span>" }
+                             ], title: " ", width: 70
+                },
+                { field: "ID" },
+                { field: "FundCode" },
+              { field: "Code" },
+              { field: "Percentage" }
+            ],
+            dataSource: {
+            },
+        });
+    }
+    function EffectiveDateShowAndHide() {
+        if ($("#AddNewPositionFundingSourcelst").data("kendoGrid") != undefined) {
+            if ($("#AddNewPositionFundingSourcelst").data("kendoGrid").dataSource.data().length == 0) {
+                $("#AddNewPositionFundingSourcelst").data("kendoGrid").dataSource.data(null);
+            } else {
+                $('#positionfundEffectiveDate').attr("disabled", true);
+            }
+            $("#AddNewPositionFundingSourcelst").data("kendoGrid").hideColumn(1);
+            $("#AddNewPositionFundingSourcelst").data("kendoGrid").hideColumn(2);
+        }
+        else {
+            $("#AddNewPositionFundingSourcelst").hide();
+        }
+    }
+    $('#positionfundPercentage').change(function () {
+        getPercentage('positionfundPercentage');
+    });
+    function resetPositionFundcontrol() {
+        $('#positionfundPercentage').val('');
+        $('#ddpositionfundCode').prop('selectedIndex', 0);
+    }
+    function deletefunding(e) {
+        var grid = $('#AddNewPositionFundingSourcelst').data("kendoGrid");
+        var tr = $(e.target).closest("tr");
+        grid.removeRow(tr);
+    }
+    function Editfunding(e) {
+        var entityGrid = $("#AddNewPositionFundingSourcelst").data("kendoGrid");
+        var item = entityGrid.dataItem($(e.target).closest("tr"));
+        $('#positionfundPercentage').val(item.Percentage);
+        $("#ddpositionfundCode option[value=" + item.FundCode + "]").prop('selected', 'selected');
+        $('#IsAdd').val('false');
+        $('#gridID').val(item.ID);
+
+    }
+
+    function newKendoDS(ndata) {
+        var datasource = new kendo.data.DataSource({ data: ndata });
+        datasource.read();
+        return datasource;
+    }
+    function resetpositionfundingGrid(grid) {
+        var postData = {
+            EffectiveDate: $('#EditEffectiveDate').val()
+        }
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("RefreshPositionFundSourceList", "PositionSetupDetail")',
+            data:postData,
+            beforeSend: function () {
+            },
+            success: function (data) {
+                var newKendoDatasource = newKendoDS(data);
+                $("#" + grid).data("kendoGrid").dataSource.data(newKendoDatasource._data);
+            },
+            complete: function () {
+            },
+            error: function (data) {
+            },
+            dataType: "json",
+            async: false,
+            traditional: true,
+            cache: false
+        });
+    }
+
+    function fillpositionFundCodefundCode() {
+        var currentSelect = $('#ddpositionfundCode');
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("FillFundCodeDropDown", "PositionSetupDetail")',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                for (i = 0; i < data.length; i++) {
+                    currentSelect.append('<option value="' + data[i].keyvalue + '">' + data[i].keydescription + '</option>');
+                }
+            },
+            complete: function () {
+            },
+            error: function (data) {
+            },
+            dataType: "json",
+            async: false,
+            traditional: true,
+            cache: false
+        });
+    }*@
+
+</script>

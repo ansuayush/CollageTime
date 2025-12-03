@@ -1,0 +1,19 @@
+﻿@model object
+
+@(
+ Html.Kendo().DropDownListFor(m => m)
+        .DataValueField("TempJobId")
+        .DataTextField("TempJobCode")
+        .Filter(FilterType.Contains)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {         
+                read.Action("ValidTempJobCodes", "LookupTables").Data("filterDepartmentsByCompanyCode"); 
+
+            })
+            .ServerFiltering(true);
+        })
+        .OptionLabel("- select one -")
+        .ValuePrimitive(true)
+)

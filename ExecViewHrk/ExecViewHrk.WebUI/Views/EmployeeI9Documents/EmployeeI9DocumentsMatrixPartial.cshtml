@@ -1,0 +1,464 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Employee I9 Documents";
+
+}
+
+@model ExecViewHrk.WebUI.Models.EmployeeI9DocumentVm
+
+
+@*@{
+        var id = ViewContext.RouteData.Values["id"];
+        var requestType = ViewContext.RouteData.Values["RequestType"];
+        var controller = ViewContext.RouteData.Values["controller"];
+        var action = ViewContext.RouteData.Values["action"];
+    }*@
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<script src="~/Scripts/application/EmployeeI9DocumentsMatrixPartial.js"></script>
+
+
+@Html.ValidationSummary(true)
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+
+            <div class="col-md-3 ">
+                Employee <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                <div style="color:red; font-size:x-small">* denotes required field</div>
+
+            </div>
+@using (Html.BeginForm("EmployeeI9DocumentsSelectedIndexChanged", "EmployeeI9Documents", FormMethod.Post, new { role = "form", id = "EmployeeI9DocumentFormDdl", @class = "form-group form-inline" }))
+{
+            <div class="col-md-4 ">
+                   
+
+                        <label>Employment Numbers</label>
+
+                        @(Html.Kendo().DropDownListFor(model => model.EmployeeId)
+                                .Name("EmployeeIdDdl")
+                                // .HtmlAttributes(new { style = "width:300px" })
+                                .DataTextField("EmploymentNumber")
+                                .DataValueField("EmployeeId")
+                                .Filter(FilterType.Contains)
+                                  .DataSource(source =>
+                                  {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("GetEmployeeEmploymentNumberList", "EmployeeI9Documents").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                      })
+                                      .ServerFiltering(true);
+                                  })
+
+                                .Value(@Model.EmployeeId.ToString())
+                                .OptionLabel("- select one -")
+
+                             .Events(e =>
+                             {
+                                 e.DataBound("onDataBoundEmployeeDocumentDdl");
+                                 e.Select("onCascadeEmployeeI9DocumentDdl"); 
+                             })
+                        )
+                     
+                        <div id="noEmployeeRecordsFound" style="color:red; font-size:x-small">no records found</div>
+                    
+
+                </div>
+            <div class="col-md-5 ">
+                <div class="form-group form-inline">
+                    <label>Employee I9 Documents</label>
+
+                    @(Html.Kendo().DropDownListFor(model => model.EmployeeI9DocumentId)
+                                .Name("EmployeeI9DocumentIdDdl")
+                                // .HtmlAttributes(new { style = "width:120px" })
+                                .DataTextField("I9DocumentTypeDescription")
+                                .DataValueField("EmployeeI9DocumentId")
+                                .Filter(FilterType.Contains)
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                        read.Action("GetEmployeeI9DocumentList", "EmployeeI9Documents").Data("filterI9Docs").Type(HttpVerbs.Post); //.Data("additionalData");
+
+                                    })
+                                    .ServerFiltering(true);
+                                })
+                                //.Enable(false)
+                                .AutoBind(false)
+                                .CascadeFrom("EmployeeIdDdl")
+
+                                .Value(@Model.EmployeeI9DocumentId.ToString())
+                                .OptionLabel("- select one -")
+                            .Events(e =>
+                            {
+                                e.DataBound("onDataBoundEmployeeI9DocumentDdl")
+                                .Select("onSelectEmployeeI9DocumentDdl");
+                            })
+                    )
+                    
+
+                    
+
+
+                    <div id="noEmployeeI9DocumentRecordsFound" style="color:red; font-size:x-small;">no records found</div>
+                </div>
+            </div>
+}
+        </div>
+    </div>
+    <div id="formDiv" class="panel-body">
+        @using (Html.BeginForm("EmployeeI9Documents", "EmployeeI9Documents", FormMethod.Post, new { role = "form", id = "EmployeeI9DocumentForm" }))
+        {
+            @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+            @Html.HiddenFor(model => model.PersonName)
+
+            @Html.HiddenFor(model => model.EmployeeI9DocumentId, new { id = "hiddenEmployeeI9DocumentId" })
+
+            <div class="row ">
+
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="col-md-5 ">
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Document Type</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("I9DocumentTypeDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("I9DocumentDescription")
+                                        .DataValueField("I9DocumentTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetI9DocumentTypes", "DdlI9DocumentTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select a I9 Document Type")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddI9DocumentType" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.I9DocumentTypeDescription)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Date Delivered</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.PresentedDate)
+                                        .Name("PresentedDate")
+                                        .Format("MM/dd/yyyy")
+                                        .Min(new DateTime(1915, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+                                      
+
+                                    )
+                                    @Html.ValidationMessageFor(x => x.PresentedDate , "The field Presented Date must be a date.")
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Expires Date</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.ExpirationDate)
+                                        .Name("ExpirationDate")
+                                        .Format("MM/dd/yyyy")
+                                         .Min(new DateTime(1915, 1, 1))
+                                         .Max(new DateTime(2099, 12, 31))
+
+                                    )
+                                    @Html.ValidationMessageFor(x => x.ExpirationDate, "The field Expiration Date must be a date.")
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-offset-1 col-md-5">
+
+                            <div>
+
+                                <div class="form-group ">
+                                    <label>Notes</label>
+                                    @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                    @Html.ValidationMessageFor(x => x.Notes)
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered By:</label>
+                                    <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered Date:</label>
+                                    <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="form-group">
+                        <input id="btnSaveEmployeeI9DocumentAjax" type="button" value="Save" class="btn btn-info" />
+                        <input id="btnClearEmployeeI9DocumentAjax" type="button" value="Clear" class="btn btn-info" />
+                        @*<input id="btnDeleteEmployeeI9DocumentAjax" type="button" value="Delete" class="btn btn-info" />*@
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div id="i9DocumentTypesWindow" style="display:none">
+        <div id="i9DocumentTypesContent">
+            @Html.Partial("~/Views/DdlI9DocumentTypes/DdlI9DocumentTypesPartial.cshtml")
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+
+    var i9DocumentTypesWindow = $("#i9DocumentTypesWindow");
+    if (!i9DocumentTypesWindow.data("kendoWindow")) {
+        i9DocumentTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "I9 Document Types",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseI9DocumentsWindow
+        });
+    }
+
+    function onCloseI9DocumentsWindow() {
+        resetKenoComboBox('I9DocumentTypeDescription');
+        resetGrid('gridDdlI9DocumentType');
+    }
+
+    $("#btnAddI9DocumentType").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#i9DocumentTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+@*<script>
+
+    var employeeTypesWindow = $("#employeeTypesWindow");
+    if (!employeeTypesWindow.data("kendoWindow")) {
+        employeeTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Employee Types",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseEmployeeTypesWindow
+        });
+    }
+
+    function onCloseEmployeeTypesWindow() {
+        $("#EmployeeTypeDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddEmployeeType").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#employeeTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+
+    var employmentStatusesWindow = $("#employmentStatusesWindow");
+    if (!employmentStatusesWindow.data("kendoWindow")) {
+        employmentStatusesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Employment Statuses",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseEmploymentStatusesWindow
+        });
+    }
+
+    function onCloseEmploymentStatusesWindow() {
+        $("#EmploymentStatusDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddEmployeeStatus").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#employmentStatusesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var payFrequenciesWindow = $("#payFrequenciesWindow");
+    if (!payFrequenciesWindow.data("kendoWindow")) {
+        payFrequenciesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Pay Frequencies",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onClosePayFrequenciesWindow
+        });
+    }
+
+    function onClosePayFrequenciesWindow() {
+        $("#PayFrequencyDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddPayFrequency").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#payFrequenciesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var maritalStatusesWindow = $("#maritalStatusesWindow");
+    if (!maritalStatusesWindow.data("kendoWindow")) {
+        maritalStatusesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Marital Statuses",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseMaritalStatusesWindow
+        });
+    }
+
+    function onCloseMaritalStatusesWindow() {
+        $("#MaritalStatusDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddMaritalStatus").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#maritalStatusesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var workedStateTaxCodesWindow = $("#workedStateTaxCodesWindow");
+    if (!workedStateTaxCodesWindow.data("kendoWindow")) {
+        workedStateTaxCodesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Worked State Tax Code",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseWorkedStateTaxCodesWindow
+        });
+    }
+
+    function onCloseWorkedStateTaxCodesWindow() {
+        $("#WorkedStateTitle").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddWorkedStateTaxCode").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#workedStateTaxCodesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    function onCloseMaritalStatusesWindow() {
+          $("#HireDate").data("kendoComboBox").dataSource.read();
+    }
+
+</script>*@
+
+
+
+
+
+
+
+
+
+

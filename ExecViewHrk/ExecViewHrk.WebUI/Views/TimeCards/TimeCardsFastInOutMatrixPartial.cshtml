@@ -1,0 +1,161 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Time Card";
+
+}
+
+@model ExecViewHrk.WebUI.Models.TimeCardFastInOutVm
+
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<script src="~/Scripts/application/TimeCardsMatrixPartial.js"></script>
+@Html.ValidationSummary(true)
+
+<div id="FormEntryDiv">
+    <div class="panel panel-info">
+        @*@using (Html.BeginForm("TimeCardsFastInOutMatrixPartial", "TimeCards", FormMethod.Post, new { role = "form", id = "TimeCardFastInOutForm" }))*@
+        @*, InsertionMode = InsertionMode.Replace, UpdateTargetId = "TimeCardData" HttpMethod = "POST"*@
+        <div id="TimeCardData" >
+            @using (Ajax.BeginForm("EnterTime_FastInOut_Ajax", "TimeCards", new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "TimeCardData" }))
+            {
+                <div class="table-responsive">
+                    <table class="table" onload="DisplayClock()">  @*; setInterval('DisplayClock()',500)*@
+                        <tr>
+                            <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.ActualDate, "{0:MM/dd/yyyy}", new { disabled = "disabled" })</td>
+                            <td></td>
+                        </tr>
+
+                        @for (int i = 0; i < Model.EmpTimeCard_List.Count(); i++)
+                        {
+                            if (i == Model.EmpTimeCard_List.Count() - 1)
+                            {
+                                //data coming from database where TimeIn is filled and Timeout is not filled (last record in the list)
+                                if (Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].TimeOut == null)
+                                { break; }
+                            }
+                            <tr>
+                                <td>@Html.TextBoxFor(m => Model.EmpTimeCard_List[i].ProjectNumber, new { disabled = "disabled" })</td>
+                                <td>@Html.TextBoxFor(m => Model.EmpTimeCard_List[i].TimeIn, new { disabled = "disabled" })</td>
+                                <td>@Html.TextBoxFor(m => Model.EmpTimeCard_List[i].LunchOut, new { disabled = "disabled" })</td>
+                                <td>@Html.TextBoxFor(m => Model.EmpTimeCard_List[i].LunchBack, new { disabled = "disabled" })</td>
+                                <td>@Html.TextBoxFor(m => Model.EmpTimeCard_List[i].TimeOut, new { disabled = "disabled" })</td>
+                            </tr>
+                        }
+
+                        @if (Model.EmpTimeCard_List.Count() != 0 && Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].TimeOut == null)
+                        {
+                            //Last row of the list
+                            <tr>
+                                @*TimeCardId*@
+                                @Html.HiddenFor(m => Model.newTimeCardRecord.TimeCardId, new { @Value = Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].TimeCardId })
+
+                                @*ProjectNumber*@
+                                <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.ProjectNumber, new { @Value = (Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].ProjectNumber), disabled = "disabled" })</td>
+
+                                @if (Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].TimeIn != null)
+                                {
+                                    //TimeIn
+                                    <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.TimeIn, new { @Value = Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].TimeIn, disabled = "disabled" })</td>
+
+                                    //LunchOut is Null then LunchOut and TimeOut enabled and LunchBack, TimeIn disabled
+                                    if (Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].LunchOut == null)
+                                    {
+                                        <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.LunchOut, new { @readonly = "readonly", id="txtLunchOut" })</td>
+                                        <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.LunchBack, new { @Value = " ", disabled = "disabled" })</td>
+                                        <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.TimeOut, new { @readonly = "readonly", id="txtTimeOut" })</td>
+                                    }
+                                    else
+                                    {
+                                        //LunchOut not null then check LunchBack is null, enable LunchBack disable all other
+                                        if (Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].LunchBack == null)
+                                        {
+                                            <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.LunchOut, new { @Value = Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].LunchOut, disabled = "disabled" })</td>
+                                            <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.LunchBack, new { @readonly = "readonly", id="txtLunchBack" })</td>
+                                            <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.TimeOut, new { @Value = " ", disabled = "disabled" })</td>
+                                        }
+                                        else
+                                        {
+                                            //if LunchBack not null, disable all except TimeOut
+                                            <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.LunchOut, new { @Value = Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].LunchOut, disabled = "disabled" })</td>
+                                            <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.LunchBack, new { @Value = Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].LunchBack, disabled = "disabled" })</td>
+                                            <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.TimeOut, new {@readonly = "readonly", id="txtTimeOutAfterLunchBack" })</td>
+                                        }
+                                    }
+                                }
+                            </tr>
+
+                                //Buttons row
+                                <tr>
+                                    <td></td>
+                                    <td><input type="submit" class="btn btn-primary btn-default" value="Time In" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                                    @if (Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].LunchOut == null)
+                                    {
+                                        <td><input type="submit" class="btn btn-primary btn-default" value="Lunch Out" name="btn_TimeCardSubmit" /></td>
+                                        <td><input type="submit" class="btn btn-primary btn-default" value="Lunch Back" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                                        <td><input type="submit" class="btn btn-primary btn-default" value="Time Out" name="btn_TimeCardSubmit" /></td>
+                                    }
+                                    else
+                                    {
+                                        //LunchOut not null then check LunchBack is null, enable LunchBack disable all other
+                                        if (Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].LunchBack == null)
+                                        {
+                                            <td><input type="submit" class="btn btn-primary btn-default" value="Lunch Out" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                                            <td><input type="submit" class="btn btn-primary btn-default" value="Lunch Back" name="btn_TimeCardSubmit" /></td>
+                                            <td><input type="submit" class="btn btn-primary btn-default" value="Time Out" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                                        }
+                                        else
+                                        {
+                                            <td><input type="submit" class="btn btn-primary btn-default" value="Lunch Out" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                                            <td><input type="submit" class="btn btn-primary btn-default" value="Lunch Back" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                                            <td><input type="submit" class="btn btn-primary btn-default" value="Time Out" name="btn_TimeCardSubmit" /></td>
+                                        }
+                                    }
+
+                                </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                @Html.HiddenFor(m => Model.newTimeCardRecord.ActualDate)
+                                @if (Model.EmpTimeCard_List.Count() != 0)
+                                {
+                                    <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.ProjectNumber, new { @Value = (Model.EmpTimeCard_List[Model.EmpTimeCard_List.Count() - 1].ProjectNumber) + 1, disabled = "disabled" })</td>}
+                                else
+                                {
+                                    <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.ProjectNumber, new { @Value = 1, disabled = "disabled" })</td>
+                                }
+                                <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.TimeIn, new {  @readonly = "readonly", id = "txtTimeIn" })</td>
+                                <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.LunchOut, new { @Value = " ", disabled = "disabled" })</td>
+                                <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.LunchBack, new { @Value = " ", disabled = "disabled" })</td>
+                                <td>@Html.TextBoxFor(m => Model.newTimeCardRecord.TimeOut, new { @Value = " ", disabled = "disabled" })</td>
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td><input type="submit" class="btn btn-primary btn-default" value="Time In" name="btn_TimeCardSubmit" /></td>
+                                <td><input type="submit" class="btn btn-primary btn-default" value="Lunch Out" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                                <td><input type="submit" class="btn btn-primary btn-default" value="Lunch Back" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                                <td><input type="submit" class="btn btn-primary btn-default" value="Time Out" name="btn_TimeCardSubmit" disabled="disabled" /></td>
+                            </tr>
+
+                        }
+
+                    </table>
+                </div>
+            }
+        </div>
+        @*@Html.Partial("TimeCardsFastInOutRecordPartial")*@
+    </div>
+</div>
+
+

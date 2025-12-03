@@ -1,0 +1,142 @@
+﻿@model ExecViewHrk.WebUI.Models.EmployeeActualsVM
+@{
+    Layout = null;
+}
+
+<style>
+    .textunderline {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4> Employee Actuals <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            @if (ViewData["errormessage"] != null)
+            {             
+                <script>alert("Please Select a File.");</script>
+            }
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-lg-5">
+                        @using (Html.BeginForm("ImportData", "EmployeeActuals", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="col-lg-4">
+                                <input type="file" id="ImportId" name="postedFile" class="form-control-file" />
+                            </div>
+                            <div>
+                                <input type="submit" style="margin-left:150px;" class="btn btn-primary" value="Import" />
+                            </div>
+                        }
+                    </div>
+                    <div class="col-lg-5">
+                        <a href="~/Files/Employee Actuals Sample File.csv" target="_blank" class="textunderline">Sample Employee Actuals Template</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.EmployeeActualsVM>()
+                                            .Name("grid_EmployeeActuals")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+                                    .Columns(columns =>
+                                    {
+                                        columns.Bound(c => c.EmployeeName);
+                                        columns.Bound(c => c.CompanyCode);
+                                        columns.Bound(c => c.FileNumber);
+                                        columns.Bound(c => c.PayPeriodDate).Format("{0:MM/dd/yyyy}");
+                                        columns.Bound(c => c.PayCheckEndDate);
+                                        columns.Bound(c => c.GrossAmount);
+                                        columns.Bound(c => c.PayrollDepartmentNumber);
+                                        columns.Bound(c => c.CostNumber);
+                                        columns.Bound(c => c.PositionCode);
+                                        columns.Bound(c => c.PositionTitle);
+                                    })
+                                    .Scrollable(scrollable => scrollable.Height("Auto"))
+                                    .ClientDetailTemplateId("template")
+                                    .Sortable()
+                                    .Selectable()
+                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                    .Events(e => e.DataBound("gridDataBound"))
+                                    .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .Read(read => read.Action("EmployeeActualsList_Read", "EmployeeActuals"))
+                                                .Model(model =>
+                                                {
+                                                    model.Field(p => p.EmployeeName);
+                                                    model.Field(p => p.CompanyCode);
+                                                    model.Field(p => p.FileNumber);
+                                                    model.Field(p => p.PayPeriodDate);
+                                                    model.Field(p => p.PayCheckEndDate);
+                                                    model.Field(p => p.GrossAmount);
+                                                    model.Field(p => p.PayrollDepartmentNumber);
+                                                    model.Field(p => p.CostNumber);
+                                                    model.Field(p => p.PositionCode);
+                                                    model.Field(p => p.PositionTitle);
+                                                })
+                                              .Batch(false)
+                                              .Events(events =>
+                                              {
+                                                  events.Error("refreshGrid");
+                                                  events.RequestEnd("gridRequestEnd");
+                                              })
+                                            )
+                            )
+                            <style type="text/css">
+                                .employee-details ul {
+                                    list-style: none;
+                                    font-style: italic;
+                                    margin: 15px;
+                                    padding: 0;
+                                }
+
+                                    .employee-details ul li {
+                                        margin: 0;
+                                        line-height: 1.7em;
+                                    }
+
+                                .employee-details label {
+                                    display: inline-block;
+                                    width: 100px;
+                                    padding-right: 10px;
+                                    text-align: right;
+                                    font-style: normal;
+                                    font-weight: bold;
+                                }
+                            </style>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script id="template" type="text/kendo-tmpl">
+    <div class='k-detail-column'>
+        <ul>
+            <li><label>Employee Name:</label>#= EmployeeName #</li>
+            <li><label>Company Code:</label>#= CompanyCode #</li>
+            <li><label>File Number:</label>#= FileNumber #</li>
+            <li><label>PayPeriod Date:</label>$#= PayPeriodDate #</li>
+            <li><label>PayCheck EndDate:</label>#= PayCheckEndDate #</li>
+            <li><label>Gross Amount:</label>#= GrossAmount #</li>
+            <li><label>Payroll Department Number:</label>#= PayrollDepartmentNumber #</li>
+            <li><label>Cost Number:</label>#= CostNumber #</li>
+            <li><label>Position Code:</label>#= PositionCode #</li>
+            <li><label>Position Title:</label>#= PositionTitle #</li>
+        </ul>
+    </div>
+</script>
+<script>
+    function dataBound() {
+        this.expandRow(this.tbody.find("tr.k-master-row").first());
+    }
+</script>

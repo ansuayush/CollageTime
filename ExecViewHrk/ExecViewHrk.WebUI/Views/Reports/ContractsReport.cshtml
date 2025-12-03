@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Contracts Report:";
+    Layout = null;
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Contracts Report: <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.ContractsReportVm>()
+        .Name("gridContractsReport")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.EmployeeName).Title("Employee");
+            columns.Bound(c => c.BusinessUnitTitle).Title("Department");
+            columns.Bound(c => c.GLCode);
+            columns.Bound(c => c.Semester);
+            columns.Bound(c => c.StartDate);
+            columns.Bound(c => c.EndDate);
+            columns.Bound(c => c.Amount).Format("{0:c2}");
+            columns.Bound(c => c.PayPeriods);
+            columns.Bound(c => c.AmountToBePaid).Format("{0:c2}");
+            columns.Bound(c => c.NewAmountToBePaid).Format("{0:c2}");
+            columns.Bound(c => c.ExportedAmount).Format("{0:c2}");
+            columns.Bound(c => c.RemainderDue).Format("{0:c2}"); 
+            columns.Bound(c => c.PayPeriodsRemaining);
+            columns.Bound(c => c.EarningCodes);
+            columns.Bound(c => c.Notes);
+        })
+        .ToolBar(tools => { tools.Excel(); tools.Pdf(); })
+        .Pdf(pdf => pdf
+            .AllPages()
+            .Landscape()
+            .FileName("Contracts Report.pdf")
+        )
+        .Sortable()
+        .Excel(excel => excel.AllPages(true)
+        .FileName("Contracts Report.xlsx")
+        .Filterable(true))
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .DataSource(dataSource => dataSource.Ajax()
+        .Read(read => read.Action("ContractsReportList_Read", "Reports"))
+            .Model(model =>
+            {
+                model.Id(p => p.BusinessUnitTitle);
+            }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .k-grid-header th.k-header {
+        min-width: 175px;
+    }
+
+    .k-grid {
+        overflow-x: scroll;
+    }
+
+    .k-pdf-export .k-grid-toolbar,
+    .k-pdf-export .k-pager-wrap {
+        display: none;
+    }
+    .k-grid-toolbar, .k-pager-wrap {
+        background: transparent !important;
+        border: 0;
+    }
+    .k-footer-template td {
+        font-weight: 700 !important;
+    }
+</style>

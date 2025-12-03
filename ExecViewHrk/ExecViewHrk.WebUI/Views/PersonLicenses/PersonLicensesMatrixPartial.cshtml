@@ -1,0 +1,193 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Person License";
+    Layout = null;
+}
+@model ExecViewHrk.Models.PersonLicensVm
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted">
+                    <div class="col-md-3 p-0">
+                        <h4>
+                            License
+                        </h4>
+                    </div>
+                    <div class="col-md-9 p-0 text-right">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton" onclick="addPersonLicense();">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.PersonLicensVm>()
+                                             .Name("gridPersonLicense")
+                                             .Resizable(resize => resize.Columns(true))
+                                             .Filterable()
+                                             .Columns(columns =>
+                                             {
+                                                 columns.Command(command =>
+                                                 {
+                                                     command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPersonLicenseEdit");
+                                                     command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridPersonLicenseDelete");
+                                                 }).Width(70);
+                                                 columns.Bound(c => c.PersonLicenseId).Visible(false);
+                                                 columns.Bound(c => c.LicenseNumber).Title("License Number");
+                                                 columns.Bound(c => c.LicenseDescription).Title("License Type");
+                                                 columns.Bound(c => c.CountryDescription).Title("Country");
+                                                 columns.Bound(c => c.StateTitle).Title("State");
+                                                 columns.Bound(c => c.ExpirationDate).Title("Expiration Date").ClientTemplate("#= kendo.toString(ExpirationDate, \"MM/dd/yyyy\") #");
+                                             })
+                                             .Sortable()
+                                    .Selectable()
+                                    .Pageable(pageable => pageable.Refresh(true).PageSizes(true))
+                                    .Events(e => e.DataBound("gridDataBound"))
+                                    .DataSource(dataSource => dataSource.Ajax()
+                                                    .Read(read => read.Action("PersonLicenseList_Read", "PersonLicenses"))
+
+                                                    .Model(model =>
+                                                    {
+                                                        model.Id(p => p.PersonLicenseId);
+                                                        model.Field(p => p.PersonId);
+                                                        model.Field(p => p.LicenseDescription);
+                                                        model.Field(p => p.StateTitle);
+                                                        model.Field(p => p.CountryDescription);
+                                                        model.Field(p => p.ExpirationDate);
+                                                        model.Field(p => p.RevokedDate);
+                                                        model.Field(p => p.ReinstatedDate);
+                                                        model.Field(p => p.LicenseNumber);
+                                                    }
+                                                )
+                                                .PageSize(10)
+                                        .Batch(false)
+                                        .Events(events =>
+                                        {
+                                            events.Error("refreshGrid");
+                                            events.RequestEnd("gridRequestEnd");
+                                        })
+                                    )
+                            )
+
+                        </div>
+                        <div id="licenseTypesWindow" style="display:none">
+                            <div id="licenseTypesContent">
+                                @Html.Partial("~/Views/DdlLicenseTypes/DdlLicenseTypesPartial.cshtml")
+
+                            </div>
+                        </div>
+                        <div id="statesWindow" style="display:none">
+                            <div id="statesContent">
+                                @Html.Partial("~/Views/DdlStates/DdlStatesPartial.cshtml")
+
+                            </div>
+                        </div>
+                        <div id="countriesWindow" style="display:none">
+                            <div id="countriesContent">
+                                @Html.Partial("~/Views/DdlCountries/DdlCountriesPartial.cshtml")
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#enteredDateLabel").text(convertUTCDateToLocalDate(new Date('@Model.EnteredDate')));
+    $("#modifiedDateLabel").text(convertUTCDateToLocalDate(new Date('@Model.ModifiedDate')));
+
+    function newKendoWindow(title, onClose) {
+        var obj = {
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: title,
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+            close: onClose
+        }
+        return obj;
+    };
+
+    var licenseTypesWindow = $("#licenseTypesWindow");
+    if (!licenseTypesWindow.data("kendoWindow")) {
+        licenseTypesWindow.kendoWindow(
+           newKendoWindow("License Types", onCloseLicensesWindow)
+       );
+    }
+
+    function onCloseLicensesWindow() {
+        resetKenoComboBox('LicenseDescription');
+        resetGrid('gridDdlLicenseType');
+    }
+
+    $("#btnAddLicenseType").click(function (e) {
+
+        e.preventDefault();
+        var kendoWindow = $("#licenseTypesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var statesWindow = $("#statesWindow");
+    if (!statesWindow.data("kendoWindow")) {
+        statesWindow.kendoWindow(
+           newKendoWindow("States", onCloseStateWindow)
+       );
+    }
+
+    function onCloseStateWindow() {
+        resetKenoComboBox('StateTitle');
+        resetGrid('gridDdlState');
+    }
+
+    $("#btnAddState").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#statesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var countriesWindow = $("#countriesWindow");
+    if (!countriesWindow.data("kendoWindow")) {
+        countriesWindow.kendoWindow(
+          newKendoWindow("Countries", onClosecountriesWindow)
+      );
+    }
+
+    function onClosecountriesWindow() {
+        resetKenoComboBox('CountryDescription');
+        resetGrid('gridDdlCountry');
+    }
+
+    $("#btnAddCountry").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#countriesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+</script>

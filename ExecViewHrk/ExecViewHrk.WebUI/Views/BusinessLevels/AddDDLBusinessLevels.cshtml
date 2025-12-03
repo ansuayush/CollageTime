@@ -1,0 +1,196 @@
+﻿
+@model List<ExecViewHrk.WebUI.Models.DDLPartial>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">@ViewBag.Title</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmDDL">
+            @foreach (var item in Model)
+            {
+                <input type="hidden" id="DDL" name="@item.DDLName" value="@item.DDLName" />
+                if (item.FieldID.Contains("Active") || item.FieldID.Contains("active") || (item.FieldID.Contains("FedralEINNbr")) ||(item.FieldID.Contains("LocationId")) || (item.FieldID.Contains("EEoFileStatusNbr")) || (item.FieldID.Contains("BusinessLevelTypeNbr")) )
+                {
+                    <input type="hidden" id="DDLPrimaryId" name="@item.FieldID" value="@item.FieldID" />
+                }
+                else if ((item.FieldID.Contains("LocationCode")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Code</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("LocationDescription")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("addressLineOne")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>address Line One</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("addressLineTwo")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>address Line Two</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("stateID")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>state ID</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("zipCode")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>zip Code</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("countryID")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>country ID</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("phoneNumber")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("faxNumber")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Fax Number</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("EEOFileStatusID")))
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>EEO File Status ID</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+                }
+                else if ((item.FieldID.Contains("notes")))
+                {
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>@item.Caption</label>
+                            <textarea  name="@item.FieldID" id="@item.FieldID"   class="form-control" style="height:auto;"></textarea>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>@item.Caption</label>
+                            <input type="text" id="@item.FieldID" class="form-control" name="@item.FieldID" value="@item.FieldValue" />
+                        </div>
+                    </div>
+
+                }
+
+            }
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseDDl">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveDDL">Save</button>
+</div>
+<script>
+    $("#btnSaveDDL").click(function (e) {
+        e.preventDefault();
+        if ($("#Code").val() == "" || ($("#LocationCode").val() == "") ) {
+            toastr.error("The Code field is required.");
+            return;
+        }
+        if ($("#EIN").val() == "") {
+            toastr.error("The EIN field is required.");
+            return;
+        }
+        if ($("#description").val() == "" || $("#Description").val() == "" || ($("#LocationDescription").val() == "")) {
+            toastr.error("The Description field is required.");
+            return;
+        }
+    
+        var postData = $("#frmDDL").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "BusinessLevels/DdlSave";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+               reloadDDL();
+                $("#btnCloseDDl").trigger('click');
+            }
+        });
+    });
+    function reloadDDL() {
+      
+        var PrimaryID = $("#DDLPrimaryId").val();
+        $.get($("#appBaseUrl").val() + 'BusinessLevels/ReloadDDL?DDLName=' + $("#DDL").val(),
+            function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#" + PrimaryID).empty();
+                $("#" + PrimaryID).append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    var data = list[i].Description == undefined ? list[i].description : list[i].Description;
+                    switch ($("#DDL").val()) {
+                        case "ddlEINs":
+                            $("#" + PrimaryID).append("<option  value='" + list[i].FedralEINNbr + "' > " + data + " </option>");
+                            break;
+                        case "Locations":
+                            $("#" + PrimaryID).append("<option  value='" + list[i].LocationId + "' > " + list[i].LocationDescription + " </option>");
+                            break;
+                        case "ddlEEOFileStatuses":
+                            $("#" + PrimaryID).append("<option  value='" + list[i].EEoFileStatusNbr + "' > " + data + " </option>");
+                            break;
+                        case "ddlBusinessLevelTypes":
+                            $("#" + PrimaryID).append("<option  value='" + list[i].BusinessLevelTypeNbr + "' > " + data + " </option>");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        });
+    }
+</script>

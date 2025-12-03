@@ -1,0 +1,135 @@
+﻿@model ExecViewHrk.Models.E_PositionSalaryHistorVm
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Salary Details</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                @using (Html.BeginForm("SavepositionSalaySource", "E_Positions", FormMethod.Post, new { role = "form", id = "E_PositionForm" }))
+                {
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Rate Type</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.RateTypeId, new SelectList((System.Collections.IEnumerable)ViewData["RatetypeList"], "keyvalue", "keydescription"), new { @class = "form-control", data_required = "Y", @id = "DdlRateTypeId" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Rate</label>
+                            <input type="text" class="form-control" id="txtPayRate" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Hours per PayPeriod</label>
+                            <input type="text" class="form-control" id="txtHoursPerPayPeriod" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Effective Date</label>
+                            @Html.TextBoxFor(model => model.EffectiveDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseSalaryHistory" onclick="closePopup();">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " onclick="SavepositionSalaySource();">Done</button>
+        </div>
+    </div>
+</div>
+<script>   
+    function SavepositionSalaySource() {
+        var postedData = $("#E_PositionForm").serializeArray();
+        var E_positionId = postedData[2].value;
+        var RateType = $("#DdlRateTypeId option:selected").val();
+        var PayRate = $("#txtPayRate").val();
+        var HoursPerPayPeriod = $('#txtHoursPerPayPeriod').val();
+        var EffectiveDate = $('#EffectiveDate').val();
+        if (RateType == "" || RateType == 0) {
+            toastr.error("Please Select Rate Type");
+            return;
+        }
+        if (PayRate == "") {
+            toastr.error("Please enter Pay Rate");
+            return;
+        }
+        if (HoursPerPayPeriod == "") {
+            toastr.error("Please enter Hours Per Pay Period");
+            return;
+        }
+        if (EffectiveDate == "") {
+            toastr.error("Please enter Effective Date");
+            return;
+        }
+        if (!isDate(EffectiveDate)) {
+            toastr.error("Please enter valid Effective Date");
+            return;
+        }
+        if (EffectiveDate)
+            var formURL = $("#ApplicationUrl").val() + '/E_Positions/SavepositionSalaySource?E_PositionId=' + E_positionId + '&RateType=' + RateType + '&PayRate=' + PayRate + '&HoursPerPayPeriod=' + HoursPerPayPeriod + '&EffectiveDate=' + EffectiveDate;
+        $.post(formURL, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                $('#btnCloseSalaryHistory').click();
+                toastr.success('Record created successfully.');
+                resetGrid("gridEmployeeSalPosition");
+                resetcontrol();
+                $.get($("#appBaseUrl").val() + "E_Positions/GetRateTypes", function (pdata, status) {
+                    if (pdata.length > 0) {
+                        for (var i = 0; i < pdata.length; i++) {
+                            $("#RateTypeId").append("<option value='" + pdata[i].keyvalue + "'>" + pdata[i].keydescription + "</option>");
+                        }
+                    }
+                });
+            }
+        });
+    }
+    function closePopup() {
+
+        $("#DdlRateTypeId").val("");
+        $('#txtPayRate').val("");
+        $('#HoursPerPayPeriod').val("");
+        $('#EffectiveDate').val("");
+    }
+    function isDate(txtDate) {
+        var currVal = txtDate;
+        if (currVal == '')
+            return false;
+        var rxDatePattern = /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/;
+        var dtArray = currVal.match(rxDatePattern);
+        if (dtArray == null)
+            return false;
+        dtMonth = dtArray[1];
+        dtDay = dtArray[3];
+        dtYear = dtArray[5];
+        if (dtMonth < 1 || dtMonth > 12)
+            return false;
+        else if (dtDay < 1 || dtDay > 31)
+            return false;
+        else if ((dtMonth == 4 || dtMonth == 6 || dtMonth == 9 || dtMonth == 11) && dtDay == 31)
+            return false;
+        else if (dtMonth == 2) {
+            var isleap = (dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0));
+            if (dtDay > 29 || (dtDay == 29 && !isleap))
+                return false;
+        }
+        return true;
+    }
+
+    function resetcontrol() {
+        $("#RateTypeId").empty('');
+        $('#PayRate').val('');
+        $('#HoursPerPayPeriod').val('');
+        $('#EffectiveDate').val('')
+    }
+</script>

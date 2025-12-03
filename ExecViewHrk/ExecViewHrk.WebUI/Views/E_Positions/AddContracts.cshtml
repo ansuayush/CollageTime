@@ -1,0 +1,381 @@
+﻿@model ExecViewHrk.WebUI.Models.ContractsVm
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" id="btnCloseAddNew" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Add New Contracts</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                @using (Html.BeginForm("", "E_Positions", FormMethod.Post, new { role = "form", id = "ContractsForm" }))
+                {
+                    
+                        @*<div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Department</label>
+                                @Html.DropDownListFor(model => model.Department,
+                                         new SelectList((System.Collections.IEnumerable)ViewData["DepartmentList"], "keyvalue", "keydescription"), "--Select--", new { @class = "form-control", @Id = "ddlDepartment" })
+                            </div>
+                        </div>*@
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Semester</label>
+                                @Html.DropDownListFor(model => model.SemisterId,
+                                         new SelectList((System.Collections.IEnumerable)ViewData["SemisterList"], "keyvalue", "keydescription"), "--Select--", new { @class = "form-control", @Id = "ddlSemister" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label><span style="color:red">*</span>Start Date</label>
+                                @Html.TextBoxFor(model => model.StartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", @Id = "txtStartDate" })
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label><span style="color:red">*</span>End Date</label>
+                                @Html.TextBoxFor(model => model.EndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", @Id = "txtEndDate" })
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Job</label>
+                                @Html.TextBoxFor(model => model.Job, new { @class = "form-control" })                             
+                            </div>
+                        </div>*@
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Remaining Balance</label>
+                                @Html.TextBoxFor(model => model.Amounts, new { @class = "form-control", @type = "number", @min = "0", @Id = "txtAmount", @readonly = "readonly" })
+                            </div>
+                        </div>
+                          <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>GL Code</label>
+                                @Html.TextBoxFor(model => model.GLCode, new { @class = "form-control"})
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4">
+                            <div class="form-group">
+                                <label>GL Code</label>
+                                <div class="input-group">
+                                    @Html.DropDownListFor(model => model.GLCodeId,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["GLCodesList"], "keyvalue", "keydescription"), "--Select--", new { @class = "form-control", @Id = "ddlGLCodeId" })
+                                    @Html.HiddenFor(m => m.GLCodeId)
+                                </div>
+                            </div>
+                        </div>*@
+                        @*<div class="col-sm-4"
+                            <div class="form-group">
+                                <label>Add New Contract</label>
+                                @Html.TextBoxFor(model => model.AddNewContract, new { @class = "form-control" })     
+                            </div>
+                        </div>*@
+                        @Html.HiddenFor(model => model.Id)
+                        <div class="col-sm-4">
+                            <div class="form-group ">
+                                <label>No.of Pay Period</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.PayPeriod, new { @class = "form-control", @type = "number", @min = "0", @Id = "txtPayPeriod", @readonly=true })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group ">
+                                <label>Earning Code</label>
+                                <div class="input-group">
+                                    @Html.DropDownListFor(model => model.EarningsCodeId,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["EarningCodesList"], "EarningsCodeId", "EarningsCodeCode"), "--Select--", new { @class = "form-control", @Id = "ddlEarningsCodeId" })
+                                    @Html.HiddenFor(m => m.EarningsCodeId)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Earning Code Description</label>
+                                @Html.TextBoxFor(x => x.EarningCodes, new { @class = "form-control", @readonly = true, @id = "txtEarningsCode" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Amount </label>
+                                @Html.TextBoxFor(model => model.AmountsInDollar, new { @class = "form-control",  @Id = "txtAmountsInDollar", @onchange = "amountchangeevent();" })
+                                @Html.HiddenFor(model => model.AmountsInDollar)
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4">
+                            <div class="form-group ">
+                                <label>Memo Code 1</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.MemoCode1, new { @class = "form-control", @readonly = true, @Id = "txtMemoCode1" })
+                                </div>
+                            </div>
+                        </div>*@
+                        @*<div class="col-sm-4">
+                            <div class="form-group ">
+                                <label>Memo Code 1 Amount</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.MemoCode1Amount, new { @class = "form-control", @readonly = true, @Id = "txtMemoCode1Amt" })
+                                </div>
+                            </div>
+                        </div>*@
+                        @*<div class="col-sm-4">
+                            <div class="form-group ">
+                                <label>Memo Code 2</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.MemoCode2, new { @class = "form-control", @readonly = true, @Id = "txtMemoCode2" })
+                                </div>
+                            </div>
+                        </div>*@
+                        @*<div class="col-sm-4">
+                            <div class="form-group ">
+                                <label>Memo Code 2 Amount</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.MemoCode2Amount, new { @class = "form-control", @readonly = true, @Id = "txtMemoCode2Amt" })
+                                </div>
+                            </div>
+                        </div>*@
+                        <div class="col-sm-4">
+                            <div class="form-group ">
+                                <label>Outside Payment Adjustment</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.ADJlimits, new { @class = "form-control",  @Id = "txtADJlimits"  ,@onchange = "amountchangedforoutsidepay();" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Notes</label>
+                                @Html.TextAreaFor(model => model.Notes, new { @class = "form-control" })          
+                            </div>
+                        </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseContracts">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " onclick="saveNewContacts();">Done</button>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {        
+        resetcontrolAdd();
+        
+        $('#txtStartDate').datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#txtEndDate').datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#btnCloseAddNew").click(function () {            
+            resetcontrolAdd();
+        });
+
+        $("#btnCloseContracts").click(function () {            
+            resetcontrolAdd();
+        });
+
+        $('#txtPayPeriod').keyup(function () {             
+            var Status1FlagCode = '@Session["EmployeeTypeId"]'
+            var PayPeriod = $('#txtPayPeriod').val();
+            if (Status1FlagCode === "1") {
+                if (PayPeriod >= 1 && PayPeriod <= 18) {
+                   // $("#ddlEarningsCodeId").val('R');
+                    $("#ddlEarningsCodeId option[value='R']").attr("selected", "selected");
+                    $("#txtMemoCode1").val('SAL');
+                    $("#txtMemoCode2").val('DPA');                 
+                    $("#txtMemoCode1Amt").val($("#txtAmountsInDollar").val() * 26 / 18);
+                    $("#txtMemoCode2Amt").val($("#txtMemoCode1Amt").val() - $("#txtAmountsInDollar").val());
+                }
+                else if (PayPeriod >= 19 && PayPeriod <= 26){
+                    $("#ddlEarningsCodeId option[value='R']").attr("selected", "selected");
+                    $("#txtMemoCode1").val('');
+                    $("#txtMemoCode2").val('DPA');
+                    $("#txtMemoCode1Amt").val('');
+                    $("#txtMemoCode2Amt").val(-$("#txtAmountsInDollar").val());
+                }
+                else{
+                    toastr.error("Invalid Pay Period.");
+                    $("#txtMemoCode1Amt").val('');
+                    $("#txtMemoCode2Amt").val('');
+                    return;
+                }
+            }
+            else if (Status1FlagCode === "2") {
+                if (PayPeriod >= 1 && PayPeriod <= 18) {
+
+                }
+                else {
+                    toastr.error("Invalid Pay Period.");
+                    $("#txtMemoCode1Amt").val('');
+                    $("#txtMemoCode2Amt").val('');
+                    return;
+                }
+            }
+        });
+    });
+   
+    $("#txtStartDate").on('change', function () {
+        var appBaseUrl = $("#appBaseUrl").val();
+        var startDate = $("#txtStartDate").val();
+        var endDate = $("#txtEndDate").val();
+        if (startDate != '' && endDate != '') {
+            if (Date.parse(startDate) >= Date.parse(endDate)) {
+                $("#txtEndDate").val('');
+                toastr.error("End Date can't be less than start Date. ");
+                return false;
+            }
+        }
+        $.ajax({
+            url: appBaseUrl + "E_Positions/getPayperiodscount",
+            type: "Get",
+            data: {
+                startDate: startDate, endDate: endDate
+            },
+            success: function (count) {
+                $("#txtPayPeriod").val(count);
+            }
+        });
+    })
+    $("#txtEndDate").on('change', function () {
+        var appBaseUrl = $("#appBaseUrl").val();
+        var startDate = $("#txtStartDate").val();
+        var endDate = $("#txtEndDate").val();
+        if (startDate != '' && endDate != '') {
+            if (Date.parse(startDate) >= Date.parse(endDate)) {
+                $("#txtEndDate").val('');
+                toastr.error("End Date can't be less than start Date. ");
+                return false;
+            }
+        }
+        $.ajax({
+            url: appBaseUrl + "E_Positions/getPayperiodscount",
+            type: "Get",
+            data: {
+                startDate: startDate, endDate: endDate
+            },
+            success: function (count) {
+                $("#txtPayPeriod").val(count);
+            }
+        });
+    })
+    function amountchangeevent() {
+        var amount = $("#txtAmountsInDollar").val();
+        if (amount == '') {
+            $("#txtAmount").val('');
+        }
+        else if ( amount!='') {
+            var remainingbal1 = $("#txtAmount").val(amount);
+        }
+    }
+    function amountchangedforoutsidepay() {
+        var calremainingbal = $("#txtAmount").val();
+        var amount = $("#txtAmountsInDollar").val();
+        var payperiodno = $("#txtPayPeriod").val();
+        var outsidepay = $("#txtADJlimits").val();
+        if (outsidepay == '') {
+            $("#txtAmount").val(amount);
+        }
+        else if (outsidepay != '') {
+            var calremainingbal = calremainingbal - outsidepay;
+            var calremainingbal = $("#txtAmount").val(calremainingbal);
+        }
+    }
+
+    function saveNewContacts() {
+        var postData = $("#ContractsForm").serializeArray();
+        @*var status1FlagCode = '@Session["EmployeeTypeId"]'*@
+        //if (status1FlagCode === "3" || status1FlagCode === "") {
+            var startDate = $("#txtStartDate").val();
+            var endDate = $("#txtEndDate").val();
+            if (startDate === "" && endDate === "") {
+                toastr.error("Enter Start and End Date.");
+                return;
+            }
+            if (startDate === "") {
+                toastr.error("Enter Start Date.");
+                return;
+            }
+            if (endDate === "") {
+                toastr.error("Enter End Date.");
+                return;
+            }
+        //}
+        //else if (status1FlagCode === "1") {
+        //    var PayPeriod = $('#txtPayPeriod').val();
+        //    if (PayPeriod === "") {
+        //        toastr.error("Enter Pay Period.");
+        //        return;
+        //    }
+        //    else if (PayPeriod === "0" || PayPeriod > "26") {
+        //        toastr.error("Invalid Pay Period.");
+        //        return;
+        //    }
+        //}
+        //else if (status1FlagCode === "2") {
+        //    var PayPeriod = $('#txtPayPeriod').val();
+        //    if (PayPeriod === "") {
+        //        toastr.error("Enter Pay Period.");
+        //        return;
+        //    }
+        //    else if (PayPeriod === "0" || PayPeriod > "18") {
+        //        toastr.error("Invalid Pay Period.");
+        //        return;
+        //    }
+        //}
+        var formURL = $("#ApplicationUrl").val() + '/E_Positions/SaveContracts';
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                $('#btnCloseContracts').trigger('click');
+                toastr.success('Record created successfully.');
+                resetGrid("gridContract");
+                resetcontrolAdd();
+               
+            }
+        });
+    }
+    function resetcontrolAdd() {
+        $("#Amount").val('');
+        $("#ddlDepartment").val('');
+        $("#ddlSemister").val('');
+        $("#ddlGLCodeId").val('');
+        $("#txtStartDate").val('');
+        $("#txtEndDate").val('');
+        $("#txtAmount").val('');
+        $("#txtPayPeriod").val('');
+    //    $("#ddlEarningsCodeId").val('');
+        $("#txtMemoCode1").val('');
+        $("#txtMemoCode1Amt").val('');
+        $("#txtMemoCode2").val('');
+        $("#txtMemoCode2Amt").val('');
+    }
+
+
+    $("#ddlEarningsCodeId").on('change', function () {
+        var appBaseUrl = $("#appBaseUrl").val();
+        var earningCodeId = $("#ddlEarningsCodeId").val();
+        if (earningCodeId != "0" && earningCodeId != "") {
+            $.ajax({
+                url: appBaseUrl + "PersonEmployees/OnChangeEarningsCodes",
+                type: "Get",
+                data: {
+                    earningCodeId: earningCodeId
+                },
+                success: function (response) {
+                    if (response != null) {                       
+                        var earningsCode = response;                        
+                        $("#txtEarningsCode").val(earningsCode);
+                    }
+                }
+            });
+        } 
+    });
+</script>

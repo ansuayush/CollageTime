@@ -1,0 +1,85 @@
+﻿@model ExecViewHrk.Models.PerformanceReviewSetupVm
+    @{
+        ViewBag.Title = "Performance Profile Review";
+        Layout = null;
+        string alert = "";
+        if (ViewBag.AlertMessage != null)
+        {
+            alert = (string)ViewBag.AlertMessage;
+        }
+    }
+    <style>
+            .modal-backdrop {
+            z-index: 9998;
+        }
+    </style>
+    <div class="card-header p-l-0">
+        <h5 class="card-header-text">Performance Review</h5>
+    </div>
+    <div class="row">
+        <div class="card-title">
+            <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" data-toggle="modal" data-target="#PerformanceAddModal">
+                <i class="fa fa-plus"></i><span class="m-l-10">Add New Performance Section</span>
+            </button>
+        </div>
+        <div class="card-block">
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.PerformanceReviewSetupVm>()
+                                            .Name("gridPerformanceReviewSetup")
+                                            .Resizable(resize => resize.Columns(true))
+                                            .Filterable()
+
+                                            .Columns(columns =>
+                                            {
+                                                columns.Command(command =>
+                                                {
+                                                    command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPerformanceReviewSetupEdit");
+                                                    command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("gridPerformanceReviewSetupDelete");
+                                                }).Width(90);
+                                                columns.Bound(c => c.ID).Visible(false);
+                                                columns.Bound(c => c.SectionName).Title("Section Name");
+                                                columns.Bound(c => c.Header).Title("Description");
+                                                columns.Bound(c => c.Weight).Title("Weight");
+                                                columns.Bound(c => c.Position).Title("Field Position");
+                                            })
+
+                                            .Sortable()
+                                            .Selectable()
+                                            .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                            .Events(e => e.DataBound("gridDataBound"))
+                                            .DataSource(dataSource => dataSource.Ajax()
+                                            .Read(read => read.Action("PerformanceReviewSetup_Read", "PerformanceReviewSetup", new { perProfileId = ViewBag.PerProfileID }))
+
+                                            .Model(model =>
+                                            {
+                                                model.Id(p => p.ID);
+                                                model.Field(p => p.ID);
+                                                model.Field(p => p.SectionName);
+                                                model.Field(p => p.Header);
+                                                model.Field(p => p.Weight);
+                                                model.Field(p => p.Position);
+                                            }
+                                            )
+                                              .Batch(false)
+                                              .Events(events =>
+                                              {
+                                                  events.Error("refreshGrid");
+                                                  events.RequestEnd("gridRequestEnd");
+                                              })
+                                            )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="PerformanceAddModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        @Html.Partial("AddPerformanceProfile", new ExecViewHrk.Models.PerformanceReviewSetupVm())
+    </div>
+    <div class="modal fade" id="PerformanceEditModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        @Html.Partial("EditPerformanceProfile", new ExecViewHrk.Models.PerformanceReviewSetupVm())
+    </div>

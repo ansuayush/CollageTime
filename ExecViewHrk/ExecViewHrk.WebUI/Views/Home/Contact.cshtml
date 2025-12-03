@@ -1,0 +1,79 @@
+﻿
+@model EmployMeMatch.WebUI.Models.ContactUsModel
+@{
+    ViewBag.Title = "Contact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="margin-top:50px">Contact Us</h2>
+
+<div class="row">
+
+    
+    <div class="col-md-6">
+
+        <p>
+            
+        </p>
+
+        
+
+        <div>
+            <p style="font-size:large; font-weight:bold">Resource Navigation, Inc</p>
+            <address>
+                <strong>Resource Navigation, Inc.</strong><br />
+                <strong>1484 Main Street</strong><br />
+                <strong>Waltham, Ma. 02451</strong><br />
+                <strong>Phone: 781-899-8999 x201</strong><br />
+                <strong>Fax: 781-899-8026</strong><br />
+                <strong>Support:</strong>   <a href="http://www.ResourceNavigation.com" target="_blank">www.resourcenavigation.com</a><br />
+            </address>
+        </div>
+        <div class="col-md-3" style="padding-top:15px; ">
+            
+        </div>
+    </div>
+
+    <div class="col-md-offset-2 col-md-4 well" style="margin-top:20px; ">
+        <h3>Send us a message</h3>
+
+        @Html.ValidationSummary(false)
+
+        @if (TempData["message"] != null)
+        {
+            <div id="tempDataMsg" class="alert-danger alert-danger">@TempData["message"]</div>
+        }
+
+        @using (Html.BeginForm("Contact", "Home"))
+        {
+            <div class="form-group">
+                <label>Name</label>
+                @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Name)
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                @Html.TextBoxFor(x => x.EmailAddress, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.EmailAddress)
+            </div>
+            <div class="form-group">
+                <label>Question or Comment</label>
+                @Html.TextAreaFor(x => x.Message, new { @class = "form-control", @style = "height:80px;" })
+                @Html.ValidationMessageFor(x => x.Message)
+            </div>
+
+
+            @Html.Hidden("submitId", "Employee")
+            <button type="submit" class="btn btn-primary">Submit</button>
+
+        }
+
+    </div>
+
+
+
+
+
+</div>
+

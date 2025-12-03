@@ -1,0 +1,591 @@
+﻿<section class="sidebar" id="sidebar-scroll">
+
+    <div class="user-panel">
+        <div class="f-left image"> <img src="~/assets/images/avatar-01.png" alt="User Image" class="img-circle" /> </div>
+        <div class="f-left info">
+            <p>KSHARMA</p>
+        </div>
+    </div>
+    <!--horizontal Menu Starts-->
+    <nav class="navbar navbar-inverse p-0">
+        <div class="collapse navbar-collapse collapsed in p-0" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="dropdown dropdown-megamenu">
+                    <a href="@Url.Action("Index", "HrkAdmin", new { RequestType = "NSS" }, null)" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Home</a>
+                </li>
+                @if ((!User.IsInRole("ClientEmployees")) || (User.IsInRole("ClientManagers")))
+                {
+                    if (!User.IsInRole("ClientManagers"))
+                    {
+                        <li class="dropdown dropdown-megamenu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Employment Info<i class="icon-arrow-down"></i></a>
+                            <div class="dropdown-container">
+                                <ul class="mega-menu treeview-menu">
+                                    <li class="row">
+                                        <ul>
+                                            <li class="col-md-4 p-0">
+                                                <div class="card-block mega-card p-b-0">
+                                                    <h6 class="sub-title color-theme f-16">Person</h6>
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-4">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("Person", "Person")'><i class="icon-arrow-right"></i> Identity</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-8 p-0">
+                                                <div class="card-block mega-card p-b-0">
+                                                    <h6 class="sub-title color-theme f-16">Employee</h6>
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PersonEmployeesMatrixPartial", "PersonEmployees")'><i class="icon-arrow-right"></i> Employee</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PersonRelationshipsList", "PersonRelationships")'><i class="icon-arrow-right"></i> Relationship</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("E_PositionsMatrixPartial", "E_Positions")'><i class="icon-arrow-right"></i> Employee Position</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                    if ((!User.IsInRole("ClientManagers")))
+                    {
+                        <li class="dropdown dropdown-megamenu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Position<i class="icon-arrow-down"></i></a>
+                            <div class="dropdown-container">
+                                <ul class="mega-menu treeview-menu">
+                                    <li class="row">
+                                        <ul>
+                                            <li class="col-md-3 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list mega-list-new row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("BusinessLevelsListMatrixPartial","BusinessLevels")'><i class="icon-arrow-right"></i> Business Levels</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-3 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list mega-list-new row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li style="min-width: 160px;"><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("JobSetupList", "JobSetup")'><i class="icon-arrow-right"></i> Job Setup</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-3 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list mega-list-new row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li style="min-width: 160px;"><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PositionsMatrixPartial","Positions")'><i class="icon-arrow-right"></i> Position Setup</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-3 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list mega-list-new row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PositionBudgetList","PositionBudgets")'><i class="icon-arrow-right"></i> Position Budgets</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                    <li class="dropdown dropdown-megamenu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Web Time<i class="icon-arrow-down"></i></a>
+                        <div class="dropdown-container">
+                            <ul class="mega-menu treeview-menu">
+                                <li class="row">
+                                    <ul>
+                                        <li class="col-md-12 p-0">
+                                            <div class="card-block mega-card p-t-0 p-b-0">
+                                                <ul class="mega-list row">
+                                                    <li class="col-xs-12 col-sm-3">
+                                                        <ul>
+                                                            @if ((!User.IsInRole("ClientManagers")))
+                                                            {
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("DepartmentsMatrixPartial", "Departments")'><i class="icon-arrow-right"></i> Departments</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("EarningsCodesMatrixPartial", "EarningsCodes")'><i class="icon-arrow-right"></i> Earning Codes</a></li>
+                                                            }
+                                                            <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardsArchiveMatrixPartial", "TimeCardArchive")'><i class="icon-arrow-right"></i> Time Card Archived</a></li>
+                                                            <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("RetroHoursMatrixPartial", "RetroHours")'><i class="icon-arrow-right"></i> Retro Hours</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li class="col-xs-12 col-sm-3">
+                                                        <ul>
+                                                            @if ((!User.IsInRole("ClientManagers")))
+                                                            {
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("HoursCodesMatrixPartial", "HoursCodes")'><i class="icon-arrow-right"></i> Hours Codes</a></li>
+                                                                if ((!User.IsInRole("ClientAdministrators")))
+                                                                {
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardConfigurationsMatrixPartial", "TimeCardConfigurations")'><i class="icon-arrow-right"></i> Time Card Configuration</a></li>
+
+                                                                }
+                                                            }
+                                                            @if ((User.IsInRole("HrkAdministrators")) || (User.IsInRole("ClientManagers")) || (User.IsInRole("ClientAdministrators")))
+                                                            {
+                                                            <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("Index", "DesignateSupervisor")'><i class="icon-arrow-right"></i> Designate Supervisor Override</a></li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                    <li class="col-xs-12 col-sm-3">
+                                                        <ul>
+                                                            @if ((!User.IsInRole("ClientManagers")))
+                                                            {
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("PayPeriodsMatrixPartial", "PayPeriods")'><i class="icon-arrow-right"></i> Pay Period</a></li>
+                                                            }
+                                                            <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardsMatrixPartial", "TimeCardMatrix")'><i class="icon-arrow-right"></i> Time Card</a></li>
+                                                            <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardApprovalReportMatrixPartial", "TimeCardApprovalReport")'><i class="icon-arrow-right"></i> Time Card Approval Report</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li class="col-xs-12 col-sm-3">
+                                                        <ul>
+                                                            @if ((!User.IsInRole("ClientManagers")))
+                                                            {
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("ManagerDepartmentsMatrixPartial", "ManagerDepartments")'><i class="icon-arrow-right"></i> Manager Department</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardSessionInOutMatrixPartial", "TimeCardSessionInOutConfig")'><i class="icon-arrow-right"></i> Time Card Session Configuration</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardAuditsMatrixPartial", "TimeCardAudits")'><i class="icon-arrow-right"></i> Time Card Audits</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardUnapprovedReportPartial", "TimeCardUnApprovedReport")'><i class="icon-arrow-right"></i> Time Card Unapproved Report</a></li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    if ((!User.IsInRole("ClientManagers")))
+                    {
+                        <li class="dropdown dropdown-megamenu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports<i class="icon-arrow-down"></i></a>
+                            <div class="dropdown-container">
+                                <ul class="mega-menu treeview-menu">
+                                    <li class="row">
+                                        <ul>
+                                            <li class="col-md-2 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("EmployeePositionReport", "Reports")'><i class="icon-arrow-right"></i> Employee Position</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("BudgetToActualsReport", "Reports")'><i class="icon-arrow-right"></i> Budget To Actuals</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("ContractReport", "Reports")'><i class="icon-arrow-right"></i> Contract Report</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-2 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("PositionReportList", "Reports")'><i class="icon-arrow-right"></i> Position Report - General</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("EmployeeActuals", "EmployeeActuals")'><i class="icon-arrow-right"></i> Employee Actuals </a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("WorkStudylimit", "Reports")'><i class="icon-arrow-right"></i> Work Study Limits</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-2 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("OpenPositionReport", "Reports")'><i class="icon-arrow-right"></i> Position Open </a></li>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("TimeReport", "TimeReport")"><i class="icon-arrow-right"></i> Time Report</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-2 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("PositionsInUseReport", "Reports")'><i class="icon-arrow-right"></i> Position In Use</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("FinancialAidCustomReport", "FinancialAidCustomReport")'><i class="icon-arrow-right"></i> Financial Aid Custom Report</a></li>
+
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("StudentPositionReport", "Reports")'><i class="icon-arrow-right"></i> Student Position Report</a></li>
+
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-2 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("PositionClosedReport", "Reports")'><i class="icon-arrow-right"></i> Position Closed Report</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("TreatyReport", "Reports")'><i class="icon-arrow-right"></i> Treaty Report</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                    if ((!User.IsInRole("ClientManagers")))
+                    {
+                        <li class="dropdown dropdown-megamenu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Lookup Tables<i class="icon-arrow-down"></i></a>
+                            <div class="dropdown-container">
+                                <ul class="mega-menu treeview-menu">
+                                    <li class="row">
+                                        <ul>
+                                            <li class="col-md-6 p-0">
+                                                <div class="card-block mega-card p-b-0">
+                                                    <h6 class="sub-title color-theme f-16">Person</h6>
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-4">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlGenderListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Gender</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlMaritalStatusListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Marital Status</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlPrefixListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Prefix</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlSuffixListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Suffix</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlProfessionalBodiesListMaintenance", "DdlProfessionalBodies")'><i class="icon-arrow-right"></i> Professional Bodies</a></li>
+                                                                @if ((!User.IsInRole("ClientAdministrators")))
+                                                                {
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlLicenseTypesListMaintenance", "DdlLicenseTypes")'><i class="icon-arrow-right"></i> License Types</a></li>
+                                                                    <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("DdlEducationTypesListMaintenance", "DdlEducationTypes")'><i class="icon-arrow-right"></i> Education Types</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlEducationLevelsListMaintenance", "DdlEducationLevels")'><i class="icon-arrow-right"></i> Education Levels</a></li>
+                                                                }
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlMedicalExaminationTypesListMaintenance", "DdlMedicalExaminationTypes")'><i class="icon-arrow-right"></i> Medical Examination Types</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="col-xs-12 col-sm-4">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlPhoneTypesListMaintenance", "DdlPhoneTypes")'><i class="icon-arrow-right"></i> Phone Types</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlAddressTypesListMaintenance", "DdlAddressTypes")'><i class="icon-arrow-right"></i> Address Types</a></li>
+                                                                @if ((!User.IsInRole("ClientAdministrators")))
+                                                                {
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlEvaluationTestsListMaintenance", "DdlEvaluationTests")'><i class="icon-arrow-right"></i> Evaluation Tests</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlAccommodationTypesListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Accomodation Types</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlDisabilityTypesListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Disability Types</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlDegreeTypesListMaintenance", "DdlDegreeTypes")'><i class="icon-arrow-right"></i> Degree Types</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlPropertyTypesListMaintenance", "DdlPropertyTypes")'><i class="icon-arrow-right"></i> Property Types</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlEducationEstablishmentsList", "LookupTables")'><i class="icon-arrow-right"></i> Education Establishments</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlTrainingCoursesListMaintenance", "DdlTrainingCourses")'><i class="icon-arrow-right"></i> Training Courses</a></li>
+                                                                }
+                                                            </ul>
+                                                        </li>
+
+                                                        <li class="col-xs-12 col-sm-4">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlCountriesListMaintenance", "DdlCountries")'><i class="icon-arrow-right"></i> Country</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlStatesListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> States</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlCitizenshipsListMaintenance", "DdlCitizenships")'><i class="icon-arrow-right"></i> Citizenship</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlRelationshipTypesList", "LookupTables")'><i class="icon-arrow-right"></i> Relationship Types</a></li>
+                                                                @if ((!User.IsInRole("ClientAdministrators")))
+                                                                {
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlInnoculationTypesListMaintenance", "DdlInnoculationTypes")'><i class="icon-arrow-right"></i> Innoculation Types</a></li>
+                                                                    <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("DdlRegionalChaptersListMaintenance", "DdlRegionalChapters")'><i class="icon-arrow-right"></i> Regional Chapters</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlMajorsListMaintenance", "DdlMajors")'><i class="icon-arrow-right"></i> Majors</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlQualificationTypesListMaintenance", "DdlQualificationTypes")'><i class="icon-arrow-right"></i> Qualification Types</a></li>
+                                                                    <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("ClientConfigurationList", "ClientConfiguration")'><i class="icon-arrow-right"></i> Client Configuration</a></li>
+                                                                }
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-2 p-0">
+                                                <div class="card-block mega-card p-b-0">
+                                                    <h6 class="sub-title color-theme f-16">Employee</h6>
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlEmployeeTypesListMaintenance", "DdlEmployeeTypes")'><i class="icon-arrow-right"></i> Employee Types</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlEmploymentStatusesListMaintenance", "DdlEmploymentStatuses")'><i class="icon-arrow-right"></i> Employment Status</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlPayFrequenciesListMaintenance", "DdlPayFrequencies")'><i class="icon-arrow-right"></i> Pay Frequency</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlPositionCategoriesListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Position Category</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlGLCodesListMaintenance", "DdlGLCodes")'><i class="icon-arrow-right"></i>GL Codes</a></li>
+                                                                @if ((!User.IsInRole("ClientAdministrators")))
+    {
+                                                            <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("DdlSkillsListMaintenance", "DdlSkills")'><i class="icon-arrow-right"></i> Skills</a></li>
+                                                            <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("DdlSkillTypesListMaintenance", "DdlSkillTypes")'><i class="icon-arrow-right"></i> Skill Types</a></li>
+                                                            <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("DdlSkillLevelsListMaintenance", "DdlSkillLevels")'><i class="icon-arrow-right"></i> Skill Levels</a></li>
+                                                            <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("EmployeeClassGrid", "DdlEmployeeClass")'><i class="icon-arrow-right"></i> Employee Class</a></li>
+}
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-4 p-0">
+                                                <div class="card-block mega-card p-b-0">
+                                                    <h6 class="sub-title color-theme f-16">Positions</h6>
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-6">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlBusinessLevelTypesListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Business Level</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlFLSAListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> FLSA</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlUnionsListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Unions</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlCompanyCodeListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Company Code</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlPayGroupsMain", "DdlPayGroups")'><i class="icon-arrow-right"></i> Pay Groups</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("ddlEEOJobTrainingStatusesListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> EEO Job Training</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("ddlEEOJobCodesListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> EEO Job Code</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlEEOFileStatusListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> EEO File Status</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("DdlEeoTypesListMaintenance", "DdlEeoTypes")'><i class="icon-arrow-right"></i> EEO Types</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="col-xs-12 col-sm-6">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("FedralEINListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Federal EIN</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlJobClassListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Job Class</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlJobFamilysListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Job Family</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("LocationsListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Locations</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("DdlFundCodeListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i> Fund Code</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("ddlWorkersCompensationsListMaintenance", "LookupTables")'><i class="icon-arrow-right"></i>Workers Compensation</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight: bold" href="javascript:void(0)" onclick='LoadMenu("ddlSemester", "LookupTables")'><i class="icon-arrow-right"></i>Semester</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                    if ((!User.IsInRole("ClientManagers")))
+                    {
+                        @*<li class="dropdown dropdown-megamenu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Import<i class="icon-arrow-down"></i></a>
+                            <div class="dropdown-container">
+                                <ul class="mega-menu treeview-menu">
+                                    <li class="row">
+                                        <ul>
+                                            <li class="col-md-3 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("EmployeeImport", "Import")'><i class="icon-arrow-right"></i> Import Employee</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PositionImport", "PositionImportTest")'><i class="icon-arrow-right"></i>Import Master Data</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PositionImport", "PositionImportTest")'><i class="icon-arrow-right"></i>Import Student Data</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("EmployeeForecasMatrixPartial", "EmployeeForecast")'><i class="icon-arrow-right"></i>Employee Salary Forecast</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-3 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list mega-list-new row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                @if ((!User.IsInRole("ClientAdministrators")))
+                                                                {
+                                                                    <li style="min-width: 160px;"><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("TimeOffEmployeesAllowedTakenMatrixPartial", "TimeOffEmployeesAllowedTaken")'><i class="icon-arrow-right"></i> Employees Allowed Taken</a></li>
+                                                                }
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>*@
+                    }
+                }
+
+                @if (User.IsInRole("HrkAdministrators"))
+                {
+                    <li class="dropdown dropdown-megamenu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Security<i class="icon-arrow-down"></i></a>
+                        <div class="dropdown-container">
+                            <ul class="mega-menu treeview-menu">
+                                @if ((!User.IsInRole("ClientAdministrators")))
+                                {
+                                    <li class="row">
+                                        <ul>
+                                            <li class="col-md-4 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("UsersListMaintenance", "HrkAdmin")"><i class="icon-arrow-right"></i> Users</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("UserRolesAssignmentListMaintenance", "HrkAdmin")"><i class="icon-arrow-right"></i> User Roles</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("Index", "RoleAdmin")"><i class="icon-arrow-right"></i> Roles</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("ExternalUserClientAssignments", "HrkAdmin")"><i class="icon-arrow-right"></i> External User Client Assignments</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-4 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                @*<li><a class="waves-effect waves-dark" href="@Url.Action("ChangePassword", "Common")"><i class="icon-arrow-right"></i> Change Password</a></li>*@
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("ViewErrorLog", "HrkAdmin")"><i class="icon-arrow-right"></i> Error Log</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("ViewMessageLog", "HrkAdmin")"><i class="icon-arrow-right"></i> Message Log</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("ManagersMatrixPartial", "Managers")'><i class="icon-arrow-right"></i> Managers</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("ResetTreatyLimit", "HrkAdmin")'><i class="icon-arrow-right"></i> Reset Treaty Limit</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="col-md-4 p-0">
+                                                <div class="card-block mega-card p-t-0 p-b-0">
+                                                    <ul class="mega-list row">
+                                                        <li class="col-xs-12 col-sm-12">
+                                                            <ul>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("EmployerListMaintenance", "HrkAdmin")"><i class="icon-arrow-right"></i> Employer List</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("ClientAssignments", "HrkAdmin")"><i class="icon-arrow-right"></i> Client Assignments</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("EmployerCompanyAssignments", "HrkAdmin")"><i class="icon-arrow-right"></i> Employer Company Assignments</a></li>
+                                                                <li><a class="waves-effect waves-dark" href="@Url.Action("Treatylimithistory", "HrkAdmin")"><i class="icon-arrow-right"></i> Treaty Limit History</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @if ((User.IsInRole("ClientAdministrators")))
+                {
+                    <li class="dropdown dropdown-megamenu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Security<i class="icon-arrow-down"></i></a>
+                        <div class="dropdown-container">
+                            <ul class="mega-menu treeview-menu">
+                                <li class="row">
+                                    <ul>
+                                        <li class="col-md-4 p-0">
+                                            <div class="card-block mega-card p-t-0 p-b-0">
+                                                <ul class="mega-list row">
+                                                    <li class="col-xs-12 col-sm-12">
+                                                        <ul>
+                                                            <li><a class="waves-effect waves-dark" href="@Url.Action("UsersListMaintenance", "HrkAdmin")"><i class="icon-arrow-right"></i> Users</a></li>
+                                                            <li><a class="waves-effect waves-dark" href="@Url.Action("UserRolesAssignmentListMaintenance", "HrkAdmin")"><i class="icon-arrow-right"></i> User Roles</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li class="col-md-4 p-0">
+                                            <div class="card-block mega-card p-t-0 p-b-0">
+                                                <ul class="mega-list row">
+                                                    <li class="col-xs-12 col-sm-12">
+                                                        <ul>
+                                                            <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("ManagersMatrixPartial", "Managers")'><i class="icon-arrow-right"></i> Managers</a></li>
+                                                            <li><a class="waves-effect waves-dark" href="javascript:void(0)" onclick='LoadMenu("ResetTreatyLimit", "HrkAdmin")'><i class="icon-arrow-right"></i> Reset Treaty Limit</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @if (User.IsInRole("ClientEmployees"))
+                {
+                    if (User.Identity.GetEmployeeTimeCardTypeCode().Equals("IO", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        <li class="dropdown dropdown-megamenu">
+                            <a href="javascript:void(0)" class="f-bold"
+                               onclick="LoadDetailView('TimeCardMatrixPartial', 'TimeCardMatrix', { IsArchived: false });">TimeCard</a>
+                        </li>
+                    }
+                    else if (User.Identity.GetEmployeeTimeCardTypeCode().Equals("FIO", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        <li class="dropdown dropdown-megamenu">
+                            <a href="javascript:void(0)" class="f-bold"
+                               onclick="LoadMenu('TimeCardsFastInOutMatrixPartial', 'TimeCards');">TimeCard Fast In Out</a>
+                        </li>
+                        if (User.IsInRole("ClientAdministrators") || User.IsInRole("ClientEmployees"))
+                        {
+                            <li class="dropdown dropdown-megamenu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Self Service<i class="icon-arrow-down"></i></a>
+                                <div class="dropdown-container">
+                                    <ul class="mega-menu treeview-menu">
+                                        <li class="row">
+                                            <ul>
+                                                <li class="col-md-12 p-0">
+                                                    <div class="card-block mega-card p-t-0 p-b-0">
+                                                        <ul class="mega-list mega-list-new row">
+                                                            <li class="col-xs-12 col-sm-12">
+                                                                <ul>
+                                                                    <li>@Html.ActionLink("Employment Info", "ActionMatrix", "EmploymentInfo", new { RequestType = "IsSelfService" }, null)</li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        }
+                    }
+                    else if (User.Identity.GetEmployeeTimeCardTypeCode().Equals("DH", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        <li class="dropdown dropdown-megamenu">
+                            <a href="javascript:void(0)" class="f-bold"
+                               onclick="LoadDetailView('TimeCardsMatrixPartial', 'TimeCardMatrix', { IsArchived: false });">TimeCard</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="dropdown dropdown-megamenu">
+                            <a href="javascript:void(0)" class="f-bold"
+                               onclick="LoadDetailView('TimeCardsMatrixPartial', 'TimeCardMatrix', { IsArchived: false });">TimeCard</a>
+                        </li>
+                    }
+                    <li class="dropdown dropdown-megamenu"><a class="f-bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardsArchiveMatrixPartial", "TimeCardArchive")'> Time Card Archived</a></li>
+                }
+            </ul>
+        </div>
+    </nav>
+    <!--horizontal Menu Ends-->
+</section>

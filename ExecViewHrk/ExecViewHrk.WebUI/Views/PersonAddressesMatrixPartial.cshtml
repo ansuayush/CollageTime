@@ -1,0 +1,429 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Person Address";
+
+}
+
+@model ExecViewHrk.WebUI.Models.PersonAddressVm
+
+
+@*@{
+        var id = ViewContext.RouteData.Values["id"];
+        var requestType = ViewContext.RouteData.Values["RequestType"];
+        var controller = ViewContext.RouteData.Values["controller"];
+        var action = ViewContext.RouteData.Values["action"];
+    }*@
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<script src="~/Scripts/application/PersonAddressesMatrixPartial.js"></script>
+
+
+@Html.ValidationSummary(true)
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+
+            <div class="col-md-6 ">
+                Person Address <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                <div style="color:red; font-size:x-small">* denotes required field</div>
+
+            </div>
+            <div class="col-md-6 ">
+
+                @using (Html.BeginForm("PersonAddressSelectedIndexChanged", "PersonAddresses", FormMethod.Post, new { role = "form", id = "PersonAddressForm" }))
+                {
+                    <label>My Addresses</label>
+
+                    @(Html.Kendo().DropDownListFor(model => model.PersonAddressId)
+                                                .Name("PersonAddressIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            //.DataTextField("MedicalExaminationDescription")
+                                            .DataValueField("PersonAddressId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonAddressesList", "PersonAddresses").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                  });
+                                                  //.ServerFiltering(true);
+                                              })
+                                                .Value(@Model.PersonAddressId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonAddressDdl")
+                                                    .Select("onSelectPersonAddressDdl");
+                                            })
+                    )
+                    <input id="closeButtonDiv" type="button" value="Close" class="btn btn-danger" />
+                    @*@Html.Hidden("requestType", @requestType.ToString())*@
+                }
+
+
+                <div id="noAddressRecordsFound" style="color:red; font-size:x-small">no records found</div>
+
+
+            </div>
+
+        </div>
+    </div>
+    <div id="formDiv" class="panel-body">
+
+        @*need this for validation*@
+        @using (Html.BeginForm("PersonAddresses", "PersonAddresses", FormMethod.Post, new { role = "form", id = "personInfoForm" }))
+        {
+            @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+            @Html.HiddenFor(model => model.PersonAddressId, new { id = "hiddenPersonAddressId" })
+            <div class="row ">
+
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="col-md-5 ">
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Address Type</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("AddressDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("AddressDescription")
+                                        .DataValueField("AddressTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetAddressTypes", "DdlAddressTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Address Type")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddAddressType" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.AddressTypeDescription)
+                                </div>
+                            </div>
+
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>State</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("StateTitle")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("StateTitle")
+                                        .DataValueField("StateId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetStates", "DdlStates").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select a State")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddState" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.StateTitle)
+                                </div>
+                            </div>
+
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Country</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("CountryDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("CountryDescription")
+                                        .DataValueField("CountryId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetCountries", "DdlCountries").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select a Country")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddCountry" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.CountryDescription)
+                                </div>
+                            </div>
+
+                    
+                           <div class="form-group ">
+                                <label><span style="color:red">*</span>Address Line One</label>
+                                @Html.TextBoxFor(x => x.AddressLineOne, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.AddressLineOne)
+                            </div>
+
+                            <div class="form-group ">
+                                <label><span style="color:red">*</span>Address Line Two</label>
+                                @Html.TextBoxFor(x => x.AddressLineTwo, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.AddressLineTwo)
+                            </div>
+
+                            <div class="form-group ">
+                                <label><span style="color:red">*</span>City</label>
+                                @Html.TextBoxFor(x => x.City, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.City)
+                            </div>
+
+                            <div class="form-group ">
+                                <label><span style="color:red">*</span>Zip Code</label>
+                                @Html.TextBoxFor(x => x.ZipCode, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.ZipCode)
+                            </div>
+
+                            <div class=" form-group " style="margin-top:20px">
+                                <label style="vertical-align:middle; ">Check Payroll Address</label>
+                                @Html.EditorFor(x => x.CheckPayrollAddress, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                            </div>
+
+                            <div class=" form-group " style="margin-top:20px">
+                                <label style="vertical-align:middle; ">Correspondence Address</label>
+                                @Html.EditorFor(x => x.CorrespondenceAddress, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                            </div>
+                           
+                        </div>
+
+                        <div class="col-md-offset-1 col-md-5">
+
+                            <div>
+
+                                <div class="form-group ">
+                                    <label>Notes</label>
+                                    @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", style = "max-width:450px", rows = 10 })
+                                    @Html.ValidationMessageFor(x => x.Notes)
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered By:</label>
+                                    <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered Date:</label>
+                                    <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Modified By:</label>
+                                    <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Modified Date:</label>
+                                    <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate</label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="form-group">
+
+                        <input id="btnSavePersonAddressAjax" type="button" value="Save" class="btn btn-info" />
+                        <input id="btnClearPersonAddressAjax" type="button" value="Clear" class="btn btn-info" />
+                        <input id="btnDeletePersonAddressAjax" type="button" value="Delete" class="btn btn-info" />
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+
+
+
+
+    @*<div id="medicalAddressTypesWindow" style="display:none">
+        <div id="medicalAddressTypesContent">*@
+    @*@Html.Partial("~/Views/LookupTables/DdlAccommodationTypesPartial.cshtml")*@
+    @*@Html.Action("DdlMedicalAddressTypesPartial", "DdlMedicalAddressTypes")
+
+            </div>
+        </div>*@
+
+
+
+    <div id="addressTypesWindow" style="display:none">
+        <div id="addressTypesContent">
+            @Html.Partial("~/Views/DdlAddressTypes/DdlAddressTypesPartial.cshtml")
+
+        </div>
+    </div>
+
+    <div id="statesWindow" style="display:none">
+        <div id="statesContent">
+            @Html.Partial("~/Views/DdlStates/DdlStatesPartial.cshtml")
+
+        </div>
+    </div>
+
+    <div id="countriesWindow" style="display:none">
+        <div id="countriesContent">
+            @Html.Partial("~/Views/DdlCountries/DdlCountriesPartial.cshtml")
+
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+
+    var addressTypesWindow = $("#addressTypesWindow");
+    if (!addressTypesWindow.data("kendoWindow")) {
+        addressTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Address Types",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseAddressesWindow
+        });
+    }
+
+    function onCloseAddressesWindow() {
+        $("#AddressDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddAddressType").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#addressTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var countriesWindow = $("#countriesWindow");
+    if (!countriesWindow.data("kendoWindow")) {
+        countriesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Countries",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseCountriesWindow
+        });
+    }
+
+    function onCloseCountriesWindow() {
+        $("#CountryDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddCountry").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#countriesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var statesWindow = $("#statesWindow");
+    if (!statesWindow.data("kendoWindow")) {
+        statesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "States",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseStatesWindow
+        });
+    }
+
+    function onCloseStatesWindow() {
+        $("#StateTitle").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddState").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#statesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

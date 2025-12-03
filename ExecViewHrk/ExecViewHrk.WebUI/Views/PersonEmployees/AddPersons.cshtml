@@ -1,0 +1,87 @@
+﻿@model ExecViewHrk.EfClient.Person
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add New Person</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmPerson">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Last Name</label>
+                    @Html.TextBoxFor(x => x.Lastname, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>First Name</label>
+                    @Html.TextBoxFor(x => x.Firstname, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Email ID</label>
+                    @Html.TextBoxFor(x => x.eMail, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>SSN</label>
+                    @Html.TextBoxFor(x => x.SSN, new { @class = "form-control", data_required = "Y", id = "ssn1" })
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnClosePersons">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSavePersons">Save</button>
+</div>
+<script src="~/Scripts/jquery.maskedinput.min1.4.0.js"></script>
+<script src="~/Scripts/jquery.maskssn.js"></script>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+        $("#ssn1").mask('999-99-9999', { placeholder: "_" });
+    });
+    $("#btnSavePersons").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmPerson")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmPerson").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonEmployees/Persons_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadPersonDropDown(data.Data["0"].PersonId);
+                $("#btnClosePersons").trigger('click');
+            }
+        });
+    });
+    function reloadPersonDropDown(personId) {
+        var _selectedValue = personId; //$("#PersonId").val();
+        $.get($("#appBaseUrl").val() + "PersonEmployees/GetPersonsList", function (data, status) {
+            var JsonList = JSON.parse(data);
+            var list = JsonList;
+            if (list.length > 0) {
+                $("#PersonId").empty();
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#PersonId").append("<option value='" + list[i].keyvalue + "' selected >" + list[i].keydescription + "</option>");
+                    } else {
+                        $("#PersonId").append("<option value='" + list[i].keyvalue + "' >" + list[i].keydescription + "</option>");
+                    }
+                }
+            }
+        });
+    }
+</script>

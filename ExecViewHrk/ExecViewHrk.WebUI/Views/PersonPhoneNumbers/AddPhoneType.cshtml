@@ -1,0 +1,73 @@
+﻿@model ExecViewHrk.EfClient.DdlPhoneType
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Phone Number Type</h4>
+</div>
+<div class="modal-body" style="height:235px">
+    <div class="row">
+        <form id="frmPhoneType">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label>Phone Type Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label>Phone Number Type</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+         
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<br />
+<br />
+<br />
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnClosePhoneType">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSavePhoneType">Save</button>
+</div>
+<script>
+    $("#btnSavePhoneType").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("frmPhoneType")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmPhoneType").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonPhoneNumbers/DdlPhoneTypeList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                loading(false);
+                reloadPhoneTypeDropDown();
+                $("#btnClosePhoneType").trigger('click');
+            }
+        });
+    });
+    function reloadPhoneTypeDropDown() {
+        var _selectedValue = $("#PhoneTypeId").val();
+        $.get($("#appBaseUrl").val() + "PersonPhoneNumbers/GetDdlPhoneTypeList", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#PhoneTypeId").empty();
+                $("#PhoneTypeId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].PhoneTypeId == _selectedValue) {
+                        $("#PhoneTypeId").append("<option value='" + list[i].PhoneTypeId + "' selected >" + list[i].Description + "</option>");
+                    } else {
+                        $("#PhoneTypeId").append("<option value='" + list[i].PhoneTypeId + "' >" + list[i].Description + "</option>");
+                    }
+                }
+            }
+        });
+    }
+</script>

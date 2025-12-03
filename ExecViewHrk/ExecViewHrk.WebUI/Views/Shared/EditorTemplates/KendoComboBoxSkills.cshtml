@@ -1,0 +1,16 @@
+@(Html.Kendo().ComboBox()
+                                    .Name("SkillId")
+                                    .HtmlAttributes(new { style = "width:300px" })
+                                    .Placeholder("Select skill...")
+                                    .DataTextField("SkillName")
+                                    .DataValueField("SkillId")
+                                    .Filter(FilterType.Contains)
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetSkills", "JobSeeker");
+                                        });
+                                    })
+
+)

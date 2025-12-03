@@ -1,0 +1,55 @@
+﻿@(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlEmploymentStatus>()
+                            .Name("gridDdlEmploymentStatus")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridEditEmpStatus1");
+                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridDeleteEmpStatus");
+            });
+            columns.Bound(c => c.EmploymentStatusId).Visible(false);
+            columns.Bound(c => c.Code);
+            columns.Bound(c => c.Description);
+            columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'Yes' : 'No' #"); ;
+
+        })
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .Events(e => e.DataBound("gridDataBound"))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                                            .Read(read => read.Action("DdlEmploymentStatusesList_Read", "DdlEmploymentStatuses"))
+                                            .Create(create => create.Action("DdlEmploymentStatusesList_Create", "DdlEmploymentStatuses"))
+                                            .Update(update => update.Action("DdlEmploymentStatusesList_Update", "DdlEmploymentStatuses"))
+                                            .Destroy(destroy => destroy.Action("DdlEmploymentStatusesList_Destroy", "DdlEmploymentStatuses"))
+            .Model(model =>
+            {
+                model.Id(p => p.EmploymentStatusId);
+                model.Field(p => p.EmploymentStatusId).Editable(false);
+                model.Field(p => p.Code);
+                model.Field(p => p.Description);
+                model.Field(p => p.Active);
+            }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+)
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+

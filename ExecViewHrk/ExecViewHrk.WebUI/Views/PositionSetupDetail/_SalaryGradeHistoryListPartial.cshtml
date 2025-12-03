@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.SalaryGradeHistoryListVm>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Salary Grade History</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="theme-grid">
+            @(Html.Kendo().Grid(Model)
+    .Name("SalaryGradeHistorylst")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.description).Title("Desc");
+        columns.Bound(p => p.validFrom).Title("Valid From").ClientTemplate("#= validFrom == null ? '' : kendo.toString(kendo.parseDate(validFrom, 'yyyy-MM-dd'), 'MM/dd/yyyy') #");
+        columns.Bound(p => p.salaryMinimum).Title("Sal Min").ClientTemplate("$#= salaryMinimum !== null ? kendo.toString(salaryMinimum,'n2') : ''#");
+        columns.Bound(p => p.salaryMidpoint).Title("Sal Mid").ClientTemplate("$#= salaryMidpoint !== null ? kendo.toString(salaryMidpoint,'n2') : ''#");
+        columns.Bound(p => p.salaryMaximum).Title("Sal Max").ClientTemplate("$#= salaryMaximum !== null ? kendo.toString(salaryMaximum,'n2') : ''#");
+        columns.Bound(p => p.ChangeDate).Title("Valid Till").ClientTemplate("#= ChangeDate == null ? '' : kendo.toString(kendo.parseDate(ChangeDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #");
+    })
+   
+    .Sortable()
+    .Filterable()
+    .DataSource(dataSource => dataSource
+        .Ajax()
+       
+     )
+            )
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseSalaryHistoryList">Close</button>
+    @*<button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveFundAllocationList">Save</button>*@
+</div>
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+
+</script>
+
+
+
+
+
+
+

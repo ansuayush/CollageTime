@@ -1,0 +1,99 @@
+﻿@model ExecViewHrk.Models.E_PositioVm
+<script src="http://localhost/ExecViewDrew/Scripts/application/Common.js"></script>
+@{
+    ViewBag.Title = "Employee Positions";
+    Layout = null;
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<style>
+    .modal-backdrop {
+        z-index: 9998;
+    }
+</style>
+<script>
+    function test(options)
+    {
+      
+        return {
+            e_PositionId: '@ViewBag.ePositionId'
+        }
+    }
+</script>
+<div class="card-header p-l-0">
+    <h5 class="card-header-text">Salary History</h5>
+</div>
+
+<div class="row">
+    <div class="card-title">
+        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal btn-addsalary" data-toggle="modal" data-target="#SalaryAddModal">
+            <i class="fa fa-plus"></i><span class="m-l-10">Add Salary</span>
+        </button>
+    </div>
+    <div class="card-block">
+        <div class="col-lg-12 col-md-12 p-0">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="theme-grid">
+                        @(Html.Kendo().Grid<ExecViewHrk.Models.E_PositioVm>()
+                .Name("gridEmployeeSalPosition")
+                .Resizable(resize => resize.Columns(true))
+                .Filterable()
+
+                .Columns(columns =>
+                {
+                    columns.Command(command =>
+                    {
+                        command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridEmployeeSalPositionEdit");
+                    }).Width(40);
+                    columns.Bound(c => c.E_PositionId).Visible(false);
+                    columns.Bound(c => c.RateTypeDescription).Width(80);//.ClientTemplate("#if( RateTypeId == 4){#<span>H</span>#}else if(RateTypeId == 5){#<span>S</span>#}#").Title("Rate Type");
+                    columns.Bound(c => c.PayRate).Width(80).Title("Rate").Format("{0:c2}");
+                    columns.Bound(c => c.HoursPerPayPeriod).Width(150).Title("Hours per Pay Period");
+                    columns.Bound(c => c.AnnualSalary).Width(100).Title("Annual Salary").Format("{0:c2}");
+                    columns.Bound(c => c.EffectiveDate).Width(100).Title("Effective Date").ClientTemplate("#= EffectiveDate == null ? '' : kendo.toString(EffectiveDate, \"MM/dd/yyyy\") #");
+                    columns.Bound(c => c.EndDate).Width(100).Title("End Date").ClientTemplate("#= EndDate == null ? '' : kendo.toString(EndDate, \"MM/dd/yyyy\") #");
+                })
+                                .Sortable().Scrollable()
+                                .Selectable()
+                                .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                .Events(e => e.DataBound("gridDataBound"))
+                                .DataSource(dataSource => dataSource.Ajax()
+                                                .Read(read => read.Action("EPositionSalaryHistoryList_Read", "E_Positions").Data("test"))//, new { e_PositionId = ViewBag.ePositionId }))
+
+                                                .Model(model =>
+                                                {
+                                                    model.Id(p => p.E_PositionId);
+                                                    model.Field(p => p.E_PositionId);
+                                                    model.Field(p => p.RateTypeId);
+                                                    model.Field(p => p.PayRate);
+                                                    model.Field(p => p.HoursPerPayPeriod);
+                                                    model.Field(p => p.AnnualSalary);
+                                                    model.Field(p => p.EffectiveDate);
+                                                    model.Field(p => p.EndDate);
+                                                }
+                                            )
+                                            .PageSize(10)
+                                    .Batch(false)
+                                    .Events(events =>
+                                    {
+                                        events.Error("refreshGrid");
+                                        events.RequestEnd("gridRequestEnd");
+                                    })
+                                )
+                        )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="SalaryAddModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    @Html.Partial("AddPositionSalaryHistory", new ExecViewHrk.Models.E_PositionSalaryHistorVm())
+</div>
+<div class="modal fade" id="SalaryEditModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    @Html.Partial("EditPositionSalaryHistory", new ExecViewHrk.Models.E_PositionSalaryHistorVm())
+</div>

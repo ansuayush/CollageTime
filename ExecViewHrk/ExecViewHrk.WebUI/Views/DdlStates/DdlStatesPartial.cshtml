@@ -1,0 +1,50 @@
+﻿@(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlState>()
+        .Name("gridDdlState")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .ToolBar(toolbar => toolbar.Create())
+
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Edit();
+                command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");
+            }).Width(170);
+            columns.Bound(c => c.StateId);
+            columns.Bound(c => c.Code);
+            columns.Bound(c => c.Title);
+
+        })
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .Selectable()
+
+        .Pageable(pageable => pageable
+            .Refresh(false)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                        .Read(read => read.Action("DdlStatesList_Read", "DdlStates"))
+                        .Create(create => create.Action("DdlStatesList_Create", "DdlStates"))
+                        .Update(update => update.Action("DdlStatesList_Update", "DdlStates"))
+                        .Destroy(destroy => destroy.Action("DdlStatesList_Destroy", "DdlStates"))
+            .Model(model =>
+            {
+                model.Id(p => p.StateId);
+                model.Field(p => p.StateId).Editable(false);
+                model.Field(p => p.Code);
+                model.Field(p => p.Title);
+            }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+)

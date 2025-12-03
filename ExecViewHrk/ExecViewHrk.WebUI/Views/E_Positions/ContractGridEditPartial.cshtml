@@ -1,0 +1,164 @@
+﻿@model ExecViewHrk.Models.E_PositioVm
+@{
+    ViewBag.Title = "Collegetime Stipends (Contracts)";
+    Layout = null;
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<script src="~/Scripts/application/E_PositionsMatrixPartial.js"></script>
+<script>
+    $(document).ready(function () {
+        @*var formatDate12 = '@ViewBag.formatDate'
+        if (formatDate12 != null && formatDate12 !="") {
+            $("#btnAddContracts").prop("disabled", true);
+        }
+         else {
+                $("#btnAddContracts").attr("disabled", false);
+            }*@
+    });
+    function gridContractDelete(e) {
+        e.preventDefault();
+        var grid = this;
+        var row = $(e.currentTarget).closest("tr");
+        var data = grid.dataItem(row);
+        var postData = { Id: data.Id };
+        var formURL = $("#ApplicationUrl").val() + "E_Positions/ContractDeleteAjax?Id";
+        confirmDialog("", function () {
+            $.post(formURL, postData, function (data, status) {
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                } else {
+                    toastr.success('Record deleted successfully.');
+                    //window.location.reload();
+                    resetGrid("gridContract");
+                }
+            });
+        });
+    }
+    function gridContractEdit(e) {
+        e.preventDefault();
+        var grid = this;
+        var row = $(e.currentTarget).closest("tr");
+        var data = grid.dataItem(row);
+        if (data != null) {
+            openContractDetailEditPopup(data.Id);
+        }
+    }
+
+    function openContractDetailEditPopup(_Id) {
+        var formURL = $("#ApplicationUrl").val() + '/E_Positions/EditContractDetail?Id=' + _Id;
+        $.post(formURL, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                var $modal = $('#ContractsEditModal');
+                $modal.html(data);
+                $modal.modal("show");
+            }
+        });
+    }
+
+
+
+
+    function openContractDetailAddPopup() {
+        var paygroup = $("#PayGroupId1").val();
+        if (paygroup == "" || paygroup == null) {
+            toastr.error("Please Select Pay Group.");
+            return false;
+        }
+        var formURL = $("#ApplicationUrl").val() + '/E_Positions/AddContractDetail';
+        $.post(formURL, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                var $modal = $('#ContractsEditModal');
+                $modal.html(data);
+                $modal.modal("show");
+            }
+        });
+    }
+</script>
+<style>
+    .modal-backdrop {
+        z-index: 9998;
+    }
+</style>
+<div class="card-header p-l-0">
+    <h5 class="card-header-text">Collegetime Stipends (Contracts)</h5>
+</div>
+<div class="row">
+    <div class="card-title">
+        <button type="button" id="btnAddContracts" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" onclick="openContractDetailAddPopup()">
+            <i class="fa fa-plus"></i><span class="m-l-10">Add Contracts</span>
+        </button>
+    </div>
+    <div class="card-block">
+        <div class="col-lg-12 col-md-12 p-0">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="theme-grid">
+                        @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.ContractsVm>()
+                        .Name("gridContract")
+                        .Resizable(resize => resize.Columns(true))
+                        .Filterable()
+                        .Columns(columns =>
+                        {
+                            columns.Command(command =>
+                            {
+                                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridContractEdit");
+                                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridContractDelete");
+                            }).Width(100);
+                            columns.Bound(c => c.Id).Visible(false);
+                            columns.Bound(c => c.StartDate).ClientTemplate("#= StartDate == null ? '' : kendo.toString(StartDate, \"MM/dd/yyyy\") #");
+                            columns.Bound(c => c.EndDate).ClientTemplate("#= EndDate == null ? '' : kendo.toString(EndDate, \"MM/dd/yyyy\") #");
+                            columns.Bound(c => c.AmountsInDollar).Title("Amount(in $$)");
+                            columns.Bound(c => c.ADJlimits).Title("ADJ Limit");
+                            columns.Bound(c => c.Semister).Title("Semester");
+                            columns.Bound(c => c.TreatyCode).ClientTemplate("#= TreatyCode == true ? 'Yes' :'No'#").Title("Earning/hour code- treaty");  
+                        })
+                        .Sortable().Scrollable()
+                        .Selectable()
+                        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                        .Events(e => e.DataBound("gridDataBound"))
+                        .DataSource(dataSource => dataSource.Ajax()
+                        .Read(read => read.Action("ContractList_Read", "E_Positions"))
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Id);
+                            model.Field(p => p.StartDate);
+                            model.Field(p => p.EndDate);
+                            model.Field(p => p.AmountsInDollar);
+                            model.Field(p => p.ADJlimits);
+                            model.Field(p => p.Semister);
+                            model.Field(p => p.TreatyCode);
+                            model.Field(p => p.MemoCode1);
+                            model.Field(p => p.MemoCode1Amount);
+                            model.Field(p => p.MemoCode2);
+                            model.Field(p => p.MemoCode2Amount);
+                        }
+                        )
+                        .PageSize(10)
+                        .Batch(false)
+                        .Events(events =>
+                        {
+                            events.Error("refreshGrid");
+                            events.RequestEnd("gridRequestEnd");
+                        })
+                                )
+                        )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ContractsAddModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    @*@Html.Partial("AddContracts", new ExecViewHrk.WebUI.Models.ContractsVm())*@
+</div>
+<div class="modal fade" id="ContractsEditModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    @Html.Partial("EditContracts", new ExecViewHrk.WebUI.Models.ContractsVm())
+</div>

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.PositionBudgetFundAllocationVm>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Fund Allocation</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="theme-grid">
+                @(Html.Kendo().Grid(Model)
+                  .Name("grid_Fund_Allocation_List")
+                  .Resizable(resize => resize.Columns(true))
+                  .Filterable()
+                  .Columns(columns =>
+                  {
+
+                      columns.Bound(c => c.FundCode).Title("Fund Code");
+                      columns.Bound(c => c.TotalFund).Title("Total Fund").ClientTemplate("$#= TotalFund !== null ? kendo.toString(TotalFund,'n2') : ''#");
+                      columns.Bound(c => c.PositionAllocation).Title("Position Allocation").ClientTemplate("$#= PositionAllocation !== null ? kendo.toString(PositionAllocation,'n2') : ''#");
+                      columns.Bound(c => c.TotalAllocation).Title("Total Allocation").ClientTemplate("$#= TotalAllocation !== null ? kendo.toString(TotalAllocation,'n2') : ''#");
+                      //columns.Bound(c => c.Budget).Title("Budget").ClientTemplate("$#= Budget !== null ? kendo.toString(Budget,'n2') : ''#");
+                  })
+
+                  .Sortable()
+                  .Selectable()
+                  .Pageable(pageable => pageable.Refresh(true).PageSizes(true))
+
+                  .DataSource(dataSource => dataSource
+                      .Ajax()
+                      .Model(model =>
+                      {
+                          model.Field(p => p.FundCode);
+                          model.Field(p => p.TotalFund);
+                          model.Field(p => p.PositionAllocation);
+                          model.Field(p => p.TotalAllocation);
+                          //model.Field(p => p.Budget);
+                      }
+                      )
+                  ))
+            </div>
+        </div>
+        </div>
+</div>
+<div class="modal-footer">
+        <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseFundAllocationList">Close</button>
+        @*<button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveFundAllocationList">Save</button>*@
+    </div>
+
+

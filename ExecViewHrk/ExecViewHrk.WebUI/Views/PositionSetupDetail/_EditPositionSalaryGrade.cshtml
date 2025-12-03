@@ -1,0 +1,98 @@
+﻿@model ExecViewHrk.WebUI.Models.EditPositionSalaryGrad
+
+    @*<div class="modal-content">*@
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Salary Details</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <div class="input-group">
+                            <label><b>@Model.EditPositionSalaryDescription</b></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Valid From</label>
+                        @Html.TextBoxFor(m => m.EditPositionSalaryVadidDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control ", @data_dateformat = "mm/dd/yy", @data_type = "smalldate" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Salary Minimum
+                        </label>
+                        @*@Html.TextBoxFor(x => x.EditPositionSalarySalaryMin, new { @class = "form-control" })*@
+                        @Html.TextBoxFor(x => x.EditPositionSalarySalaryMin, "{0:0.00}", new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Salary Midpoint
+                        </label>
+                        @*@Html.TextBoxFor(x => x.EditPositionSalarySalaryMad, new { @class = "form-control" })*@
+                        @Html.TextBoxFor(x => x.EditPositionSalarySalaryMad, "{0:0.00}", new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Salary Maximum
+                        </label>
+                        @*@Html.TextBoxFor(x => x.EditPositionSalarySalaryMax, new { @class = "form-control" })*@
+                        @Html.TextBoxFor(x => x.EditPositionSalarySalaryMax, "{0:0.00}", new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.EditSalaryGradeGridID)
+        @Html.HiddenFor(m=>m.EditPositionSalaryDescription)
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseEditSalaryGrade">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " onclick="UpdateSalaryGradeRecord();">Save</button>
+        </div>
+    @*</div>*@
+
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $("#EditPositionSalaryVadidDate").datepicker();
+            })
+        });
+        function UpdateSalaryGradeRecord() {
+            var postData = { description: $("#EditPositionSalaryDescription").val(), validDate: $('#EditPositionSalaryVadidDate').val(), salaryMin: $('#EditPositionSalarySalaryMin').val(), salaryMid: $('#EditPositionSalarySalaryMad').val(), salaryMax: $('#EditPositionSalarySalaryMax').val(), GridID: $('#EditSalaryGradeGridID').val() }
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveSalaryGrade", "PositionSetupDetail")',
+                data: postData,
+                success: function (data) {
+                    if ($.isNumeric(data)) {
+                        $('#btnCloseEditSalaryGrade').click();
+                        resetSalaryGrid('SalaryGradelst');
+                        resetSalaryGradHistoryGrid('SalaryGradeHistorylst');
+                        toastr.success('Record Updated successfully.');
+                        resetcontrol();
+                    } else {
+                        toastr.error("Changes rejected.");
+                    }
+                },
+                complete: function () {
+
+                },
+                error: function (data) {
+                },
+                async: false,
+                cache: false
+            });
+        }
+    </script>

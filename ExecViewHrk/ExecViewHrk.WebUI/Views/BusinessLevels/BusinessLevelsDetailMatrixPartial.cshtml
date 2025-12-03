@@ -1,0 +1,149 @@
+﻿@model ExecViewHrk.WebUI.Models.BusinessLevelsDetailVm
+@{
+    ViewBag.Title = "Business Levels Details";
+    Layout = null;
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Business Level Detail <span class="pull-right icon-edit-block m-l-30">@*<i class="fa fa-question-circle f-26 m-r-10"></i>*@ <i class="fa fa-expand f-24"></i></span></h4>
+                </div>
+                <div class="form-group p-t-35 v-top pull-right">
+                    <div class="col-md-9 p-0">
+                        <button type="button" onclick='LoadMenu("BusinessLevelsListMatrixPartial", "BusinessLevels")' class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal">
+                            <i></i><span class="m-l-10">Back</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-id-card-o f-20 m-r-5"></i> Title</h5> <span class="pull-right icon-edit-block myButton"><i class="fa fa-pencil f-20 txt-primary" onclick="openBusinessLevelsEditpopup(@Model.BusinessLevelNbr)"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 bg-dark-success profile-block-tag">
+                                            <h6><label id="BusinessLevelTitleLabel" class="f-14 txt-white">@Model.BusinessLevelTitle</label></h6>
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label class="m-0">Buisness Code</label>
+                                                    <label id="BuisnessCodeLabel" class="f-13 block f-w-600">@Model.BusinessLevelCode</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Buisness Title</label>
+                                                    <label id="BusinessLevelTitleLabel" class="f-13 block f-w-600">@Model.BusinessLevelTitle</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Parent Business level</label>
+                                                    <label id="DepartmentBULevelNbrLabel" class="f-13 block f-w-600">@Model.ParentBULevelTitle</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Division (Location)</label>
+                                                    <label id="DivisionLocationNbrLabel" class="f-13 block f-w-600">@Model.LocationDescription</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-flag-o f-20 m-r-5"></i> EIN</h5><span class="pull-right icon-edit-block myButton"><i class="fa fa-pencil f-20 txt-primary" onclick="openBusinessLevelsEditpopup(@Model.BusinessLevelNbr)"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 bg-dark-warning profile-block-tag">
+                                            <h6><label id="FedralEINNbrLabel" class="f-14 txt-white">@Model.EIN</label></h6>
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Federal EIN</label>
+                                                    <label id="FedralEINNbrLabel" class="f-13 block f-w-600">@Model.EIN</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">EEO</label>
+                                                    <label id="EEoFileStatusNbrLabel" class="f-13 block f-w-600">@Model.EEoDesc</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Budget Reporting</label>
+                                                    <label id="IsBudgetReportedLabel" class="f-13 block f-w-600">@Model.BudgetReported</label>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Pay Frequency</label>
+                                                    <label id="PayFrequencyNbrLabel" class="f-13 block f-w-600">@Model.PayFrequency</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Schedule Hours</label>
+                                                    <label id="SchedeuledHoursLabel" class="f-13 block f-w-600">@Model.SchedeuledHours</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Buisness Level Type</label>
+                                                    <label id="BusinessLevelTypeNbrLabel" class="f-13 block f-w-600">@Model.BusinessLevelTypeDescription</label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-comments-o f-20 m-r-5"></i> Notes</h5><span class="pull-right icon-edit-block myButton"><i class="fa fa-pencil f-20 txt-primary" onclick="openBusinessLevelsEditpopup(@Model.BusinessLevelNbr)"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 bg-dark-primary profile-block-tag">
+                                            <h6 class="f-14 txt-white"></h6>
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label class="m-0">Notes</label>
+                                                    <label id="BusinessLevelNotesLabel" class="f-13 block f-w-600">@Model.BusinessLevelNotes</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

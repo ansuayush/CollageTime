@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[PersonAddresses] (
+    [PersonAddressId]       INT           IDENTITY (1, 1) NOT NULL,
+    [PersonId]              INT           NOT NULL,
+    [AddressTypeId]         INT		      NOT NULL,
+    [AddressLineOne]        VARCHAR (50)  NULL,
+    [AddressLineTwo]        VARCHAR (50)  NULL,
+    [City]                  VARCHAR (50)  NULL,
+    [StateId]               INT       CONSTRAINT [DF_pAddress_stateID] DEFAULT ((0)) NULL,
+    [ZipCode]               VARCHAR (10)  NULL,
+    [CountryId]             INT      CONSTRAINT [DF_pAddress_countryID] DEFAULT ((0)) NULL,
+    [CheckPayrollAddress]   BIT           NULL,
+    [CorrespondenceAddress] BIT           NULL,
+    [Notes]                 TEXT          NULL,
+    [EnteredBy]             VARCHAR (50)  NULL,
+    [EnteredDate]           SMALLDATETIME NULL,
+    [ModifiedBy]            VARCHAR (50)  NULL,
+    [ModifiedDate]          SMALLDATETIME NULL,
+    [IsPrimaryAddress]      BIT           DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_pAddress] PRIMARY KEY CLUSTERED ([PersonAddressId] ASC),
+    CONSTRAINT [FK_PersonAddresses_DdlAddressTypes] FOREIGN KEY ([AddressTypeId]) REFERENCES [dbo].[DdlAddressTypes] ([AddressTypeId]),
+    CONSTRAINT [FK_PersonAddresses_DdlCountries] FOREIGN KEY ([CountryId]) REFERENCES [dbo].[DdlCountries] ([CountryId]),
+    CONSTRAINT [FK_PersonAddresses_DdlStates] FOREIGN KEY ([StateId]) REFERENCES [dbo].[DdlStates] ([StateId]),
+    CONSTRAINT [FK_PersonAddresses_Persons] FOREIGN KEY ([PersonId]) REFERENCES [dbo].[Persons] ([PersonId])
+);
+

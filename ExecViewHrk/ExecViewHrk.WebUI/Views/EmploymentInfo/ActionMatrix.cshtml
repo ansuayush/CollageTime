@@ -1,0 +1,287 @@
+﻿@{
+    ViewBag.Title = "ActionMatrix";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+
+        <div>
+            <div class="row">
+                <div class="col-md-6 ">
+                    @Html.Action("PersonRoloDex", "Person")
+                </div>
+            </div>
+        </div>
+
+<style>
+    #matrix a:hover {
+        background-color: white;
+    }
+
+    #matrix img { 
+        border: 0px solid red; 
+    } 
+    #matrix img:hover { 
+      outline: 2px solid white; 
+    } 
+
+    #matrix > div {text-align:center}
+
+    #a {margin:5px}
+</style>
+
+
+<div id="matrix" class="container-fluid" style="background-color:black; border-width:3px; border-color:red; border-style:solid">
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")Person/Person/NSS"><img src="~/images/EmployeeInfoBlocks/Identity.png" style="width:110px;height:110px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonAda/PersonAdaMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/ADA.png" style="width:110px;height:110px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonExaminations/PersonExaminationsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Examinations.png" style="width:110px;height:110px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonMemberships/PersonMembershipsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Membership.png" style="width:110px;height:110px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonInnoculations/PersonInnoculationsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Inoculations.png" style="width:110px;height:110px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonLicenses/PersonLicensesMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/License.png" style="width:110px;height:110px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonPassports/PersonPassportsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Passport.png" style="width:110px;height:110px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonVehicles/PersonVehiclesMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Vehicle.png" style="width:110px;height:110px; margin-top:15px; margin-bottom:10px; "></a>
+
+        </div>
+
+
+
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12 ">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonProperties/PersonPropertiesMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Property.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonWorkPermits/PersonWorkPermitsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/WorkPermit.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonAddresses/PersonAddressesMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Address.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonRelationships/PersonRelationshipsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Relationship.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonEmployees/PersonEmployeesMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Employee.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonPhoneNumbers/PersonPhoneNumbersMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/PhoneNumber.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonSkills/PersonSkillsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Skill.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonTests/PersonTestsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Test.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:10px; "></a>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonEmergencyContacts/PersonEmergencyContactsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Emergency Contact.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:15px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")EmployeeI9Documents/EmployeeI9DocumentsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/I-9Documents.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:15px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonTrainings/PersonTrainingsMatrixPartial/NSS"><img src="~/images/EmployeeInfoBlocks/Training.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:15px;"></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")E_Positions/E_PositionsMatrixPartial/NSS">
+            <img src="~/images/EmployeeInfoBlocks/EmployeePosition.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:15px; ">
+            </a>
+
+            @*<a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")/HierarchicalDisplay/HierarchicalDisplay/NSS"><img src="~/images/ActionMatrixBlocks/Reserved.jpg" style="width:124px;height:124px; margin-top:5px; margin-bottom:5px;"></a>*@
+            
+           
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PersonAdditionals/PersonAdditionalsMatrixPartial/NSS">
+                <img src="~/images/EmployeeInfoBlocks/Additional-Info.png" style="width:110px;height:110px; margin-top:5px; margin-bottom:15px;">
+            </a>
+
+                @*<img src="~/images/EmployeeInfoBlocks/Reserved.png" style="width:110px;height:110px;  margin:5px; margin-top:5px; margin-bottom:15px; border:0; outline:0">
+
+                <img src="~/images/EmployeeInfoBlocks/Reserved.png" style="width:110px;height:110px;  margin:5px;  margin-top:5px; margin-bottom:15px; border:0; outline:0">
+
+                <img src="~/images/EmployeeInfoBlocks/Reserved.png" style="width:110px;height:110px;  margin:5px; margin-top:5px; margin-bottom:15px; border:0; outline:0">*@
+
+</div>
+
+
+    </div>
+    
+
+</div>
+
+
+
+
+
+
+
+    <div id="FormEntryDiv">
+
+    </div>
+@*<div id="FormEntryDivContainer" style="display:none; ">
+</div>*@
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var formEntryDiv = $("#FormEntryDiv");
+
+
+        $("#matrix a").click(function (e) {
+            //e.preventDefault();
+            $('#matrix').hide(1500);
+            $('#closeButtonDiv').show(1500);
+            $('#FormEntryDiv').show(1500);
+
+        });
+
+        $("#closeButtonDiv").click(function (e) {
+            e.preventDefault();
+            $('#matrix').show(1500);
+            $('#closeButtonDiv').hide(1500);
+            $('#FormEntryDiv').hide(1500);
+        });
+
+        // this works if the button is in the partial view
+        $(document).on("click", "#closeButtonDiv", function (e) {
+            e.preventDefault();
+            $('#matrix').show(1500);
+            $('#closeButtonDiv').hide(1500);
+            $('#FormEntryDiv').hide(1500);
+        });
+
+
+        // this definition will fire ok
+        //$(document).on("change", "#personImageInput", function (e) {
+        //    
+        //    //e.preventDefault();
+        //    var formData = new FormData();
+        //    var totalFiles = document.getElementById("personImageInput").files.length;
+        //});
+
+
+        // this is the event for the link under the person image to upload pic on the PersonDdlPartialMatrix.cshtml
+        $("#personImageInput").change(function () {
+            //
+            var formData = new FormData();
+            var totalFiles = document.getElementById("personImageInput").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("personImageInput").files[i];
+
+                formData.append("personImageInput", file);
+            }
+
+            var ddlPerson = $("#ddlPersonId").data("kendoDropDownList");
+            var personId = ddlPerson.value();
+
+            formData.append("personId", personId);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UploadPersonImage", "Person")",
+                data: formData ,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    
+                    if (response != null)
+                        alert('success!!');
+                    else
+                    {
+                        alert("Check file type (system support only jpg file) or your image is bigger than accepted size");
+                        return;
+                    }
+                       
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("GetBase64Image", "Person")",
+
+                        success: function (response) {
+                            //
+                            $('#personImageDiv').html('<img width="100" height="100" src="data:image/jpg;base64,' + response.base64image + '"/>');
+                        },
+                        error: function (error) {
+                            alert("errror");
+                        }
+                    });
+                },
+                error: function (error) {
+                    alert("errror");
+                }
+            });
+        }); 
+            
+    });
+
+
+    function OnBeginAjax()
+    {
+
+    }
+
+    function OnSuccessAjax(data) {
+        //
+        //alert("Got to On Success Ajax");
+    }
+
+    function OnFailureAjax(request, error) {
+        //alert("Got to On Failure Ajax");
+    }
+
+    function OnCompleteAjax(request, status) {
+        //alert("Got to On Complete Ajax");
+    }
+
+
+
+</script>

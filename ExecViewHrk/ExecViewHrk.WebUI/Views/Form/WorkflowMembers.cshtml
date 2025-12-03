@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "WorkflowMembers";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+<style>
+    .k-invalid-msg{
+  position: relative; 
+}
+</style>
+<style>
+    .k-grid {
+        font-size: 10px;
+    }
+
+        .k-grid td {
+            line-height: 2em;
+        }
+</style>
+<div class="row">
+    <h2>@ViewBag.WorkflowName Members @Html.ActionLink("Back to Workflow List", "Workflows", null, new { @class = "btn btn-danger pull-right" })</h2>
+
+</div>
+<div class="row">
+    <div class=" form-group ">
+        <input type="hidden" value='@ViewContext.RouteData.Values["RequestType"]' id="routeDataId" />
+        @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.WorkflowMemberVm>()
+                        .Name("grid")
+                        .Resizable(resize => resize.Columns(true))
+                        .Filterable()
+                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                        .ToolBar(toolbar => toolbar.Create())
+                        .Columns(columns =>
+                        {
+                            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete"); }).Width(180);
+                            columns.ForeignKey(p => p.UserOrGroupName, (System.Collections.IEnumerable)ViewData["UserGroupNames"], "Name", "Name").Width(350); 
+                            columns.Bound(c => c.IsGroup).ClientTemplate("#= IsGroup ? 'yes' : 'no' #");;
+                            columns.Bound(c => c.Position); 
+                            
+                        })
+                        .HtmlAttributes(new { style = "height: 350px;" })
+                        .Scrollable()
+                        .Sortable()
+                        //.Pageable(pageable => pageable
+                        //        .Refresh(false)
+                        //        .PageSizes(true)
+                        //        .ButtonCount(5))
+
+                        .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Read(read => read.Action("WorkflowMembers_Read", "Form").Data("additionalData"))
+                                                    .Create(create => create.Action("WorkflowMember_Create", "Form").Data("additionalData"))
+                                                    .Update(update => update.Action("WorkflowMember_Update", "Form"))
+                                                    .Destroy(destroy => destroy.Action("WorkflowMember_Destroy", "Form"))
+                            //.PageSize(5)
+                            .Model(model =>
+                                {
+                                    model.Id(p => p.WorkflowMemberId);
+                                    model.Field(p => p.WorkflowMemberId).Editable(false);
+                                    model.Field(p => p.UserOrGroupName); //.DefaultValue("Text Box");
+                                    model.Field(p => p.IsGroup);
+                                    model.Field(p => p.Position);
+                                }
+                                )
+                                //.Events(e => e.RequestEnd("onRequestEnd"))
+                        )
+
+                        .Selectable()
+
+        )
+
+    </div>
+
+</div>
+
+
+
+
+<script>
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+    // pass in the form workflow id
+    function additionalData() {
+
+        return {
+
+            id: $('#routeDataId').val()
+
+        }
+    }
+
+</script>

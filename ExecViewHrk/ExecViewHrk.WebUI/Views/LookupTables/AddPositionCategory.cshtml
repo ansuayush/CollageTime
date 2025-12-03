@@ -1,0 +1,71 @@
+﻿@model ExecViewHrk.EfClient.DdlPositionCategory
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Position Category</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmPositionCategory">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnClosePositionCategory">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSavePositionCategory">Save</button>
+</div>
+<script>
+    $("#btnSavePositionCategory").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmPositionCategory")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmPositionCategory").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/DdlPositionCategoryList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadPositionCategoryDropDown();
+                $("#btnClosePositionCategory").trigger('click');
+            }
+        });
+    });
+    function reloadPositionCategoryDropDown() {
+        var _selectedValue = $("#PositionCategoryID").val();
+        $.get($("#appBaseUrl").val() + "LookupTables/GetDdlPositionCategoryList", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#PositionCategoryID").empty();
+                $("#PositionCategoryID").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#PositionCategoryID").append("<option value='" + list[i].code + "' selected >" + list[i].description + "</option>");
+                    } else {
+                        $("#PositionCategoryID").append("<option value='" + list[i].code + "' >" + list[i].description + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

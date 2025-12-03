@@ -1,0 +1,166 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionBudgetsVM
+@{
+    Layout = null;
+}
+
+<style>    
+    .textunderline {
+        text-decoration: underline;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Position Budget List <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-2 p-0">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" onclick="AddNewPositionBudget(@Model.ID)">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+                    <div class="col-lg-5">
+                        @using (Html.BeginForm("ImportData", "PositionBudgets", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="col-lg-4">
+                                <input type="file" id="ImportId" name="postedFile" class="form-control-file" />
+                            </div>
+                            <div>
+                                <input type="submit" style="margin-left:150px;" class="btn btn-primary" value="Import" />
+                            </div>
+                        }
+                    </div>
+                    <div class="col-lg-5">
+                        <a href="~/Files/Position Budget Sample File.csv" target="_blank" class="textunderline">Sample Position Budget Template</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.PositionBudgetsVM>()
+                                            .Name("grid_PositionBudgets")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+                                    .Columns(columns =>
+                                    {
+                                        columns.Command(command =>
+                                        {
+                                            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPositionBudgetEdit");
+                                            command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>").Click("gridPositionBudgetDelete");
+                                        }).Width(100);
+                                        columns.Bound(c => c.ID).Visible(false);
+                                        columns.Bound(c => c.PositionTitle).Width(200);
+                                        columns.Bound(c => c.BudgetYear).Width(200);
+                                        columns.Bound(c => c.BudgetMonthText).Width(250);
+                                        columns.Bound(c => c.BudgetAmount).Width(200).ClientTemplate("$#= BudgetAmount !== null ? kendo.toString(BudgetAmount,'n2') : ''#");
+                                        columns.Bound(c => c.FTE).Width(200).ClientTemplate("#= FTE !== null ? kendo.toString(FTE,'n2') : ''#");
+
+                                    })
+
+                                    .ClientDetailTemplateId("template")
+                                    .Sortable()
+                                    .Selectable()
+                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                    .Events(e => e.DataBound("gridDataBound"))
+                                    .DataSource(dataSource => dataSource
+                                                .Ajax()
+
+
+                                            .Read(read => read.Action("PositionBudgetsList_Read", "PositionBudgets"))
+                                            .Create(create => create.Action("PositionBudgetsList_Create", "PositionBudgets"))
+                                            .Update(update => update.Action("PositionBudgetsList_Update", "PositionBudgets"))
+                                            .Model(model =>
+                                            {
+                                                model.Id(p => p.ID);
+                                                model.Field(p => p.BudgetYear);
+                                                model.Field(p => p.BudgetMonth);
+                                                model.Field(p => p.BudgetAmount);
+                                                model.Field(p => p.FTE);
+                                            }
+                                                  )
+                                              .Batch(false)
+                                              .Events(events =>
+                                              {
+                                                  events.Error("refreshGrid");
+                                                  events.RequestEnd("gridRequestEnd");
+                                              })
+                                            )
+                            )
+                            <style type="text/css">
+                                .employee-details ul {
+                                    list-style: none;
+                                    font-style: italic;
+                                    margin: 15px;
+                                    padding: 0;
+                                }
+
+                                    .employee-details ul li {
+                                        margin: 0;
+                                        line-height: 1.7em;
+                                    }
+
+                                .employee-details label {
+                                    display: inline-block;
+                                    width: 100px;
+                                    padding-right: 10px;
+                                    text-align: right;
+                                    font-style: normal;
+                                    font-weight: bold;
+                                }
+                            </style>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script id="template" type="text/kendo-tmpl">
+    <div class='k-detail-column'>
+        <ul>
+            <li><label>Position Title:</label>#= PositionTitle #</li>
+            <li><label>Budget Year:</label>#= BudgetYear #</li>
+            <li><label>Budget Month:</label>#= BudgetMonth #</li>
+            <li><label>Budget Amount:</label>$#= kendo.toString(BudgetAmount, "n2") #</li>
+            <li><label>FTE:</label>#= kendo.toString(FTE, "n2") #</li>
+
+        </ul>
+    </div>
+</script>
+<script>
+    function dataBound() {
+        this.expandRow(this.tbody.find("tr.k-master-row").first());
+    }
+</script>
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+    function OnClickEdit(e) {
+        var anchor = document.createElement('a');
+        anchor.href = "@Url.Action("PositionBudgetsDetail", "PositionBudgets", new { RequestType = "NSS" }, null)";
+        anchor.click();
+        document.removeChild(anchor);
+    }
+
+    function AddNewPositionBudget(ID) {
+        var formURL = $("#ApplicationUrl").val() + '/PositionBudgets/AddEditPositionBudgets?ID=' + ID;
+        $("#EditDetailDiv .md-content").html("");
+        $("#EditDetailDiv .md-content").load(formURL);
+        $('#EditDetailDiv').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv').addClass('md-show');
+    }
+</script>
+
+

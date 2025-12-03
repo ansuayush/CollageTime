@@ -1,0 +1,99 @@
+﻿@model ExecViewHrk.WebUI.Models.AppUser
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">User</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("HrkAdmin", "Edit", FormMethod.Post, new { role = "form", id = "UserData" }))
+            {
+                @Html.HiddenFor(model => model.Id, new { id = "hiddenuserId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+                    <div class="form-group ">
+                        <label><span style="color:red"> *</span> LastName</label>
+                        @Html.TextBoxFor(x => x.LastName, new { @class = "form-control", @style = "height:30px;" })
+                        @Html.ValidationMessageFor(x => x.LastName)
+                    </div>
+                </div>
+                <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+                    <div class="form-group ">
+                        <label><span style="color:red"> *</span> First Name</label>
+                        @Html.TextBoxFor(x => x.FirstName, new { @class = "form-control", @style = "height:30px;" })
+                        @Html.ValidationMessageFor(x => x.FirstName)
+                    </div>
+                </div>               
+                <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+                    <div class="form-group ">
+                        <label><span style="color:red"> *</span>User Name</label>
+                        @Html.TextBoxFor(x => x.UserName, new { @class = "form-control", @style = "height:30px;"})
+                        @Html.ValidationMessageFor(x => x.UserName)
+                    </div>
+                </div>
+                <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+                    <div class="form-group ">
+                        <label><span style="color:red"> *</span> Employer</label>
+                        @Html.DropDownList("Employer", ViewBag.EmployerList as SelectList, (string)ViewBag.EmployerName, new { @class = "form-control", style = "width:196px;" })
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveEmployeeAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+    });
+
+    $("#btnSaveEmployeeAjax").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("UserData")) {
+            loading(false);
+            return;
+        }
+        var postData = $("#UserData").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "HrkAdmin/UsersSave";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenuserId = $("#hiddenuserId").val();
+                $("#btnSaveEmployeeAjax").parent().find(".md-close").click();
+                if (_oldhiddenuserId != "0") {
+                    toastr.success(formService.messages.updated);
+                    resetGrid("grid");
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+
+    function gridEmployeePositionDelete(e) {
+        e.preventDefault();
+        var grid = this;
+        var row = $(e.currentTarget).closest("tr");
+        var data = grid.dataItem(row);
+        var postData = { e_PositionIdDdl: data.E_PositionId, personId: data.PersonId };
+        var formURL = $("#ApplicationUrl").val() + "E_Positions/E_PositionsDeleteAjax";
+        confirmDialog("", function () {
+            $.post(formURL, postData, function (data, status) {
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                } else {
+                    toastr.success('Record deleted successfully.');
+                    resetGrid("gridEmployeePosition");
+                }
+            });
+        });
+    }
+</script>

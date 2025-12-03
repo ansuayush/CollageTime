@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>::: HR Next :::</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="icon" href="~/assets/images/hr-knowledge.png" type="image/x-icon">
+
+    @Html.Partial("_CssScripts")
+
+</head>
+
+<body class="horizontal-fixed fixed">
+    <div class="wrapper main-wrapper">
+        <header class="main-header-top hidden-print">
+            @Html.Partial("_LoginPartial")
+        </header>
+        <aside class="main-sidebar hidden-print ">
+            <section class="sidebar" id="sidebar-scroll">
+                <div class="user-panel">
+                    <div class="f-left image"> <img src="~/assets/images/avatar-01.png" alt="User Image" class="img-circle" /> </div>
+                    <div class="f-left info">
+                        <p>KSHARMA</p>
+                    </div>
+                </div>
+            </section>
+
+            @Html.Partial("_NavBar")
+        </aside>
+        <div class="content-wrapper">
+            <div id="content">
+                @RenderBody()
+            </div>
+            <footer class="f-fix">
+                <div class="footer-bg b-t-muted text-center footer-area f-13">
+                    &copy; @DateTime.Now.Year - ExecView @ExecViewHrk.Domain.Helper.ExecViewHrkConstants.ExecviewVersionNumber
+                </div>
+            </footer>
+        </div>
+    </div>
+    @Html.Partial("_Common")
+    @Html.Hidden("appBaseUrl", Url.Content("~"))
+    @RenderSection("PageScripts", required: false)
+
+    <input type="hidden" id="ApplicationUrl" value="" />
+    <input type="hidden" id="HD_VIEW" value="" />
+    <input type="hidden" id="HD_CONTROLLER" value="" />
+    <input type="hidden" id="SelectedPersonID" value="" />
+    <input type="hidden" id="SelectedPersonType" value="P" />
+    <script>
+        var baseApplicationPath = $(location).attr("protocol") + "//" + $(location).attr("host") + "@Url.Content("~/")";
+        $("#ApplicationUrl").val(baseApplicationPath);
+        $(document).ajaxStop(function () {
+            loading(false);
+        });
+        $(document).ready(function () {
+           $.pushMenu.activate("[data-toggle='offcanvas']");
+        });
+    </script>   
+</body>
+</html>

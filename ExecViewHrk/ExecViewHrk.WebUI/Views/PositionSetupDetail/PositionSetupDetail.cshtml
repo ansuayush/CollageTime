@@ -1,0 +1,824 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionDetailsVm
+@{
+    ViewBag.Title = "Position Details";
+    Layout = null;
+
+}
+
+<style>
+    @@media screen and (max-width: 1023px) {
+        div.k-window {
+            display: none !important;
+        }
+    }
+</style>
+
+
+    <div class="container-fluid">
+        <div class="row p-t-15">
+            <div class="col-lg-12 col-md-12">
+                <div class="main-header col-sm-12 p-0 m-b-15 b-b-muted">
+                    <div class="col-md-9 m-b-15 p-0">
+                        <h4>Position Setup Detail <span class="pull-right icon-edit-block m-l-30">@*<i class="fa fa-question-circle f-26 m-r-10"></i>*@ <i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen();"></i></span></h4>
+                    </div>
+                    <div class="col-sm-3 p-r-0 text-right">
+                        <button type="button" onclick='LoadMenu("PositionsMatrixPartial", "Positions")' class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal m-t-5 m-r-10">
+                            <span>Back</span>
+                        </button>
+                        @*<div class="form-group p-t-10 v-top pull-right rolodex">
+                                <span class="block">
+                                    <i class="fa fa-chevron-left f-24 p-r-5"></i>
+                                    <label class="f-18 f-w-600 m-0 v-bottom text-tranform-lower">1 to 40</label>
+                                    <i class="fa fa-chevron-right f-24 p-l-5"></i>
+                                </span>
+                            </div>*@
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 p-0">
+                    <div class="row row-new">
+                        <div class="col-sm-6 col-md-4">
+                            <section class="panels-wells edit-block">
+                                <div class="card m-b-15">
+                                    <div class="card-header">
+                                        <h5 class="card-header-text"><i class="fa fa-list f-16 m-r-5"></i> Position Details</h5>
+                                        <span class="pull-right icon-edit-block myButton positionDetail"><i class="fa fa-pencil f-20 txt-primary"></i></span>
+                                    </div>
+                                    <div class="card-block p-t-0">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12 card-bg-primary-oth profile-block-tag">
+                                                <h6 class="f-14 txt-white">Business Level - @Model.BUCode</h6>
+                                             
+                                            </div>
+                                        </div>
+                                        <div class="row p-t-10">
+                                            <div class="col-sm-12 col-md-12 p-0">
+                                                <div class="col-sm-12 col-md-6">
+
+                                                    <div class="form-group">
+                                                        <label class="m-0">Position Code</label>
+                                                        <span class="f-13 block f-w-600">@Model.PositionCode &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Position Title</label>
+                                                        <span class="f-13 block f-w-600">@Model.PositionDescription &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">BU Code</label>
+                                                        <span class="f-13 block f-w-600">@Model.BUCode &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">BU Title</label>
+                                                        <span class="f-13 block f-w-600">@Model.BUTitle. &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Job Code</label>
+                                                        <span class="f-13 block f-w-600">@Model.JobCode &nbsp;</span>
+                                                       
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Job Title</label>
+                                                        <span class="f-13 block f-w-600">@Model.JobTitle &nbsp;</span>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="m-0">Actual End Date</label>
+                                                        @if (Model.ActualEnddate != null)
+                                                        {
+                                                            <span class="f-13 block f-w-600">@Model.ActualEnddate.Value.ToString("MM/dd/yyyy") &nbsp;</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="f-13 block f-w-600">@Model.ActualEnddate &nbsp;</span>
+                                                        }
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Position Categories</label>
+                                                        <span class="f-13 block f-w-600">@Model.PositionCategory &nbsp;</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6">
+
+                                                    <div class="form-group">
+                                                        <label class="m-0">Position Status</label>
+                                                        <span class="f-13 block f-w-600">@Model.CurrentStatus &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Position Type</label>
+                                                        <span class="f-13 block f-w-600">@Model.PositionType &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Reports To</label>
+                                                        <span class="f-13 block f-w-600">@Model.ReportsTo &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Total Slots</label>
+                                                        <span class="f-13 block f-w-600">@Model.TotalSlots &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Slots Filled</label>
+                                                        <span class="f-13 block f-w-600">@Model.FilledSlots &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">FTE</label>
+                                                        <span class="f-13 block f-w-600">@Model.FTE &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Cost Number</label>
+                                                        <span class="f-13 block f-w-600">@Model.CostNumber &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Suffix</label>
+                                                        <span class="f-13 block f-w-600">@Model.Suffix &nbsp;</span>
+                                                    </div>
+                                                    <!--<div class="form-group">
+                                                        <label class="m-0">Start Date</label>
+                                                        <span class="f-13 block f-w-600">9/8/2017 &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Frozen Date</label>
+                                                        <span class="f-13 block f-w-600">9/8/2017 &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Last Modified Date</label>
+                                                        <span class="f-13 block f-w-600">9/8/2017 &nbsp;</span>
+                                                    </div>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <section class="panels-wells edit-block">
+                                <div class="card m-b-15">
+                                    <div class="card-header">
+                                        <h5 class="card-header-text"><i class="fa fa-list-alt f-20 m-r-5"></i> Pos Additional Details</h5>
+                                        <span class="pull-right icon-edit-block myButton" id="PosAdditional_btn" data-target="#myDiv"><i class="fa fa-pencil f-20 txt-primary"></i></span>
+                                    </div>
+                                    <div class="card-block p-t-0">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12 card-bg-success profile-block-tag">
+                                                <h6 class="f-14 txt-white">Location - @Model.PositLocation</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row p-t-10">
+                                            <div class="col-sm-12 col-md-12 p-0">
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="m-0">Location</label>
+                                                        <span class="f-13 block f-w-600">@Model.PositLocation &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Department</label>
+                                                        <span class="f-13 block f-w-600">@Model.Department &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Division</label>
+                                                        <span class="f-13 block f-w-600">@Model.Division &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Shift</label>
+                                                        <span class="f-13 block f-w-600">@Model.Shift &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Group 2</label>
+                                                        <span class="f-13 block f-w-600">@Model.Group2 &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Group 3</label>
+                                                        <span class="f-13 block f-w-600">@Model.Group3 &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Group 4</label>
+                                                        <span class="f-13 block f-w-600">@Model.Group4 &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Group 5</label>
+                                                        <span class="f-13 block f-w-600">@Model.Group5 &nbsp;</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="m-0">Travel Percent</label>
+                                                        <span class="f-13 block f-w-600">@Model.TravPercent &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Incumbent ADP ID</label>
+                                                        <span class="f-13 block f-w-600">@Model.IncumbentADPID &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Requisition Number</label>
+                                                        <span class="f-13 block f-w-600">@Model.Requisitno &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Account Number</label>
+                                                        <span class="f-13 block f-w-600">@Model.AccountNumber &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Performance Profile</label>
+                                                        @if (Model.PerProfile == "")
+                                                        {
+                                                            <span class="f-13 block f-w-600">N/A</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="f-13 block f-w-600">@Model.PerProfile &nbsp;</span>
+                                                        }
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Approved By</label>
+                                                        @if (Model.AuthorizedByID == 0 || Model.AuthorizedByID == null)
+                                                        {
+                                                            <span class="f-13 block f-w-600">N/A</span>}
+                                                        else
+                                                        {
+                                                            if (Model.EmployeeList.Where(x => x.keyvalue == Convert.ToString(Model.AuthorizedByID)).Count() > 0)
+                                                            {
+                                                                <span class="f-13 block f-w-600">@Model.EmployeeList.Where(x => x.keyvalue == Convert.ToString(Model.AuthorizedByID)).FirstOrDefault().keydescription.ToString()</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="f-13 block f-w-600">&nbsp;</span>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Reason</label>
+                                                        <span class="f-13 block f-w-600">@Model.PositReason &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Probation Period</label>
+                                                        <span class="f-13 block f-w-600">@Model.ProbationPeriod Days &nbsp;</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <section class="panels-wells edit-block">
+                                <div class="card m-b-15">
+                                    <div class="card-header">
+                                        <h5 class="card-header-text"><i class="fa fa-money f-20 m-r-5"></i> Salary Details</h5>
+                                        <span class="pull-right icon-edit-block myButton" id="SalaryDetails_btn" data-target="#myDiv"><i class="fa fa-pencil f-20 txt-primary"></i></span>
+                                    </div>
+                                    <div class="card-block p-t-0">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12 card-bg-warning profile-block-tag">
+                                                <h6 class="f-14 txt-white">Standard Hours - @Model.ScheduledHours </h6>
+                                            </div>
+                                        </div>
+                                        <div class="row p-t-10">
+                                            <div class="col-sm-12 col-md-12 p-0">
+                                                <div class="col-sm-6 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="m-0">Standard Hours</label>
+                                                        <span class="f-13 block f-w-600">@Model.ScheduledHours &nbsp; </span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Pay Frequency</label>
+                                                        @if (Model.PayFrequencyCode == null)
+                                                        {
+                                                            <span class="f-13 block f-w-600">&nbsp;</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Model.DdlPayFrequency.Where(x => x.keyvalue == Model.PayFrequencyCode.ToString()).Count() > 0)
+                                                            {
+                                                                <span class="f-13 block f-w-600">@Model.DdlPayFrequency.Where(x => x.keyvalue == Model.PayFrequencyCode).FirstOrDefault().keydescription.ToString() &nbsp;</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="f-13 block f-w-600">&nbsp;</span>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Salary Amount</label>
+                                                        <span class="f-13 block f-w-600">@string.Format("{0:$0.00}", Model.SalaryAmount) &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Salary Plan Code</label>
+                                                        <span class="f-13 block f-w-600">@Model.SalaryPlanCode &nbsp;</span>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="m-0">Salary Grade Code</label>
+                                                        @if (Model.PositionSalaryGradeDetail != null)
+                                                        {
+                                                            <span class="f-13 block f-w-600">@Model.PositionSalaryGradeDetail.description &nbsp;</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="f-13 block f-w-600">&nbsp;</span>
+                                                        }
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="m-0">Salary Minimum</label>
+                                                        @if (Model.PositionSalaryGradeDetail != null)
+                                                        {   <span class="f-13 block f-w-600"> @string.Format("{0:$0.00}", Model.PositionSalaryGradeDetail.salaryMinimum) &nbsp;</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="f-13 block f-w-600">&nbsp;</span>
+                                                        }
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Salary Midpoint</label>
+                                                        @if (Model.PositionSalaryGradeDetail != null)
+                                                        {   <span class="f-13 block f-w-600">@string.Format("{0:$0.00}", Model.PositionSalaryGradeDetail.salaryMidpoint)  &nbsp;</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="f-13 block f-w-600">&nbsp;</span>
+                                                        }
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Salary Maximum</label>
+                                                        @if (Model.PositionSalaryGradeDetail != null)
+                                                        {    <span class="f-13 block f-w-600">@string.Format("{0:$0.00}", Model.PositionSalaryGradeDetail.salaryMaximum)  &nbsp;</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="f-13 block f-w-600">&nbsp;</span>
+                                                        }
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="col-sm-6 col-md-6">
+
+                                                    <div class="form-group">
+                                                        <label class="m-0">Salary Step</label>
+                                                        <span class="f-13 block f-w-600">@Model.SalaryStep &nbsp;</span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Reg/Temp</label>
+                                                        @if (Model.SalaryType == null)
+                                                        {
+                                                            <span class="f-13 block f-w-600">&nbsp;</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Model.DropDownWorkStatusType.Where(x => x.keyvalue == Model.SalaryType).Count() > 0)
+                                                            {
+                                                                <span class="f-13 block f-w-600">@Model.DropDownWorkStatusType.Where(x => x.keyvalue == Model.SalaryType).FirstOrDefault().keydescription.ToString() &nbsp;</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="f-13 block f-w-600">&nbsp;</span>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Work Status</label>
+                                                        @if (Model.WorkClassificationId == null)
+                                                        {
+                                                            <span class="f-13 block f-w-600">&nbsp;</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Model.DDEmpType.Where(x => x.keyvalue == Model.WorkClassificationId.ToString()).Count() > 0)
+                                                            {
+                                                                <span class="f-13 block f-w-600">@Model.DDEmpType.Where(x => x.keyvalue == Model.WorkClassificationId.ToString()).FirstOrDefault().keydescription.ToString() &nbsp;</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="f-13 block f-w-600">&nbsp;</span>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="m-0">Units</label>
+                                                        <span class="f-13 block f-w-600">@Model.UnitsID &nbsp;</span>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <section class="panels-wells edit-block">
+                                <div class="card ">
+                                    <div class="card-header">
+                                        <h5 class="card-header-text"><i class="fa fa-bank f-16 m-r-5"></i> Funding Source</h5>
+                                        <span class="pull-right icon-edit-block myButton" id="FundingSource_btn" data-target="#myDiv"><i class="fa fa-pencil f-20 txt-primary"></i></span>
+                                    </div>
+                                    <div class="card-block p-t-0">
+
+                                        <div class="row ">
+
+                                            @*@Html.Partial("_CardPositionFundingSource", @Model.posionFundingSourceVM)*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <section class="panels-wells edit-block">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-header-text"><i class="fa fa-usd f-16 m-r-5"></i> Position Budget</h5>
+                                        <span class="pull-right icon-edit-block myButton" id="PositionBudget_btn" data-target="#myDiv"><i class="fa fa-pencil f-20 txt-primary"></i></span>
+                                    </div>
+                                    <div class="card-block p-t-0">
+                                        @*<div class="row">
+                                                <div class="col-sm-12 col-md-12 card-bg-thumbler profile-block-tag">
+                                                    <h6 class="f-14 txt-white">Position - @Model.Title</h6>
+                                                </div>
+                                            </div>*@
+                                        <div class="row p-t-0">
+                                            @Html.Partial("_CardPositionBudgetList", @Model.PositionBudgetList)
+                                            @*<div class="form-group">
+                                                    <label class="m-0">Position Id</label>
+                                                    <span class="f-13 block f-w-600">967 &nbsp;</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Year</label>
+                                                    <span class="f-13 block f-w-600">2016 &nbsp;</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Month</label>
+                                                    <span class="f-13 block f-w-600">January &nbsp;</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Amount</label>
+                                                    <span class="f-13 block f-w-600">$0.00 &nbsp;</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">FTE</label>
+                                                    <span class="f-13 block f-w-600">14.00 &nbsp;</span>
+                                                </div>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <section class="panels-wells edit-block">
+                                <div class="card m-b-15">
+                                    <div class="card-header">
+                                        <h5 class="card-header-text"><i class="fa fa-eye f-20 m-r-5"></i>  Staffing History</h5>
+                                        <span class="pull-right icon-edit-block myButton" id="ViewEmployee_btn" data-target="#myDiv"><i class="fa fa-pencil f-20 txt-primary"></i></span>
+                                    </div>
+                                    <div class="card-block p-t-0">
+                                        <div class="row p-t-0">
+                                            @Html.Partial("_CardEmployeePosition", @Model.EmpSalaryList)
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-sm-8">
+                            <section class="panels-wells edit-block">
+                                <div class="card m-b-15">
+                                    <div class="card-header">
+                                        <h5 class="card-header-text">Position History</h5>
+                                    </div>
+                                    <div class="card-block p-t-0">
+                                        <div class="row p-t-0">
+                                            @Html.Partial("_PositionHistory", @Model.PositionHistory)
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<div id="myDiv">
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Position Setup Detail</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <ul class="nav nav-tabs nav-tabs-new md-tabs m-0 p-0" role="tablist">
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link active f-w-600" data-toggle="tab" href="#PositionDetails" role="tab" aria-expanded="true"><i class="fa fa-list f-14"></i> Position Details</a>
+                            <div class="slide"></div>
+                        </li>
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="PosAdditional_tab" data-toggle="tab" href="#PosAdditional" role="tab" aria-expanded="false"><i class="fa fa-list-alt"></i> Pos Additional Details</a>
+                            <div class="slide"></div>
+                        </li>
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="PositionBudget_tab" data-toggle="tab" href="#PositionBudget" role="tab" aria-expanded="false"><i class="fa fa-usd"></i> Position Budget</a>
+                            <div class="slide"></div>
+                        </li>
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="FundingSource_tab" data-toggle="tab" href="#FundingSource" role="tab" aria-expanded="false"><i class="fa fa-bank"></i> Funding Source</a>
+                            <div class="slide"></div>
+                        </li>
+
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="SalaryDetails_tab" data-toggle="tab" href="#SalaryDetails" role="tab" aria-expanded="false"><i class="fa fa-money"></i> Salary Details</a>
+                            <div class="slide"></div>
+                        </li>
+
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="ViewEmployee_tab" data-toggle="tab" href="#ViewEmployee" role="tab" aria-expanded="false"><i class="fa fa-eye"></i> View Employee</a>
+                            <div class="slide"></div>
+                        </li>
+                    </ul>
+
+                    @using (Html.BeginForm("PositionSaveAjax", "PositionSetupDetail", FormMethod.Post, new { role = "form", id = "PositionForm" }))
+                    {
+                        @Html.HiddenFor(model => model.PositionId)
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="PositionDetails" role="tabpanel" aria-expanded="true">
+                                @*PositionDetailsPartial*@
+                                @Html.Partial("PositionDetailsPartial", Model)
+                                @*PositionDetailsPartial*@
+                            </div>
+                            <div class="tab-pane" id="PosAdditional" role="tabpanel" aria-expanded="false">
+                                @*PositionAdditionalPartial*@
+                                @Html.Partial("PositionAdditionalPartial", @Model)
+                            </div>
+
+                            <div class="tab-pane" id="PositionBudget" role="tabpanel" aria-expanded="false">
+                                @*PositionBudgetPartial*@
+                                @Html.Partial("PositionBudgetPartial", @Model)
+                            </div>
+                            <div class="tab-pane" id="FundingSource" role="tabpanel" aria-expanded="false">
+                                @*PositionFundingSourcePartial*@
+                                @Html.Partial("PositionFundingSourcePartial", @Model.positionFundingSourceList)
+                            </div>
+                            <div class="tab-pane" id="SalaryDetails" role="tabpanel" aria-expanded="false">
+
+                                @*PositionSalaryDetailsPartial*@
+                                @Html.Partial("PositionSalaryDetailsPartial", @Model)
+                            </div>
+                            <div class="tab-pane" id="ViewEmployee" role="tabpanel" aria-expanded="false">
+                                @*PositionViewEmploeePartial*@
+                                @Html.Partial("PositionViewEmploeePartial", @Model.EmpSalaryList)
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="p-15 text-right">
+            <button type="button" id="BtnPositionClose" class="btn btn-default waves-effect m-r-15">Cancel</button>
+            <input type="button" id="BtnPoitionSave" name="Done" value="Done" class="btn btn-primary">
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="FundSelectionModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+</div>
+
+<div class="modal fade" id="" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+
+</div>
+<div class="modal fade" id="EditPositionBudgetModal" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+
+    @*PositionBudgetEditModalPartial*@
+    @*@Html.Partial("PositionBudgetEditModalPartial", @Model)*@
+</div>
+
+<div class="modal fade" id="AddPositionBudgetModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+    @*PositionBudgetEditModalPartial*@
+    @*@Html.Partial("PositionBudgetAddModalPartial", @Model)*@
+</div>
+
+
+<div class="modal fade" id="ViewAllocationModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+    @*PositionViewAllocationModalPartial
+        @Html.Partial("PositionViewAllocationModalPartial", )*@
+</div>
+
+
+<div class="modal fade" id="AddAllocationsModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+    @*PositionAddAllocationModalPartial*@
+    @*@Html.Partial("PositionAddAllocationModalPartial", @Model)*@
+</div>
+
+<div class="modal fade" id="FundDefinitionModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+    @*PositionAddFundDefinitionModalPartial*@
+    @*@Html.Partial("PositionAddFundDefinitionModalPartial", @Model)*@
+</div>
+
+<div class="modal fade" id="SalaryGradeHistoryList" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @Html.Partial("_SalaryGradeHistoryListPartial", Model.SalaryGradeHistoryListVm)
+        </div>
+    </div>
+    @*_SalaryGradeHistoryListPartial*@
+    @*@Html.Partial("_SalaryGradeHistoryListPartial", Model.SalaryGradeHistoryListVm)*@
+</div>
+
+<div class="modal fade" id="FundHistoryList" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @Html.Partial("_PositionFundingHistoryList", Model.posionFundingSourceVM)
+        </div>
+    </div>
+    @*_SalaryGradeHistoryListPartial*@
+    @*@Html.Partial("_SalaryGradeHistoryListPartial", Model.SalaryGradeHistoryListVm)*@
+</div>
+
+<div class="modal fade" id="EditPositionBudgetModal"  role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+    </div>
+
+    <div class="modal fade" id="SalaryDetailsModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        @*PositionSalaryDetailsModalPartial*@
+        @Html.Partial("PositionSalaryDetailsModalPartial", @Model)
+    </div>
+    <div class="modal fade" id="PositionSalaryGradeDetailsEditModal" role="dialog" data-backdrop="static" data-keyboard="false" data-toggle="modal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <div id="MySupportDiv">
+        <div class="md-content p-10">
+            <div class="p-15">
+                <button type="button" class="btn btn-default waves-effect md-close mySupport">Back</button>
+            </div>
+            <div class="card p-15">
+                <div class="card-header">
+                    <h5 class="card-header-text">Support</h5>
+                </div>
+                <div class="card-block">
+                    <div class="row">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Dialogs ends -->
+    <div class="md-overlay"></div>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+            $(".myButton").click(function () {
+                // Set the effect type
+                var effect = 'slide';
+                // Set the options for the effect type chosen
+                var options = { direction: 'right' };
+                // Set the duration (default: 400 milliseconds)
+                var duration = 500;
+
+                $('#myDiv').toggle(effect, options, duration);
+                $('#myDiv').addClass('md-show');
+            });
+
+            $("#BtnPositionClose").click(function () {
+
+                var Positiondata = { positionID: $('#PositionId').val() };
+                LoadDetailView("PositionSetupDetail", "PositionSetupDetail", Positiondata)
+                var effect = 'slide';
+                // Set the options for the effect type chosen
+                var options = { direction: 'right' };
+                // Set the duration (default: 400 milliseconds)
+                var duration = 500;
+
+                $('#myDiv').toggle(effect, options, duration);
+                // $('#myDiv').css("display", "");
+                $('#myDiv').removeClass('md-show');
+                //var Positiondata = { positionID: $('#PositionId').val() };
+                //LoadDetailView("PositionSetupDetail", "PositionSetupDetail", Positiondata)
+                //$("#BtnPoitionSave").parent().find(".md-close").click();
+                //formService.isLoadingInProgress = true;
+                //killTimer();
+                //timeOutFn = setTimeout(function () {
+                //    formService.isSavingInProgress = false;
+                //    toastr.success(formService.messages.updated);
+                //    formService.isLoadingInProgress = false;
+                //}, 0);
+            });
+
+            $(".mySupport").click(function () {
+                // Set the effect type
+                var effect = 'slide';
+                // Set the options for the effect type chosen
+                var options = { direction: 'right' };
+                // Set the duration (default: 400 milliseconds)
+                var duration = 500;
+                $('#MySupportDiv').toggle(effect, options, duration);
+            });
+
+
+
+            $('#PosAdditional_btn').on('click',
+                function () {
+                    $('#PosAdditional_tab').tab('show');
+                });
+
+            $('#SalaryDetails_btn').on('click',
+                    function () {
+                        $('#SalaryDetails_tab').tab('show');
+                    });
+
+            $('#PositionBudget_btn').on('click',
+                    function () {
+                        $('#PositionBudget_tab').tab('show');
+                    });
+
+            $('#ViewEmployee_btn').on('click',
+                    function () {
+                        $('#ViewEmployee_tab').tab('show');
+                    });
+
+            $('#FundingSource_btn').on('click',
+                    function () {
+                        $('#FundingSource_tab').tab('show');
+                    });
+
+
+            $("#BtnPoitionSave").click(function (e) {
+                e.preventDefault();
+                var form = $("#PositionForm");
+                var staus = formService.getStatus();
+                if (staus) {
+                    return;
+                }
+                var errorMessage = formService.validate(form);
+                //}
+                if (!ValidateForm("PositionForm")) {
+                    loading(false);
+                    return;
+                }
+                var appBaseUrl = $("#appBaseUrl").val();
+                var postData = $("#PositionForm").serializeArray();
+
+                var formUrl = appBaseUrl + "PositionSetupDetail/PositionSaveAjax";
+                $.post(formUrl,
+                    postData,
+                    function (data, status) {
+                        if (status == "success") {
+
+                            if (data.succeed == false)
+                                toastr.error(data.Message);
+                            else {
+                                if (data.recordIsNew == true) {
+                                    LoadMenu("PositionsMatrixPartial", "Positions");
+                                    $("#BtnPoitionSave").parent().find(".md-close").click();
+                                    formService.isLoadingInProgress = true;
+                                    killTimer();
+                                    timeOutFn = setTimeout(function () {
+                                        formService.isSavingInProgress = false;
+                                        toastr.success(formService.messages.saved);
+                                        formService.isLoadingInProgress = false;
+                                    },
+                                        0);
+                                } else {
+                                    var Positiondata = { positionID: data.positionDetailsVm.PositionId };
+                                    LoadDetailView("PositionSetupDetail", "PositionSetupDetail", Positiondata);
+                                    $("#BtnPoitionSave").parent().find(".md-close").click();
+                                    formService.isLoadingInProgress = true;
+                                    killTimer();
+                                    timeOutFn = setTimeout(function () {
+                                        formService.isSavingInProgress = false;
+                                        toastr.success(formService.messages.updated);
+                                        formService.isLoadingInProgress = false;
+                                    },
+                                        0);
+                                }
+                            }
+                        } else {
+                            toastr.error(data.Message);
+                        }
+                    });
+            });
+        });
+    </script>

@@ -1,0 +1,280 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonMembershipVm
+@*<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Examination</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+
+            @Html.ValidationSummary(true)
+
+
+            <div id="formDiv" class="panel-body">
+
+                @using (Html.BeginForm("PersonMemberships", "PersonMemberships", FormMethod.Post, new { role = "form", id = "PersonMembershipForm" }))
+                {
+                    @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                    @Html.HiddenFor(model => model.PersonMembershipId, new { id = "hiddenPersonMembershipId" })
+                    <div class="row ">
+
+                        <div class="row ">
+                            <div class="col-md-12">
+                                <div class="col-md-5 ">
+
+                                    <div class="form-group ">
+                                        <div>
+                                            <label><span style="color:red">*</span>Professional Body</label>
+                                        </div>
+                                        @(Html.Kendo().ComboBox()
+                                        .Name("ProfessionalBodyDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("ProfessionalBodyDescription")
+                                        .DataValueField("ProfessionalBodyId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetProfessionalBodies", "DdlProfessionalBodies").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("Select a Professional Body")
+                                        )
+
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <button id="btnAddProfessionalBody" class="btn btn-info">+</button>
+                                        }
+
+
+                                        <div>
+                                            @Html.ValidationMessageFor(model => model.ProfessionalBodyDescription)
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <div>
+                                            <label><span style="color:red">*</span>Regional Chapter</label>
+                                        </div>
+                                        @(Html.Kendo().ComboBox()
+                                        .Name("RegionalChapterDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("RegionalChapterDescription")
+                                        .DataValueField("RegionalChapterId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetRegionalChapters", "DdlRegionalChapters").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true); //If true the DataSource will not filter the data on the client.
+                                          })
+                                        .Placeholder("Select a Regional Chapter")
+                                        )
+
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <button id="btnAddRegionalChapter" class="btn btn-info">+</button>
+                                        }
+
+                                        <div>
+                                            @Html.ValidationMessageFor(model => model.RegionalChapterDescription)
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <div>
+                                            @(Html.Kendo().DatePickerFor(x => x.StartDate)
+                                        .Name("StartDate")
+                                        .Min(new DateTime(1900, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+                                            )
+                                            @Html.ValidationMessageFor(x => x.StartDate, "The field Start Date must be a date.")
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label>Renewal Date</label>
+                                        <div>
+                                            @(Html.Kendo().DatePickerFor(x => x.RenewalDate)
+                                    .Name("RenewalDate")
+                                            )
+                                        </div>
+                                        <div>
+                                            @Html.ValidationMessageFor(x => x.RenewalDate, "The field Renewal Date must be a date.")
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label><span style="color:red">*</span>Number</label>
+                                        @Html.TextBoxFor(x => x.Number, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(x => x.Number)
+                                    </div>
+
+                                    <div>
+                                        <label>Fee</label>
+                                        <div>
+                                            @Html.Kendo().NumericTextBoxFor(x => x.Fee).Min(0)
+                                            @Html.ValidationMessageFor(x => x.Fee)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Fee Paid Date</label>
+                                        <div>
+                                            @(Html.Kendo().DatePickerFor(x => x.FeePaidDate)
+                                .Name("FeePaidDate")
+                                            )
+                                        </div>
+                                        <div>
+                                            @Html.ValidationMessageFor(x => x.FeePaidDate, "The field Fee Paid Date must be a date.")
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label>Professional Title</label>
+                                        @Html.TextBoxFor(x => x.ProfessionalTitle, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(x => x.ProfessionalTitle)
+                                    </div>
+                                </div>
+
+                                <div class="col-md-offset-1 col-md-5">
+
+                                    <div>
+
+                                        <div class="form-group ">
+                                            <label>Notes</label>
+                                            @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                            @Html.ValidationMessageFor(x => x.Notes)
+                                        </div>
+
+                                        <div class=" form-group ">
+                                            <label style="width:100px">Entered By:</label>
+                                            <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                        </div>
+
+                                        <div class=" form-group ">
+                                            <label style="width:100px">Entered Date:</label>
+                                            <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                                        </div>
+
+                                        <div class=" form-group ">
+                                            <label style="width:100px">Modified By:</label>
+                                            <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                        </div>
+
+                                        <div class=" form-group ">
+                                            <label style="width:100px">Modified Date:</label>
+                                            <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate</label>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 ">
+                            <div class="form-group">
+
+                                <input id="btnSavePersonMembershipAjax" type="button" value="Save" class="btn btn-info" />
+                                <input id="btnClearPersonMembershipAjax" type="button" value="Clear" class="btn btn-info" />
+                                <input id="btnDeletePersonMembershipAjax" type="button" value="Delete" class="btn btn-info" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+
+            <div id="professionalBodiesWindow" style="display:none">
+                <div id="professionalBodiesContent">
+                    @Html.Partial("~/Views/DdlProfessionalBodies/DdlProfessionalBodiesPartial.cshtml")
+                </div>
+            </div>
+
+            <div id="regionalChaptersWindow" style="display:none">
+                <div id="regionalChaptersContent">
+                    @Html.Partial("~/Views/DdlRegionalChapters/DdlRegionalChaptersPartial.cshtml")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function newKendoWindow(title, onClose) {
+        var obj = {
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: title,
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+            close: onClose
+        }
+        return obj;
+    };
+
+    var professionalBodiesWindow = $("#professionalBodiesWindow");
+    if (!professionalBodiesWindow.data("kendoWindow")) {
+        professionalBodiesWindow.kendoWindow(
+            newKendoWindow("Professional Body", onCloseProfessionalWindow)
+        );
+    }
+
+    function onCloseProfessionalWindow() {
+        resetKenoComboBox('ProfessionalBodyDescription');
+        resetGrid('gridDdlProfessionalBody');
+    }
+
+
+    $("#btnAddProfessionalBody").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#professionalBodiesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+
+    var regionalChaptersWindow = $("#regionalChaptersWindow");
+    if (!regionalChaptersWindow.data("kendoWindow")) {
+        regionalChaptersWindow.kendoWindow(
+            newKendoWindow("Regional Body", onCloseRegionalWindow)
+        );
+    }
+
+    function onCloseRegionalWindow() {
+        resetKenoComboBox('RegionalChapterDescription');
+        resetGrid('gridDdlRegionalChapter');
+    }
+
+    $("#btnAddRegionalChapter").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#regionalChaptersWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+</script>*@
+
+
+
+

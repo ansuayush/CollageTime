@@ -1,0 +1,294 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+
+.dt-toolbar {
+    display: block;
+    position: relative;
+    padding: 6px 7px 1px;
+    width: 100%;
+    float: left;
+    border-bottom: 0px solid #ccc;
+    background: #ced6dc;
+}
+.dt-toolbar .form-control{
+	width:auto;
+	text-indent:5px;
+}
+
+.table-bordered {
+    border: 0px solid #00aaff;
+}
+
+.tab-content.tab-content-bordered {
+    padding: 10px;
+}
+
+.dt-toolbar > :last-child .dataTables_filter {
+    float: right;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+}
+
+.dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    color: #555;
+}
+
+.pagination {
+    display: inline-block;
+    padding-left: 0;
+    margin: 18px 0;
+    margin: 0;
+    border-radius: 2px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    margin-left: 0;
+}
+
+.pagination > li > a {
+    margin-right: 2px;
+    font-size:12px;
+}
+
+.dataTables_length, .dataTables_info {
+    float: left;
+    font-size:13px;
+}
+
+.dataTables_filter, .dataTables_paginate .paging_simple_numbers {
+    float: right;
+}
+
+
+.dataTables_wrapper .table-header {
+    margin-bottom: -7px !important;
+    padding: 5px 0 7px 0 !important;
+}
+
+.dt-extra-control-left {
+    width: 100px;
+    float: left;
+    position: absolute;
+    z-index: 9999;
+    top: 23px;
+}
+
+.dt-extra-control-right {
+    width: 100px;
+    float: right;
+    position: absolute;
+    z-index: 9999;
+    top: 23px;
+}
+
+.dt-extra-control-search {
+    position: absolute;
+    float: right;
+    right: 211px;
+    top: 30px;
+    z-index: 9999;
+}
+
+.DtExtraCtrl-Left ul {
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    left: 145px;
+    z-index: 9999;
+    top: 46px;
+    float: left;
+    list-style: none;
+}
+
+.DtExtraCtrl-Left li {
+    display: inline-block;
+    color: #000;
+    padding: 0 10px;
+    font-weight: bold;
+}
+
+    .DtExtraCtrl-Left li a {
+        color: #3690e6 !important;
+        text-decoration: underline !important;
+    }
+
+.DtExtraCtrl-right {
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    right: 170px;
+    z-index: 100;
+    top: 13px;
+    float: right;
+    list-style: none;
+}
+
+    .DtExtraCtrl-right li {
+        display: inline-block;
+        color: #000;
+        padding: 0 5px;
+        font-weight: bold;
+    }
+
+        .DtExtraCtrl-right li a {
+            color: #3690e6 !important;
+            text-decoration: underline !important;
+        }
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-button {
+    width: 8px;
+    height: 0;
+}
+
+::-webkit-scrollbar-track {
+    background: #eee;
+    border: thin solid #d3d3d3;
+    box-shadow: 0 0 3px #dfdfdf inset;
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #002140;
+    border: thin solid #004e75;
+    border-radius: 0;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #001324;
+    }
+
+table.has-columns-hidden > tbody > tr > td > span.responsiveExpander {
+    background: url('../img/plus.png') no-repeat 5px center;
+    padding-left: 32px;
+    cursor: pointer;
+}
+
+table.has-columns-hidden > tbody > tr.detail-show > td span.responsiveExpander {
+    background: url('../img/minus.png') no-repeat 5px center;
+}
+
+.pagination > li > a, .pagination > li > span {
+    padding: 2px 10px;
+}
+
+.table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+    border-bottom-width: 0;
+}
+
+/*<!--table.dataTable thead .sorting:after {
+    content: "ïƒœ";
+    display: inline-block !important;
+    color: #ccc;
+    padding-left: 10px;
+    font-size: 12px;
+}-->*/
+
+table.dataTable th:after {
+    display: none;
+    font-family: FontAwesome;
+    font-size: 16px;
+    font-weight: 400 !important;
+    line-height: 16px;
+    height: 12px;
+    position: static;
+    right: 0;
+    top: 8px;
+    width: 20px;
+    text-align: right;
+}
+
+/*<!--table.dataTable thead .sorting_asc:after {
+    content: "ïƒ";
+    display: inline-block;
+    padding-left: 10px;
+    font-size: 12px;
+}-->*/
+table.dataTable thead .sorting_desc:after {
+    content: "";
+    display: inline-block;
+}
+	
+ table.dataTable thead .sorting:after {
+                content: "";
+                display: inline-block;
+            }
+table.dataTable thead .sorting_asc:after {
+	 content: "";
+                display: inline-block;
+	}
+	table.dataTable thead .sorting_asc:after {
+    content: "";
+    display: inline-block;
+}
+table thead tr {
+    color: #000000;
+    background-color: #93b6bf !important;
+    border-color: #263238;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.table > thead > tr > th {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.dataTables_length label {
+    font-weight: 600;
+}
+.dataTable.table>tbody>tr>td {
+    text-align: left;
+    font-size: 13px;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+.quickMenuDiv {
+    width: 270px;
+    position: fixed;
+    right: 0;
+    display: none;
+    top: 75px;
+}
+
+.quickMenuHeader {
+    padding: 10px;
+    color: #fff;
+    background: #282828;
+    border-bottom: 1px solid #ccc;
+    font-size: 18px;
+}
+
+.QuickMenuBody {
+    background: #444;
+    height: 270px;
+}
+
+    .QuickMenuBody ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .QuickMenuBody ul li a {
+            padding: 10px;
+            padding-left: 20px;
+            border-bottom: 1px solid #545454;
+            color: #fff;
+            display: block;
+            transition: all .3s ease-in-out 0s;
+            -moz-transition: all .3s ease-in-out 0s;
+            -webkit-transition: all .3s ease-in-out 0s;
+        }
+
+            .QuickMenuBody ul li a:hover {
+                padding-left: 38px;
+            }

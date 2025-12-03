@@ -1,0 +1,73 @@
+﻿@using System.Web.Routing;
+@model ExecViewHrk.Models.E_PositionSalaryHistorVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">View Salary</h5>
+    </div>
+    <div class="card-block">
+        <div class="col-lg-12 col-md-12 p-0">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="theme-grid">
+                        @(Html.Kendo().Grid<ExecViewHrk.Models.E_PositionSalaryHistorVm>()
+                .Name("gridEmployeeSalPosition")
+                .Resizable(resize => resize.Columns(true))
+                .Filterable()
+
+                .Columns(columns =>
+                {
+                    columns.Command(command =>
+                    {
+                        command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridEmployeeSalPositionEdit");
+                        command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridEmployeeSalPositionDelete");
+                    }).Width(70);
+                    columns.Bound(c => c.E_PositionSalaryHistoryId).Visible(false);
+                    columns.Bound(c => c.RateTypeDescription).Title("Rate Type");
+                    columns.Bound(c => c.PayRate).Title("Pay Rate");
+                    columns.Bound(c => c.HoursPerPayPeriod).Title("Hours Per PayPeriod");
+                    columns.Bound("Annual Salary");
+                    columns.Bound(c => c.EffectiveDate).Title("Efective Date").ClientTemplate("#= kendo.toString(EffectiveDate, \"MM/dd/yyyy\") #");
+                    columns.Bound("End Date");
+                })
+
+                                .Sortable()
+                                .Selectable()
+                                .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                .Events(e => e.DataBound("gridDataBound"))
+                                .DataSource(dataSource => dataSource.Ajax()
+                                                .Read(read => read.Action("E_PositionSalaryHistoriesList_Read", "E_Positions"))
+
+                                                .Model(model =>
+                                                {
+                                                    model.Id(p => p.E_PositionSalaryHistoryId);
+                                                    model.Field(p => p.E_PositionSalaryHistoryId);
+                                                    model.Field(p => p.RateTypeDescription);
+                                                    model.Field(p => p.PayRate);
+                                                    model.Field(p => p.HoursPerPayPeriod);
+                                                    model.Field(p => p.EffectiveDate);
+                                                }
+                                            )
+                                            .PageSize(10)
+                                    .Batch(false)
+                                    .Events(events =>
+                                    {
+                                        events.Error("refreshGrid");
+                                        events.RequestEnd("gridRequestEnd");
+                                    })
+                                )
+                        )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Close</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+    });
+</script>

@@ -1,0 +1,167 @@
+﻿@model ExecViewHrk.WebUI.Models.AcceptPunchVM
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>::: HR Next :::</title>
+    <!-- Meta -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="Priya International Ltd - BR" />
+    <meta name="keywords" content="Priya International Ltd - BR" />
+    <meta name="author" content="Priya International Ltd - BR" />
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="images/hr-favicon.png">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet" />
+    <!-- Font Awesome font-->
+    <!--<link type="text/css" href="assets/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" />-->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="~/Content/mobile/css/bootstrap.min.css" />
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="~/Content/mobile/css/main.css" />
+    <!-- custom.css-->
+    <link rel="stylesheet" type="text/css" href="~/Content/mobile/css/custom.css" />
+    <link href="~/Content/mobile/css/responsive.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body class="horizontal-fixed fixed">
+    <div class="wrapper main-wrapper">
+        <!-- Main content starts -->
+        <div class="content-wrapper">
+            <div class="container-fluid p-b-0">
+                <div class="row">
+                    @if (Model == null)
+                    {
+                        <div>
+                            <p style="font-size:large;">Something went wrong! Person/Student have not been assigned.</p>
+                            <p style="font-size:large;">Contact your admin.</p>
+                        </div>
+                    }
+                    else if (Model.IsInActive)
+                    {
+                        <div>
+                            <p style="font-size:large;">You are not an active Person/Student!</p>
+                            <p style="font-size:large;">Contact your admin.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <form id="AcceptPunch" action="@Url.Action("AcceptPunch","MobileHomeV2")" name="Accept Employee Punch" method="post">
+                            <div class="col-md-12 p-0">
+                                <div class="col-sm-12 p-0 header-section text-center">
+                                    <i class="fa fa-home f-30 m-r-5" onclick="window.location.href = '@Url.Action("Index", "HrkAdmin")'" style="float:left; margin-left:15px; margin-top:5px;"></i>
+                                    <h3 style="display:inline-block;"><i class="fa fa-clock-o m-r-10"></i>CollegeTime</h3>
+                                    <i class="fa fa-sign-out f-28 pull-right m-r-15" style="margin-top:8px;" onclick="window.location.href='@Url.Action("Login", "Account")'"></i>
+                                </div>
+                                <div class="col-sm-12 blog-single">
+                                    <p class="qutoe-text">
+                                        <i class="fa fa-clock-o m-r-10"></i>@Model.CurrentDate.ToString("ddd MMM dd, yyy HH:mm tt")<br />
+                                        <i class="fa fa-user m-r-10"></i>Employee: @Model.FullName<br />
+                                        <i class="fa fa-clock-o m-r-10"></i>Daily Total: @String.Format("{0:0.00}", Model.DailyTotal) Hours<br />
+                                        <i class="fa fa-clock-o m-r-10"></i>Pay Period Total: @String.Format("{0:0.00}", Model.PayPeriodTotal) Hours<br />
+                                        <i class="fa fa-clock-o m-r-10"></i>Pay Period: @( Model.PayPeriodStartDate.HasValue ? Model.PayPeriodStartDate.Value.ToShortDateString() : "") to @( Model.PayPeriodEndDate.HasValue ? Model.PayPeriodEndDate.Value.ToShortDateString() : "")
+                                    </p>
+                                </div>
+                                @if (Model.IsPayPeriodLocked)
+                                {
+                                    <div>
+                                        <p style="margin:10px;font-size:large;color:white">Pay period is locked. Please contact your manager/supervisor.</p>
+                                    </div>
+                                }
+                                @if (!String.IsNullOrEmpty(Model.NotificationMessage))
+                                {
+                                    <div>
+                                        <p style="margin:10px;font-size:large;color:white">@Model.NotificationMessage</p>
+                                    </div>
+                                }
+                                <div class="col-sm-12">
+                                    <hr class="hr-white" />
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-12 p-0 m-t-15 m-b-15">
+                                    <div class="col-xs-12 col-sm-12 col-md-6 m-b-10 dropdown-warning">
+                                        @Html.DropDownListFor(m => Model.SelectedPosition, new SelectList(Model.PositionList, "PositionId", "PositionDescription"), new { @class = "btn btn-xlg btn-inverse-warning dropdown-toggle dropdown-toggle-split waves-effect waves-light btn-block btn-new h-70", @id = "ddlPosition" })
+                                    </div>
+                                    <div id="punchButtonsView">
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6 m-b-10">
+                                        <a href='@Url.Action("Summary", "MobileHomeV2")' class="btn btn-xlg btn-inverse-primary waves-effect waves-light btn-block btn-new">View Summary</a>
+                                    </div>
+                                    @Html.HiddenFor(m => m.PunchType)
+                                    @Html.HiddenFor(m => m.EmployeeId, new { @id = "hdnEmployeeId" })
+                                    @Html.HiddenFor(m => m.CompanyCodeId, new { @id = "hdnCompanyCodeId" })
+                                    @Html.HiddenFor(m => m.CurrentDate, new { @id = "hdnCurrentDate" })
+                                    @Html.HiddenFor(m => m.IsPayPeriodLocked)
+                                    @Html.HiddenFor(m => m.FileName)
+                                </div>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+            <footer class="f-fix">
+                <div class="footer-bg b-t-muted text-center footer-area f-13">
+                    © 2017-2018 <a href="#" class="txt-white">CollegeTime</a>. All rights reserved.
+                </div>
+            </footer>
+        </div>
+        <!-- Main content starts //-->
+    </div>
+    <!-- Required Jqurey -->
+    <script type="text/javascript" src="~/Scripts/mobile/js/jquery.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/mobile/js/three.min.js"></script>
+    <script type="text/javascript">
+
+        function SetPunchType(punchType) {
+            $("#PunchType").val(punchType);
+            return true;
+        }
+
+        $("#ddlPosition").on("change", function () {
+            var positionId = $("#ddlPosition").val();
+            var employeeId = $("#hdnEmployeeId").val();
+            var currentDate = $("#hdnCurrentDate").val();
+            var companyCodeId = $("#hdnCompanyCodeId").val();
+            var fileName = $("#FileName").val();
+            //alert(currentDate);
+            //alert('hitewsh');
+            if ($("#IsPayPeriodLocked").val().toLowerCase() !== "true") {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("_PunchButtons", "MobileHomeV2")',
+                    data: { employeeId: employeeId, positionId: positionId, punchTime: currentDate.toISOString(), companyCodeId: companyCodeId },
+                    cache: false,
+                    success: function (data) {
+                        if (data == "") {
+                            alert("Your session has been timed out or expired. Click 'OK' to login and continue.");
+                            window.location = '@Url.Action("Login","Account")';
+                        }
+                        if (data != null) {
+                            $("#punchButtonsView").empty();
+                            $("#punchButtonsView").html(data);
+                        }
+                    },
+                    onerror: function (ex) { }
+                });
+            }
+        });
+
+        $(document).ready(function () {
+            triggerRefresh();
+        });
+
+        function triggerRefresh() {
+            if ($('#ddlPosition > option').length > 0)
+                $("#ddlPosition").trigger("change");
+        }
+
+        if ($("#IsPayPeriodLocked").val().toLowerCase() !== "true") {
+            setInterval(function () { triggerRefresh(); }, 1000 * 60);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewBag.Title = "FormTemplate";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+<h2>Workflows</h2>
+
+
+<div>
+
+
+    @(Html.Kendo().Grid<ExecViewHrk.EfClient.Workflow>()
+            .Name("gridWorkflow")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .ToolBar(toolbar => toolbar.Create())
+
+        .Columns(columns =>
+        {
+            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(170);
+            columns.Bound(m => m.WorkflowId).Title("").Width(150).Groupable(false).Filterable(false)
+                                .ClientTemplate(Html.ActionLink("<span class=\"k-icon k-edit\"></span>Define Members"
+                                    , "WorkflowMembers", new { requestType = "id" }
+                                    , new { @class = "k-button k-button-icontext k-grid-edit" }).ToHtmlString().Replace("id", "#=WorkflowId#"))
+                                    .Width(170);
+            columns.Bound(c => c.WorkflowId).Width(100);
+            columns.Bound(c => c.WorkflowName).Width(400);
+            columns.Bound(c => c.WorkflowDescription);
+
+        })
+        .HtmlAttributes(new { style = "height: 480px;" })
+
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .Selectable()
+
+        .Pageable(pageable => pageable
+            .Refresh(false)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                            .Read(read => read.Action("Workflows_Read", "Form"))
+                                    .Create(create => create.Action("Workflow_Create", "Form"))
+                                    .Update(update => update.Action("Workflow_Update", "Form"))
+                                    .Destroy(destroy => destroy.Action("Workflow_Destroy", "Form"))
+                    .Model(model =>
+                            {
+                                model.Id(p => p.WorkflowId);
+                                model.Field(p => p.WorkflowId).Editable(false);
+                                model.Field(p => p.WorkflowName);
+                                model.Field(p => p.WorkflowDescription);
+                            }
+                          )
+            .Batch(false)
+            .Events(events => events.Error("error_handler"))
+        )
+    )
+
+
+</div>
+
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+    function error_handler(e) {
+        
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+
+            $('#gridFormTemplate').data('kendoGrid').dataSource.read();
+            $('#gridFormTemplate').data('kendoGrid').refresh();
+        }
+    }
+</script>

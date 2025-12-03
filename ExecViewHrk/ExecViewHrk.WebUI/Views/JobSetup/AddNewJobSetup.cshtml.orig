@@ -1,0 +1,298 @@
+﻿@model ExecViewHrk.WebUI.Models.JobSetupDetail
+
+   
+        @using (Html.BeginForm("JobSaveAjax", "JobSetup", FormMethod.Post, new { role = "form", id = "JobSetupForm" }))
+        {
+            @Html.HiddenFor(model => model.Jobid)
+            @Html.ValidationSummary(true)
+            <div class="md-content p-10">
+                <div class="card p-15">
+                    <div class="card-header">
+                        <h5 class="card-header-text">Job Setup Detail</h5>
+                    </div>
+                    <div class="card-block">
+                        <div class="row">
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label><span style="color:red">*</span>Job Code</label>
+                                    @Html.TextBoxFor(m => m.JobCode, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.JobCode)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label><span style="color:red">*</span>Job Title</label>
+                                    @Html.TextBoxFor(m => m.title, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.title)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Job Class</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.jobClassID, new SelectList(Model.JobClassList, "jobClassID", "description", Model.jobClassID), new { @class = "form-control input-sm" })
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLJobsetup(event, 'ddlJobClasses');">
+                                                <span class="fa fa-plus"></span>
+                                            </span>
+                                        }
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label><span style="color:red">*</span>Company Code</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.CompanyCodeId, new SelectList(Model.CompanyCodeList, "CompanyCodeId", "CompanyCodeDescription", Model.CompanyCodeId), new { @class = "form-control input-sm" })
+                                        @Html.ValidationMessageFor(x => x.CompanyCodeId)
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLJobsetup(event, 'CompanyCode');">
+                                                <span class="fa fa-plus"></span>
+                                            </span>
+                                        }
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>EEO Job Code</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.eeoJobCodeID, new SelectList(Model.EEOJobCodesList, "eeoJobCodeID", "description", Model.eeoJobCodeID), new { @class = "form-control input-sm" })
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLJobsetup(event, 'ddlEEOJobCodes');">
+                                                <span class="fa fa-plus"></span>
+                                            </span>
+                                        }
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>EEO Job Training</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.eeoJobTrainingStatusID, new SelectList(Model.EEOJobTrainingStatusesList, "eeoJobTrainingStatusID", "description", Model.eeoJobTrainingStatusID), new { @class = "form-control input-sm" })
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLJobsetup(event, 'ddlEEOJobTrainingStatuses');">
+                                                <span class="fa fa-plus"></span>
+                                            </span>
+                                        }
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Worker's Compensation</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.workersCompensationID, new SelectList(Model.WorkersCompensationsList, "workersCompensationID", "description", Model.workersCompensationID), new { @class = "form-control input-sm" })
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLJobsetup(event, 'ddlWorkersCompensations');">
+                                                <span class="fa fa-plus"></span>
+                                            </span>
+                                        }
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Job Family</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.JobFamilyId, new SelectList(Model.JobFamilyList, "JobFamilyId", "description", Model.JobFamilyId), new { @class = "form-control input-sm" })
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLJobsetup(event, 'ddlJobFamilys');">
+                                                <span class="fa fa-plus"></span>
+                                            </span>
+                                        }
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <label>FLSA</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.FLSAID, new SelectList(Model.FLSAList, "FLSAID", "description", Model.FLSAID), new { @class = "form-control input-sm" })
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLJobsetup(event, 'ddlFLSAs');">
+                                                <span class="fa fa-plus"></span>
+                                            </span>
+                                        }
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Unions</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.unionID, new SelectList(Model.UnionsList, "unionID", "description", Model.unionID), new { @class = "form-control input-sm" })
+                                        @if (!User.IsInRole("ClientEmployees"))
+                                        {
+                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLJobsetup(event, 'ddlUnions');">
+                                                <span class="fa fa-plus"></span>
+                                            </span>
+                                        }
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Created Date</label>
+                                    @Html.TextBoxFor(m => m.createdDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control " })
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    @Html.TextBoxFor(m => m.endDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Last Evaluation Date</label>
+                                    @Html.TextBoxFor(m => m.lastEvaluationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Salary Range</label>
+                                    @Html.TextBoxFor(m => m.salaryRange, new { @class = "form-control" })
+                                    @*<input type="text" value="@Model.salaryRange" class="form-control" />*@
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Job Description</label>
+                                    @Html.TextAreaFor(m => m.JobDescription, new { @class = "form-control" })
+                                    @*<textarea name="" cols="" rows="4" value="@Model.Description" class="form-control" style="height:auto;"></textarea>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Qualification Requirements</label>
+                                    @Html.TextAreaFor(m => m.requirements, new { @class = "form-control" })
+                                    @*<textarea name="" cols="" rows="4" class="form-control" value="@Model.requirements" style="height:auto;"></textarea>*@
+                                </div>
+                            </div>
+                          
+                            @*<div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Upload Job</label>
+                                    <div class="md-group-add-on">
+                                        <span class="md-add-on-file">
+                                            <button class="btn btn-success waves-effect waves-light">File</button>
+                                        </span>
+                                        <div class="md-input-file">
+                                            <input type="file" class="">
+                                            <input type="text" class="md-form-control md-form-file">
+                                            <label class="md-label-file">Upload File</label>
+                                            <span class="md-line"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Notes</label>
+                                    @Html.TextAreaFor(m => m.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                    @*<textarea name="" cols="" rows="4" value="@Model.Notes" class="form-control" style="height:auto;"></textarea>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="p-15 text-right">
+                    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+                    <input type="button" id="BtnNewJobSave" name="Done" value="Done" class="btn btn-primary">
+                </div>
+            </div>
+        }
+    @*</div>*@
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+      
+        $('#jobClassID option[description=' + @Model.jobClassID +']').prop('selected', true);
+        $('#workersCompensationID option[value=' + @Model.workersCompensationID +']').prop('selected', true);
+        $('#CompanyCodeId option[CompanyCodeDescription=' + @Model.CompanyCodeId +']').prop('selected', true);
+        $('#eeoJobCodeID option[description=' + @Model.eeoJobCodeID +']').prop('selected', true);
+        $('#eeoJobTrainingStatusID option[value=' + @Model.eeoJobTrainingStatusID +']').prop('selected', true);
+        $('#unionID option[CompanyCodeDescription=' + @Model.unionID +']').prop('selected', true);
+        $('#JobFamilyId option[description=' + @Model.JobFamilyId +']').prop('selected', true);
+        $('#FLSAID option[value=' + @Model.FLSAID +']').prop('selected', true);
+    });
+
+   
+
+
+    $("#BtnNewJobSave").click(function (e) {
+        e.preventDefault();
+        var form = $("#JobSetupForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            return;
+        }
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+<<<<<<< HEAD
+        if (!CompareDates($("#createdDate").val(), $("#endDate").val())) {
+            toastr.error("End Date should greater than Created Date");
+=======
+      
+        if ($("#CompanyCodeId").val() == 0) {
+            toastr.error("The Company Code field is required.");
+>>>>>>> 5a995545bc5681a0be4556f81d6e90c3cbffa1a0
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#JobSetupForm").serializeArray();
+
+        var formURL = appBaseUrl + "JobSetup/JobSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+               
+                if (data.succeed == false)
+                    toastr.error(data.Message);
+                else {
+                    if (data.recordIsNew == true) {
+                        LoadMenu("JobSetupList", "JobSetup")
+                        $("#BtnNewJobSave").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.saved);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    }
+                    else {
+                        var Jobdata = { jobid: data.JobSetUp.Jobid };
+                        LoadDetailView("JobSetupDetail", "JobSetup", Jobdata)
+                        $("#BtnNewJobSave").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.updated);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    }
+                }
+            }
+            else
+            {
+                    toastr.error(data.Message);
+            }
+        });
+    });
+</script>

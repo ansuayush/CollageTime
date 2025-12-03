@@ -1,0 +1,554 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Person Additional";
+    Layout = null;
+}
+
+@model ExecViewHrk.WebUI.Models.PersonAdditionalVm
+
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <section class="panels-wells edit-block">
+                            @Html.ValidationSummary(true)
+
+                            <div class="panel panel-info">
+
+                                <div class="panel-heading  ">
+
+                                    <div class="row">
+
+                                        <div class="col-md-6 ">
+                                            Person Additional <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                                            <div style="color:red; font-size:x-small">* denotes required field</div>
+
+                                        </div>
+                                        <div class="col-md-6 text-right ">
+
+                                            @using (Html.BeginForm("PersonAdditionalsSelectedIndexChanged", "PersonAdditionals", FormMethod.Post, new { role = "form", id = "PersonAdditionalFormDdl" }))
+                {
+
+
+                                            @*@(Html.Kendo().DropDownListFor(model => model.PersonAdditionalId)
+                                                                        .Name("PersonAdditionalIdDdl")
+                                                                        .HtmlAttributes(new { style = "width:300px" })
+                                                                        .DataTextField("PersonAdditionalId")
+                                                                        .DataValueField("PersonAdditionalId")
+                                                                        .Filter(FilterType.Contains)
+                                                                          .DataSource(source =>
+                                                                          {
+                                                                              source.Read(read =>
+                                                                              {
+                                                                                  read.Action("GetPersonAdditionalsList", "PersonAdditionals").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                                              });
+                                                                              //.ServerFiltering(true);
+                                                                          })
+                                                                        .Value(@Model.PersonAdditionalId.ToString())
+                                                                        .OptionLabel("- select one -")
+                                                                        .Events(e =>
+                                                                        {
+                                                                            e.DataBound("onDataBoundPersonAdditionalDdl")
+                                                                                .Select("onSelectPersonAdditionalDdl");
+                                                                        })
+                                                )*@
+
+
+
+                }
+
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="formDiv" class="panel-body">
+
+                                    @*need this for validation*@
+                                    @using (Html.BeginForm("PersonAdditionals", "PersonAdditionals", FormMethod.Post, new { role = "form", id = "PersonAdditionalForm" }))
+        {
+                                    @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                                    @Html.HiddenFor(model => model.PersonAdditionalId, new { id = "hiddenPersonAdditionalId" })
+                                    <div class="row ">
+                                        <div class="row ">
+                                            <div class="col-md-12">
+                                                <div class="col-md-6">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">Person Additional</div>
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group ">
+                                                                        <label>Birth Place</label>
+                                                                        @Html.TextBoxFor(x => x.BirthPlace, new { @class = "form-control" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group ">
+                                                                        <div>
+                                                                            <label><span style="color:red">*</span>Eeo Type</label>
+                                                                        </div>
+                                                                        @(Html.Kendo().ComboBox()
+                                        .Name("EeoDescription")
+                                        .DataTextField("EeoDescription")
+                                        .DataValueField("EeoTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetEeoTypes", "DdlEeoTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(false);
+                                          })
+                                        .Placeholder("select an Eeo Type")
+                                                                        )
+
+                                                                        @if (!User.IsInRole("ClientEmployees"))
+                                                {
+                                            <button id="btnAddEeoType" class="btn btn-info">+</button>
+                                                }
+
+
+                                                                        <div>
+                                                                            @Html.ValidationMessageFor(model => model.EeoDescription)
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="row">
+
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group ">
+                                                                        <div>
+                                                                            <label><span style="color:red">*</span>Applicant Source</label>
+                                                                        </div>
+                                                                        @(Html.Kendo().ComboBox()
+                                        .Name("ApplicantDescription")
+                                        .DataTextField("ApplicantDescription")
+                                        .DataValueField("ApplicantSourceId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetDdlApplicantSource", "DdlApplicantSources").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(false);
+                                          })
+                                        .Placeholder("select an Applicant Source")
+                                                                        )
+
+                                                                        @if (!User.IsInRole("ClientEmployees"))
+                                                {
+                                            <button id="btnAddApplicantSource" class="btn btn-info">+</button>
+                                                }
+
+
+                                                                        <div>
+                                                                            @Html.ValidationMessageFor(model => model.ApplicantDescription)
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div>
+                                                                        <label><span style="color:red">*</span>Citizenship</label>
+                                                                    </div>
+                                                                    @(Html.Kendo().ComboBox()
+                                        .Name("CitizenshipDescription")
+                                        .DataTextField("CitizenshipDescription")
+                                        .DataValueField("CitizenshipId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetCitizenships", "DdlCitizenships").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(false);
+                                          })
+                                        .Placeholder("select an Citizenship")
+                                                                    )
+
+                                                                    @if (!User.IsInRole("ClientEmployees"))
+                                            {
+                                        <button id="btnAddCitizenship" class="btn btn-info">+</button>
+                                            }
+
+
+                                                                    <div>
+                                                                        @Html.ValidationMessageFor(model => model.CitizenshipDescription)
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label>Citizenship Date</label>
+                                                                    <div>
+                                                                        @(Html.Kendo().DatePickerFor(x => x.CitizenshipDate)
+                                                 .Name("CitizenshipDate").Format("MM/dd/yyyy")
+                                                                        )
+                                                                    </div>
+                                                                    <div>
+                                                                        @Html.ValidationMessageFor(x => x.CitizenshipDate)
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label>Veteran</label>
+                                                                    <div class="row small">
+                                                                        <div class="col-md-12">
+                                                                            @Html.EditorFor(x => x.Vietnam, new { @class = "form-control" })Vietnam
+                                                                            @Html.EditorFor(x => x.SpecialDisabled, new { @class = "form-control", @style = "margin-left:5px" })Special/Disabled
+                                                                            @Html.EditorFor(x => x.Other, new { @class = "form-control", @style = "margin-left:5px" })Other
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    @Html.EditorFor(x => x.Disabled, new { @class = "form-control" })
+                                                                    <label>Disabled</label>
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <label>Disabled Comments</label>
+                                                                    @Html.TextAreaFor(x => x.DisabledComments, new { @class = "form-control", style = "max-width:238px", rows = 2 })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">Hospital </div>
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div>
+                                                                        <label><span style="color:red">*</span>Hospital</label>
+                                                                    </div>
+                                                                    @(Html.Kendo().ComboBox()
+                                        .Name("HospitalDescription")
+                                        .DataTextField("HospitalDescription")
+                                        .DataValueField("HospitalId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetHospitals", "DdlHospitals").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(false);
+                                          })
+                                        .Placeholder("select a Hospital")
+                                                                    )
+
+                                                                    @if (!User.IsInRole("ClientEmployees"))
+                                            {
+                                        <button id="btnAddHospitals" class="btn btn-info">+</button>
+                                            }
+
+
+                                                                    <div>
+                                                                        @Html.ValidationMessageFor(model => model.HospitalDescription)
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 ">
+                                                                    <label> Primary Doctor </label>
+                                                                    @Html.TextBoxFor(x => x.Doctor, new { @class = "form-control" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+
+                                                                    @Html.EditorFor(x => x.BloodDonor, new { @class = "form-control" })Blood Donor
+                                                                    @Html.EditorFor(x => x.Smoker, new { @class = "form-control", @style = "margin-left:10px" })Smoker
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    @Html.EditorFor(x => x.AdvancedDirective, new { @class = "form-control" })Advanced Directive
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="panel">
+                                                        <div class="panel-body">
+                                                            <div class=" form-group ">
+                                                                <label>Notes</label>
+                                                                <div class="col-md-12">
+                                                                    @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                                                    @Html.ValidationMessageFor(x => x.Notes)
+                                                                </div>
+                                                            </div>
+                                                            <div class=" form-group ">
+                                                                <div class="col-md-6">
+                                                                    <label>Entered By:</label>
+                                                                    <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label style="width:100px">Entered Date:</label>
+                                                                    <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class=" form-group ">
+                                                                <div class="col-md-6">
+                                                                    <label style="width:100px">Modified By:</label>
+                                                                    <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label style="width:100px">Modified Date:</label>
+                                                                    <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate</label>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">Retirement Dates</div>
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label>Early</label>
+                                                                    <div>
+
+                                                                        @(Html.Kendo().DatePickerFor(x => x.EarlyRetirementDate)
+                                             .Name("EarlyRetirementDate")
+                                             .Format("MM/dd/yyyy")
+                                                                        )
+                                                                    </div>
+                                                                    <div>
+                                                                        @Html.ValidationMessageFor(x => x.EarlyRetirementDate)
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label>Expected</label>
+                                                                    <div>
+                                                                        @(Html.Kendo().DatePickerFor(x => x.ExpectedRetirementDate)
+                                             .Name("ExpectedRetirementDate").Format("MM/dd/yyyy")
+                                                                        )
+                                                                    </div>
+                                                                    <div>
+                                                                        @Html.ValidationMessageFor(x => x.ExpectedRetirementDate)
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label>Normal</label>
+                                                                    <div>
+                                                                        @(Html.Kendo().DatePickerFor(x => x.NormalRetirementDate)
+                                               .Name("NormalRetirementDate").Format("MM/dd/yyyy")
+                                                                        )
+                                                                    </div>
+                                                                    <div>
+                                                                        @Html.ValidationMessageFor(x => x.NormalRetirementDate)
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label>Date Of Death</label>
+                                                                    <div>
+                                                                        @(Html.Kendo().DatePickerFor(x => x.DateOfDeath)
+                                        .Name("DateOfDeath").Format("MM/dd/yyyy")
+                                                                        )
+                                                                    </div>
+                                                                    <div>
+                                                                        @Html.ValidationMessageFor(x => x.DateOfDeath)
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 ">
+                                            <div class="form-group">
+
+                                                <input id="btnSavePersonAdditionalAjax" type="button" value="Save" class="btn btn-info" />
+                                                <input id="btnClearPersonAdditionalAjax" type="button" value="Clear" class="btn btn-info" style="display:none" />
+                                                <input id="btnDeletePersonAdditionalAjax" type="button" value="Delete" class="btn btn-info" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+        }
+
+
+                                </div>
+
+                                <div id="eeoTypesWindow" style="display:none">
+                                    <div id="eeoTypesContent">
+                                        @Html.Partial("~/Views/DdlEeoTypes/DdlEeoTypesPartial.cshtml")
+                                    </div>
+                                </div>
+
+                                <div id="applicantSourcesWindow" style="display:none">
+                                    <div id="applicantSourcesContent">
+                                        @Html.Partial("~/Views/DdlApplicantSources/DdlApplicantSourcesPartial.cshtml")
+                                    </div>
+                                </div>
+
+                                <div id="citizenshipsWindow" style="display:none">
+                                    <div id="citizenshipsContent">
+                                        @Html.Partial("~/Views/DdlCitizenships/DdlCitizenshipsPartial.cshtml")
+                                    </div>
+                                </div>
+
+                                <div id="hospitalsWindow" style="display:none">
+                                    <div id="hospitalsContent">
+                                        @Html.Partial("~/Views/DdlHospitals/DdlHospitalsPartial.cshtml")
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    function newKendoWindow(title, onClose) {
+        var obj = {
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: title,
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+            close: onClose
+        }
+        return obj;
+    };
+
+    var eeoTypesWindow = $("#eeoTypesWindow");
+    if (!eeoTypesWindow.data("kendoWindow")) {
+        eeoTypesWindow.kendoWindow(
+            newKendoWindow("Medical Examination Types", onCloseEeosWindow)
+        );
+    }
+
+    function onCloseEeosWindow() {
+        resetKenoComboBox('EeoDescription');
+        resetGrid('gridDdlEeoType');
+
+    }
+
+    $("#btnAddEeoType").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#eeoTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+
+    var applicantSourcesWindow = $("#applicantSourcesWindow");
+    if (!applicantSourcesWindow.data("kendoWindow")) {
+        applicantSourcesWindow.kendoWindow(newKendoWindow("Applicant Sources", onCloseApplicantsWindow));
+    }
+
+    function onCloseApplicantsWindow() {
+        resetKenoComboBox('ApplicantDescription');
+        resetGrid('gridDdlApplicationSource');
+    }
+
+    $("#btnAddApplicantSource").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#applicantSourcesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var citizenshipsWindow = $("#citizenshipsWindow");
+    if (!citizenshipsWindow.data("kendoWindow")) {
+        citizenshipsWindow.kendoWindow(newKendoWindow("Citizenships", onCloseCitizenshipsWindow));
+    }
+
+    function onCloseCitizenshipsWindow() {
+        resetKenoComboBox('CitizenshipDescription');
+        resetGrid('gridDdlCitizenship');
+    }
+
+    $("#btnAddCitizenship").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#citizenshipsWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    $("#btnAddHospitals").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#hospitalsWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+
+    var hospitalsWindow = $("#hospitalsWindow");
+    if (!hospitalsWindow.data("kendoWindow")) {
+        hospitalsWindow.kendoWindow(newKendoWindow("Hospitals", onClosehospitalsWindow));
+    }
+    function onClosehospitalsWindow() {
+        resetKenoComboBox('HospitalDescription');
+        resetGrid('gridHospitals');
+    }
+
+
+</script>
+
+
+
+
+
+
+
+
+
+

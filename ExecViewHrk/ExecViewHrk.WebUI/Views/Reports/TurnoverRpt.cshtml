@@ -1,0 +1,1262 @@
+﻿
+@{
+    Layout = null;
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header p-0">
+                <div class="col-md-9 p-0">
+                    <h4>
+                        Turn Over Report
+                        <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row p-t-15">
+        
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-block">
+                    <div class="table-report-div">
+                        <table width="1500" border="1" cellspacing="0" cellpadding="0" class="table-report">
+                            <tr>
+                                <td width="129" align="center" valign="middle">&nbsp;</td>
+                                <td width="601" align="center" valign="middle"><strong>Turnover Rates</strong></td>
+                                <td width="545" align="center" valign="middle"><strong>Unavoidable Separations</strong></td>
+                                <td colspan="3" align="center" valign="middle">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="border:1px;">
+                                        <tr>
+                                            <td height="29" colspan="3" align="center" valign="middle"><strong>Avoidable Separations</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="32%" height="24" align="center" valign="middle">Avoidable Separations</td>
+                                            <td width="30%" align="center" valign="middle">Disciplinary Separations</td>
+                                            <td width="38%" align="center" valign="middle">Separations during Intro Period **</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height:105px;" align="center">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td><div class="rotate">PPE</div></td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Active No Of Employees
+                                                </div>
+                                            </td>
+                                            <td><div class="rotate">Separations</div></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td>
+                                                <div class="rotate">
+                                                    Overall Monthly Turnovers
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Overall YTD Turnover Rate
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Unavoidable Turnover Monthly
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Unavoidable YTD Turnover Rate
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Avoidable Turnover Monthly Rate
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Avoidable YTD Turnover Rate
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Disciplinary Turnover Monthly Rate
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Disciplinary YTD Turnover
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Introductory Period Turnover Monthly Rate
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Introductory YTD Turnover
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td><div class="rotate">Military Move</div></td>
+                                            <td><div class="rotate">Relocation (Non-Mil)</div></td>
+                                            <td><div class="rotate">Abandonment</div></td>
+                                            <td><div class="rotate">Family Care</div></td>
+                                            <td><div class="rotate">Layoff</div></td>
+                                            <td><div class="rotate">Education</div></td>
+                                            <td><div class="rotate">Ees Illness</div></td>
+                                            <td><div class="rotate">Retirement</div></td>
+                                            <td><div class="rotate">Death</div></td>
+                                            <td><div class="rotate">Commute</div></td>
+                                            <td><div class="rotate">Other</div></td>
+                                            <td>
+                                                <div class="rotate">
+                                                    TOTAL UNAVOID. SEPS
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td><div class="rotate">Other Employment</div></td>
+                                            <td><div class="rotate">Working Environment</div></td>
+                                            <td><div class="rotate">Other</div></td>
+                                            <td><div class="rotate">TOTAL AVOIDABLE SEPS</div></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td><div class="rotate">Attendance</div></td>
+                                            <td><div class="rotate">Performance</div></td>
+                                            <td>
+                                                <div class="rotate">
+                                                    Inappropriate Behavior
+                                                </div>
+                                            </td>
+                                            <td><div class="rotate">Other</div></td>
+                                            <td><div class="rotate">TOTAL DISCP. SEPS</div></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td><div class="rotate">Resign</div></td>
+                                            <td><div class="rotate">Termination</div></td>
+                                            <td><div class="rotate">Abandonment</div></td>
+                                            <td><div class="rotate">Other</div></td>
+                                            <td><div class="rotate">TOTAL INTRO SEPS</div></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td colspan="3"><strong>Development</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="54%">Jun-96</td>
+                                            <td width="32%">15</td>
+                                            <td width="16%">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nov-98</td>
+                                            <td>15</td>
+                                            <td>1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                            <td align="center">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="60" align="center" valign="top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td colspan="3"><strong>HRIS</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="54%">Apr-96</td>
+                                            <td width="29%">3</td>
+                                            <td width="17%">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jul-95</td>
+                                            <td>3</td>
+                                            <td>1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nov-98</td>
+                                            <td>3</td>
+                                            <td>3</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="60" align="center" valign="top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td colspan="3"><strong>Human Resources</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="52%">Jan-96</td>
+                                            <td width="32%">11</td>
+                                            <td width="16%">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mar-96</td>
+                                            <td>11</td>
+                                            <td>1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nov-98</td>
+                                            <td>11</td>
+                                            <td>1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="60" align="center" valign="top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td colspan="3"><strong>IT</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="52%">Jan-96</td>
+                                            <td width="32%">11</td>
+                                            <td width="16%">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jun-91</td>
+                                            <td>11</td>
+                                            <td>1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nov-98</td>
+                                            <td>11</td>
+                                            <td>1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="60" align="center" valign="top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td colspan="3"><strong>Marketing</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="52%">Jan-96</td>
+                                            <td width="32%">11</td>
+                                            <td width="16%">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jun-91</td>
+                                            <td>11</td>
+                                            <td>1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="60" align="center" valign="top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td colspan="3"><strong>Sales</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="52%">Jan-96</td>
+                                            <td width="32%">11</td>
+                                            <td width="16%">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jun-91</td>
+                                            <td>11</td>
+                                            <td>1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nov-98</td>
+                                            <td>11</td>
+                                            <td>1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">6.7%</td>
+                                            <td align="center">13.3%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                            <td align="center">0.0%</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">1</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">1</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td align="center" valign="middle">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                            <td align="center">0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

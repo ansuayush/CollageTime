@@ -1,0 +1,446 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Time Card Archive";
+}
+@model ExecViewHrk.Models.TimeCardsArchiveVM
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="container-fluid">
+    @using (Html.BeginForm("TimeCardsInAndOutMatrixPartial", "TimeCardArchive", FormMethod.Post, new { role = "form", id = "TimeCardArchiveFormDdl" }))
+    {
+        @Html.HiddenFor(model => model.IsArchived, new { id = "hiddenIsArchived" })
+        <div class="row p-t-15">
+            <div class="col-lg-12 col-md-12">
+                <div class="main-header col-sm-12 p-0 m-b-0">
+                    <div class="col-md-8 m-b-10 p-0">
+                        <div class="row">
+                            @*<div style="@(User.IsInRole("HrkAdministrators") || User.IsInRole("ClientManagers") || User.IsInRole("ClientAdministrators") ? "display:block" : "display:none")">*@
+
+                                <div class="col-md-3 ">
+                                    <label>Company Codes</label>
+                                    @(Html.Kendo().DropDownListFor(model => model.CompanyCodeId)
+.HtmlAttributes(new { id = "CompanyCodeIdDdl", @class = "form-control" })
+.DataTextField("CompanyCodeDescription")
+.DataValueField("CompanyCodeId")
+.Filter(FilterType.Contains)
+.DataSource(source =>
+{
+source.Read(read =>
+                                                                                    {
+                                                                    read.Action("GetCompanyCodes", "LookupTables").Type(HttpVerbs.Post);//.Data("additionalData");
+                                                                                })
+                                                                                    .ServerFiltering(true);
+})
+.Value(@Model.CompanyCodeId.ToString())
+                                            //.OptionLabel("- select one -")
+                                    )
+                                    @Html.ValidationMessageFor(model => model.CompanyCodeId)
+                                </div>
+
+                                <div class="col-md-3 ">
+                                    <label>Departments</label>
+                                    @(Html.Kendo().DropDownListFor(model => model.DepartmentId)
+.HtmlAttributes(new { id = "DepartmentIdDdl", @class = "form-control" })
+.DataTextField("CompCode_DeptCode_DeptDescription")
+.DataValueField("DepartmentId")
+.Filter(FilterType.Contains)
+.DataSource(source =>
+{
+    source.Read(read =>
+    {
+        read.Action("GetDepartmentsList", "LookupTables").Data("filterDepartmentsByCompanyCode").Type(HttpVerbs.Post); //.Data("additionalData");
+    })
+                                                                                        .ServerFiltering(true);
+})
+.AutoBind(true)
+.CascadeFrom("CompanyCodeIdDdl")
+.Value(@Model.DepartmentId.ToString())
+                                    //.OptionLabel("- select one -")
+                                    )
+                                    @Html.ValidationMessageFor(model => model.DepartmentId)
+                                </div>
+
+                                <div class="col-md-3 ">
+                                    <label>Employees</label>
+
+                                    @(Html.Kendo().DropDownListFor(model => model.EmployeeId)
+.HtmlAttributes(new { id = "EmployeeIdDdl", @class = "form-control" })
+.DataTextField("EmployeeFullName")
+.DataValueField("EmployeeId")
+.Filter(FilterType.Contains)
+.DataSource(source =>
+{
+    source.Custom()
+                                                                                        .Group(g => g.Add("EmployeeRole", typeof(string)))
+                                                                                        .Transport(transport => transport
+                                                                                        .Read(read =>
+                                                                                        {
+                                                                                            read.Action("GetEmployeesList", "LookupTables").Data("filterEmployeesByDepartment").Type(HttpVerbs.Post); //.Data("additionalData");
+
+                                                                                    }))
+                                                                                        .ServerFiltering(true);
+})
+.AutoBind(true)
+.CascadeFrom("DepartmentIdDdl")
+.Value(@Model.EmployeeId.ToString())
+//.OptionLabel("- select one -")
+.Events(e => e.Change("OnChangeEmployeeforArchive"))
+                                    )
+                                    @Html.ValidationMessageFor(model => model.EmployeeId)
+                                </div>
+
+                            @*</div>*@
+                            <div class="col-md-3">
+                                <label>Pay Period</label>
+
+                                @*@if (User.IsInRole("ClientEmployees"))
+                                {
+                                    @(Html.Kendo().DropDownListFor(model => model.PayPeriodId)
+                                                        .HtmlAttributes(new { id = "PayPeriodIdDdl", @class = "form-control" })
+                                                        .DataTextField("PayPeriod")
+                                                        .DataValueField("PayPeriodId")
+                                                        .Filter(FilterType.Contains)
+                                                        .DataSource(source =>
+                                                        {
+                                                            source.Read(read =>
+                                                            {
+                                                                read.Action("GetPayPeriodsList", "TimeCardArchive").Data("filterPayperiodByPayfrequency");
+                                                            })
+                                                            .ServerFiltering(true);
+                                                        })
+                                                        .AutoBind(true)
+                                                        .Value(@Model.PayPeriodId.ToString())
+                                                        .OptionLabel("- select one -")
+                                                        .Events(e => e.Change("OnChangePayPeriodforArchive"))
+                                    )
+                                }
+                                else
+                                {*@
+                                    @(Html.Kendo().DropDownListFor(model => model.PayPeriodId)
+                                                            .HtmlAttributes(new { id = "PayPeriodIdDdl", @class = "form-control" })
+                                                            .DataTextField("PayPeriod")
+                                                            .DataValueField("PayPeriodId")
+                                                            .Filter(FilterType.Contains)
+                                                            .DataSource(source =>
+                                                            {
+                                                                source.Read(read =>
+                                                                {
+                                                                    read.Action("GetPayPeriodsList", "TimeCardArchive").Data("filterPayperiodByPayfrequency").Type(HttpVerbs.Post);
+                                                                })
+                                                                .ServerFiltering(true);
+                                                            })
+                                                            .AutoBind(true)
+                                                            .CascadeFrom("EmployeeIdDdl")
+                                                            .Value(@Model.PayPeriodId.ToString())
+                                                            .OptionLabel("- select one -")
+                                                            .Events(e => e.Change("OnChangePayPeriodforArchive"))
+                                    )
+                                @*}*@
+                                @Html.ValidationMessageFor(model => model.PayPeriodId)
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    @*<div class="col-md-4 m-b-10 p-0 text-right">
+                            <div class="col-md-4 p-t-27 float-none">
+                                @if (User.IsInRole("HrkAdministrators") || User.IsInRole("ClientManagers") || User.IsInRole("ClientAdministrators"))
+                                {
+                                    @Html.CheckBoxFor(m => m.Approved, new { @disabled = "disabled" })
+                                    <label style="vertical-align:middle;">Approved</label>
+                                }
+                                else
+                                {
+                                    @Html.CheckBoxFor(m => m.Approved, new { @disabled = "disabled" })
+                                    <label style="vertical-align:middle;color: #ccc;">Approved</label>
+                                }
+                            </div>
+                        </div>*@
+                </div>
+                <div id="formDiv" class="panel-body">
+                    <div class="col-lg-12 col-md-12 p-0">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+
+                                <div class="theme-grid theme-grid-new">
+                                    @(Html.Kendo().Grid<ExecViewHrk.Models.TimeCardsArchiveVM>()
+                                                    .Name("GridTimeCardArchive")
+                                                    .Resizable(resize => resize.Columns(true))
+                                                    //.Editable(editable => { if (Model.IsArchived == false) { editable.Mode(GridEditMode.InCell); } })
+                                                    //.ToolBar(toolbar =>
+                                                    //{
+                                                    //    if (Model.IsArchived == false)
+                                                    //    {
+                                                    //        toolbar.Create();
+                                                    //        toolbar.Save();
+                                                    //    }
+                                                    //})
+                                                    .Columns(columns =>
+                                                    {
+                                                    //    if
+                                                    //(Model.IsArchived == false)
+                                                    //    {
+
+                                                    //        columns.Command(command => command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridDeleteRow")).Width(30).Locked(true);
+                                                    //    }
+                                                    columns.Bound(c => c.TimeCardsArchiveId).Title("TimeCardId").Hidden();
+                                                    columns.Bound(c => c.Day).Format("{0:ddd}").Title("Day").Width(70);
+                                                    //.ClientGroupHeaderTemplate("Day: #= kendo.toString(value,'D') #").Locked(true);
+                                                    //    columns.Bound(c => c.ActualDate).Format("{0:MM-dd-yyyy}").EditorTemplateName("TimeCardDatePicker").Title("Date").Width(75)
+                                                    //.ClientGroupHeaderTemplate("Date: #= kendo.toString(value,'D') #").Locked(true).ClientGroupHeaderTemplate("Actual Date :#= value#").Width(100);
+                                                    columns.Bound(c => c.ActualDateString).Title("ActualDate").ClientGroupHeaderTemplate("#: value#").Width(100);
+                                                    columns.Bound(c => c.TimeIn).Title("Time In").EditorTemplateName("TimeCardTimePicker").Format("{0: hh:mm tt}").Width(72);
+                                                    columns.Bound(c => c.LunchOut).Title("Lunch Out").Format("{0: hh:mm tt}").Width(72);
+                                                    columns.Bound(c => c.LunchBack).Format("{0: hh:mm tt}").Title("Lunch Back").Width(72);
+                                                    columns.Bound(c => c.TimeOut).Format("{0: hh:mm tt}").Title("Time Out").Width(72);
+                                                    columns.ForeignKey(c => c.PositionId, (System.Collections.IEnumerable)ViewData["employeePositionsList"], "PositionId", "PositionCode").Width(215)
+                                                                                                                                                                                .EditorTemplateName("EmployeePositionsEditor")
+                                                                                                                                                                                .Title("Position").HtmlAttributes(new { id = "ddlPosition" });
+                                                    columns.ForeignKey(c => c.HoursCodeId, (System.Collections.IEnumerable)ViewData["hourCodesList"], "HoursCodeId", "HoursCodeCode")
+                                                                        .EditorTemplateName("HoursCodeTypeDropDown")
+                                                                        .Title("Hour Code").Width(115);
+                                                    //        columns.Bound(c => c.Hours).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(80)
+                                                    //.ClientFooterTemplate("Total Hours: #=sum#")
+                                                    //.ClientGroupFooterTemplate("Hours: #=sum#");
+                                                    columns.ForeignKey(c => c.EarningsCodeId, (System.Collections.IEnumerable)ViewData["earningCodesList"], "EarningsCodeId", "EarningsCodeCode")
+                                                .EditorTemplateName("EarningCodeEditor")
+                                                .Title("Earning Code").Width(100);
+
+                                                    //        columns.Bound(c => c.EarningsAmount).HeaderHtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(115)
+                                                    //.ClientFooterTemplate("Total Amount: #=sum#")
+                                                    //.ClientGroupFooterTemplate("Amount: #=sum#");
+                                                    columns.ForeignKey(c => c.TempDeptId, (System.Collections.IEnumerable)ViewData["tempDepartmentCodesList"], "TempDeptId", "TempDeptCode")
+
+                                                .EditorTemplateName("DepartmentEditor")
+                                                .Title("Temp Dept").Width(75);
+                                                    columns.ForeignKey(c => c.TempJobId, (System.Collections.IEnumerable)ViewData["tempJobCodesList"], "TempJobId", "TempJobCode")
+                                                                        .EditorTemplateName("JobEditor")
+                                                                        .Title("Temp Job Code").Width(75);
+                                                    //    columns.Bound(c => c.WeekNum).Hidden()
+                                                    //.ClientGroupHeaderTemplate("Week Number :#= value#").Width(100);
+                                                    columns.Bound(c => c.LineTotal).Title("Total").Format("{0:n2}").Width(90);//;
+                                                                                                             //.ClientFooterTemplate("<div>Min: #= min #</div><div>Max: #= max #</div>");
+                                                    columns.Bound(c => c.ShowLineApprovedActive).Width(50).Hidden();
+                                                    columns.Bound(p => p.TimeCardId).ClientTemplate("<input type='button' class='k-button min-width-auto' onclick=\"getArchiveNotes('#=TimeCardId#')\" />").Title("Notes").Width(50);
+                                                    columns.Bound(c => c.UserId).Title("User Id").Width(200);
+                                                    if (User.IsInRole("ClientEmployees") || Model.IsArchived == true)
+                                                        columns.Bound(c => c.IsLineApproved).Title("Appr.").Width(50).Template
+                                                                            (@<text></text>).ClientTemplate("<input type='checkbox' disabled='disabled' #= IsLineApproved ? checked='checked':'' # class='chkbx' />");
+                                        else
+                                            columns.Bound(c => c.IsLineApproved).Title("Appr.").Width(50).Template
+                                                                                                (@<text></text>).ClientTemplate(" #if(ShowLineApprovedActive){# <input type='checkbox'  #= IsLineApproved ? checked='checked':'' # class='chkbx' />#} else{# <input type='checkbox' disabled='disabled' #= IsLineApproved ? checked='checked':'' # class='chkbx' />#}#");
+                                                    })
+.Scrollable(scrollable => scrollable.Height("Auto"))
+.Reorderable(reorderable => reorderable.Columns(true))
+.Resizable(resizable => resizable.Columns(true))
+.Selectable()
+.Pageable(pageable => pageable
+.Refresh(false)
+.PageSizes(true)
+.ButtonCount(5))
+.Sortable()
+.DataSource(dataSource => dataSource
+.Ajax()
+.Batch(true)
+//.Events(e => e.RequestEnd("OnCreateUpdate"))
+.Aggregates(aggregates =>
+{
+    //aggregates.Add(p => p.Hours).Sum();
+    aggregates.Add(p => p.EarningsAmount).Sum();
+}).PageSize(8)
+//.Group(groups => groups.Add(p => p.WeekNum))
+.Group(g => g.Add(p => p.ActualDateString))
+.Read(read => read.Action("WeeksArchiveList_Read", "TimeCardArchive").Data("filterTimeCardRecords").Type(HttpVerbs.Post))
+//.Create(create => create.Action("WeeksInOutList_Create", "TimeCardInOutMatrix").Data("filterTimeCardRecords").Type(HttpVerbs.Post))
+//.Update(update => update.Action("WeeksInOutList_Update", "TimeCardInOutMatrix").Data("filterTimeCardRecords").Type(HttpVerbs.Post))
+//.Destroy(destroy => destroy.Action("WeeksInOutList_Destroy", "TimeCardInOutMatrix").Data("filterTimeCardRecords").Type(HttpVerbs.Post))
+.Model(model =>
+{
+    model.Id(p => p.TimeCardsArchiveId);
+    model.Field(p => p.Day).Editable(false);
+})
+.Events(events =>
+{
+    //events.Error("refreshGrid");
+    //events.RequestEnd("gridRequestEnd");
+})
+)
+
+                                    )
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 p-0">
+
+                            <div class="col-md-6 m-t-10">
+                                <div class="theme-grid theme-grid-new">
+                                    @(Html.Kendo().Grid<ExecViewHrk.Models.TimeCardWeekTotalCollectionVm>()
+                                                             .Name("GridDisplayWeeklyTimeCardTotal")
+                                                             .Columns(columns =>
+                                                             {
+                                                                 columns.Bound(c => c.WeekNum).Title("Week").Width(100).ClientFooterTemplate("Total");
+                                                                 columns.Bound(c => c.RegularHours).Title("Regular").Width(100)
+                                                                 .ClientFooterTemplate("#=kendo.toString(sum,'0.00')#");
+                                                                 columns.Bound(c => c.OverTime).Title("Over Time").Width(100)
+                                                                 .ClientFooterTemplate("#=kendo.toString(sum,'0.00')#");
+                                                                 columns.Bound(c => c.CodedHours).Title("Coded").Width(100)
+                                                                 .ClientFooterTemplate("#=kendo.toString(sum,'0.00')#");
+                                                                 columns.Bound(c => c.WeeklyTotal).Title("Total").Width(100)
+                                                                 .ClientFooterTemplate("#=kendo.toString(sum,'0.00')#");
+                                                             })
+
+                                                             .DataSource(dataSource => dataSource
+                                                             .Ajax()
+                                                             .Read(read => read.Action("WeeksTotalArchiveList_Read", "TimeCardArchive").Data("filterTimeCardRecords").Type(HttpVerbs.Post))
+                                                             .Aggregates(aggregates =>
+                                                                    {
+                                                                        aggregates.Add(p => p.RegularHours).Sum();
+                                                                        aggregates.Add(p => p.OverTime).Sum();
+                                                                        aggregates.Add(p => p.CodedHours).Sum();
+                                                                        aggregates.Add(p => p.WeeklyTotal).Sum();
+                                                                    })
+                                                                .Model(model =>
+                                                                {
+                                                                    model.Id(p => p.WeekNum);
+                                                                })
+                                                            )
+                                    )
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 m-t-10">
+                                <div class="theme-grid theme-grid-new">
+                                    @(Html.Kendo().Grid<ExecViewHrk.Models.TimeoffSummaryVM>()
+                                                                                .Name("GridTimeoffSummary")
+                                                                                .Columns(columns =>
+                                                                                {
+                                                                                    columns.Bound(c => c.Position).Width(150);
+                                                                                                    //columns.Bound(c => c.Typecode).Title("Type Code").Width(100);
+                                                                                                    columns.Bound(c => c.Allowed).Title("Limit").Width(50);
+                                                                                    columns.Bound(c => c.Taken).Title("Used").Width(50);
+                                                                                    columns.Bound(c => c.Remainder).Title("Balance").Width(50);
+                                                                                })
+                                                                                .DataSource(dataSource => dataSource
+                                                                                .Ajax()
+                                                                                .Read(read => read.Action("GetTimeoffSummary_Read", "TimeCardArchive").Data("filterTimeCardRecords").Type(HttpVerbs.Post))
+                                                                                .Model(model =>
+                                                                                {
+                                                                                    model.Id(p => p.EmployeeId);
+                                                                                })
+                                                                                )
+                                    )
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+    @*Timecard Notes PopUp*@
+    <div class="modal fade" tabindex="-1" id="timecardNotesModal"
+         data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">Timecard Notes</h4>
+                </div>
+                <div class="modal-body" id="timecardnoteBody">
+                </div>
+                <div class="modal-footer">
+                    @*@if (!User.IsInRole("ClientEmployees"))
+                        {
+                            <input type="button" value="Submit" id="btnSubmit" class="btn btn-primary" />
+                        }*@
+                    <button type="button" id="btnHideModal" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    var grid = $("#GridTimeCardArchive").data("kendoGrid");
+    var displayColumns = @Html.Raw(Json.Encode(Model.timeCardDislayColumns));
+    if (displayColumns.Day == false) { grid.hideColumn("Day"); }
+    if (displayColumns.ActualDate == false) { grid.hideColumn("ActualDate");}
+    if (displayColumns.TimeIn == false) { grid.hideColumn("TimeIn");}
+    if (displayColumns.LunchOut == false) { grid.hideColumn("LunchOut");}
+    if (displayColumns.LunchBack == false) { grid.hideColumn("LunchBack");}
+    if (displayColumns.TimeOut == false) { grid.hideColumn("TimeOut");}
+    if (displayColumns.HoursCodeId == false) { grid.hideColumn("HoursCodeId"); }
+    if (displayColumns.Hours == false) { grid.hideColumn("Hours"); }
+    if (displayColumns.EarningsCodeId == false) { grid.hideColumn("EarningsCodeId");}
+    if (displayColumns.EarningsAmount == false) { grid.hideColumn("EarningsAmount");}
+    if (displayColumns.TempDeptId == false) { grid.hideColumn("TempDeptId");}
+    if (displayColumns.TempJobId == false) { grid.hideColumn("TempJobId");}
+    if (displayColumns.IsApproved == false) { grid.hideColumn("IsLineApproved");}
+    $(function () {
+        $('#GridTimeCardArchive').on('click', '.chkbx', function () {
+            var checked = $(this).is(':checked');
+            var grid = $('#GridTimeCardArchive').data().kendoGrid;
+            var dataItem = grid.dataItem($(this).closest('tr'));
+            dataItem.set('IsLineApproved', checked);
+        });
+    });
+</script>
+
+<style>
+    .k-grid {
+        font-size: 11px;
+    }
+
+        .k-grid td {
+            line-height: 2em;
+        }
+
+    .form-control {
+        width: 100% !important;
+    }
+
+    .k-button {
+        color: #fff;
+        border-color: #1a3a59;
+        background-color: #1a3a59;
+    }
+
+
+    /**************** Kendo buttons********************/
+    .k-button {
+        color: #fff;
+        border-color: #1a3a59;
+        background-color: #1a3a59;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        font-size: 13px;
+    }
+
+        .k-button:hover {
+            background-color: #252723;
+            border-color: #252723;
+            color: #fff;
+        }
+
+        .k-button:focus {
+            background-color: #6e6f66;
+            border-color: #6e6f66;
+            color: #fff;
+        }
+</style>

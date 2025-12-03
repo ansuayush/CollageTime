@@ -1,0 +1,23 @@
+﻿
+@model object
+
+<script src="~/Scripts/application/TimeCardsMatrixPartial.js"></script>
+
+@(
+ Html.Kendo().DropDownListFor(m => m)
+        //.Name("TempDeptVm")
+        .DataValueField("TempDeptId")
+        .DataTextField("TempDeptCode")
+        .Filter(FilterType.Contains)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {                       //, new {companyCodeId = ViewData["companyCodeId"]
+                read.Action("ValidTempDeptCodes", "LookupTables").Data("filterDepartmentsByCompanyCode"); //.Data("additionalData");
+
+            })
+            .ServerFiltering(true);
+        })
+        .OptionLabel("- select one -")
+        .ValuePrimitive(true)       
+)

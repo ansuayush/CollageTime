@@ -1,0 +1,722 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Requisition List <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-9 p-0">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="card">
+                            <div class="card-block">
+                                <div class="table-primary table-striped">
+                                    <table class="table table-striped table-bordered" id="DraftItems" style="width: 100%">
+                                        <thead>
+                                            <tr>
+                                                <th data-hide="phone" style="width:70px;" class="no-sorting"></th>
+                                                <th data-class="expand">Division</th>
+                                                <th>Department</th>
+                                                <th data-hide="phone">Position Title</th>
+                                                <th data-hide="phone,tablet">Requisition #</th>
+                                                <th data-hide="phone,tablet">Requisition Date</th>
+                                                <th data-hide="phone,tablet">Closed Date</th>
+                                                <th data-hide="phone,tablet">Approved</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:70px;"></td>
+                                                <td class="Expander">
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:70px;"><a href="#" class="myButton"><i class="fa fa-pencil txt-primary f-18"></i></a> <a href="#"><i class="fa fa-trash-o m-0 txt-danger f-18"></i></a></td>
+                                                <td><a href="#">Louisville</a></td> 
+                                                <td>Laboratory</td>
+                                                <td>Manager</td>
+                                                <td>1</td>
+                                                <td>6/20/2017</td>
+                                                <td>6/31/2017  </td>
+                                                <td>Closed</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:70px;"><a href="#" class="myButton"><i class="fa fa-pencil txt-primary f-18"></i></a> <a href="#"><i class="fa fa-trash-o m-0 txt-danger f-18"></i></a></td>
+                                                <td><a href="#">Fort Worth</a></td>
+                                                <td>QA</td>
+                                                <td>Admin</td>
+                                                <td>2</td>
+                                                <td>7/15/2017</td>
+                                                <td>6/31/2017  </td>
+                                                <td>Approved</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:70px;"><a href="#" class="myButton"><i class="fa fa-pencil txt-primary f-18"></i></a> <a href="#"><i class="fa fa-trash-o m-0 txt-danger f-18"></i></a></td>
+                                                <td><a href="#">Crowley</a></td>
+                                                <td>Finanace</td>
+                                                <td>Public Relation Officers</td>
+                                                <td>3</td>
+                                                <td>7/22/2017</td>
+                                                <td>6/31/2017  </td>
+                                                <td>Pending</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:70px;"><a href="#" class="myButton"><i class="fa fa-pencil txt-primary f-18"></i></a> <a href="#"><i class="fa fa-trash-o m-0 txt-danger f-18"></i></a></td>
+                                                <td><a href="#">Arlington</a></td>
+                                                <td>Accountant</td>
+                                                <td>Directors</td>
+                                                <td>4</td>
+                                                <td>11/05/2017</td>
+                                                <td>6/31/2017  </td>
+                                                <td>Pending</td>
+                                            </tr>
+                                           
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myDiv">
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <div class="col-sm-10 p-0">
+                    <h5 class="card-header-text">Requisition</h5>
+                </div>
+                <div class="col-sm-2 p-0 pull-right text-right">
+                    <select class="form-control">
+                        <option>SBH HEALTH SYSTEM</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <ul class="nav nav-tabs nav-tabs-new md-tabs m-0 p-0" role="tablist">
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link active f-w-600" data-toggle="tab" href="#PositionDetails" role="tab" aria-expanded="true"><i class="fa fa-universal-access f-14"></i> Requisition For Position</a>
+                            <div class="slide"></div>
+                        </li>
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="PosAdditional_tab" data-toggle="tab" href="#PositionInformation" role="tab" aria-expanded="false"><i class="fa fa-info-circle"></i> Position Information</a>
+                            <div class="slide"></div>
+                        </li>
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="SalaryDetails_tab" data-toggle="tab" href="#HRReview" role="tab" aria-expanded="false"><i class="fa fa-eye"></i> HR Review</a>
+                            <div class="slide"></div>
+                        </li>
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="FundingSource_tab" data-toggle="tab" href="#Approvals" role="tab" aria-expanded="false"><i class="fa fa-thumbs-o-up"></i> Approvals</a>
+                            <div class="slide"></div>
+                        </li>
+                        <li class="nav-item nav-item-new">
+                            <a class="nav-link f-w-600" id="PositionBudget_tab" data-toggle="tab" href="#HR-Approval" role="tab" aria-expanded="false"><i class="fa fa-user"></i> HR Approval</a>
+                            <div class="slide"></div>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="PositionDetails" role="tabpanel" aria-expanded="true">
+                            <div class="row">
+                                <div class="col-sm-12 p-0">
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-12 p-0 form-radio">
+                                            <div class="radio radio-inline">
+                                                <label>
+                                                    <input type="radio" name="radio1" checked="checked"><i class="helper"></i>Replacement Position
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 p-0">
+                                            <hr>
+                                        </div>
+                                        <div class="col-sm-12 p-0 form-radio">
+                                            <div class="radio radio-inline">
+                                                <label>
+                                                    <input type="radio" name="radio" checked="checked"><i class="helper"></i>Terminated
+                                                </label>
+                                            </div>
+                                            <div class="radio radio-inline">
+                                                <label>
+                                                    <input type="radio" name="radio" checked="checked"><i class="helper"></i>Transfer
+                                                </label>
+                                            </div>
+                                            <div class="radio radio-inline">
+                                                <label>
+                                                    <input type="radio" name="radio" checked="checked"><i class="helper"></i>LOA
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 p-0 m-t-15">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>Former Employee Name</label>
+                                                        <select class="form-control">
+                                                            <option>Anthea Abbott</option>
+                                                            <option>John Doe</option>
+                                                            <option>Bobby Orr</option>
+                                                            <option>Carolyn Hopkins</option>
+                                                            <option>Rick Fuller</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>Dept. Transferring From</label>
+                                                        <select class="form-control">
+                                                            <option>49102</option>
+                                                            <option>028105</option>
+                                                            <option>028106</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>Dept. Transferred To if applicable</label>
+                                                        <select class="form-control">
+                                                            <option>048008</option>
+                                                            <option>028111</option>
+                                                            <option>028108</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>Last Day Worked </label>
+                                                        <input type="text" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>Total # of overlap hours (if needed)</label>
+                                                        <input type="text" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>Justification for overlap</label>
+                                                        <input type="text" class="form-control" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 b-l-solid">
+                                        <div class="col-sm-12 p-0 form-radio">
+                                            <div class="radio radio-inline">
+                                                <label>
+                                                    <input type="radio" name="radio11" checked="checked"><i class="helper"></i>New Position
+                                                </label>
+                                            </div>
+                                            <div class="radio radio-inline">
+                                                <label>
+                                                    <input type="radio" name="radio11" checked="checked"><i class="helper"></i>Position Upgrade
+                                                </label>
+                                            </div>
+                                            <div class="radio radio-inline">
+                                                <label>
+                                                    <input type="radio" name="radio11" checked="checked"><i class="helper"></i>Position Downgrade
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 p-0">
+                                            <hr>
+                                        </div>
+                                        <div class="col-sm-12 p-0">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Comment Justification </label>
+                                                        <textarea class="form-control" style="height:140px;"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="form-group">
+                                                        <label>New Position Title</label>
+                                                        <input type="text" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="md-group-add-on m-t-15">
+                                                            <span class="md-add-on-file">
+                                                                <button class="btn btn-success waves-effect waves-light">Browse</button>
+                                                            </span>
+                                                            <div class="md-input-file">
+                                                                <input type="file" class="">
+                                                                <input type="text" class="md-form-control md-form-file">
+                                                                <label class="md-label-file">Upload File</label>
+                                                                <span class="md-line"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-1 text-right m-t-15">
+                                                    <button type="button" class="btn btn-primary btn-icon waves-effect waves-light">
+                                                        <i class="fa fa-download f-16"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="PositionInformation" role="tabpanel" aria-expanded="false">
+                            <div class="row">
+                                <div class="col-sm-12 p-0">
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Department </label>
+                                                <select class="form-control">
+                                                    <option>Laboratory</option>
+                                                    <option>Temp</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Job Title  </label>
+                                                <select class="form-control">
+                                                    <option>Laboratory</option>
+                                                    <option>Temp</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 b-t-b-solid p-t-10 p-b-10">
+                                            <div class="form-group">
+                                                <label>Employment Type</label>
+                                                <div class="col-sm-12 p-0 form-radio">
+                                                    <div class="col-sm-3">
+                                                        <div class="radio radio-inline block m-b-10">
+                                                            <label>
+                                                                <input type="radio" name="Employment1" checked="checked"><i class="helper"></i>Full-Time
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio radio-inline block m-b-10">
+                                                            <label>
+                                                                <input type="radio" name="Employment1" checked="checked"><i class="helper"></i>Part-Time
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio radio-inline block m-b-10">
+                                                            <label>
+                                                                <input type="radio" name="Employment1" checked="checked"><i class="helper"></i>Per Diem
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6 b-l-solid">
+                                                        <div class="radio radio-inline block m-b-10">
+                                                            <label>
+                                                                <input type="radio" name="Employment2" checked="checked"><i class="helper"></i>Union Employee
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio radio-inline block m-b-10">
+                                                            <label>
+                                                                <input type="radio" name="Employment2" checked="checked"><i class="helper"></i>Non-Union Employee
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio radio-inline block m-b-10">
+                                                            <label>
+                                                                <input type="radio" name="Employment2" checked="checked"><i class="helper"></i>Management
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 m-t-15">
+                                            <div class="form-group">
+                                                <label>Projected Annual Compensation</label>
+                                                <input type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 p-0">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Scheduled # of Hours/Week </label>
+                                                    <input type="text" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 form-inline">
+                                                <label class="block">Scheduled Hours</label>
+                                                <div class="form-group m-r-30">
+                                                    <label for="inline2mail" class="m-r-15 form-control-label">From</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" />
+                                                        <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" data-target="#Federal">
+                                                            <span class="fa fa-plus1 icon-text">AM/PM</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group m-r-15">
+                                                    <label for="inline2pwd" class="m-r-15 form-control-label">To</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" />
+                                                        <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" data-target="#Federal">
+                                                            <span class="fa fa-plus1 icon-text">AM/PM</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <label>Date Needed</label>
+                                                <input type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 b-l-solid">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Cost Center # </label>
+                                                <input type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Position </label>
+                                                <input type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Clock #  </label>
+                                                <input type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 p-0 form-radio b-t-b-solid p-t-10 p-b-10">
+                                            <label class="block">&nbsp;</label>
+                                            <div class="col-sm-8">
+                                                <div class="radio radio-inline block m-b-10">
+                                                    <label>
+                                                        <input type="radio" name="Employment11" checked="checked"><i class="helper"></i>Regular Position
+                                                    </label>
+                                                </div>
+                                                <div class="radio radio-inline block m-b-10">
+                                                    <label>
+                                                        <input type="radio" name="Employment11" checked="checked"><i class="helper"></i>Temporary
+                                                    </label>
+                                                </div>
+                                                <div class="radio radio-inline block m-b-10">
+                                                    <label>
+                                                        <input type="radio" name="Employment11" checked="checked"><i class="helper"></i>Per Diem
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4 b-l-solid">
+                                                <div class="radio radio-inline block m-b-10">
+                                                    <label>
+                                                        <input type="radio" name="Employment22" checked="checked"><i class="helper"></i>Days
+                                                    </label>
+                                                </div>
+                                                <div class="radio radio-inline block m-b-10">
+                                                    <label>
+                                                        <input type="radio" name="Employment22" checked="checked"><i class="helper"></i>Evenings
+                                                    </label>
+                                                </div>
+                                                <div class="radio radio-inline block m-b-10">
+                                                    <label>
+                                                        <input type="radio" name="Employment22" checked="checked"><i class="helper"></i>Nights
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 m-t-15">
+                                            <div class="form-group">
+                                                <label>Projected Annual Range</label>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" />
+                                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" data-target="#Federal">
+                                                                <span class="fa fa-plus1 icon-text">K</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6 p-l-0">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" />
+                                                            <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" data-target="#Federal">
+                                                                <span class="fa fa-plus1 icon-text">K</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="HRReview" role="tabpanel" aria-expanded="false">
+                            <div class="row">
+                                <div class="col-sm-12 p-0">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label style="width:100%">Select - HR</label>
+                                            <select class="form-control">
+                                                <option>Adela Caberera - MGR. HUMAN RESCOURCES</option>
+                                                <option>Frances Caputo - HR. GENERALIST</option>
+                                                <option>Sarah Quanitero - HR.GENERALIST</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label style="width:100%">Date</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label style="width:100%">New Employee #</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 p-t-25" style="padding-left:0px;padding-right:0px;width: 1%;">
+                                        <label style="width:100%"> - </label>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <div class="form-group">
+                                            <label style="width:100%">&nbsp;</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 p-t-25" style="padding-left:0px;padding-right:0px;width: 1%;">
+                                        <label style="width:100%"> - </label>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <div class="form-group">
+                                            <label style="width:100%">Job Title</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 p-t-25" style="padding-left:0px;padding-right:0px;width: 1%;">
+                                        <label style="width:100%"> - </label>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <div class="form-group">
+                                            <label style="width:100%">Shift</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="Approvals" role="tabpanel" aria-expanded="false">
+                            <div class="col-sm-12 p-0">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Approver</label>
+                                            <input type="text" class="form-control" placeholder="Ruth Cassidy - SENIOR VP" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="text" class="form-control" placeholder="Date" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Approver</label>
+                                            <input type="text" class="form-control" placeholder="Ruth Cassidy - SENIOR VP" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="text" class="form-control" placeholder="Date" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group text-right">
+                                            <label class="block p-t-35 f-w-600">Budget</label>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="text" class="form-control" placeholder="Date" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Approver</label>
+                                            <input type="text" class="form-control" placeholder="Leonard Walsh - EVP/COO" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Approver</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="text" class="form-control" placeholder="Date" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Finance Approval</label>
+                                            <select class="form-control">
+                                                <option>William Dibitetto - AVP BUDGET SPEC PROJ.</option>
+                                                <option>Mike Hagin - ASST. DIR. BUDGET</option>
+                                                <option>GRANTS</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="text" class="form-control" placeholder="Date" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="HR-Approval" role="tabpanel" aria-expanded="false">
+
+                            <div class="col-sm-12 p-0">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label style="width:100%">Select HR</label>
+                                            <select class="form-control">
+                                                <option>Rick Fuller - ASST. DIRECTOR OF H.R.</option>
+                                                <option>Joel  Kelley - SENIOR H.R.</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label style="width:100%">Date</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-15 text-right">
+            <div class="form-group pull-left">
+                <label><strong>Requisition ID : 12</strong> </label>
+            </div>
+
+            <button type="button" class="btn btn-default waves-effect md-close myButton m-r-15">Cancel</button>
+            <button type="button" class="btn btn-primary waves-effect md-close myButton">Done</button>
+        </div>
+    </div>
+</div>
+<div class="md-overlay"></div>
+<script type="text/javascript">
+
+    $(".myButton").click(function () {
+        // Set the effect type
+        var effect = 'slide';
+        // Set the options for the effect type chosen
+        var options = { direction: 'right' };
+        // Set the duration (default: 400 milliseconds)
+        var duration = 500;
+
+        $('#myDiv').toggle(effect, options, duration);
+        $('#myDiv').addClass('md-show');
+    });
+
+    $(".md-close").click(function () {
+        $('#myDiv').removeClass('md-show');
+    });
+
+</script>
+<style>
+    table thead tr {
+        color: #000000;
+        background-color: #93b6bf !important;
+        font-size: 13px;
+    }
+</style>

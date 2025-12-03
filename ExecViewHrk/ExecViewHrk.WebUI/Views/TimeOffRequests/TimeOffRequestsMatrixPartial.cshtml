@@ -1,0 +1,239 @@
+﻿
+@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Time Off Request";
+    Layout = null;
+}
+
+@model ExecViewHrk.Models.TimeOffRequestVM
+
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+
+
+<script src="~/Scripts/application/TimeOffRequestsMatrixPartial.js"></script>
+
+@*<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css" />*@
+@*<script src="//code.jquery.com/jquery-1.10.2.js" type="text/javascript"></script>*@
+@*<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js" type="text/javascript"></script>*@
+
+
+
+
+@Html.ValidationSummary(true)
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            @using (Html.BeginForm("TimeOffRequests", "TimeOffRequests", FormMethod.Post, new { role = "form", id = "TimeOffRequestsFormDdl" }))
+            {
+
+
+                <div class="main-header col-sm-12 p-0 m-b-0 b-b-muted">
+                    <div class="col-md-8 m-b-15 p-0">
+                        <h4>Time Off Requests <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-12 col-md-12 p-0">
+                    <div class="theme-grid square-calender">
+                        <div id="formDiv">
+                            <h4 class="text-center">Pick a date</h4>
+                            @*@(Html.Kendo().Calendar()
+                                    .Name("calendar")
+                                    .Value(DateTime.Today)
+                                    //.HtmlAttributes(new { style = "width: 243px;" })
+
+                                .MonthTemplate(month => month.Content("# var test = isInArray(data.date, events); #" +
+                                            "# if(test.equal == 0){#" +
+                                                    "#if(test.pending == 1){ #" +
+                                                        "<div class=\"pending\">#= data.value #</div>" +
+                                                    "#} else if(test.approved == 2){#" +
+                                                        "<div class=\"approved\">#= data.value #</div>" +
+                                                    "#}#" +
+                                            "#} else {#" +
+                                                "<div>#= data.value #</div>" +
+                                             "#}#")
+                                     )
+                                 .Events(e => e.Change("openRangeSelectionDialog"))
+                                         //.Navigate("navigate_Calendar"))
+                                    //.HtmlAttributes(new { style = "width: 100%" })
+                                )*@
+
+                            <div id="example" class="k-content">
+                                <div id="calendar"></div>
+                            </div>
+                            @*<div class="row" style="margin-top:20px">
+                                    <input id="RefreshButtonDiv" type="button" value="Refresh" class="btn-default" onclick="RefreshCalendar()" />
+                                </div>*@
+
+                            <div id="RangeSelection" style="display:none">
+                                @*@Html.Action("RangeSelectionPartial", "TimeOffRequests")*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+<style>
+    . /*panel-body {
+                height: 430px;
+                width: 690px;
+            }
+
+            #formDiv{
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }*/
+    #calendar {
+        margin: 20px 0 0 265px;
+        width: 340px;
+        text-align: center;
+    }
+
+    #calendar .k-content {
+        height: 300px;
+    }
+
+    #calendar {
+        width: 100%;
+    }
+
+        #calendar .k-content,
+        #calendar .k-header,
+        #calendar th,
+        #calendar .k-link,
+        #calendar .k-state-hover,
+        #calendar .k-state-selected,
+        #calendar .k-state-focused {
+            background: transparent;
+            border-color: transparent;
+            color: #000;
+            box-shadow: none;
+        }
+
+            #calendar .k-content .k-state-hover,
+            #calendar .k-content .k-state-focused {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            #calendar .k-state-selected, #calendar .k-state-selected.k-state-focused {
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            #calendar .k-content .k-link {
+                padding: 0;
+                min-height: 40px;
+                line-height: 40px;
+            }
+
+        #calendar th {
+            padding-top: 20px;
+            color: #8cbabf;
+        }
+
+        #calendar td.k-other-month .k-link {
+            color: #8cbabf;
+        }
+
+        #calendar th,
+        #calendar td {
+            text-align: center;
+        }
+
+
+    /*.pending {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                vertical-align: middle;
+                margin-right: 3px;
+                color: red;
+                background-color: #ccc;
+                font-weight: bold;
+            }
+
+            .approved {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                vertical-align: middle;
+                margin-right: 3px;
+                color: green;
+                background-color: #ccc;
+                font-weight: bold;
+            }*/
+
+    .pending, .approved, .disapproved {
+        width: 40px;
+        height: 40px;
+        margin: auto;
+        -webkit-border-radius: 100px;
+        -moz-border-radius: 100px;
+        border-radius: 50%;
+        line-height: 40px;
+    }
+
+    .approved {
+        display: inline-block;
+        background-color: #70c114;
+        /*color: navajowhite;*/
+    }
+
+    .pending {
+        /*background-color: #70c114;*/
+        background-color: orangered;
+        /*color:navajowhite;*/
+    }
+
+    .disapproved {
+        /*background-color: #00a1e8;*/
+        background-color: turquoise;
+        /*color: navajowhite;*/
+    }
+
+    .k-calendar .k-content .k-link {
+        white-space: nowrap;
+    }
+
+    .k-calendar {
+        display: table-row;
+    }
+</style>
+
+@*<script id="cell-template" type="text/x-kendo-template">
+
+        #if ($.inArray(+data.date, data.dates ) != -1) {#
+        <div class=birthday>#= data.value #</div>
+        #}#
+             #= data.value #
+    </script>*@
+
+
+@*<script id="cell-template" type="text/x-kendo-template">
+
+        #if (isInArray(data.date, events) == "pending") {#
+        <div class=birthday>#= data.value #</div>
+        #}#
+          #= data.value #
+
+    </script>*@
+
+
+
+

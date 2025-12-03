@@ -1,0 +1,172 @@
+﻿@model ExecViewHrk.Models.FinancialCustomVm
+@{
+    ViewBag.Title = "Financial Aid Custom Report";
+    Layout = null;
+}
+
+<script>
+    $(document).ready(function () {
+     var id = @ViewBag.PayPeriodId;
+        $("#PayPeriodIdDdl").val(id)
+    })
+    function excelExport(e) {
+        var sheet = e.workbook.sheets[0];
+        for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+            var sheet = e.workbook.sheets[0];
+            for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+                var row = sheet.rows[rowIndex];
+                row.cells[6].format = "dd-MMM-yyyy"
+                row.cells[7].format = "$#.00"
+                row.cells[8].format = "$#.00"
+                row.cells[10].format = "dd-MMM-yyyy"
+                row.cells[11].format = "#.00"
+            }
+        }
+    }
+    function payperiodiddata() {        
+        return {
+            payperiodid: $("#PayPeriodIdDdl").val() == "" ? 0 : $("#PayPeriodIdDdl").val()
+        };
+    }
+    $("#PayPeriodIdDdl").on('change', function () {
+        var appBaseUrl = $("#appBaseUrl").val();
+        var payperioddate = $("#PayPeriodIdDdl").val();
+        var payperiodid = $("#PayPeriodIdDdl").val();
+        $.ajax({
+            url: appBaseUrl + "FinancialAidCustomReport/FinancialAidList1_Read",
+            type: "Get",
+            data: {
+                payperiodid: payperiodid
+            },
+            success: function (data) {
+               var grid = $("#gridFinancialCustoms").data("kendoGrid");
+               grid.dataSource.data(data.Data);
+               resetGrid("gridFinancialCustoms");
+            }
+        });
+    })
+</script>
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Financial Aid Custom Report <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-9 p-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>Pay Period</label>
+                                @(Html.Kendo().DropDownListFor(model => model.PayPeriodId)
+                                                                                                               .HtmlAttributes(new { id = "PayPeriodIdDdl", @class = "form-control", @style = "width:200px;" })
+                                                                                                               .DataTextField("PayPeriod")
+                                                                                                               .DataValueField("PayPeriodId")
+                                                                                                               .Filter(FilterType.Contains)
+                                                                                                               .DataSource(source =>
+                                                                                                               {
+                                                                                                                   source.Read(read =>
+                                                                                                                   {
+                                                                                                                       read.Action("GetPayPeriodsList", "FinancialAidCustomReport");
+                                                                                                                   })
+                                                                                                                                               .ServerFiltering(true);
+                                                                                                                                       })
+                                                                                                                                       .AutoBind(true)
+                                                                                                                                       //.Value(@Model.PayPeriodId.ToString())
+                                                                                                                                       .OptionLabel("- select one -")
+                                                                                                                                       //.Events(e => e.Change("FinancialAidList_Read"))
+                                                                                                                                       )
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-12 col-md-12 p-0">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="theme-grid">
+                                            @(Html.Kendo().Grid<ExecViewHrk.Models.FinancialCustomVm>()
+                                                    .Name("gridFinancialCustoms")
+                                                    .Resizable(resize => resize.Columns(true))
+                                                    .Filterable()
+                                                    //.Editable(editable => editable.Mode(GridEditMode.InLine))
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(c => c.PositionID).Title("ADP ID").Width(70);
+                                                        columns.Bound(c => c.Lastname).Title("Last name").Width(90);
+                                                        columns.Bound(c => c.Firstname).Title("First name").Width(70);
+                                                        columns.Bound(c => c.JobTitleCode).Title("Job Title Code").Width(70);
+                                                        columns.Bound(c => c.Description).Title("Suffix").Width(70);
+                                                        columns.Bound(c => c.SSN).Title("Tax ID (SSN)").Width(100);
+                                                        columns.Bound(c => c.payperidenddate).Format("{0: dd-MMM-yyyy}").Title("Period End Date").Width(70);
+                                                        columns.Bound(c => c.RegularRatePaid).Title("Regular Rate Paid").Format("{0:c2}").Width(70); ;
+                                                        columns.Bound(c => c.GrossPay).Title("Gross Pay").Format("{0:c2}").Width(70); ;
+                                                        columns.Bound(c => c.PayPeriodNumber).Title("Pay Period Number").Width(70);
+                                                        columns.Bound(c => c.PayDate).Format("{0: dd-MMM-yyyy}").Title("Pay Date").Width(70);
+                                                        columns.Bound(c => c.RegularHours).Title("Hours Amount").Format("{0:n2}").Width(70);
+                                                        //columns.Bound(c => c.CodedHours).Title("Coded/Retro Hours").Format("{0:n2}").Width(70);
+                                                        columns.Bound(c => c.HoursCodeDescription).Title("Hours Code").Width(100);
+                                                        columns.Bound(c => c.DailyHours).Title("Total Hours").Format("{0:n2}").Width(70);
+
+                                                    })
+                                                    .Events(e => e.ExcelExport("excelExport"))
+                                                    .ToolBar(tools => { tools.Excel(); tools.Pdf(); })
+                                                    .Pdf(pdf => pdf
+                                                    .AllPages()
+                                                    .Landscape()
+                                                    .FileName("Financial Aid Custom Report.pdf")
+                                                    )
+                                                    .Sortable()
+                                                    .Excel(excel => excel.AllPages(true)
+                                                    .FileName("Financial Aid Custom Report.xlsx")
+                                                    .Filterable(true))
+                                                    .Selectable()
+                                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                                    .DataSource(dataSource => dataSource.Ajax()
+                                                    .Read(read => read.Action("FinancialAidList1_Read", "FinancialAidCustomReport").Data("payperiodiddata")
+                                                    )
+                                                    .Model(model =>
+                                                    {
+                                                        model.Id(p => p.PositionID);
+                                                    }
+                                                    )
+                                                    .Batch(false)
+                                                    .Events(events =>
+                                                    {
+                                                        events.Error("refreshGrid");
+                                                        events.RequestEnd("gridRequestEnd");
+                                                    })
+                                                    )
+                                            )
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    .k-grid-header th.k-header {
+                        min-width: 150px;
+                    }
+
+                    .k-grid {
+                        overflow-x: scroll;
+                    }
+
+                    .k-pdf-export .k-grid-toolbar,
+                    .k-pdf-export .k-pager-wrap {
+                        display: none;
+                    }
+
+                    .k-grid-toolbar, .k-pager-wrap {
+                        background: transparent !important;
+                        border: 0;
+                    }
+
+                    .k-footer-template td {
+                        font-weight: 700 !important;
+                    }
+                </style>

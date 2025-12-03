@@ -1,0 +1,140 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Person License";
+    Layout = null;
+}
+@model ExecViewHrk.Models.PersonsPassportVm
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Passport</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonPassports", "PersonPassports", FormMethod.Post, new { role = "form", id = "PersonPassportForm" }))
+            {
+
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonPassportId, new { id = "hiddenPersonPassportId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group ">
+
+                        <label><span style="color:red">*</span>Country</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.CountryId,
+                  new SelectList(Model.CountryDropDownList, "keyvalue", "keydescription", Model.CountryId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'Country');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.CountryId)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Issue Date</label>
+                        @Html.TextBoxFor(model => model.IssueDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.IssueDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Expiration Date</label>
+                        @Html.TextBoxFor(model => model.ExpirationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.ExpirationDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Passport Number</label>
+                        @Html.TextBoxFor(x => x.PassportNumber, new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.PassportNumber)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Passport Storage</label>
+                        @Html.TextBoxFor(x => x.PassportStorage, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.PassportStorage)
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div id="countriesWindow" style="display:none">
+    <div id="countriesContent">
+        @Html.Partial("~/Views/DdlCountries/DdlCountriesPartial.cshtml")
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSavePersonPassportAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+    });
+    $("#btnSavePersonPassportAjax").click(function (e) {
+        e.preventDefault();
+        var IssueDate = $("#IssueDate").val();
+        var ExpirationDate = $("#ExpirationDate").val();
+        if (IssueDate != '' && ExpirationDate != '') {
+            if (Date.parse(IssueDate) > Date.parse(ExpirationDate)) {
+                $("#ExpirationDate").val('');
+                toastr.error("ExpirationDate can't be less than Issue Date. ");
+                return false;
+            }
+        }
+        var str = $("#PassportNumber").val();
+        if (!str.match("^[a-zA-Z0-9]*$")) {
+            toastr.error("do not enter fractions in Passport number");
+            return;
+        }
+
+        if (!ValidateForm("PersonPassportForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#PersonPassportForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonPassports/PersonPassportsSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonPassportId = $("#hiddenPersonPassportId").val();
+                resetGrid("gridPersonPassport");
+                $("#btnSavePersonPassportAjax").parent().find(".md-close").click();
+                if (_oldhiddenPersonPassportId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>

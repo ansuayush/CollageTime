@@ -1,0 +1,92 @@
+﻿@model List<ExecViewHrk.Models.TimeCardSummaryVm>
+<section class="panels-wells edit-block">
+    <div class="card m-b-15">
+        <div class="card-header p-t-10 p-b-10">
+            <h5 class="card-header-text">View Summary</h5>
+        </div>
+        <div class="card-block p-t-0">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 yellow profile-block-tag">
+                    <div class="col-xs-8 col-sm-8col-md-8 p-0">
+                        <h6 class="f-12 txt-white m-0">Employee Name</h6>
+                        <span class="f-15 f-w-600 txt-white">@TempData.Peek("EmployeeName")</span>
+                    </div>
+                    <div class="col-xs-4 col-sm-4 col-md-4 p-0">
+                        <h6 class="f-12 txt-white m-0">Total Hours</h6>
+                        <span class="f-15 f-w-600 txt-white">@String.Format("{0:0.00}", (double)ViewData["PayPeriodTotal"])</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-t-10">
+                @if ((Model != null) && (Model.Count > 0))
+                {
+                    foreach (var item in Model)
+                    {
+                        <div class="card-br">
+                            <div class="col-sm-12 col-md-12 p-0" style="border-bottom:1px solid #ccc; background:#f2f2f2;">
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="row">
+                                        <label class="col-sm-3 col-xs-4">Position</label>
+                                        <div class="col-sm-9 col-xs-8" style="font-weight:bold;">
+                                            @item.Title
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="row">
+                                        <label class="col-sm-3 col-xs-4">Date: </label>
+                                        <div class="col-sm-9 col-xs-8" style="font-weight:bold;">
+                                            @item.ActualDate.ToString("MM/dd/yyyy")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 p-0">
+                                <div class="col-md-3 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <label class="m-0">@( Request.Browser.IsMobileDevice ? "Clock In" : "Punch In")</label>
+                                        <span class="f-16 block f-w-600">
+                                            <i class="fa fa-clock-o m-r-5 txt-dribbble"></i>
+                                            @(item.TimeIn.HasValue ? item.TimeIn.Value.ToString("h:mm tt") : "0:00")
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <label class="m-0">@( Request.Browser.IsMobileDevice ? "Clock Out" : "Punch Out")</label>
+                                        <span class="f-16 block f-w-600">
+                                            <i class="fa fa-clock-o m-r-5 txt-dribbble"></i>
+                                            @(item.TimeOut.HasValue ? item.TimeOut.Value.ToString("h:mm tt") : "0:00")
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <label class="m-0">Lunch Out</label>
+                                        <span class="f-16 block f-w-600">
+                                            <i class="fa fa-clock-o m-r-5 txt-dribbble"></i>
+                                            @(item.LunchOut.HasValue ? item.LunchOut.Value.ToString("h:mm tt") : "0:00")
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <label class="m-0">Lunch Back</label>
+                                        <span class="f-16 block f-w-600">
+                                            <i class="fa fa-clock-o m-r-5 txt-dribbble"></i>
+                                            @(item.LunchBack.HasValue ? item.LunchBack.Value.ToString("h:mm tt") : "0:00")
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div><p style="margin-left:10px">No Timecard(s) found for the selected Pay Period</p></div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

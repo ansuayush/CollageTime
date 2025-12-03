@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "ViewErrorLog";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+<h2>View Error Log</h2>
+
+<div>
+    
+
+    @(Html.Kendo().Grid<ExecViewHrk.EfAdmin.ErrorLog>()
+        .Name("grid")
+        .Resizable(resize => resize.Columns(true))
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.ErrorLogId).Width(100);
+            columns.Bound(c => c.LogDate).Width(100).Format("{0:MM/dd/yyyy h:mm tt}"); 
+            columns.Bound(c => c.ExceptionMessage).Width(200);
+            columns.Bound(c => c.ExceptionSource).Width(200);
+            columns.Bound(c => c.ExceptionStackTrace).Width(5000);
+            columns.Bound(c => c.ExceptionTargetSite).Width(100);
+            columns.Bound(c => c.RequestPhysicalPath).Width(200);
+            columns.Bound(c => c.RequestUrl).Width(100);
+            columns.Bound(c => c.RequestUrlReferrer).Width(200);
+            columns.Bound(c => c.RequestUserAgent).Width(200);
+            columns.Bound(c => c.ServerVariablesRemoteAddress).Width(200);
+            columns.Bound(c => c.UserName).Width(200);
+            columns.Bound(c => c.Browser).Width(200);
+            columns.Bound(c => c.BrowserVersion).Width(100);
+            columns.Bound(c => c.CookiesEnabled).Width(100);
+            columns.Bound(c => c.IsAuthenticated).Width(100);
+            columns.Bound(c => c.IsLocale).Width(100);
+            columns.Bound(c => c.JavaScriptEnabled).Width(100);
+            
+        })
+        .HtmlAttributes(new { style = "height: 380px;" })
+        
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable
+            .Refresh(false)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Read(read => read.Action("ErrorLog_Read", "HrkAdmin"))
+        )
+    )
+
+</div>
+
+

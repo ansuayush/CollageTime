@@ -1,0 +1,326 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Person Training";
+    Layout = null;
+}
+
+@model ExecViewHrk.WebUI.Models.PersonTrainingVm
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <section class="panels-wells edit-block">
+
+                            @Html.ValidationSummary(true)
+
+                            <div class="panel panel-info">
+
+                                <div class="panel-heading  ">
+
+                                    <div class="row">
+
+                                        <div class="col-md-6 ">
+                                            Person Training <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                                            <div style="color:red; font-size:x-small">* denotes required field</div>
+
+                                        </div>
+                                        <div class="col-md-6 ">
+
+                                            @using (Html.BeginForm("PersonTrainingsSelectedIndexChanged", "PersonTrainings", FormMethod.Post, new { role = "form", id = "PersonTrainingFormDdl" }))
+                {
+                <label>My Trainings</label>
+
+                @(Html.Kendo().DropDownListFor(model => model.PersonTrainingId)
+                                            .Name("PersonTrainingIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PersonTrainingDescription")
+                                            .DataValueField("PersonTrainingId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonTrainingsList", "PersonTrainings").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                  });
+                                              })
+                                            .Value(@Model.PersonTrainingId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonTrainingDdl")
+                                                    .Select("onSelectPersonTrainingDdl");
+                                            })
+                )
+
+                }
+
+
+                                            <div id="noTrainingRecordsFound" style="color:red; font-size:x-small">no records found</div>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="formDiv" class="panel-body">
+
+                                    @using (Html.BeginForm("PersonTrainings", "PersonTrainings", FormMethod.Post, new { role = "form", id = "PersonTrainingForm" }))
+        {
+        @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+        @Html.HiddenFor(model => model.PersonTrainingId, new { id = "hiddenPersonTrainingId" })
+        <div class="row ">
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="col-md-5 ">
+                        <div class="form-group ">
+                            <div>
+                                <label><span style="color:red">*</span>Training Course</label>
+                            </div>
+                            @(Html.Kendo().ComboBox()
+                                        .Name("TrainingCourseDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("TrainingCourseDescription")
+                                        .DataValueField("TrainingCourseId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetTrainingCourses", "DdlTrainingCourses").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("Select a Training Course")
+                            )
+
+                            @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                <button id="btnAddTrainingCourse" class="btn btn-info">+</button>
+                                }
+
+
+                            <div>
+                                @Html.ValidationMessageFor(model => model.TrainingCourseDescription)
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Recommendation Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.RecommendationDate)
+                                        .Name("RecommendationDate")
+                                        .Min(new DateTime(1900, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+
+                                )
+                                @Html.ValidationMessageFor(x => x.RecommendationDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>RequiredBy Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.RequiredByDate)
+                                        .Name("RequiredByDate")
+                                        .Min(new DateTime(1900, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+
+                                )
+                                @Html.ValidationMessageFor(x => x.RequiredByDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Scheduled Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.ScheduledDate)
+                                        .Name("ScheduledDate")
+                                        .Min(new DateTime(1900, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+
+                                )
+                                @Html.ValidationMessageFor(x => x.ScheduledDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Completed Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.CompletedDate)
+                                        .Name("CompletedDate")
+                                        .Min(new DateTime(1900, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+
+                                )
+                                @Html.ValidationMessageFor(x => x.CompletedDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <label>Grade</label>
+                            @Html.TextBoxFor(x => x.Grade, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.Grade)
+                        </div>
+
+                        <div class="form-group ">
+                            <label>Venue</label>
+                            @Html.TextBoxFor(x => x.Venue, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.Venue)
+                        </div>
+
+                        <div class=" form-group " style="margin-top:20px">
+                            <label style="vertical-align:middle; ">Quality Related</label>
+                            @Html.EditorFor(x => x.QualityRelated, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                        </div>
+
+                        <div class=" form-group " style="margin-top:20px">
+                            <label style="vertical-align:middle; ">Osha Related</label>
+                            @Html.EditorFor(x => x.OshaRelated, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                        </div>
+                        <div>
+                            <label>Travel Cost</label>
+                            <div>
+                                @Html.Kendo().NumericTextBoxFor(x => x.TravelCost).Min(0)
+                                @Html.ValidationMessageFor(x => x.TravelCost)
+                            </div>
+                        </div>
+                        <div>
+                            <label>Hotel Meals Expense</label>
+                            <div>
+                                @Html.Kendo().NumericTextBoxFor(x => x.HotelMealsExpense).Min(0)
+                                @Html.ValidationMessageFor(x => x.HotelMealsExpense)
+                            </div>
+                        </div>
+
+                        <div>
+                            <label>Actual Course Cost</label>
+                            <div>
+                                @Html.Kendo().NumericTextBoxFor(x => x.ActualCourseCost).Min(0)
+                                @Html.ValidationMessageFor(x => x.ActualCourseCost)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-offset-1 col-md-5">
+                        <div>
+                            <div class="form-group ">
+                                <label>Notes</label>
+                                @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                @Html.ValidationMessageFor(x => x.Notes)
+                            </div>
+                            <div class=" form-group ">
+                                <label style="width:100px">Entered By:</label>
+                                <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                            </div>
+                            <div class=" form-group ">
+                                <label style="width:100px">Entered Date:</label>
+                                <label id="enteredDateLabel" style="font-weight:normal;">
+                                    @Model.EnteredDate
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12 ">
+                <div class="form-group">
+                    <input id="btnSavePersonTrainingAjax" type="button" value="Save" class="btn btn-info" />
+                    <input id="btnClearPersonTrainingAjax" type="button" value="Clear" class="btn btn-info" />
+                    <input id="btnDeletePersonTrainingAjax" type="button" value="Delete" class="btn btn-info" />
+                </div>
+            </div>
+        </div>
+
+        }
+
+
+                                </div>
+
+
+                                <div id="trainingCoursesWindow" style="display:none">
+                                    <div id="trainingCoursesContent">
+                                        @Html.Partial("~/Views/DdlTrainingCourses/DdlTrainingCoursesPartial.cshtml")
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function newTrainingWindow(title, onClose) {
+        var obj = {
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: title,
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+            close: onClose
+        }
+        return obj;
+    };
+
+    var trainingCoursesWindow = $("#trainingCoursesWindow");
+    if (!trainingCoursesWindow.data("kendoWindow")) {
+        trainingCoursesWindow.kendoWindow(
+            newTrainingWindow("Training Courses", onCloseTrainingCoursesWindow)
+        );
+    }
+
+    function onCloseTrainingCoursesWindow() {
+        resetKenoComboBox('TrainingCourseDescription');
+        resetGrid('gridDdlTrainingCourse');
+    }
+
+    $("#btnAddTrainingCourse").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#trainingCoursesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+

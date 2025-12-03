@@ -1,0 +1,7 @@
+﻿
+@model ExecViewHrk.WebUI.Models.FormTemplateFieldVm
+<div class="form-group ">
+    <label>@Model.Label</label>
+    @Html.TextArea(@Model.HtmlId, null, new { @class = "form-control", style = "max-width:450px", rows = 10 })
+    @Html.ValidationMessage(@Model.HtmlId)
+</div>

@@ -1,0 +1,154 @@
+﻿@model ExecViewHrk.Models.DdlRelationshipTypeVm
+@{
+    Layout = null;
+    ViewBag.Title = "DdlRelationshipTypeDetails";
+}
+@using (Html.BeginForm("DdlRelationshipTypesSaveAjax", "LookupTables", FormMethod.Post, new { role = "form", id = "DdlRelationshipTypeForm" }))
+{
+    @Html.HiddenFor(model => model.RelationshipTypeId)
+    @Html.ValidationSummary(true)
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h4 class="card-header-text">Relationship Type</h4>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Code</label>
+                            @Html.TextBoxFor(m => m.Code, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(x => x.Code)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Description</label>
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(x => x.Description)
+                        </div>
+                    </div>
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.RelationshipTypeId != 0)
+                                {
+                                    if (Model.Active == true)
+                                    {
+                                        <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="@Model.Active" checked="checked">
+                                    }
+                                    else
+                                    {
+                                        <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="@Model.Active">
+                                    }
+                                }
+                                else
+                                {
+                                    <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="@Model.Active">
+                                }
+                                @Html.LabelFor(x => x.Active)
+                                @Html.HiddenFor(x => x.Active)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.RelationshipTypeId != 0)
+                                {
+                                    if (Model.CobraEligible == true)
+                                    {
+                                        <input id="@Html.NameFor(x => x.CobraEligible)" type="checkbox" value="@Model.CobraEligible" checked="checked">
+                                    }
+                                    else
+                                    {
+                                        <input id="@Html.NameFor(x => x.CobraEligible)" type="checkbox" value="@Model.CobraEligible">
+                                    }
+                                }
+                                else
+                                {
+                                    <input id="@Html.NameFor(x => x.CobraEligible)" type="checkbox" value="@Model.CobraEligible">
+                                }
+                                @Html.LabelFor(x => x.CobraEligible)
+                                @Html.HiddenFor(x => x.CobraEligible)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.RelationshipTypeId != 0)
+                                {
+                                    if (Model.IsSpouse == true)
+                                    {
+                                        <input id="@Html.NameFor(x => x.IsSpouse)" type="checkbox" value="@Model.IsSpouse" checked="checked">
+                                    }
+                                    else
+
+                                    {
+                                        <input id="@Html.NameFor(x => x.IsSpouse)" type="checkbox" value="@Model.IsSpouse">
+                                    }
+                                }
+                                else
+                                {
+                                    <input id="@Html.NameFor(x => x.IsSpouse)" type="checkbox" value="@Model.IsSpouse">
+                                }
+                                @Html.LabelFor(x => x.IsSpouse)
+                                @Html.HiddenFor(x => x.IsSpouse)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-15 text-right">
+            <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+            <input type="button" id="btnRelationshipTypeSave" name="Done" value="Done" class="btn btn-primary waves-effect myButton">
+        </div>
+    </div>
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+    });
+    $("#btnRelationshipTypeSave").click(function (e) {
+        
+        e.preventDefault();
+        loading(true)
+        var form = $("#DdlRelationshipTypeForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            loading(false)
+            return;
+        }
+        if (!ValidateForm("DdlRelationshipTypeForm")) {
+            loading(false);
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#DdlRelationshipTypeForm").serializeArray();
+        var formURL = appBaseUrl + "LookupTables/DdlRelationshipTypesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                }
+                else if (data.succeed == true) {
+                    LoadMenu("DdlRelationshipTypesList", "LookupTables")
+                    $("#btnRelationshipTypeSave").parent().find(".md-close").click();
+                    loading(false);
+                    formService.isLoadingInProgress = true;
+                    killTimer();
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+            }
+        });
+    });
+
+</script>

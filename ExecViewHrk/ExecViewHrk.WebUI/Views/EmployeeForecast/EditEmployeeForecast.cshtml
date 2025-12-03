@@ -1,0 +1,207 @@
+﻿@model ExecViewHrk.EfClient.EmployeeForecastVm
+
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Employee Forecast</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("BenefitGroupsList_Update", "BenefitGroups", FormMethod.Post, new { role = "form", id = "EmpForeCastForm" }))
+            {
+                @Html.HiddenFor(model => model.ePosSalHistoryId, new { id = "hiddenFileNumber" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Last Name :</label>
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.Lastname, new { @class = "form-control" })
+                        </span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>First Name :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.Firstname, new { @class = "form-control" })
+                        </span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Position Title :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.Positiontitle, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Id :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.FileNumber, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>BiHrs :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.HoursPerPayPeriod, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Last Change :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.StartDate, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>CRATE :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.RateTypeId, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Number Of Days :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.NumberOfDays, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>NFY RATE :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.NewRate, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>WAGES :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.Wages, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Annual Salary :</label>
+
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.AnnualSalary, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>New Annual Salary :</label>
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.NewAnnualSalary, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Salary history ID :</label>
+                        <span style="font-size:14px">
+                            @Html.DisplayFor(m => m.ePosSalHistoryId, new { @class = "form-control" })
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>% Increase :</label><span style="color:red">*</span>
+                        @Html.TextBoxFor(m => m.IncreasePercent, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IncreasePercent)
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="p-20 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15" data-dismiss="modal" id="btncancel">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnUpdatePercentIncreaseAjax">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+        $(function () {
+            var regExp = /[a-z]/i;
+            $('#IncreasePercent').on('keydown keyup', function (e) {
+                var value = String.fromCharCode(e.which) || e.key;
+                // No letters
+                if (regExp.test(value)) {
+                    toastr.error('Please provide the percent in number');
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+    });
+    $("#btnUpdatePercentIncreaseAjax").click(function (e) {
+       
+        e.preventDefault();
+        var form = $("#EmpForeCastForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            return;
+        }
+
+        var errormsg = "Please Enter the following Fields</br>";
+
+        var percentIncrease = $("#IncreasePercent").val();
+
+
+
+        if (percentIncrease.trim() == "") {
+            errormsg += "Percent to increase. </br>";
+        }
+
+        if (percentIncrease.trim() == "") {
+            loading(false);
+            toastr.error(errormsg);
+            return;
+        }
+        if (!ValidateForm("EmpForeCastForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#EmpForeCastForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "EmployeeForecast/UpdateEmpForecast";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                formService.isSavingInProgress = false;
+                toastr.error(data.Message);
+               
+            }
+            else {
+               
+                resetGrid("gridEmpForecast");
+                $("#btncancel").trigger('click');
+            }
+        });
+    });
+</script>

@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNet.Identity
+<a href="@Url.Content("~//HrkAdmin")" class="logo"> <img class="img-fluid able-logo" src="~/assets/images/Logonew.png" alt="Qloud Next" /> </a>
+<nav class="navbar navbar-static-top">
+
+    <a href="#!" data-toggle="offcanvas" class="sidebar-toggle hidden-md-up"></a>
+
+    <div class="navbar-custom-menu">
+        <ul class="top-nav">
+
+            @if (User.IsInRole("HrkAdministrators") || User.IsInRole("HrkAccountManagers"))
+            {
+                <li style="margin-top:8px;  margin-left: 15px; display:none; ">@Html.Partial("ClientsDdlPartial")</li>
+            }
+            else if (User.IsInRole("ClientAdminsMultipleCompanies"))
+            {
+                <li style="margin-top:8px;  margin-left: 15px;display:none;">@Html.Partial("UserWithMultipleCompaniesDdlPartial")</li>
+            }
+            else if (User.IsInRole("ExternalUserAdmins"))
+            {
+                <li style="margin-top:8px;  margin-left: 15px;display:none;">@Html.Partial("ExternalUserClientsDdlPartial")</li>
+            }
+
+
+            @*
+                <li class="pc-rheader-submenu"> <a href="#!" class="drop icon-circle"> <i class="fa fa-calendar"></i> </a> </li>
+
+                <li class="pc-rheader-submenu"> <a href="Login.html" class="drop icon-circle"> <i class="fa fa-sign-out"></i> </a> </li>*@
+            <li class="dropdown">
+                <a href="#!" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+                   class="dropdown-toggle drop icon-circle drop-image"><span>@User.Identity.GetUserName() <i class="icofont icofont-simple-down"></i></span></a>
+                <ul class="dropdown-menu settings-menu">
+                    @*<li><a href="#"><i class="fa fa-wrench"></i>Configuration</a></li>
+                        <li><a href="#"><i class="fa fa-user"></i>My Profile</a></li>
+                        <li><a href="#"><i class="fa fa-cog"></i>Preferances</a></li>*@
+                    <li style="padding: 0px 20px;"><a class="waves-effect waves-dark" href="@Url.Action("ChangePassword", "Common")"><i class="fa fa-wrench"></i>Change Password</a></li>
+                    <li class="p-0">
+                        <div class="dropdown-divider m-0"></div>
+                    </li>
+                    <li>
+                        @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <a href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-user"></i>Log off</a>
+                        }
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

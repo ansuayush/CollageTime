@@ -1,0 +1,61 @@
+﻿<div class="theme-grid">
+    @(Html.Kendo().Grid<ExecViewHrk.EfClient.Funds>()
+            .Name("gridDdlFundCode")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridFundCodeEdit");
+                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridDelete");
+            }).Width(70);
+            columns.Bound(c => c.Code).Title("Code").ToString().Trim();
+            columns.Bound(c => c.Description).Title("Description").ToString().Trim();
+            columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'Yes' : 'No' #");
+            columns.Bound(c => c.Amount);
+            columns.Bound(c => c.FTE);
+            columns.Bound(c => c.EffectiveStartDate).Title("Effective Start Date").ClientTemplate("#= EffectiveStartDate == null ? '' : kendo.toString(EffectiveStartDate, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.EffectiveEndDate).Title("Effective End Date").ClientTemplate("#= EffectiveEndDate == null ? '' : kendo.toString(EffectiveEndDate, \"MM/dd/yyyy\") #");
+        })
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .DataSource(dataSource => dataSource.Ajax()
+                                .Read(read => read.Action("DdlFundCodeList_Read", "LookupTables"))
+                                .Create(create => create.Action("DdlFundCode_Create", "LookupTables"))
+                                .Update(update => update.Action("DdlFundCodeList_Update", "LookupTables"))
+                                .Destroy(destroy => destroy.Action("DdlFundCode_Destroy", "LookupTables"))
+            .Model(model =>
+            {
+                model.Id(p => p.ID);
+                model.Field(p => p.ID).Editable(false);
+                model.Field(p => p.Code).ToString().Trim();
+                model.Field(p => p.Description).ToString().Trim();
+                model.Field(p => p.Amount);
+                model.Field(p => p.FTE);
+                model.Field(p => p.EffectiveStartDate);
+                model.Field(p => p.EffectiveEndDate);
+            }
+                  )
+            .Batch(false)
+          .Events(events => {
+              events.Error("errorhandlerEeoTypes");
+              events.RequestEnd("gridRequestEnd");
+          })
+        )
+    )
+</div>
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+
+
+
+

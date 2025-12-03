@@ -1,0 +1,64 @@
+﻿@model ExecViewHrk.Models.ManagerVm
+@{
+    ViewBag.Title = "Add New Manager";
+}
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Add Manager Positions</h5>
+    </div>
+    <div id="dvPosition" class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("Managers", "Managers", FormMethod.Post, new { role = "form", id = "ManagerForm" }))
+            {
+                @Html.HiddenFor(model => model.ManagerId, new { id = "hiddenManagerId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Persons</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.PersonName,
+               new SelectList(Model.PersonsList, "keyvalue", "keydescription", Model.PersonName), new { @class = "form-control" })
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.PersonName)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15" id="btnCloseManager">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveManager" onclick="saveNewManagerRecord();">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+    });
+    function saveNewManagerRecord() {
+        
+        var postedData = $("#ManagerForm").serializeArray();
+        var personId = $("#PersonName").val();
+        var errormsg = "Please Enter the following Fields</br>";
+        if ($("#PersonName").val() == "" || $("#PersonName").val() == "Select") {
+            errormsg += " Persons </br>";
+            toastr.error(errormsg);
+            return;
+        }
+        var formURL = $("#ApplicationUrl").val() + '/Managers/SaveManagerRecord?personId=' + personId;
+        $.post(formURL, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                $('#btnCloseManager').click();
+                toastr.success('Record created successfully.');
+                resetGrid("gridManager");
+                resetAddcontrol();
+            }
+        });
+    }
+    function resetAddcontrol() {
+        $('#PersonName').val(0);
+    }
+</script>

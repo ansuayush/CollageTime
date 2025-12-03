@@ -1,0 +1,71 @@
+﻿@model ExecViewHrk.EfClient.DdlInnoculationType
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Innoculation Type</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmInnoculationType">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseInnoculationType">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveInnoculationType">Save</button>
+</div>
+<script>
+    $("#btnSaveInnoculationType").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmInnoculationType")) {
+            loading(false);
+            return;
+        }
+     
+        var postData = $("#frmInnoculationType").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "DdlInnoculationTypes/DdlInnoculationTypesList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadInnoculationTypeDropDown();
+                $("#btnCloseInnoculationType").trigger('click');
+            }
+        });
+    });
+    function reloadInnoculationTypeDropDown() {
+        var _selectedValue = $("#InnoculationTypeId").val();
+        $.get($("#appBaseUrl").val() + "DdlInnoculationTypes/GetInnoculationTypes", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#InnoculationTypeId").empty();
+                $("#InnoculationTypeId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#InnoculationTypeId").append("<option value='" + list[i].InnoculationTypeId + "' selected >" + list[i].InnoculationDescription + "</option>");
+                    } else {
+                        $("#InnoculationTypeId").append("<option value='" + list[i].InnoculationTypeId + "' >" + list[i].InnoculationDescription + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,334 @@
+﻿
+@{
+    ViewBag.Title = "FormTemplateFields";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+@model List<ExecViewHrk.WebUI.Models.FormTemplateFieldVm>
+<style>
+    .k-invalid-msg{
+  position: relative; 
+}
+</style>
+<style>
+    .k-grid {
+        font-size: 10px;
+    }
+
+        .k-grid td {
+            line-height: 2em;
+        }
+</style>
+<div class="row">
+    <h2>@ViewBag.FormTemplateName Form Fields @Html.ActionLink("Back to Form Templates List", "FormTemplates", null, new { @class = "btn btn-danger pull-right" })</h2>
+
+</div>
+<div class="row">
+    <div class=" form-group ">
+        <input type="hidden" value='@ViewContext.RouteData.Values["RequestType"]' id="routeDataId" />
+        @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.FormTemplateFieldVm>()
+                        .Name("grid")
+                        .Resizable(resize => resize.Columns(true))
+                        .Filterable()
+                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                        .ToolBar(toolbar => toolbar.Create())
+                        .Columns(columns =>
+                        {
+                            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(180);
+        columns.Bound(c => c.HtmlId).Width(150);
+        columns.ForeignKey(p => p.Type, (System.Collections.IEnumerable)ViewData["FormTemplateFieldTypes"], "Name", "Name").Width(150);
+        columns.ForeignKey(p => p.SelectionGroup, (System.Collections.IEnumerable)ViewData["FormTemplateSelectionGroups"], "Name", "Name").Width(150);
+        columns.Bound(c => c.ColumnNumber);
+        columns.Bound(c => c.Position);
+        columns.Bound(c => c.Required).ClientTemplate("#= Required ? 'yes' : 'no' #");
+
+        columns.Bound(c => c.Label).Width(200);
+        columns.Bound(c => c.CheckBoxRadioGroupName);
+    })
+                        .HtmlAttributes(new { style = "height: 350px;" })
+                        .Scrollable()
+                        .Sortable()
+                        //.Pageable(pageable => pageable
+                        //        .Refresh(false)
+                        //        .PageSizes(true)
+                        //        .ButtonCount(5))
+
+                        .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Read(read => read.Action("FormTemplateFields_Read", "Form").Data("additionalData"))
+                                            .Create(create => create.Action("FormTemplateField_Create", "Form").Data("additionalData"))
+                                            .Update(update => update.Action("FormTemplateField_Update", "Form"))
+                                            .Destroy(destroy => destroy.Action("FormTemplateField_Destroy", "Form"))
+                            //.PageSize(5)
+                            .Model(model =>
+                                {
+                                    model.Id(p => p.FormTemplateFieldId);
+                                    model.Field(p => p.FormTemplateFieldId).Editable(false);
+                                    model.Field(p => p.HtmlId);
+                                    model.Field(p => p.Type).DefaultValue("Text Box");
+                                    model.Field(p => p.SelectionGroup).DefaultValue("None");
+                                    model.Field(p => p.ColumnNumber);
+                                    model.Field(p => p.Position);
+                                }
+                                )
+                                .Events(e => e.RequestEnd("onRequestEnd"))
+                        )
+
+                        .Selectable()
+
+        )
+
+    </div>
+
+</div>
+
+
+@using (Html.BeginForm("FormTemplateFields", "Form", FormMethod.Post, new { role = "form", id = "FormTemplateFields" }))
+{
+
+    <div class="row ">
+
+        <div class="row ">
+            <div class="col-md-12">
+
+                <div class="col-md-5 ">
+                    @{
+                        List<string> groupList = new List<string>();
+                        
+                    }
+
+                    @foreach (ExecViewHrk.WebUI.Models.FormTemplateFieldVm fields in @Model)
+                    {
+                        if (fields.ColumnNumber % 2 != 0)
+                        {
+                            if (fields.Type == "Text Box")
+                            {
+                                @Html.Partial("RenderTextBox", fields)
+
+                            }
+                            else if (fields.Type == "Label")
+                            {
+                                @Html.Partial("RenderLabel", fields)
+
+                            }
+                            else if (fields.Type == "Date Time")
+                            {
+                                @Html.Partial("RenderKendoDatePicker", fields)
+                            }
+                            else if (fields.Type == "Number")
+                            {
+                                @Html.Partial("RenderKendoNumeric", fields)
+                            }
+                            else if (fields.Type == "Drop Down List")
+                            {
+                                @Html.Partial("RenderKendoDropDownList", fields)
+                            }
+                            else if (fields.Type == "Text Area")
+                            {
+                                @Html.Partial("RenderTextArea", fields)
+                            }
+                            else if (fields.Type == "Check Box")
+                            {
+                                string groupName = fields.CheckBoxRadioGroupName;
+                                if (!groupList.Any(e => e.EndsWith(fields.CheckBoxRadioGroupName)))
+                                {
+                                    groupList.Add(groupName);
+                                    <div class="form-group ">
+                                        
+                                        @foreach (ExecViewHrk.WebUI.Models.FormTemplateFieldVm fields2 in @Model)
+                                        {
+
+                                            if (fields2.Type == "Check Box" && fields2.CheckBoxRadioGroupName != null
+                                                && fields2.CheckBoxRadioGroupName == groupName)
+                                            {
+                                                <label>&nbsp;&nbsp;&nbsp;</label>
+                                                @Html.CheckBox(fields2.CheckBoxRadioGroupName, new { id = fields2.HtmlId })
+                                                <label>&nbsp;</label> @fields2.Label;
+                                                <label>&nbsp; &nbsp; &nbsp;</label>
+                                            }
+
+                                        }
+                            
+                                    
+                                    </div>
+                                }
+                            }
+
+                            else if (fields.Type == "Radio Button")
+                            {
+                                string groupName = fields.CheckBoxRadioGroupName;
+                                if (!groupList.Any(e => e.EndsWith(fields.CheckBoxRadioGroupName)))
+                                {
+                                    groupList.Add(groupName);
+                                    <div class="form-group ">
+
+                                        @foreach (ExecViewHrk.WebUI.Models.FormTemplateFieldVm fields2 in @Model)
+                                        {
+
+                                            if (fields2.Type == "Radio Button" && fields2.CheckBoxRadioGroupName != null
+                                                && fields2.CheckBoxRadioGroupName == groupName)
+                                            {
+                                                <label>&nbsp;&nbsp;&nbsp;</label>
+                                                @Html.RadioButton(fields2.CheckBoxRadioGroupName, new { id = fields2.HtmlId })
+                                                <label>&nbsp;</label> @fields2.Label;
+                                                <label>&nbsp; &nbsp; &nbsp;</label>
+                                            }
+
+                                        }
+
+
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+
+                </div>
+
+                <div class="col-md-offset-1 col-md-5">
+
+                    <div>
+                        @foreach (ExecViewHrk.WebUI.Models.FormTemplateFieldVm fields in @Model)
+                        {
+                            if (fields.ColumnNumber % 2 == 0)
+                            {
+
+                                if (fields.Type == "Text Box")
+                                {
+                                    @Html.Partial("RenderTextBox", fields)
+
+                                }
+                                else if (fields.Type == "Label")
+                                {
+                                    @Html.Partial("RenderLabel", fields)
+
+                                }
+                                else if (fields.Type == "Date Time")
+                                {
+                                    @Html.Partial("RenderKendoDatePicker", fields)
+                                }
+                                else if (fields.Type == "Number")
+                                {
+                                    @Html.Partial("RenderKendoNumeric", fields)
+                                }
+                                else if (fields.Type == "Drop Down List")
+                                {
+
+                                    @Html.Partial("RenderKendoDropDownList", fields)
+                                }
+                                else if (fields.Type == "Text Area")
+                                {
+
+                                    @Html.Partial("RenderTextArea", fields)
+                                }
+                                else if (fields.Type == "Check Box")
+                                {
+                                    string groupName = fields.CheckBoxRadioGroupName;
+                                    if (!groupList.Any(e => e.EndsWith(fields.CheckBoxRadioGroupName)))
+                                    {
+                                        groupList.Add(groupName);
+                                        <div class="form-group ">
+
+                                            @foreach (ExecViewHrk.WebUI.Models.FormTemplateFieldVm fields2 in @Model)
+                                            {
+
+                                                if (fields2.Type == "Check Box" && fields2.CheckBoxRadioGroupName != null
+                                                    && fields2.CheckBoxRadioGroupName == groupName)
+                                                {
+                                                    <label>&nbsp;&nbsp;&nbsp;</label>
+                                                    @Html.CheckBox(fields2.CheckBoxRadioGroupName, new { id = fields2.HtmlId })
+                                                    <label>&nbsp;</label> @fields2.Label;
+                                                    <label>&nbsp; &nbsp; &nbsp;</label>
+                                                }
+
+                                            }
+
+
+                                        </div>
+                                    }
+                                }
+
+                                else if (fields.Type == "Radio Button")
+                                {
+                                    string groupName = fields.CheckBoxRadioGroupName;
+                                    if (!groupList.Any(e => e.EndsWith(fields.CheckBoxRadioGroupName)))
+                                    {
+                                        groupList.Add(groupName);
+                                        <div class="form-group ">
+
+                                            @foreach (ExecViewHrk.WebUI.Models.FormTemplateFieldVm fields2 in @Model)
+                                            {
+
+                                                if (fields2.Type == "Radio Button" && fields2.CheckBoxRadioGroupName != null
+                                                    && fields2.CheckBoxRadioGroupName == groupName)
+                                                {
+                                                    <label>&nbsp;&nbsp;&nbsp;</label>
+                                                    @Html.RadioButton(fields2.CheckBoxRadioGroupName, new { id = fields2.HtmlId })
+                                                    <label>&nbsp;</label> @fields2.Label;
+                                                <label>&nbsp; &nbsp; &nbsp;</label>
+                                                }
+
+                                            }
+
+
+                                        </div>
+                                    }
+                                }
+
+                            }
+
+                        }
+                          
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <div class="form-group">
+                @*<input name="submitme" id="Save" type="submit" value="Save" class="btn btn-info" />
+    <input id="btnSavePersonAjax" type="button" value="Save" class="btn btn-info" />
+    <input id="btnClearPersonAjax" type="button" value="Clear" class="btn btn-info" />
+    <input id="btnDeletePersonAjax" type="button" value="Delete" class="btn btn-info" />*@
+            </div>
+        </div>
+    </div>
+
+}
+
+<script>
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+    function onRequestEnd(e) {
+
+        //alert("onRequestEnd " + e.type);
+        //read, create, update, destroy
+        //
+        if (e.type == "create" || e.type == "update" || e.type == "destroy")
+        {
+            var form = $("#FormTemplateFields");
+            form.submit();
+        }
+
+    }
+
+    // pass in the form template id
+    function additionalData() {
+
+        return {
+
+            id: $('#routeDataId').val()
+
+        }
+    }
+
+</script>

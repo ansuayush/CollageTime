@@ -1,0 +1,78 @@
+﻿@model ExecViewHrk.WebUI.Models.LoginModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login : HR Next</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+
+    <!-- Favicon icon -->
+    <link rel="icon" href="~/assets/images/hr-knowledge.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/assets/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="~/assets/css/custom.css" />
+    <link href="~/assets/css/login-css.css" rel="stylesheet" />
+</head>
+<body class="login-bg-hr">
+    <div class="wrapper">
+        <div id="center-wrapper">
+            <div id="overlay">
+                <div id="mainLoginWrapper" style="display: inline-block;">
+                    <div>
+                        @Html.ValidationSummary(true, null, new { @class = "f-13 txt-theme" })
+
+                        @if (TempData["message"] != null)
+                        {
+                            <div class="alert alert-success">@TempData["message"]</div>
+                        }
+                        <div class="welcomeBlock m-b-10">
+                            <h2 id="portal.login.welcome" class="f-w-600">Welcome to HR Next</h2>
+                        </div>
+                    </div>
+                    <div class="login-main">
+                        <div style="  margin-bottom:30px; font-size:18px;">
+                            
+                            @using (Html.BeginForm())
+                            {
+                                @*@Html.AntiForgeryToken();*@
+                               @Html.HiddenFor(x => x.Browser_Time, new { @Value = Convert.ToDateTime("12/12/2017") })
+                                <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+                                <div>
+                                    <input type="hidden" name="target" value="/portal/theme">
+                                    <label class="loginLabel" id="login">User ID</label>
+                                    @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.Name, null, new { @class = "f-12 txt-theme" })
+                                    <label class="loginLabel m-t-10" id="login-pw">Password</label>
+                                    @Html.PasswordFor(x => x.Password, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(x => x.Password,null, new { @class = "f-12 txt-theme" })
+                                </div>
+                                    <div style="padding-left: 25px; font-size:12px;" class="m-t-10">
+                                        <a href="@Url.Action("ForgotPassword", "Account")"
+                                           class="forgotUID f-w-600 txt-primary"
+                                           onmouseover="javascript:this.style.textDecoration='underline'"
+                                           onmouseout="javascript:this.style.textDecoration='none'">Forgot Your User ID/Password?</a>
+
+                                    </div>
+                                    <span style="margin:auto;">
+                                        <button type="submit"
+                                                class="btn btn-primary waves-effect md-close myButton m-t-15">
+                                            Log In
+                                        </button>
+                                    </span>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

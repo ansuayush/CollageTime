@@ -1,0 +1,304 @@
+﻿@using System.Web.Routing;
+@model ExecViewHrk.WebUI.Models.PersonWorkPermitVm
+@{
+    ViewBag.Title = "Person Work Permit";
+    Layout = null;
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <section class="panels-wells edit-block">
+
+                            @Html.ValidationSummary(true)
+
+                            <div class="panel panel-info">
+
+                                <div class="panel-heading  ">
+
+                                    <div class="row">
+
+                                        <div class="col-md-6 ">
+                                            Person Work Permit <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                                            <div style="color:red; font-size:x-small">* denotes required field</div>
+
+                                        </div>
+                                        <div class="col-md-6 ">
+
+                                            @using (Html.BeginForm("PersonWorkPermitSelectedIndexChanged", "PersonWorkPermits", FormMethod.Post, new { role = "form", id = "PersonWorkPermitFormDdl" }))
+                {
+                <label>My Work Permits</label>
+
+                @(Html.Kendo().DropDownListFor(model => model.PersonWorkPermitId)
+                                                .Name("PersonWorkPermitIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PersonWorkPermitCountryDescription")
+                                            .DataValueField("PersonWorkPermitId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonWorkPermitsList", "PersonWorkPermits").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                  })
+                                                  .ServerFiltering(false);
+                                              })
+                                                .Value(@Model.PersonWorkPermitId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonWorkPermitDdl")
+                                                    .Select("onSelectPersonWorkPermitDdl");
+                                            })
+                )
+
+
+                }
+
+
+                                            <div id="noWorkPermitRecordsFound" style="color:red; font-size:x-small">no records found</div>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="formDiv" class="panel-body">
+
+                                    @*need this for validation*@
+                                    @using (Html.BeginForm("PersonWorkPermits", "PersonWorkPermits", FormMethod.Post, new { role = "form", id = "PersonWorkPermitForm" }))
+        {
+        @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+        @Html.HiddenFor(model => model.PersonWorkPermitId, new { id = "hiddenPersonWorkPermitId" })
+        <div class="row ">
+
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="col-md-5 ">
+                        <div class="form-group ">
+                            <div>
+                                <label><span style="color:red">*</span>Country</label>
+                            </div>
+                            @(Html.Kendo().ComboBox()
+                                        .Name("CountryDescription")
+                                        .HtmlAttributes(new { style = "width:61%;" })
+                                        .DataTextField("CountryDescription")
+                                        .DataValueField("CountryId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetCountries", "DdlCountries").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(false);
+                                          })
+                                        .Placeholder("Select Country")
+                            )
+
+                            @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                <button id="btnAddCountry" class="btn btn-info">+</button>
+                                }
+
+
+                            <div>
+                                @Html.ValidationMessageFor(model => model.CountryDescription)
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Issue Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.IssueDate)
+                                        .Name("IssueDate")
+                                        .Min(new DateTime(1900, 1, 1))
+                                        .Max(new DateTime(2100, 12, 31))
+
+                                )
+                                @Html.ValidationMessageFor(x => x.IssueDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <label><span style="color:red"></span>Work Permit Number</label>
+                            @Html.TextBoxFor(x => x.WorkPermitNumber, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.WorkPermitNumber)
+                        </div>
+
+                        <div class="form-group ">
+                            <label><span style="color:red"></span>Work Permit Type</label>
+                            @Html.TextBoxFor(x => x.WorkPermitType, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.WorkPermitType)
+                        </div>
+
+                        <div class="form-group ">
+                            <label><span style="color:red"></span>Issuing Authority</label>
+                            @Html.TextBoxFor(x => x.IssuingAuthority, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.IssuingAuthority)
+                        </div>
+
+                        <div class="form-group">
+                            <label>Expiration Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.ExpirationDate)
+                                                  .Name("ExpirationDate")
+                                                 .Min(new DateTime(1900, 1, 1))
+                                                 .Max(new DateTime(2100, 12, 31))
+                                )
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(x => x.ExpirationDate)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Extension Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.ExtensionDate)
+                                                 .Name("ExtensionDate")
+                                                 .Min(new DateTime(1900, 1, 1))
+                                                 .Max(new DateTime(2100, 12, 31))
+                                )
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(x => x.ExtensionDate)
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-offset-1 col-md-5">
+
+                        <div>
+
+                            <div class="form-group ">
+                                <label>Notes</label>
+                                @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                @Html.ValidationMessageFor(x => x.Notes)
+                            </div>
+
+                            <div class="form-group">
+                                <label style="width:100px">Entered By:</label>
+                                <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                            </div>
+
+                            <div class="form-group">
+                                <label style="width:100px">Entered Date:</label>
+                                <label id="enteredDateLabel" style="font-weight:normal;"></label>
+                            </div>
+
+                            @*<div class="form-group">
+                                    <label style="width:100px">Modified By:</label>
+                                    <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="width:100px">Modified Date:</label>
+                                    <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate</label>
+                                </div>*@
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <div class="form-group">
+
+                    <input id="btnSavePersonWorkPermitAjax" type="button" value="Save" class="btn btn-info" />
+                    <input id="btnClearPersonWorkPermitAjax" type="button" value="Clear" class="btn btn-info" />
+                    <input id="btnDeletePersonWorkPermitAjax" type="button" value="Delete" class="btn btn-info" />
+                </div>
+            </div>
+        </div>
+        }
+
+
+                                </div>
+
+                                <div id="countriesWindow" style="display:none">
+                                    <div id="countriesContent">
+                                        @Html.Partial("~/Views/DdlCountries/DdlCountriesPartial.cshtml")
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $("#enteredDateLabel").text(convertUTCDateToLocalDate(new Date('@Model.EnteredDate')));
+
+    var medicalExaminationTypesWindow = $("#countriesWindow");
+    if (!medicalExaminationTypesWindow.data("kendoWindow")) {
+        medicalExaminationTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Countries",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseCountriesWindow
+        });
+    }
+
+    function onCloseCountriesWindow() {
+        $("#CountryDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddCountry").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#countriesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

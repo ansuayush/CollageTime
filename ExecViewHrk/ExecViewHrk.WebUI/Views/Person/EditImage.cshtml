@@ -1,0 +1,97 @@
+﻿@model ExecViewHrk.EfClient.PersonImage
+
+@{
+    ViewBag.Title = "EditImage";
+}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Person Image</h4>
+</div>
+    <div class="modal-body">
+        <input type="file" id="FileUpload1" /> 
+        @{
+            if (Model.PersonImageData != null)
+            {
+                string groupLogo = Convert.ToBase64String(Model.PersonImageData);
+                string imageSrc = string.Format("data:image/jpeg;base64,{0}", groupLogo);
+                <img src="@imageSrc" class="img img-circle" id="imgPreview" style="height: 123px; width: 123px;" />
+            }
+            else
+            {
+                <img class="img img-circle" src="~/images/PersonSilhouette.jpg" alt="img cap" id="imgPreview" style="height: 123px; width: 123px;">
+            }
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClosePersonImage">Close</button>
+        <button type="submit" class="btn btn-primary" id="btnSavePersonImageAjax">Save</button>
+    </div>
+<script>
+    $(document).ready(function () {
+        $('#btnSavePersonImageAjax').click(function () {
+            //Checking input file is empty 
+            if (!$('#FileUpload1').val()) {
+                toastr.error("Please upload file!");
+                return false;}
+            // Checking whether FormData is available in browser  
+            if (window.FormData !== undefined) {
+
+                var fileUpload = $("#FileUpload1").get(0);
+                var files = fileUpload.files;
+
+                // Create FormData object  
+                var fileData = new FormData();
+
+                // Looping over all files and add it to FormData object  
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].name, files[i]);
+                }
+
+                var formURL = $("#ApplicationUrl").val() + '/Person/UploadPersonImages';
+                $("#QuickAddModal").modal("hide");
+                $.ajax({
+                    url: formURL,
+                    type: "POST",
+                    contentType: false, // Not to set any content header  
+                    processData: false, // Not to process data  
+                    data: fileData,
+                    success: function (result) {
+                        LoadMenu("Person", "Person");
+                    },
+                    error: function (err) {
+                    }
+                });
+            }
+        });
+
+        $('INPUT[type="file"]').change(function () {
+            if (this.value != "") {
+                var ext = this.value.match(/\.(.+)$/)[1].toLocaleLowerCase();
+                var fileExtension = ['jpeg', 'jpg', 'png'];
+                switch (ext) {
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                        break;
+                    default:
+                        toastr.error("Only formats are allowed : <b>" + fileExtension.join(', ') + "</b> only.");
+                        this.value = '';
+                }
+                if (ext == "jpeg" || ext == "jpg" || ext == "png") {
+                    if (this.files && this.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = imageIsLoaded;
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                }
+            }
+        });
+        function imageIsLoaded(e) {
+            $('#imgPreview').attr('src', e.target.result);
+        };
+    });  
+</script>
+
+

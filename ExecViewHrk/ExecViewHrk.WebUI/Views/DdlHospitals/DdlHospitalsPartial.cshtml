@@ -1,0 +1,70 @@
+﻿@(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlHospital>()
+            .Name("gridHospitals")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .ToolBar(toolbar => toolbar.Create())
+
+        .Columns(columns =>
+        {
+            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete"); }).Width(120);
+            columns.Bound(c => c.Code).Title("Code").Width(100).ToString().Trim();
+            columns.Bound(c => c.Description).Title("Description").Width(120).ToString().Trim();
+            columns.Bound(c => c.AddressLineOne).Title("Address").Width(120).ToString().Trim();
+            columns.Bound(c => c.AddressLineTwo).Title("Address2").Width(120).ToString().Trim();
+            columns.Bound(c => c.City).Title("City").Width(100).ToString().Trim();
+            columns.Bound(c => c.PhoneNumber).Title("Phone").Width(100).ToString().Trim();
+            columns.Bound(c => c.FaxNumber).Title("Fax").Width(100).ToString().Trim();
+            //columns.Bound(c => c.Contact).Title("Contact").Width(100);
+            // columns.Bound(c => c.WebAddress).Title("Web").Width(100);
+            columns.Bound(c => c.ZipCode).Title("Zip").Width(100).ToString().Trim();
+
+        })
+        .HtmlAttributes(new { style = "height: 480px;" })
+
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .Selectable()
+
+        .Pageable(pageable => pageable
+            .Refresh(false)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                                    .Read(read => read.Action("DdlHospitalList_Read", "DdlHospitals"))
+                                                .Create(create => create.Action("DdlHospitalList_Create", "DdlHospitals"))
+                                                    .Update(update => update.Action("DdlHospitalList_Update", "DdlHospitals"))
+                                                    .Destroy(destroy => destroy.Action("DdlHospitalList_Destroy", "DdlHospitals"))
+            .Model(model =>
+            {
+                model.Id(p => p.HospitalId);
+                model.Field(p => p.HospitalId).Editable(false);
+                model.Field(p => p.Description).ToString().Trim();
+                model.Field(p => p.Code).ToString().Trim();
+                model.Field(p => p.AddressLineOne).ToString().Trim();
+                model.Field(p => p.AddressLineTwo).ToString().Trim();
+                model.Field(p => p.City).ToString().Trim();
+                model.Field(p => p.StateId).ToString().Trim();
+                model.Field(p => p.ZipCode).ToString().Trim();
+                model.Field(p => p.CountryId).ToString().Trim();
+                model.Field(p => p.PhoneNumber).ToString().Trim();
+                model.Field(p => p.FaxNumber).ToString().Trim();
+                model.Field(p => p.Contact).ToString().Trim();
+                model.Field(p => p.WebAddress).ToString().Trim();
+                model.Field(p => p.Notes).ToString().Trim();
+                model.Field(p => p.Active);
+
+            }
+                  )
+            .Batch(false)
+                .Events(events => { events.Error("errorHandlerHospitals"); events.RequestEnd("gridRequestEnd"); })
+        )
+)
+
+<script type="text/javascript">
+   
+    
+</script>
+

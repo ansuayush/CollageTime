@@ -1,0 +1,27 @@
+﻿
+@model ExecViewHrk.WebUI.Models.FormTemplateFieldVm
+<div class="form-group ">
+    <label><span style="color:red">*</span>@Model.Label</label>
+    <div class="editor-field">
+        @(Html.Kendo().DropDownList()
+                .Name(Model.HtmlId)
+                .HtmlAttributes(new { style = "width:280px" })
+                .DataTextField("Description")
+                .DataValueField("Code")
+                .DataSource(source =>
+                {
+                    source.Read(read =>
+                    {
+                        read.Action("FormTemplateFieldsSelectionGroup_Read", "Form"
+                            , new { selectionGroupName = Model.SelectionGroup, formId = 2 });
+                    });
+
+                })
+                //.SelectedIndex(Model.MaritalStatusId == null ? 0 : Convert.ToInt32(Model.MaritalStatusId))
+                .OptionLabel("Select")
+
+        )
+    </div>
+    @Html.ValidationMessage(Model.HtmlId)
+</div>
+

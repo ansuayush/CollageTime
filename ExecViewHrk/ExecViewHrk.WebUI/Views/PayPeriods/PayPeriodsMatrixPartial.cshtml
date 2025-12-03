@@ -1,0 +1,238 @@
+﻿@model ExecViewHrk.Models.PayPeriodVM
+@{
+    ViewBag.Title = "Pay Period";
+    Layout = null;
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<script>
+    function CompanyCodeId() {
+        var CompanyCode = $('#CompanyCodeIdDdl').val();
+        if (CompanyCode == "") {
+            CompanyCode= -1
+        }
+        return {
+            CompanyCodeId: CompanyCode
+        }
+    }
+</script>
+<input type="hidden" id="hiddenfilename" />
+<input type="hidden" id="hiddennewfilename" />
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>
+                        Pay Period<span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span>
+                    </h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-5 p-l-0 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-2 p-0">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton btn-sm-addN" onclick="addPayPeriods()">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                        <label style="padding-left: 50px;">Company Codes</label>
+                        @if (User.IsInRole("HrkAdministrators") || User.IsInRole("ClientManagers") || User.IsInRole("ClientAdministrators"))
+                        {
+                            @(Html.Kendo().DropDownListFor(model => model.CompanyCodeId)
+                    .HtmlAttributes(new { id = "CompanyCodeIdDdl", style = "width:300px" })
+                    .DataTextField("CompanyCodeDescription")
+                    .DataValueField("CompanyCodeId")
+                    .Filter(FilterType.Contains)
+                        .DataSource(source =>
+                        {
+                            source.Read(read =>
+                            {
+                                read.Action("GetCompanyCodes", "LookupTables").Type(HttpVerbs.Post);
+                            })
+                            .ServerFiltering(true);
+                        })
+                    .Value(@Model.CompanyCodeId.ToString())
+                    .OptionLabel("- select one -")
+                    .Events(e => e.Change("RefreshGrid"))
+                            )
+                            @Html.ValidationMessageFor(model => model.CompanyCodeId)
+                        }
+                    </div>
+
+                    <div class="col-lg-5">
+                        @using (Html.BeginForm("ImportData", "PayPeriods", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="col-lg-4">
+                                <input type="file" id="ImportId" name="postedFile" class="form-control-file" />
+                            </div>
+                            <div>
+                                <input type="submit" style="margin-left:150px;" class="btn btn-primary" value="Import" />
+                            </div>
+                        }
+                    </div>
+                    <div class="col-lg-5">
+                        <a href="~/Files/SamplePayPeriods.csv" target="_blank" class="textunderline">Sample PayPeriods Template</a>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid theme-grid-pp">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.PayPeriodVM>()
+                                                    .Name("gridPayPeriod")
+                                                    .Resizable(resize => resize.Columns(true))
+                                                    .Filterable()
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Command(command =>
+                                                        {
+                                                            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPayPeriodEdit");
+                                                            command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridPayPeriodDelete");
+                                                            command.Custom("Export Preview").Text("<i class='fa fa-eye m-0 txt-warning f-18'></i>").Click("gridPayPeriodPreview");
+                                                        }).Width(90);
+                                                        columns.Bound(c => c.PayPeriodId).Visible(false);
+                                                        columns.Bound(c => c.CompanyCode).Visible(false);
+                                                        columns.Bound(c => c.PayFrequencyName).Title("Pay Type");
+                                                        columns.Bound(c => c.ModifiedStartDate).Title("Start Date");
+                                                        columns.Bound(c => c.ModifiedEndDate).Title("End Date");
+                                                                    //columns.Bound(c => c.PayGroupCode).Title("Pay Group Code");
+                                                                    columns.Bound(c => c.Description).Title("Pay Group Code");
+                                                        columns.Bound(c => c.PayPeriodNumber).Title("Pay Period Number");
+                                                        columns.Bound(c => c.IsArchived).ClientTemplate("#= IsArchived ? 'Yes' : 'No' #");
+                                                        columns.Bound(c => c.PayPeriodStartDate).Visible(false);
+                                                        columns.Bound(c => c.PayPeriodEndDate).Visible(false);
+                                                        columns.Bound(c => c.LockoutEmployees)
+.ClientTemplate
+("#if(LockoutEmployees == true) {#"
+                                                     + "<button style='background:none;border:none' OnClick='LockoutemployeeClick(#=PayPeriodId#,#=LockoutEmployees#)'><i class='fa fa-lock' aria-hidden='true' title='Locked' ></i></button>"
+                                                             //+ "<input type=button class='fa fa-lock' style='height:17px;width:50px;Border:none;BackGround:none' OnClick='LockoutemployeeClick(#=PayPeriodId#,#=LockoutEmployees#)'/>"
+                                                             + "#} else {#"
+                                                              + "<button style='background:none;border:none' OnClick='LockoutemployeeClick(#=PayPeriodId#,#=LockoutEmployees#)'><i class='fa fa-unlock' aria-hidden='false' title='UnLocked'></i></button>"
+                                                           //+ "<input type=button value='Lock' style='height:17px;width:50px' OnClick='LockoutemployeeClick(#=PayPeriodId#,#=LockoutEmployees#)'/>"
+                                                           + "#}#").Title("Lockout Emp");
+                                                        columns.Bound(c => c.LockoutManagers)
+                                                                                .ClientTemplate
+                                                                                ("#if(LockoutManagers == true) {#"
+                                                                                    + "<button style='background:none;border:none' OnClick='LockoutManagersClick(#=PayPeriodId#,#=LockoutManagers#)'><i class='fa fa-lock' aria-hidden='true' title='Locked' ></i></button>"
+                                                                                        //+ "<input type=button value='UnLock' style='height:17px;width:50px' OnClick='LockoutManagersClick(#=PayPeriodId#,#=LockoutManagers#)'/>"
+                                                                                        + "#} else {#"
+                                                                                         + "<button style='background:none;border:none' OnClick='LockoutManagersClick(#=PayPeriodId#,#=LockoutManagers#)'><i class='fa fa-unlock' aria-hidden='false' title='UnLocked' ></i></button>"
+                                                                                       //+ "<input type=button value='Lock' style='height:17px;width:50px' OnClick='LockoutManagersClick(#=PayPeriodId#,#=LockoutManagers#)'/>"
+                                                                                       + "#}#").Title("Lockout Mang");
+                                                        columns.Bound(c => c.ManagersCount).Title("Mng Lock Count");
+                                                        columns.Bound(c => c.Export)
+                                                        .ClientTemplate("<button style='background:none;border:none' OnClick='ExportPayPeriod(#=PayPeriodStartDate#,#=PayPeriodEndDate#,#=PayGroupCode#,#=PayPeriodNumber#)'><i class='icofont icofont-external-link txt-success'></i></button>").Title("Export").Filterable(false);
+                                                                    //columns.Command(command => command.Custom("Archive").Click("ArchiveEmployeesTimeCard").Text("<i class='fa fa-archive'></i>")).Title("Archive");
+                                                                    columns.Command(command => command.Custom("Archive").Click("ArchiveEmployeesGlobalTimeCard").Text("<i class='fa fa-archive'></i>")).Title("Archive");
+                                                    })
+                                                    .Sortable()
+                                                    .Selectable()
+                                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                                    .Events(e => e.DataBound("gridDataBound"))
+                                                    .DataSource(dataSource => dataSource.Ajax()
+                                                                    .Read(read => read.Action("PayPeriodsList_Read", "PayPeriods").Data("CompanyCodeId"))
+                                                                    .Model(model =>
+                                                                    {
+                                                                        model.Id(p => p.PayPeriodId);
+                                                                        model.Field(p => p.CompanyCode);
+                                                                        model.Field(p => p.PayFrequencyName);
+                                                                        model.Field(p => p.ModifiedStartDate);
+                                                                        model.Field(p => p.ModifiedEndDate);
+                                                                        model.Field(p => p.LockoutEmployees);
+                                                                        model.Field(p => p.LockoutManagers);
+                                                                        model.Field(p => p.PayGroupCode);
+                                                                        model.Field(p => p.PayPeriodNumber);
+                                                                        model.Field(p => p.IsArchived);
+                                                                        model.Field(p => p.PayPeriodStartDate);
+                                                                        model.Field(p => p.PayPeriodEndDate);
+                                                                    }
+                                                                )
+                                                                .PageSize(10)
+                                                        .Batch(false)
+                                                        .Events(events =>
+                                                        {
+                                                            events.Error("refreshGrid");
+                                                            events.RequestEnd("gridRequestEnd");
+                                                        })
+                                                    )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalPreview" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Preview</h4>
+            </div>
+            <div class="modal-body" id="divExportPreview" style="overflow: scroll">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function ExportPayPeriod(startDate, endDate, payGroupId, payPeriodNumber, CompanyCode) {
+        loading(true);
+        var CompanyCode = $('#CompanyCodeIdDdl').val();
+        if (CompanyCode == "")
+        {
+            toastr.error("Please Select Company code");
+            loading(false);
+            return false
+        }
+        @*var url = '@Url.Action("PayRateExport", "PayPeriods",new {startDate= "_startDate_", endDate = "_endDate_", payGroupId="_pay", payPeriodNumber="_payPer" , CompanyCode= "_Compy"})';
+        actUrl = url.replace("_startDate_", startDate).replace("&amp;", '&').replace("_endDate_", endDate).replace("&amp;", '&').replace("_pay", payGroupId).replace("&amp;", '&').replace("_payPer", payPeriodNumber).replace("&amp;", '&').replace("_Compy", CompanyCode)
+        window.location.href = actUrl;*@
+        var formURL = $("#ApplicationUrl").val() + "PayPeriods/PayRateExport?startDate=" + startDate + "&endDate=" + endDate + "&payGroupId=" + payGroupId + "&payPeriodNumber=" + payPeriodNumber + "&CompanyCode=" + CompanyCode;
+        setTimeout(
+            function () {
+                window.location.href = formURL;
+                loading(false);
+            }, 6000);
+    }
+
+    function LockoutemployeeClick(PayPeriodId, LockoutEmployees) {
+        var postData = { payPeriodId: PayPeriodId, lockoutemployee: LockoutEmployees };
+        var formURL = $("#ApplicationUrl").val() + "PayPeriods/LockOutEmployeeUpdate";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                toastr.success('Record Updated successfully.');
+                resetGrid("gridPayPeriod");
+            }
+        });
+    }
+    function LockoutManagersClick(PayPeriodId, LockoutManagers) {
+        var postData = { payPeriodId: PayPeriodId, lockoutManagers: LockoutManagers };
+        var formURL = $("#ApplicationUrl").val() + "PayPeriods/LockOutManagersUpdate";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                toastr.success('Record Updated successfully.');
+                resetGrid("gridPayPeriod");
+            }
+        });
+    }
+
+</script>
+
+

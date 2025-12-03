@@ -1,0 +1,161 @@
+﻿@{
+    ViewBag.Title = "Hours Codes";
+    Layout = null;
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Hours Codes <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-5 p-l-0 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-9 p-0">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal btn-sm-addN" onclick="addHoursCode()">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @Html.ValidationSummary(true)
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.HoursCodeVm>()
+                                        .Name("gridHoursCode")
+                                        .Resizable(resize => resize.Columns(true))
+                                        .Filterable()
+                                        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("HoursCodePopUpEditor").Window(w => w.Title("Add/Edit Hours Code")))
+                                        //.ToolBar(toolbar => toolbar.Create())
+                                        .Columns(columns =>
+                                        {
+                                            columns.Command(command =>
+                                            {
+                                                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridHourEdit");
+                                                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridHoursDelete");
+                                            }).Width(100);
+                                            columns.Bound(c => c.HoursCodeId).Width(100).Hidden();
+                                            columns.ForeignKey(c => c.CompanyCodeId, (System.Collections.IEnumerable)ViewData["companycodesList"], "CompanyCodeId", "CompanyCodeDescription")
+                                            .Title("Company Code").Width(100);
+                                            columns.Bound(c => c.HoursCodeCode).Title("Hours Code").Width(100);
+                                            columns.Bound(c => c.HoursCodeDescription).Width(100);
+                                            columns.ForeignKey(c => c.ADPFieldMappingId, (System.Collections.IEnumerable)ViewData["adpFieldMappingsList"], "ADPFieldMappingId", "ADPFieldMappingCode")
+                                            .Title("ADP Field Mapping").Width(100);
+                                            columns.ForeignKey(c => c.ADPAccNumberId, (System.Collections.IEnumerable)ViewData["adpAccNumbersList"], "ADPAccNumberId", "ADPAccNumberDesc")
+                                            .Title("ADP Account Number").Width(100);
+                                            columns.Bound(c => c.RateOverride).Width(100);
+                                            columns.Bound(c => c.RateMultiplier).Width(100);
+                                            columns.Bound(c => c.ExcludeFromOT).ClientTemplate("#= ExcludeFromOT ? 'Yes' : 'No' #").Width(100).Visible(false);
+                                            columns.Bound(c => c.SubtractFromRegular).ClientTemplate("#= SubtractFromRegular ? 'Yes' : 'No' #").Width(100).Visible(false);
+                                            columns.Bound(c => c.NonPayCode).ClientTemplate("#= NonPayCode ? 'Yes' : 'No' #").Width(100).Visible(false);
+                                            columns.Bound(c => c.StartDate).Title("Start Date").ClientTemplate("#= StartDate == null ? '' : kendo.toString(StartDate, \"MM/dd/yyyy\") #");
+                                            columns.Bound(c => c.EndDate).Title("End Date").ClientTemplate("#= EndDate == null ? '' : kendo.toString(EndDate, \"MM/dd/yyyy\") #");
+                                            columns.Bound(c => c.IsHoursCodeActive).ClientTemplate("#= IsHoursCodeActive ? 'Yes' : 'No' #").Width(100);
+
+                                        })
+                                        .HtmlAttributes(new { style = "height: 480px;" })
+                                        .Scrollable()
+                                        .Groupable()
+                                        .Sortable()
+                                        .Selectable()
+                                        .Pageable(pageable => pageable
+                                            .Refresh(false)
+                                            .PageSizes(true)
+                                            .ButtonCount(5))
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                                    .Read(read => read.Action("HoursCodesList_Read", "HoursCodes"))
+                                        //.Create(create => create.Action("HoursCodesList_Create", "HoursCodes"))
+                                        //.Update(update => update.Action("HoursCodesList_Update", "HoursCodes"))
+                                        //.Destroy(destroy => destroy.Action("HoursCodesList_Destroy", "HoursCodes"))
+                                        .Model(model =>
+                                        {
+                                            model.Id(p => p.HoursCodeId);
+                                            model.Field(p => p.HoursCodeId).Editable(false);
+                                            model.Field(p => p.CompanyCodeId).DefaultValue(0);
+                                            model.Field(p => p.HoursCodeCode);
+                                            model.Field(p => p.HoursCodeDescription);
+                                            model.Field(p => p.ADPFieldMappingId).DefaultValue(1);
+                                            model.Field(p => p.ADPAccNumberId).DefaultValue(0); ;
+                                            model.Field(p => p.RateOverride);
+                                            model.Field(p => p.RateMultiplier);
+                                        }
+                                              )
+                                        .Batch(false)
+                                         .Events(events =>
+                                         {
+                                             events.Error("refreshGrid");
+                                             events.RequestEnd("gridRequestEnd");
+                                         })
+                                            )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<style type="text/css">
+        .k-grid {
+            font-size: 11px;
+        }
+
+        .k-grid {
+            line-height: 2em;
+        }
+
+        /*resize pop-up window*/
+        div.k-edit-form-container {
+            width: auto;
+            min-width: 400px;
+            max-width: 1800px;
+        }
+
+        .k-popup-edit-form .k-edit-label {
+            width: 35%;
+            text-align: right;
+        }
+
+        /*Resize widget of pop-up window*/
+        .k-popup-edit-form .k-edit-field > .k-textbox,
+        .k-popup-edit-form .k-edit-field > .k-dropdown
+        /*.k-popup-edit-form .k-edit-field > .k-widget*/ {
+            width: 90%;
+        }
+    </style>
+
+
+    <script type="text/javascript">
+        $(".k-grid-add").click(function () {
+            setTimeout(function () {
+                $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+            }, 1)
+        });
+        $("#gridHoursCode").kendoGrid({
+            editable: {
+                mode: "popup",
+                window: {
+                    resizable: true
+                }
+            }
+        });
+
+    </script>*@
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+</script>
+
+
+
+

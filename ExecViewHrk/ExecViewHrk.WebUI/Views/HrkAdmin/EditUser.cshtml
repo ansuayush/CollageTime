@@ -1,0 +1,156 @@
+﻿@model ExecViewHrk.WebUI.Models.UserRoleAssignmentViewModel
+
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">User</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("EditUser", "HrkAdmin", FormMethod.Post, new { role = "form", id = "UserForm" }))
+            {
+                @Html.HiddenFor(model => model.UserName, new { id = "hiddenemployeeId" })
+                @Html.ValidationSummary(true)
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>User Name</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.UserName,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["usersList"], "UserName", "UserName"), new { @class = "form-control" })
+                            @*@if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'PersonsList');">
+                                        <span class="fa fa-plus"></span>
+                                    </span>
+                                }*@
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.UserName)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Role Name</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.RoleName,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["rolesList"], "RoleName", "RoleName"), new { @class = "form-control" })
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.RoleName)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnUpdateUserRoleNameAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $('#btnUpdateUserRoleNameAjax').click(function () {
+            if (!ValidateForm("UserForm")) {
+                loading(false);
+                return;
+            }
+            var postData = $("#UserForm").serializeArray();
+            var formURL = $("#ApplicationUrl").val() + "HrkAdmin/UserRolesSaveAjax";
+            $.post(formURL, postData, function (data, status) {
+
+                if (data.succeed == false) {
+                    //formService.isSavingInProgress = false;
+                    toastr.error(data.Message);
+                }
+                else {
+                    var _oldhiddenPersonLicenseId = $("#hiddenPersonLicenseId").val();
+                    //refreshPersonLicenseFormData(response.personLicenseVm);
+                    resetGrid("gridPersonLicense");
+                    $("#btnSavePersonLicenseAjax").parent().find(".md-close").click();
+                    // formService.isLoadingInProgress = false;
+                    //killTimer();
+                    if (_oldhiddenPersonLicenseId != "0") {
+                        //timeOutFn = setTimeout(function () {
+                        //formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                        //formService.isLoadingInProgress = false;
+                        //}, 0);
+                    }
+                    else {
+                        //timeOutFn = setTimeout(function () {
+                        //formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        //formService.isLoadingInProgress = false;
+                        //}, 0);
+                    }
+
+                }
+        });
+    });
+    
+</script>
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+
+            $('#grid').data('kendoGrid').dataSource.read();
+            $('#grid').data('kendoGrid').refresh();
+        }
+    }
+
+    function OnChangeGrid(e) {
+
+        alert("Grid Changed");
+
+        //$('#grid').data('kendoGrid').dataSource.read();
+        $('#grid').data('kendoGrid').refresh();
+
+    }
+
+    // not sure this does what I think - needs more testing
+    function sync_handler(e) {
+        this.read();
+        //$('#grid').data('kendoGrid').refresh();
+    }
+    function gridUsrEdit(e) {
+        
+        e.preventDefault();
+        var grid = this;
+        var row = $(e.currentTarget).closest("tr");
+        var data = grid.dataItem(row);
+        openEPositionDetailEditpopup(data.UserName, data.RoleName);
+    }
+    function openEPositionDetailEditpopup(_userName, _roleName) {
+        
+        var formURL = $("#ApplicationUrl").val() + '/HrkAdmin/EditUser?userName=' + _userName + '&roleName=' + _roleName;
+        $("#EditDetailDiv .md-content").html("");
+        $("#EditDetailDiv .md-content").load(formURL);
+        $('#EditDetailDiv').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv').addClass('md-show');
+    }
+</script>
+
+
+
+
+
+

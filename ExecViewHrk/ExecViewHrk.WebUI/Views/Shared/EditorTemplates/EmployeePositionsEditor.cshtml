@@ -1,0 +1,26 @@
+﻿
+@model object
+
+<script src="~/Scripts/application/TimeCardsMatrixPartial.js"></script>
+
+@(
+ Html.Kendo().DropDownListFor(m => m)
+        .DataValueField("PositionId")
+        .DataTextField("PositionCode")
+        .Filter(FilterType.Contains)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {
+                //read.Action("ValidateEmployeePositions", "LookupTables").Data("filterEmployeePositions"); //.Data("additionalData");
+                
+                //Loads the Positions which falls under the Pay Period 
+                read.Action("ValidateEmployeePositionsByPayPeriod", "LookupTables").Data("filterEmployeePositions"); //.Data("additionalData");
+            })
+            .ServerFiltering(true);
+        })
+        //.OptionLabel("- select one -")
+        .ValuePrimitive(true)
+)
+
+

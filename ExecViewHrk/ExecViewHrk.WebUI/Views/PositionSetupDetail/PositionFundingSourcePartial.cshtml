@@ -1,0 +1,73 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.PositionFundingSourceGroupVM>
+
+<div class="col-sm-12 p-0">
+    <div class="row">
+        <div class="col-sm-12 p-0">
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @*<button type="button" class="btn btn-sm btn-success waves-effect text-tranform-normal m-t-25" data-toggle="modal" data-target="#FundSelectionModal">Add Fund</button>*@
+                    <button type="button" class="btn btn-sm btn-success waves-effect text-tranform-normal m-t-25" data-toggle="modal" onclick="AddFundSelection(event);">Add Fund</button>
+                    <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" data-toggle="modal" data-target="#FundHistoryList">
+                        <i class="fa fa-history" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-12 col-md-12 m-t-20">
+            <div class="theme-grid">
+                @(Html.Kendo().Grid(Model)
+.Name("PositionFundingSourcelst")
+.Columns(columns =>
+{
+    columns.Command(command =>
+    {
+        command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridPositionFundingSourceEdit");
+    }).Width(70);
+  //  columns.Bound(p => p.ID).Visible(false);
+    columns.Bound(p => p.EffectiveDate).Title("Effective Date")
+    .ClientTemplate("#= EffectiveDate == null ? '' : kendo.toString(kendo.parseDate(EffectiveDate, 'yyyy-MM-dd'), 'MM/dd/yyyy') #");
+    columns.Bound(p => p.Percentage).Title("Percentage").ClientTemplate("100%");
+})
+.Pageable(pageable => pageable
+.Input(true)
+.Numeric(false)
+)
+.Sortable()
+.Filterable()
+.DataSource(dataSource => dataSource
+.Ajax()
+.Model(model =>
+{
+ 
+    model.Field(p => p.EffectiveDate);
+    model.Field(p => p.Percentage);
+}
+        )
+        //.Group(groups => groups.Add(p => p.EffectiveDate))
+        .PageSize(5)
+        .ServerOperation(false)
+     )
+                )
+
+            </div>
+        </div>
+     
+            </div>
+    </div>
+<script>
+    function AddFundSelection(e)
+    {
+        e.preventDefault();
+        var formURL = "@Url.Action("PositionFundSelectionModalPartial", "PositionSetupDetail")";//$("#ApplicationUrl").val() + "PositionSetupDetail/PositionBudgetAddRecordModalPartial";
+        if (formURL != "") {
+           // $('#Editpositionbudget_ID').val(lstitem);
+            $("#FundSelectionModal").html("");
+            $("#FundSelectionModal").load(formURL);
+            $("#FundSelectionModal").modal({ show: true });
+        }
+
+    }
+</script>
+

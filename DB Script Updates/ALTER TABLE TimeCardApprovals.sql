@@ -1,0 +1,5 @@
+ALTER TABLE TimeCardApprovals
+Drop CONSTRAINT uq_TimeCardAp
+
+ALTER TABLE TimeCardApprovals
+ADD CONSTRAINT uq_TimeCardApprovals unique(EmployeeId,PayPeriodId,ManagerId)provals

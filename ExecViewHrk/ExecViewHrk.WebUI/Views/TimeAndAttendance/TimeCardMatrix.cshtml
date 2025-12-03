@@ -1,0 +1,199 @@
+﻿<script src="~/Scripts/application/EvHelpers.js"></script>
+@{
+    ViewBag.Title = "TimeCardMatrix";
+    //Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+    Layout = "~/Views/Shared/_MatrixHeader.cshtml";
+}
+
+@section TitleSection
+{
+    <h2>Time and Attendance</h2>
+}
+
+<style>
+    #matrix a:hover {
+        background-color: red;
+    }
+
+    #matrix img {
+        border: 0px solid red;
+    }
+
+        #matrix img:hover {
+            outline: 2px solid white;
+        }
+
+    #matrix > div {
+        text-align: center;
+    }
+
+    #a {
+        margin: 5px;
+    }
+</style>
+
+
+<div id="matrix" class="container-fluid" style="background-color:black; border-width:3px; border-color:red; border-style:solid">
+
+    <div class="row">
+        <div class="col-xl-12">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")Departments/DepartmentsMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/Departments.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")CompanyCodes/CompanyCodesMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/CompanyCodes.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px;  "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")HoursCodes/HoursCodesMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/HoursCodes.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")EarningsCodes/EarningsCodesMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/EarningsCode.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px;  "></a>          
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")Managers/ManagersMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/Manager.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px;"></a>                  
+                        
+         </div>
+
+
+        <div class="col-xl-12">
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")ManagerDepartments/ManagerDepartmentsMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/ManagerDepartment.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")PayPeriods/PayPeriodsMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/PayPeriod.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")TimeCardConfigurations/TimeCardConfigurationsMatrixPartial"><img src="~/images/TimeCardNewBlocks/TimeCardConfiguration.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")TimeCards/TimeCardsMatrixPartial?IsArchived=false"><img src="~/images/TimeCardNewBlocks/TimeCard.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")TimeCards/TimeCardsInAndOutMatrixPartial?IsArchived=false"><img src="~/images/TimeCardNewBlocks/TimeCardInandOut.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")TimeCards/TimeCardSemiMonthlyMatrixPartial?IsArchived=false"><img src="~/images/TimeCardNewBlocks/TimeCard.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px; "></a>
+
+        </div>
+
+        
+            <div class="col-xl-12">               
+                
+                <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")TimeCards/TimeCardSemiMonthlyInOutMatrixPartial?IsArchived=false"><img src="~/images/TimeCardNewBlocks/TimeCard.png" style="width:140px;height:140px; margin-top:15px; margin-bottom:10px; "></a>
+                                           
+                <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")TimeCards/TimeCardsMatrixPartial?IsArchived=true"><img src="~/images/TimeCardNewBlocks/TimeCardArchived.png" style="width:140px;height:140px; margin-top:10px; margin-bottom:20px; "></a>
+
+                <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")TimeCards/TimeCardsInAndOutMatrixPartial?IsArchived=true"><img src="~/images/TimeCardNewBlocks/TimeCardInOutArchived.png" style="width:140px;height:140px; margin-top:10px; margin-bottom:20px;"></a>
+                
+                <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")TimeCardApprovalReport/TimeCardApprovalReportMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/TimeCardApprovalReport.png" style="width:140px;height:140px; margin-top:10px; margin-bottom:20px;"></a>
+
+                @*@if (User.IsInRole("ClientEmployees"))
+                {
+                <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")TimeCards/TimeCardsFastInOutMatrixPartial"><img src="~/images/TimeCardBlocks/TimeCardFastInOut.jpg" style="width:180px;height:180px; margin-top:5px; margin-bottom:5px;"></a>
+                }
+                else
+                {*@
+                    
+                @*}*@
+               
+                   @*href="@Url.Content("~/")Test/TestMatrixPartial/NSS"><img src="~/images/TimeCardBlocks/Reports.jpg" style="width:180px;height:180px; margin-top:5px; margin-bottom:5px;"></a>*@
+                   @*href="@Url.Content("~/")TimeCardReports/TimeCardReportsMatrixPartial/NSS"><img src="~/images/TimeCardBlocks/Reports.jpg" style="width:180px;height:180px; margin-top:5px; margin-bottom:5px;"></a>*@
+                
+                <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"                  
+                   href="@Url.Content("~/")EmployeeAllocations/EmployeeAllocationsMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/EmployeeAllocation.png" style="width:140px;height:140px; margin-top:10px; margin-bottom:20px;"></a>
+
+                <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")TimeOffRequests/TimeOffRequestsMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/TimeOffEmp.jpg" style="width:140px;height:140px; margin-top:10px; margin-bottom:20px;"></a>
+
+                <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")TimeOffRequests/AllTimeOffRequestsMatrixPartial/NSS"><img src="~/images/TimeCardNewBlocks/TimeOffRequests.jpg" style="width:140px;height:140px; margin-top:10px; margin-bottom:20px;"></a>
+                @*<a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")/HierarchicalDisplay/HierarchicalDisplay/NSS"><img src="~/images/ActionMatrixBlocks/Reserved.jpg" style="width:124px;height:124px; margin-top:5px; margin-bottom:5px;"></a>*@
+                            
+                @*<img src="~/images/TimeCardNewBlocks/Reserved.png" style="width:140px;height:140px; margin:10px;  margin-top:10px; margin-bottom:20px; border:0; outline:0">*@
+
+            </div>
+        
+      
+     </div>
+
+ </div>
+
+        <div id="FormEntryDiv">
+
+        </div>
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                var formEntryDiv = $("#FormEntryDiv");
+
+
+                $("#matrix a").click(function (e) {
+                    //e.preventDefault();
+                    $('#matrix').hide(1500);
+                    $('#closeButtonDiv').show(1500);
+                    $('#FormEntryDiv').show(1500);
+
+                });
+
+                $("#closeButtonDiv").click(function (e) {
+                    e.preventDefault();
+                    $('#matrix').show(1500);
+                    $('#closeButtonDiv').hide(1500);
+                    $('#FormEntryDiv').hide(1500);
+                });
+
+                // this works if the button is in the partial view
+                $(document).on("click", "#closeButtonDiv", function (e) {
+                    e.preventDefault();
+                    $('#matrix').show(1500);
+                    $('#closeButtonDiv').hide(1500);
+                    $('#FormEntryDiv').hide(1500);
+                });
+            });
+
+            function OnBeginAjax() {
+
+            }
+
+            function OnSuccessAjax(data) {
+                
+                //alert("Got to On Success Ajax");
+            }
+
+            function OnFailureAjax(request, error) {
+                //alert("Got to On Failure Ajax");
+            }
+
+            function OnCompleteAjax(request, status) {
+                //alert("Got to On Complete Ajax");
+            }
+
+        </script>

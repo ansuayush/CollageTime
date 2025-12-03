@@ -1,0 +1,19 @@
+﻿@model object
+
+@(
+ Html.Kendo().DropDownListFor(m => m)
+        .DataValueField("EarningsCodeId")
+        .DataTextField("EarningsCodeCode")
+        //.Filter(FilterType.Contains)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {
+                read.Action("ValidEarningCodes", "LookupTables").Data("filterDepartmentsByCompanyCode");
+
+            })
+            .ServerFiltering(true);
+        })
+        .OptionLabel("- select one -")
+        .ValuePrimitive(true)
+)

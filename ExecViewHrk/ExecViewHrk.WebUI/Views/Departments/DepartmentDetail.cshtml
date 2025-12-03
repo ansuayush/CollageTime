@@ -1,0 +1,124 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Departments";
+    Layout = null;
+}
+
+@model ExecViewHrk.Models.DepartmentVm
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Department</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("Departments", "Departments", FormMethod.Post, new { role = "form", id = "DepartmentForm" }))
+            {
+                @Html.HiddenFor(model => model.DepartmentId, new { @Id = "hiddenDepartmentId" })
+                @*@Html.HiddenFor(model => model.TimeCardTypeId)*@
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Company Code</label>
+                      @Html.DropDownListFor(model => model.CompanyCodeId,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["companyCodesList"], "CompanyCodeId", "CompanyCodeDescription"), "--Select One--", new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.CompanyCodeId)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Department Code</label>
+                        @Html.TextBoxFor(x => x.DepartmentCode, new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.DepartmentCode)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Department Description</label>
+                        @Html.TextBoxFor(x => x.DepartmentDescription, new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.DepartmentDescription)
+                    </div>
+                </div>
+                <div class="col-sm-3 p-t-30">
+                    <div class="form-group ">
+                        <div class="checkbox-primary">
+                            @Html.ValidationMessageFor(model => model.Active)
+
+                            @if (Model.Active == true)
+                            {
+                                <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="" checked="checked">
+                            }
+                            else
+
+
+                            {
+                                <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="">
+                            }
+
+                            @Html.LabelFor(x => x.Active)
+                            @Html.HiddenFor(x => x.Active)
+                        </div>
+                        </div>
+                </div>
+            }
+        </div>
+    </div>
+    </div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnUpdateDepartmentAjax">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+    });
+    $("#btnUpdateDepartmentAjax").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("DepartmentForm")) {
+            loading(false);
+            return;
+        }
+        var postData = $("#DepartmentForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "Departments/DepartmentSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenDepartmentId = $("#hiddenDepartmentId").val();
+                LoadMenu("DepartmentsMatrixPartial", "Departments");
+                $("#btnUpdateDepartmentAjax").parent().find(".md-close").click();                
+                if (_oldhiddenDepartmentId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

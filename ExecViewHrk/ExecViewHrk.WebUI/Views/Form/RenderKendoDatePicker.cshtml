@@ -1,0 +1,16 @@
+﻿
+@model ExecViewHrk.WebUI.Models.FormTemplateFieldVm
+<div class="form-group ">
+    <label><span style="color:red">*</span>@Model.Label</label>
+    <div>
+
+        @(Html.Kendo().DatePicker()
+            .Name(Model.HtmlId)
+            .Min(new DateTime(1915, 1, 1))
+            .Max(new DateTime(2099, 12, 31))
+
+        )
+    </div>
+
+    @Html.ValidationMessage(Model.HtmlId)
+</div>

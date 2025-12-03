@@ -1,0 +1,262 @@
+﻿<script src="~/Scripts/application/EvHelpers.js"></script>
+@{
+    ViewBag.Title = "ListMatrix";
+    Layout = "~/Views/Shared/_MatrixHeader.cshtml";
+}
+
+@section TitleSection
+{
+    <h2>Lookup Tables</h2>
+}
+
+<style>
+    #matrix a:hover {
+        background-color: red;
+    }
+
+    #matrix img {
+        border: 0px solid red;
+    }
+
+        #matrix img:hover {
+            outline: 2px solid white;
+        }
+
+    #matrix > div {
+        text-align: center;
+    }
+
+    #a {
+        margin: 5px;
+    }
+</style>
+
+
+<div id="matrix" class="container-fluid" style="background-color:black; border-width:3px; border-color:red; border-style:solid">
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")LookupTables/DdlAccommodationTypesListMaintenance"><img src="~/images/LookupTablesBlocks/AccomodationTypes.png" style="width:115px;height:115px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")LookupTables/DdlDisabilityTypesListMaintenance"><img src="~/images/LookupTablesBlocks/DisabilityTypes.png" style="width:115px;height:115px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")LookupTables/DdlGenderListMaintenance"><img src="~/images/LookupTablesBlocks/Gender.png" style="width:115px;height:115px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")LookupTables/DdlMaritalStatusListMaintenance"><img src="~/images/LookupTablesBlocks/MaritalStatus.png" style="width:115px;height:115px; margin-top:15px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")LookupTables/DdlPrefixListMaintenance"><img src="~/images/LookupTablesBlocks/Prefix.png" style="width:115px;height:115px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")LookupTables/DdlSuffixListMaintenance"><img src="~/images/LookupTablesBlocks/Suffix.png" style="width:115px;height:115px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlCountries/DdlCountriesListMaintenance"><img src="~/images/LookupTablesBlocks/Country.png" style="width:115px;height:115px; margin-top:15px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlCitizenships/DdlCitizenshipsListMaintenance"><img src="~/images/LookupTablesBlocks/Citizenship.png" style="width:115px;height:115px; margin-top:15px; margin-bottom:10px; "></a>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlAddressTypes/DdlAddressTypesListMaintenance"><img src="~/images/LookupTablesBlocks/AddressTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlDegreeTypes/DdlDegreeTypesListMaintenance"><img src="~/images/LookupTablesBlocks/DegreeTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlEducationLevels/DdlEducationLevelsListMaintenance"><img src="~/images/LookupTablesBlocks/EducationLevels.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlEducationTypes/DdlEducationTypesListMaintenance"><img src="~/images/LookupTablesBlocks/EducationTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlEducationEstablishments/DdlEducationEstablishmentsListMaintenance"><img src="~/images/LookupTablesBlocks/EducationEstablishments.png" style="width:115px;height:115px;margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlMajors/DdlMajorsListMaintenance"><img src="~/images/LookupTablesBlocks/Majors.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlEvaluationTests/DdlEvaluationTestsListMaintenance"><img src="~/images/LookupTablesBlocks/EvaluationTests.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlInnoculationTypes/DdlInnoculationTypesListMaintenance"><img src="~/images/LookupTablesBlocks/InnoculationTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlLicenseTypes/DdlLicenseTypesListMaintenance"><img src="~/images/LookupTablesBlocks/LicenseTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlMedicalExaminationTypes/DdlMedicalExaminationTypesListMaintenance"><img src="~/images/LookupTablesBlocks/MedicalExaminationTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlPropertyTypes/DdlPropertyTypesListMaintenance"><img src="~/images/LookupTablesBlocks/PropertyTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlRegionalChapters/DdlRegionalChaptersListMaintenance"><img src="~/images/LookupTablesBlocks/RegionalChapters.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlTrainingCourses/DdlTrainingCoursesListMaintenance"><img src="~/images/LookupTablesBlocks/TrainingCourses.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlSkillLevels/DdlSkillLevelsListMaintenance"><img src="~/images/LookupTablesBlocks/SkillLevels.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlSkillTypes/DdlSkillTypesListMaintenance"><img src="~/images/LookupTablesBlocks/SkillTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlSkills/DdlSkillsListMaintenance"><img src="~/images/LookupTablesBlocks/Skills.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlEeoTypes/DdlEeoTypesListMaintenance"><img src="~/images/LookupTablesBlocks/EEOTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlProfessionalBodies/DdlProfessionalBodiesListMaintenance"><img src="~/images/LookupTablesBlocks/ProfessionalBodies.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlRelationshipTypes/DdlRelationshipTypesListMaintenance"><img src="~/images/LookupTablesBlocks/RelationshipTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlQualificationTypes/DdlQualificationTypesListMaintenance"><img src="~/images/LookupTablesBlocks/QualificationTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlEmployeeTypes/DdlEmployeeTypesListMaintenance"><img src="~/images/LookupTablesBlocks/EmployeeTypes.png" style="width:115px;height:115px;; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlEmploymentStatuses/DdlEmploymentStatusesListMaintenance"><img src="~/images/LookupTablesBlocks/EmploymentStatus.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlPayFrequencies/DdlPayFrequenciesListMaintenance"><img src="~/images/LookupTablesBlocks/PayFrequency.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")DdlI9DocumentTypes/DdlI9DocumentTypesListMaintenance"><img src="~/images/LookupTablesBlocks/I-9DocumentTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px; "></a>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="row">        
+        <div class=" col-md-2">
+            <div class="col-md-offset-3 col-md-1>
+                <a style="margin:5px; margin-left:15px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+                   data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+                   href="@Url.Content("~/")DdlPhoneTypes/DdlPhoneTypesListMaintenance"><img src="~/images/LookupTablesBlocks/PhoneTypes.png" style="width:115px;height:115px; margin-top:10px; margin-bottom:10px;"></a>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+
+</div>
+
+<div id="FormEntryDiv">
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var formEntryDiv = $("#FormEntryDiv");
+
+
+        $("#matrix a").click(function (e) {
+            //e.preventDefault();
+            $('#matrix').hide(1500);
+            $('#closeButtonDiv').show(1500);
+            $('#FormEntryDiv').show(1500);
+
+        });
+
+        $("#closeButtonDiv").click(function (e) {
+            e.preventDefault();
+            $('#matrix').show(1500);
+            $('#closeButtonDiv').hide(1500);
+            $('#FormEntryDiv').hide(1500);
+        });
+
+        // this works if the button is in the partial view
+        $(document).on("click", "#closeButtonDiv", function (e) {
+            e.preventDefault();
+            $('#matrix').show(1500);
+            $('#closeButtonDiv').hide(1500);
+            $('#FormEntryDiv').hide(1500);
+        });
+    });
+
+        function OnBeginAjax()
+        {
+
+        }
+
+        function OnSuccessAjax(data) {
+            //
+            //alert("Got to On Success Ajax");
+        }
+
+        function OnFailureAjax(request, error) {
+            //alert("Got to On Failure Ajax");
+        }
+
+        function OnCompleteAjax(request, status) {
+            //alert("Got to On Complete Ajax");
+        }
+
+</script>

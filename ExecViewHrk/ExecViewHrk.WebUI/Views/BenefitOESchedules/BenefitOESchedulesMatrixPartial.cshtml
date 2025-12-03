@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "Benefit OE Schedules";
+    Layout = "~/Views/Shared/_MatrixBlockHeader2.cshtml";
+}
+
+
+@section TitleSectionOfHeader2
+{
+    <label>Benefit Open Enrollment Schedules</label>
+}
+
+@*Body*@
+
+@using (Html.BeginForm("BenefitOESchedules", "BenefitOESchedules", FormMethod.Post, new { role = "form", id = "PersonExaminationForm" }))
+{ 
+<div class="row ">
+    <div class="col-md-12">
+
+        <div class="form-group ">
+
+            @(Html.Kendo().Grid<ExecViewHrk.EfClient.BenefitOESchedule>()
+                        .Name("gridBenefitOESchedule")
+                        .Resizable(resize => resize.Columns(true))
+                        .Filterable()
+                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                        .ToolBar(toolbar => toolbar.Create())
+
+                        .Columns(columns =>
+                        {
+                            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(170);
+                            columns.Bound(c => c.BenefitOEScheduleId).Title("Id").Hidden();
+                            columns.ForeignKey(c => c.CompanyCodeId, (System.Collections.IEnumerable)ViewData["companycodesList"], "CompanyCodeId", "CompanyCodeDescription")
+                            .Title("Company Code").Width(150);
+                            columns.Bound(c => c.StartDate).Title("Start Date").Format("{0:MM.dd.yyyy}").Width(150); ;
+                            columns.Bound(c => c.EndDate).Title("End Date").Format("{0:MM.dd.yyyy}").Width(150); ;
+                            columns.Bound(c => c.EffectiveDate).Title("Effective Date").Format("{0:MM.dd.yyyy}").Width(150); ;
+                            columns.Bound(c => c.ScheduleGroup).Title("Schedule Group").Width(150);
+                        })
+                        .HtmlAttributes(new { style = "height: 480px;" })
+
+                        .Scrollable()
+                        .Groupable()
+                        .Sortable()
+                        .Selectable()
+
+                        .Pageable(pageable => pageable
+                            .Refresh(false)
+                            .PageSizes(true)
+                            .ButtonCount(5))
+                        .DataSource(dataSource => dataSource
+                            .Ajax()
+
+
+                        .Read(read => read.Action("BenefitOESchedulesList_Read", "BenefitOESchedules"))
+                        .Create(create => create.Action("BenefitOESchedulesList_Create", "BenefitOESchedules"))
+                        .Update(update => update.Action("BenefitOESchedulesList_Update", "BenefitOESchedules"))
+                        .Destroy(destroy => destroy.Action("BenefitOESchedulesList_Destroy", "BenefitOESchedules"))
+                        .Model(model =>
+                        {
+                            model.Id(p => p.BenefitOEScheduleId);
+                            model.Field(p => p.BenefitOEScheduleId).Editable(false);
+                            model.Field(p => p.CompanyCodeId);
+                            model.Field(p => p.StartDate);
+                            model.Field(p => p.EndDate);
+                            model.Field(p => p.EffectiveDate);
+                            model.Field(p => p.ScheduleGroup);
+                        }
+                                )
+                        .Batch(false)
+                        .Events(events =>
+                        {
+                            events.Error("refreshGrid");
+                            events.RequestEnd("gridRequestEnd");
+                        })
+                            )
+            )
+
+               <div>
+                    @Html.ValidationMessageFor(model => model)
+               </div>
+        </div>
+    </div>
+
+</div>
+}
+
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+   
+</script>
+
+
+

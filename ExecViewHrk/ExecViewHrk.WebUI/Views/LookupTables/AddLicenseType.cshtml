@@ -1,0 +1,78 @@
+﻿@model ExecViewHrk.EfClient.DdlLicenseType
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add LicenseType</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmLicenseType">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseLicenseType">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveLicenseType">Save</button>
+</div>
+<script>
+    $("#btnSaveLicenseType").click(function (e) {
+        if (!ValidateForm("frmLicenseType")) {
+            loading(false);
+            return;
+        }
+
+        if ($("#Description").val() == "") {
+            toastr.error("The Description field is required.");
+            return;
+        }
+        var postData = $("#frmLicenseType").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/DdlLicenseType_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                //formService.isSavingInProgress = false;
+                toastr.success("Record has been Saved");
+            }
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadLicenseTypeDropDown();
+                $("#btnCloseLicenseType").trigger('click');
+            }
+        });
+    });
+    function reloadLicenseTypeDropDown() {
+        var _selectedValue = $("#LicenseTypeId").val();
+        $.get($("#appBaseUrl").val() + "LookupTables/GetDdlLicenseList", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#LicenseTypeId").empty();
+                $("#LicenseTypeId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#LicenseTypeId").append("<option value='" + list[i].LicenseTypeId + "' selected >" + list[i].Description + "</option>");
+                    } else {
+                        $("#LicenseTypeId").append("<option value='" + list[i].LicenseTypeId + "' >" + list[i].Description + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>
+
+

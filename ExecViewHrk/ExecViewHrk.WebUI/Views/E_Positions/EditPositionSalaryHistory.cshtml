@@ -1,0 +1,98 @@
+﻿@model ExecViewHrk.Models.E_PositionSalaryHistorVm
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Salary Details</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                @using (Html.BeginForm("updatePositionSalaySource", "E_Positions", FormMethod.Post, new { role = "form", id = "E_PositionEditForm" }))
+                {
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Rate Type</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.RateTypeId, new SelectList((System.Collections.IEnumerable)ViewData["RatetypeList"], "keyvalue", "keydescription"), new { @class = "form-control", data_required = "Y" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Rate</label>
+                            @Html.TextBoxFor(model => model.PayRate, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Hours per PayPeriod</label>
+                            @Html.TextBoxFor(model => model.HoursPerPayPeriod, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Effective Date</label>
+                            @Html.TextBoxFor(model => model.EffectiveDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", id = "datepicker" })
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseSalaryEditHistory">Close</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light " onclick="updateRecord();">Done</button>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#RateType").append('<option selected=' + @ViewBag.RateType + '></option>');
+        $(document).on('focus', '#datepicker', function () {
+            $(this).datepicker();
+        });
+    });
+
+    function updateRecord() {
+        var postData = $("#E_PositionForm").serializeArray();
+        var postedData = $("#E_PositionEditForm").serializeArray();
+        var E_positionId = postData[2].value;
+        var RateType = postedData[0].value;
+        var PayRate = postedData[1].value;
+        var HoursPerPayPeriod = postedData[2].value;
+        var EffectiveDate = postedData[3].value;
+        if (RateType == "--Select--") {
+            toastr.error("Please enter Rate Type");
+            return;
+        }
+        if (PayRate == "") {
+            toastr.error("Please enter Pay Rate");
+            return;
+        }
+        if (HoursPerPayPeriod == "") {
+            toastr.error("Please enter Hours Per Pay Period");
+            return;
+        }
+        if (EffectiveDate == "") {
+            toastr.error("Please enter Effective Date");
+            return;
+        }
+        var formURL = $("#ApplicationUrl").val() + '/E_Positions/updatePositionSalaySource?E_PositionId=' + E_positionId + '&RateType=' + RateType + '&PayRate=' + PayRate + '&HoursPerPayPeriod=' + HoursPerPayPeriod + '&EffectiveDate=' + EffectiveDate;
+        $.post(formURL, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            } else {
+                $('#btnCloseSalaryEditHistory').click();
+                toastr.success('Record updated successfully.');
+                resetGrid("gridEmployeeSalPosition");
+                resetcontrol();
+            }
+        });
+    }
+    function resetcontrol() {
+        $('#PayRate').val('');
+        $('#HoursPerPayPeriod').val('');
+        $('#EffectiveDate').val('')
+    }
+</script>

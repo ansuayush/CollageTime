@@ -1,0 +1,318 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Time Card Configuration";
+    Layout = null;
+}
+@model ExecViewHrk.Models.TimeCardDisplayColumnVM
+
+@{
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Time Card Configuration</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("TimeCardColumnsList_Update", "TimeCardConfigurations", FormMethod.Post, new { role = "form", id = "TimeCardConfigurationsForm" }))
+            {
+              
+                <div class="row col-sm-12">
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Timecard Type</label>
+                            @Html.DropDownListFor(m => m.TimeCardTypeId, new SelectList((System.Collections.IEnumerable)ViewData["timecardTypesList"], "timeCardTypeId", "timeCardTypeCode_Description", Model.TimeCardTypeId), new { @disabled = "disabled", @class = "form-control" })
+                            @Html.HiddenFor(model => model.TimeCardTypeId, new { @Id = "hiddentimeCardTypeId" })
+                            @Html.ValidationSummary(true)
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="col-sm-2 p-t-20">
+                    <div class="form-group ">
+                        <div class="checkbox-color checkbox-primary">
+                            <input id="@Html.NameFor(x => x.ActualDate)" type="checkbox" value="@Model.ActualDate" @(Model.ActualDate ? "checked='checked'" : string.Empty)>
+                            <label for="ActualDate">Actual Date</label>
+                            @Html.HiddenFor(x => x.ActualDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 p-t-20">
+                    <div class="form-group ">
+
+                        <div class="checkbox-color checkbox-primary">
+                            <input id="@Html.NameFor(x => x.Day)" type="checkbox" value="@Model.Day" @(Model.Day ? "checked='checked'" : string.Empty)>
+                            <label for="Day">Day</label>
+                            @Html.HiddenFor(x => x.Day)
+                        </div>
+                    </div>
+                </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.DailyHours)" type="checkbox" value="@Model.DailyHours" @(Model.DailyHours ? "checked='checked'" : string.Empty)>
+                                <label for="DailyHours">Daily Hours</label>
+                                @Html.HiddenFor(x => x.DailyHours)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.HoursCodeId)" type="checkbox" value="@Model.HoursCodeId" @(Model.HoursCodeId ? "checked='checked'" : string.Empty)>
+                                <label for="HoursCodeId">Hours Code Id</label>
+                                @Html.HiddenFor(x => x.HoursCodeId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.Hours)" type="checkbox" value="@Model.Hours" @(Model.Hours ? "checked='checked'" : string.Empty)>
+                                <label for="Hours">Hours</label>
+                                @Html.HiddenFor(x => x.Hours)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.EarningsCodeId)" type="checkbox" value="@Model.EarningsCodeId" @(Model.EarningsCodeId ? "checked='checked'" : string.Empty)>
+                                <label for="EarningsCodeId">Earnings Code Id</label>
+                                @Html.HiddenFor(x => x.EarningsCodeId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.EarningsAmount)" type="checkbox" value="@Model.EarningsAmount" @(Model.EarningsAmount ? "checked='checked'" : string.Empty)>
+                                <label for="EarningsAmount">Earnings Amount</label>
+                                @Html.HiddenFor(x => x.EarningsAmount)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.TempDeptId)" type="checkbox" value="@Model.TempDeptId" @(Model.TempDeptId ? "checked='checked'" : string.Empty)>
+                                <label for="TempDeptId">Temp DeptId</label>
+                                @Html.HiddenFor(x => x.TempDeptId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.TempJobId)" type="checkbox" value="@Model.TempJobId" @(Model.TempJobId ? "checked='checked'" : string.Empty)>
+                                <label for="TempJobId">Temp JobId</label>
+                                @Html.HiddenFor(x => x.TempJobId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.TimeIn)" type="checkbox" value="@Model.TimeIn" @(Model.TimeIn ? "checked='checked'" : string.Empty)>
+                                <label for="TimeIn">Time In</label>
+                                @Html.HiddenFor(x => x.TimeIn)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.LunchOut)" type="checkbox" value="@Model.LunchOut" @(Model.LunchOut ? "checked='checked'" : string.Empty)>
+                                <label for="LunchOut">Lunch Out</label>
+                                @Html.HiddenFor(x => x.LunchOut)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.LunchBack)" type="checkbox" value="@Model.LunchBack" @(Model.LunchBack ? "checked='checked'" : string.Empty)>
+                                <label for="LunchBack">Lunch Back</label>
+                                @Html.HiddenFor(x => x.LunchBack)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.TimeOut)" type="checkbox" value="@Model.TimeOut" @(Model.TimeOut ? "checked='checked'" : string.Empty)>
+                                <label for="TimeOut">Time Out</label>
+                                @Html.HiddenFor(x => x.TimeOut)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.Total)" type="checkbox" value="@Model.Total" @(Model.Total ? "checked='checked'" : string.Empty)>
+                                <label for="Total">Total</label>
+                                @Html.HiddenFor(x => x.Total)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.IsApproved)" type="checkbox" value="@Model.IsApproved" @(Model.IsApproved ? "checked='checked'" : string.Empty)>
+                                <label for="IsApproved">Is Approved</label>
+                                @Html.HiddenFor(x => x.IsApproved)
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="col-sm-2 p-t-20">
+                        <div class="form-group ">
+
+                            <div class="checkbox-color checkbox-primary">
+                                <input id="@Html.NameFor(x => x.AutoFill)" type="checkbox" value="@Model.AutoFill" @(Model.AutoFill ? "checked='checked'" : string.Empty)>
+                                <label for="AutoFill">Auto Fill</label>
+                                @Html.HiddenFor(x => x.AutoFill)
+                            </div>
+                        </div>
+                    </div>*@
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnTimeCardConfigurationsAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+    });
+
+    function newKendoWindow(title, onClose) {
+        var obj = {
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: title,
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+            close: onClose
+        }
+        return obj;
+    };
+
+
+    $("#btnTimeCardConfigurationsAjax").click(function (e) {
+        
+        e.preventDefault();
+        var postData = $("#TimeCardConfigurationsForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "TimeCardConfigurations/TimeCardColumnsList_Update";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonTestId = $("#hiddentimeCardTypeId").val();
+                //resetGrid("gridPersonTest");
+                //$("#SelectedPersonID").val(data.PersonId);
+                LoadMenu("TimeCardConfigurationsMatrixPartial", "TimeCardConfigurations");
+
+                $("#btnTimeCardConfigurationsAjax").parent().find(".md-close").click();
+
+                if (_oldhiddenPersonTestId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+    //var licenseTypesWindow = $("#licenseTypesWindow");
+    //if (!licenseTypesWindow.data("kendoWindow")) {
+    //    licenseTypesWindow.kendoWindow(
+    //        newKendoWindow("License Types", onCloseLicensesWindow)
+    //    );
+    //}
+
+    //function onCloseLicensesWindow() {
+    //    resetKenoComboBox('LicenseDescription');
+    //    resetGrid('gridDdlLicenseType');
+    //}
+
+    //$("#btnAddLicenseType").click(function (e) {
+
+    //    e.preventDefault();
+    //    var kendoWindow = $("#licenseTypesWindow").data("kendoWindow");
+    //    $('.k-grid-cancel').click();
+    //    kendoWindow.center();
+    //    kendoWindow.open();
+    //});
+
+    //var statesWindow = $("#statesWindow");
+    //if (!statesWindow.data("kendoWindow")) {
+    //    statesWindow.kendoWindow(
+    //        newKendoWindow("States", onCloseStateWindow)
+    //    );
+    //}
+
+    //function onCloseStateWindow() {
+    //    resetKenoComboBox('StateTitle');
+    //    resetGrid('gridDdlState');
+    //}
+
+    //$("#btnAddState").click(function (e) {
+    //    e.preventDefault();
+    //    var kendoWindow = $("#statesWindow").data("kendoWindow");
+    //    $('.k-grid-cancel').click();
+    //    kendoWindow.center();
+    //    kendoWindow.open();
+    //});
+
+    //var countriesWindow = $("#countriesWindow");
+    //if (!countriesWindow.data("kendoWindow")) {
+    //    countriesWindow.kendoWindow(
+    //        newKendoWindow("Countries", onClosecountriesWindow)
+    //    );
+    //}
+
+    //function onClosecountriesWindow() {
+    //    resetKenoComboBox('CountryDescription');
+    //    resetGrid('gridDdlCountry');
+    //}
+
+    //$("#btnAddCountry").click(function (e) {
+    //    e.preventDefault();
+    //    var kendoWindow = $("#countriesWindow").data("kendoWindow");
+    //    $('.k-grid-cancel').click();
+    //    kendoWindow.center();
+    //    kendoWindow.open();
+    //});
+</script>

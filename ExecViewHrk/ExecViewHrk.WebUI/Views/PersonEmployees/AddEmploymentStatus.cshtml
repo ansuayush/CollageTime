@@ -1,0 +1,72 @@
+﻿@model ExecViewHrk.EfClient.DdlEmploymentStatus
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Employment Status</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmEmploymentStatus">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseEmploymentStatus">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveEmploymentStatus">Save</button>
+</div>
+<script>
+    $("#btnSaveEmploymentStatus").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmEmploymentStatus")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmEmploymentStatus").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonEmployees/DdlEmploymentStatusList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadEmployeStatusDropDown();
+                $("#btnCloseEmploymentStatus").trigger('click');
+            }
+        });
+    });
+    function reloadEmployeStatusDropDown() {
+        var _selectedValue = $("#testEmpStatusId").val();
+        $.get($("#appBaseUrl").val() + "PersonEmployees/GetEmployeStatusList", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#testEmpStatusId").empty();
+                $("#testEmpStatusId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#testEmpStatusId").append("<option value='" + list[i].Code + "' selected >" + list[i].Description + "</option>");
+                    } else {
+                        $("#testEmpStatusId").append("<option value='" + list[i].Code + "' >" + list[i].Description + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>
+

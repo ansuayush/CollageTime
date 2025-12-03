@@ -1,0 +1,382 @@
+﻿
+@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Person ADA";
+    Layout = null;
+}
+
+@model ExecViewHrk.WebUI.Models.PersonAdaVm
+
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            @Html.Action("PersonRoloDex", "Person")
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <section class="panels-wells edit-block">
+                            @Html.ValidationSummary(true)
+
+                            <div class="panel panel-info">
+
+                                <div class="panel-heading  ">
+
+                                    <div class="row">
+
+                                        <div class="col-md-6 ">
+                                            Person ADA  <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                                            <div style="color:red; font-size:x-small">* denotes required field</div>
+
+                                        </div>
+                                        <div class="col-md-6 ">
+
+                                            @using (Html.BeginForm("PersonAdaSelectedIndexChanged", "PersonAda", FormMethod.Post, new { role = "form", id = "PersonAdaFormDdl" }))
+                {
+                <label>My Accommodations</label>
+
+                @(Html.Kendo().DropDownListFor(model => model.PersonAdaId)
+                                            .Name("PersonAdaIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PersonAdaDescription")
+                                            .DataValueField("PersonAdaId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonAdaList", "PersonAda").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                  });
+                                                  //.ServerFiltering(true);
+                                              })
+                                            .Value(@Model.PersonAdaId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonAdaDdl")
+                                                    .Select("onSelectPersonAdaDdl");
+                                            })
+                )
+                
+                
+                }
+
+
+                                            <div id="noAdaRecordsFound" style="color:red; font-size:x-small">no records found</div>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="formDiv" class="panel-body">
+
+                                    @*need this for validation*@
+                                    @using (Html.BeginForm("PersonAda", "PersonAda", FormMethod.Post, new { role = "form", id = "PersonAdaForm" }))
+        {
+        @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+        @Html.HiddenFor(model => model.PersonAdaId, new { id = "hiddenPersonAdaId" })
+        <div class="row ">
+
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="col-md-5 ">
+                        <div class="form-group ">
+                            <div>
+                                <label><span style="color:red">*</span>Accommodation Type</label>
+                            </div>
+                            @(Html.Kendo().ComboBox()
+                                        .Name("AccommodationDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("AccommodationDescription")
+                                        .DataValueField("AccommodationTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetAccommodationTypes", "LookupTables").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Accommodation Type")
+                            )
+
+                            @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                <button id="btnAddAccommodationType" class="btn btn-info">+</button>
+                                }
+
+
+                            <div>
+                                @Html.ValidationMessageFor(model => model.AccommodationDescription)
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <div>
+                                <label><span style="color:red">*</span>Associated Disability</label>
+                            </div>
+                            @(Html.Kendo().ComboBox()
+                                        .Name("AssociatedDisabilityDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("AssociatedDisabilityDescription")
+                                        .DataValueField("AssociatedDisabilityTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetDisabilityTypes", "LookupTables").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true); //If true the DataSource will not filter the data on the client.
+                                          })
+                                        .Placeholder("select a Disability Type")
+                            )
+
+                            @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                <button id="btnAddDisabilityType" class="btn btn-info">+</button>
+                                }
+
+                            <div>
+                                @Html.ValidationMessageFor(model => model.AssociatedDisabilityDescription)
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Requested Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.RequestedDate)
+                                        .Name("RequestedDate")
+                    .Min(new DateTime(1900, 1, 1))
+                    .Max(new DateTime(2100, 12, 31))
+                                )
+                                @Html.ValidationMessageFor(x => x.RequestedDate, "The field Requested Date must be a date.")
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>Provided Date</label>
+                            <div>
+                                @(Html.Kendo().DatePickerFor(x => x.ProvidedDate)
+                                       .Name("ProvidedDate")
+                    .Min(new DateTime(1900, 1, 1))
+                    .Max(new DateTime(2100, 12, 31))
+                                )
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(x => x.ProvidedDate, "The field Provided Date must be a date.")
+                            </div>
+                        </div>
+
+                        <div>
+                            <label>Estimated Cost</label>
+                            <div>
+                                @Html.Kendo().NumericTextBoxFor(x => x.EstimatedCost).Min(0)
+                                @Html.ValidationMessageFor(x => x.EstimatedCost)
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <label>Actual Cost</label>
+                            <div>
+                                @Html.Kendo().NumericTextBoxFor(x => x.ActualCost).Min(0)
+                                @Html.ValidationMessageFor(x => x.ActualCost)
+                            </div>
+
+                        </div>
+
+                        <div class=" form-group " style="margin-top:20px">
+                            <label style="vertical-align:middle; ">Accommodation Provided</label>
+                            @Html.EditorFor(x => x.AccommodationProvided, new { @class = "form-control", style = "width:14px; height:14px; display:inline-block; margin-left: 10px; margin-top:20px" })
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-offset-1 col-md-5">
+
+                        <div>
+
+                            <div class="form-group ">
+                                <label>Notes</label>
+                                @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                @Html.ValidationMessageFor(x => x.Notes)
+                            </div>
+
+                            <div class=" form-group ">
+                                <label style="width:100px">Entered By:</label>
+                                <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                            </div>
+
+                            <div class=" form-group ">
+                                <label style="width:100px">Entered Date:</label>
+                                <label id="enteredDateLabel" style="font-weight:normal;"></label>
+                            </div>
+
+                            <div class=" form-group ">
+                                <label style="width:100px">Modified By:</label>
+                                <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                            </div>
+
+                            <div class=" form-group ">
+                                <label style="width:100px">Modified Date:</label>
+                                <label id="modifiedDateLabel" style="font-weight:normal;"></label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <div class="form-group">
+
+                    <input id="btnSavePersonAdaAjax" type="button" value="Save" class="btn btn-info" />
+                    <input id="btnClearPersonAdaAjax" type="button" value="Clear" class="btn btn-info" />
+                    <input id="btnDeletePersonAdaAjax" type="button" value="Delete" class="btn btn-info" />
+                </div>
+            </div>
+        </div>
+        }
+
+
+                                </div>
+
+
+
+
+                                <div id="accommodationTypesWindow" style="display:none">
+                                    <div id="accomodationTypesContent">
+                                        @*@Html.Partial("~/Views/LookupTables/DdlAccommodationTypesPartial.cshtml")*@
+                                        @Html.Action("DdlAccommodationTypesPartial", "LookupTables")
+
+                                    </div>
+                                </div>
+
+
+
+                                <div id="disabilityTypesWindow" style="display:none">
+                                    <div id="disabilityTypesContent">
+                                        @Html.Partial("~/Views/LookupTables/DdlDisabilityTypesPartial.cshtml")
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    $("#enteredDateLabel").text(convertUTCDateToLocalDate(new Date('@Model.EnteredDate')));
+    $("#modifiedDateLabel").text(convertUTCDateToLocalDate(new Date('@Model.ModifiedDate')));
+
+    var accommodationTypesWindow = $("#accommodationTypesWindow");
+    if (!accommodationTypesWindow.data("kendoWindow")) {
+        accommodationTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Accommodation Types",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseAccommodationsWindow
+        });
+    }
+
+    function onCloseAccommodationsWindow() {
+        resetKenoComboBox("AccommodationDescription");
+    }
+
+
+
+    var disabilityTypesWindow = $("#disabilityTypesWindow");
+    if (!disabilityTypesWindow.data("kendoWindow")) {
+        disabilityTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Disability Types",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseDisabilityWindow
+        });
+    }
+
+    function onCloseDisabilityWindow() {
+        resetKenoComboBox("AssociatedDisabilityDescription");
+    }
+
+
+    $("#btnAddAccommodationType").click(function (e) {
+        e.preventDefault();
+        if ($("#gridDdlAccommodationType").find(".k-grid-update").length > 0) {
+            resetGrid("gridDdlAccommodationType");
+        }
+        var kendoWindow = $("#accommodationTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    $("#btnAddDisabilityType").click(function (e) {
+        e.preventDefault();
+        if ($("#disabilityGrid").find(".k-grid-update").length > 0) {
+            resetGrid("disabilityGrid");
+        }
+        var kendoWindow = $("#disabilityTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+

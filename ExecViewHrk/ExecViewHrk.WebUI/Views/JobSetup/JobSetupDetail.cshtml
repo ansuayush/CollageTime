@@ -1,0 +1,195 @@
+﻿@model ExecViewHrk.WebUI.Models.JobSetupDetail
+@{
+    ViewBag.Title = "Postions";
+    Layout = null;
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Job Setup Detail <span class="pull-right icon-edit-block m-l-30">@*<i class="fa fa-question-circle f-26 m-r-10"></i>*@ <i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+                <div class="form-group p-t-35 v-top pull-right">                
+                        <div class="col-md-9 p-0">
+                            <button type="button" onclick='LoadMenu("JobSetupList", "JobSetup")' class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal">
+                                <i></i><span class="m-l-10">Back</span>
+                            </button>
+                        </div>               
+                </div>
+            </div>
+           
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header">
+                                    <h5 class="card-header-text"><i class="fa fa-id-card-o f-20 m-r-5"></i> Title</h5>
+                                    <span class="pull-right icon-edit-block" onclick="openJobSetuptNewpopup(@Model.Jobid)"><i class="fa fa-pencil f-20 txt-primary"></i></span>
+                                </div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 bg-dark-success profile-block-tag">
+                                            <h6 class="f-14 txt-white">@Model.title</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Job Code</label>
+                                                    <span class="f-13 block f-w-600">@Model.JobCode</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Job Title</label>
+                                                    <span class="f-13 block f-w-600">@Model.title</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Job Class</label>
+                                                    <span class="f-13 block f-w-600">@Model.jobClassIDDescription</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">EEO Job Code</label>
+                                                    <span class="f-13 block f-w-600">@Model.eeoJobCodeIDDescription</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">EEO Job Training</label>
+                                                    <span class="f-13 block f-w-600">@Model.eeoJobTrainingStatusIDDescription</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Worker's Compensation</label>
+                                                    <span class="f-13 block f-w-600">@Model.workersCompensationIDDescription</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Job Family</label>
+                                                    <span class="f-13 block f-w-600">@Model.JobFamilyIdDescription</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">FLSA</label>
+                                                    <span class="f-13 block f-w-600">@Model.FLSAIDDescription</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-flag-o f-20 m-r-5"></i> Unions </h5><span class="pull-right icon-edit-block myButton"><i class="fa fa-pencil f-20 txt-primary" onclick="openJobSetuptNewpopup(@Model.Jobid)"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 bg-dark-warning profile-block-tag">
+                                            <h6 class="f-14 txt-white">@Model.unionIDDescription</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Unions</label>
+                                                    <span class="f-13 block f-w-600">@Model.unionIDDescription</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Created Date</label>
+                                                    @if (Model.createdDate != null)
+                                                    {
+                                                    <span class="f-13 block f-w-600">@Model.createdDate.Value.ToString("MM/dd/yyyy")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="f-13 block f-w-600">@Model.createdDate</span>
+                                                    }</div>
+                                                <div class="form-group">
+                                                    <label class="m-0">End Date</label>
+                                                    @if (Model.endDate != null)
+                                                    {
+                                                        <span class="f-13 block f-w-600">@Model.endDate.Value.ToString("MM/dd/yyyy")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="f-13 block f-w-600">@Model.endDate</span>
+                                                    }
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Last Evaluation Date</label>
+                                                    @if (Model.lastEvaluationDate != null)
+                                                    {
+                                                        <span class="f-13 block f-w-600">@Model.lastEvaluationDate.Value.ToString("MM/dd/yyyy")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="f-13 block f-w-600">@Model.lastEvaluationDate</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Job Description</label>
+                                                    <span class="f-13 block f-w-600">@Model.JobDescription </span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Qualification Requirements</label>
+                                                    <span class="f-13 block f-w-600">@Model.requirements</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Salary Range</label>
+                                                    <span class="f-13 block f-w-600">@Model.salaryRange</span>
+                                                </div>
+                                                @*<div class="form-group">
+                                                    <label class="m-0">Notes</label>
+                                                    <span class="f-13 block f-w-600">@Model.Notes</span>
+                                                </div>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-comments-o f-20 m-r-5"></i> Notes</h5><span class="pull-right icon-edit-block myButton"><i class="fa fa-pencil f-20 txt-primary" onclick="openJobSetuptNewpopup(@Model.Jobid)"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 bg-dark-primary profile-block-tag">
+
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label class="m-0">Notes</label>
+                                                    <span class="f-13 block f-w-600">@Model.Notes</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+        $(document).ready(function () {
+            pageSetup();
+        });
+
+      
+</script>
+

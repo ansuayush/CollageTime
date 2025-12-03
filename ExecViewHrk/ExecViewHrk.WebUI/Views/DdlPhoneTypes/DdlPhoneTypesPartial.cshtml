@@ -1,0 +1,47 @@
+﻿<div class="theme-grid">
+    @(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlPhoneType>()
+                .Name("gridDdlPhoneType")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridEdit");
+                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridDelete");
+            }).Width(70);
+            columns.Bound(c => c.PhoneTypeId).Visible(false);
+            columns.Bound(c => c.Code);
+            columns.Bound(c => c.Description);
+            columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'Yes' : 'No' #"); ;
+
+        })
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .Events(e => e.DataBound("gridDataBound"))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                        .Read(read => read.Action("DdlPhoneTypesList_Read", "DdlPhoneTypes"))
+                        .Create(create => create.Action("DdlPhoneTypesList_Create", "DdlPhoneTypes"))
+                        .Update(update => update.Action("DdlPhoneTypesList_Update", "DdlPhoneTypes"))
+                        .Destroy(destroy => destroy.Action("DdlPhoneTypesList_Destroy", "DdlPhoneTypes"))
+            .Model(model =>
+                    {
+                        model.Id(p => p.PhoneTypeId);
+                        model.Field(p => p.PhoneTypeId).Editable(false);
+                        model.Field(p => p.Code);
+                        model.Field(p => p.Description);
+                    }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+    )
+
+</div>

@@ -1,0 +1,160 @@
+﻿@model ExecViewHrk.EfClient.EmployeeForecastVm
+
+<script type="text/javascript">
+    var EmpForecastEdit = function (e) {
+        e.preventDefault();
+        var grid = this;
+        var row = $(e.currentTarget).closest("tr");
+        var data = grid.dataItem(row);
+        openEmployeeForecastPopup(data);
+    }
+    var openEmployeeForecastPopup = function (data) {
+        var formURL = $("#ApplicationUrl").val() + '/EmployeeForecast/EditEmployeeForecast?fileNumber=' + data.FileNumber;
+        $("#EditDetailDiv .md-content").html("");
+        $("#EditDetailDiv .md-content").load(formURL);
+        $('#EditDetailDiv').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv').addClass('md-show');
+    }
+    $(function () {
+        var regExp = /[a-z]/i;
+        $('#txtforecastpercent').on('keydown', function (e) {
+            var value = String.fromCharCode(e.which) || e.key;
+            // No letters
+            if (regExp.test(value)) {
+                toastr.error('Please enter percent in number');
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+
+    var validate = function () {
+        if ($('#txtforecastpercent').val() == '') {
+            toastr.error('Please enter forecast percent to increase');
+            return false;
+        }
+        else return true;
+    }
+
+
+</script>
+@using (Html.BeginForm("EmployeeForeCastMain", "EmployeeForecast", FormMethod.Post, null))
+{
+    <div class="container-fluid">
+        <div class="row p-t-15">
+            <div class="col-lg-12 col-md-12">
+
+                <div class="col-lg-12 col-md-12 p-0">
+                    <div class="card-block p-10 m-b-10 b-b-muted">
+                        <div class="col-md-3 p-0">
+                            <h4>
+                                Employee Forecast
+                            </h4>
+                        </div>
+
+                        <div class="col-md-9 p-0">
+                            <button type="submit" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton" name="submit" value="clearall">
+                                <span class="m-l-10">Clear ForeCast All</span>
+                            </button>  &nbsp;&nbsp;
+
+                            <span> ForeCast %</span><input type="text" id="txtforecastpercent" name="allempforecastpercentval" />  &nbsp;&nbsp;
+                            <button type="submit" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton" onclick="return validate()" name="submit" value="updateall">
+                                <span class="m-l-10">Update ForeCast All</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 p-0">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="theme-grid">
+                                @(Html.Kendo().Grid<ExecViewHrk.EfClient.EmployeeForecastVm>()
+                                    .Name("gridEmpForecast")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+                                    .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                    .Columns(columns =>
+                                    {
+                                        columns.Command(command =>
+                                        {
+                                            //command.Edit().UpdateText("<i class='fa fa-pencil txt-primary f-18'></i>").CancelText("C").Text("Edit");
+                                            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("EmpForecastEdit");
+
+                                        }).Width(70);
+                                        columns.Bound(c => c.PayFrequencyId).Visible(false);
+                                        columns.Bound(c => c.Lastname).Title("Last Name"); ;
+                                        columns.Bound(c => c.Firstname).Title("First Name"); ;
+                                        columns.Bound(c => c.Positiontitle).Title("Position Title");
+                                        columns.Bound(c => c.FileNumber).Title("ID");
+                                        columns.Bound(c => c.HoursPerPayPeriod).Title("BiHrs");
+                                        columns.Bound(c => c.StartDate).Title("Last Change").ClientTemplate("#= kendo.toString(StartDate, \"MM/dd/yyyy\") #");
+                                        columns.Bound(c => c.RateTypeId).Title("CRATE");
+                                        columns.Bound(c => c.NumberOfDays).Title("Number Of Days").ClientFooterTemplate("Total : #=sum#");
+                                        columns.Bound(c => c.NewRate).Title("NYF Rate");
+                                        columns.Bound(c => c.Wages).Title("Wages");
+                                        columns.Bound(c => c.AnnualSalary).Title("Annual Salary").ClientFooterTemplate("Total : #=sum#"); ;
+                                        columns.Bound(c => c.IncreasePercent).Title("% Increase").ClientFooterTemplate("Total : #=sum#"); ;
+                                        columns.Bound(c => c.NewAnnualSalary).Title("New Annual Salary").ClientFooterTemplate("Total : #=sum#"); ;
+                                        columns.Bound(c => c.ePosSalHistoryId).Visible(false);
+                                    })
+                                    .Scrollable(scrollable => scrollable.Height("Auto"))
+                                    .Sortable()
+                                    .Selectable()
+                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                    .Events(e => e.DataBound("gridDataBound"))
+                                    .DataSource(dataSource => dataSource.Ajax()
+                                                    .Read(read => read.Action("EmployeeForecastList", "EmployeeForecast"))
+                                                    .Create(create => create.Action("DdlSkillsList_Create", "DdlSkills"))
+                                                    .Update(update => update.Action("DdlSkillsList_Update", "DdlSkills"))
+                                                    .Destroy(destroy => destroy.Action("DdlSkillsList_Destroy", "DdlSkills"))
+                                                    .Model(model =>
+                                                    {
+                                                        model.Id(p => p.PayFrequencyId);
+                                                        model.Field(p => p.Lastname).Editable(false);
+                                                        model.Field(p => p.Firstname).Editable(false);
+                                                        model.Field(p => p.Positiontitle).Editable(false);
+                                                        model.Field(p => p.FileNumber);
+                                                        model.Field(p => p.HoursPerPayPeriod);
+                                                        model.Field(p => p.StartDate);
+                                                        model.Field(p => p.RateTypeId).Editable(false);
+                                                        model.Field(p => p.NumberOfDays).Editable(false);
+                                                        model.Field(p => p.NewRate).Editable(false);
+                                                        model.Field(p => p.Wages).Editable(false);
+                                                        model.Field(p => p.AnnualSalary).Editable(false);
+                                                        model.Field(p => p.IncreasePercent);
+                                                        model.Field(p => p.NewAnnualSalary).Editable(false);
+                                                        model.Field(p => p.ePosSalHistoryId).Editable(false);
+                                                    }
+
+
+                                                )
+                                    .Aggregates(aggregates =>
+                                    {
+                                        aggregates.Add(p => p.NumberOfDays).Sum();
+                                        aggregates.Add(p => p.AnnualSalary).Sum();
+                                        aggregates.Add(p => p.IncreasePercent).Sum();
+                                        aggregates.Add(p => p.NewAnnualSalary).Sum();
+                                    })
+                                    .PageSize(10)
+                                        .Batch(false)
+                                        .Events(events =>
+                                        {
+                                            events.Error("refreshGrid");
+                                            events.RequestEnd("gridRequestEnd");
+                                        })
+
+                                    )
+                                )
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+}

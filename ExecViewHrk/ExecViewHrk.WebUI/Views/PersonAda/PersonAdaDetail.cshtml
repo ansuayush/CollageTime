@@ -1,0 +1,174 @@
+﻿
+@model ExecViewHrk.WebUI.Models.PersonAdaVm
+@using (Html.BeginForm("ADASaveAjax", "PersonAda", FormMethod.Post, new { role = "form", id = "AdaForm" }))
+{
+    @Html.HiddenFor(model => model.PersonAdaId)
+    @Html.HiddenFor(model => model.PersonId)
+    @Html.ValidationSummary(true)
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">ADA Detail</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Associated Disability</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.DisabilityTypeId, new SelectList(Model.DisabilityList, "DisabilityTypeId", "Description", Model.DisabilityTypeId), new { @class = "form-control input-sm" , data_required = "Y" })
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal"onclick="quickAdd(event,'Disability');">
+                                        <span class="fa fa-plus"></span>
+                                    </span>
+                                }
+                                @Html.ValidationMessageFor(x => x.DisabilityTypeId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Accommodation Type</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(m => m.AccommodationTypeId, new SelectList(Model.AccomodationList, "AccommodationTypeId", "Description", Model.AccommodationTypeId), new { @class = "form-control input-sm", data_required = "Y" })
+                                @Html.ValidationMessageFor(x => x.AccommodationTypeId)
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'Accomodation');">
+                                        <span class="fa fa-plus"></span>
+                                    </span>
+                                }
+                                @Html.ValidationMessageFor(x => x.AccommodationTypeId)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Requested Date</label>
+                            @Html.TextBoxFor(m => m.RequestedDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control ", @data_dateformat = "mm/dd/yy", @data_type = "smalldate" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Provided Date</label>
+                            @Html.TextBoxFor(m => m.ProvidedDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", @data_dateformat = "mm/dd/yy", @data_type = "smalldate" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Estimated Cost</label>
+                            @Html.TextBoxFor(m => m.EstimatedCost, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Actual Cost</label>
+                            @Html.TextBoxFor(m => m.ActualCost, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.AccommodationProvided == true)
+                                {
+                                    <input id="@Html.NameFor(x => x.AccommodationProvided)" type="checkbox" value="@Model.AccommodationProvided" checked="checked">
+                                }
+                                else
+
+                                {
+                                    <input id="@Html.NameFor(x => x.AccommodationProvided)" type="checkbox" value="@Model.AccommodationProvided">
+                                }
+                                @Html.LabelFor(x => x.AccommodationProvided, new { id = "Acc" })
+                                @Html.HiddenFor(x => x.AccommodationProvided)
+                            </div>
+                        </div>
+                    </div>            
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Notes</label>
+                            @Html.TextBoxFor(m => m.Notes, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="p-15 text-right">
+                <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+                <input type="button" id="BtnAdaSave" name="Done" value="Done" class="btn btn-primary">
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $("#AdaForm *").filter(':input').not("input[type=hidden]").each(function () {
+            $(this).attr("onchange", "AdaForm(this)");
+        });
+        $('#DisabilityTypeId option[description=' + @Model.DisabilityTypeId +']').prop('selected', true);
+        $('#AccommodationTypeId option[value=' + @Model.AccommodationTypeId +']').prop('selected', true);
+        $("#Acc").html("Accommodation Provided");
+    });
+
+    $("#BtnAdaSave").click(function (e) {
+        e.preventDefault();
+        loading(true)
+        var form = $("#AdaForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            loading(false)
+            return;
+        }
+
+        if (!ValidateForm("AdaForm")) {
+            loading(false);
+            return;
+        }
+
+        if (!CompareDates($("#RequestedDate").val(), $("#ProvidedDate").val())) {
+            toastr.error("Provided Date should greater than Requested Date");
+            loading(false)
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#AdaForm").serializeArray();
+
+        var formURL = appBaseUrl + "PersonAda/PersonAdaSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                if (data.succeed == false)
+                    toastr.error(data.Message);
+                else {
+                    if (data.recordIsNew == true) {
+                        LoadMenu("ADAList", "PersonAda")
+                        $("#BtnAdaSave").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.saved);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    }
+                    else {
+                        var Adadata = { PersonAdaId: data.personAdaVm.PersonAdaId , PersonId:data.personAdaVm.PersonId};
+                        LoadMenu("ADAList", "PersonAda")
+                        $("#BtnAdaSave").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.updated);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    }
+                }
+            }
+            else {
+                toastr.error(data.Message);
+            }
+        });
+    });
+</script>

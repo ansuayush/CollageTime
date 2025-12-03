@@ -1,0 +1,121 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonAddressVm
+@{
+    Layout = null;
+    ViewBag.Title = "Person Address";
+
+}
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Addresses List</h5>
+    </div>
+    <div class="card-block">
+        <div class="row p-t-15">
+            <div class="col-lg-12 col-md-12">
+                <div class="col-lg-12 col-md-12 p-0">
+                    <div class="card-block p-10 m-b-10 b-b-muted">
+                        <div class="col-md-9 p-0">
+                            <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal myButton" onclick="addPersonAddress()">
+                                <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 p-0">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="theme-grid">
+                                @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.PersonAddressVm>()
+                                    .Name("gridPersonAddress")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+                                    .Columns(columns =>
+                                    {
+                                        columns.Command(command =>
+                                        {
+                                            command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("grdAddressEdit");
+                                            command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("grdAddressDelete");
+                                        }).Width(70);
+                                        columns.Bound(c => c.PersonId).Visible(false);
+                                        columns.Bound(c => c.PersonAddressId).Visible(false);
+                                        columns.Bound(c => c.AddressDescription).Title("Address Type");
+                                        columns.Bound(c => c.StateTitle).Title("State");
+                                        columns.Bound(c => c.CountryDescription).Title("Country");
+                                        columns.Bound(c => c.AddressLineOne).Title("Address Line 1");
+                                        columns.Bound(c => c.AddressLineTwo).Title("Address Line 2");
+                                        columns.Bound(c => c.City).Title("City");
+                                        columns.Bound(c => c.ZipCode).Title("Zip Code");
+                                        columns.Bound(c => c.CheckPayrollAddress).Title("Check Payroll Address");
+                                        columns.Bound(c => c.CorrespondenceAddress).Title("Correspondence Address");
+                                        columns.Bound(c => c.IsPrimaryAddress).ClientTemplate("#= IsPrimaryAddress ? 'Yes' : 'No' #").Title("IsPrimary"); 
+                                    })
+                                    .Sortable()
+                                    .Selectable()
+                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                    .DataSource(dataSource => dataSource.Ajax()
+                                                    .Read(read => read.Action("PersonAddressList_Read", "PersonAddresses"))
+                                                    .Model(model =>
+                                                    {
+                                                        model.Id(p => p.PersonId);
+                                                        model.Id(p => p.PersonAddressId);
+                                                        model.Field(p => p.PersonAddressId);
+                                                        model.Id(p => p.AddressTypeId);
+                                                        model.Field(p => p.StateTitle);
+                                                        model.Field(p => p.CountryId);
+                                                        model.Field(p => p.AddressLineOne);
+                                                        model.Field(p => p.AddressLineTwo);
+                                                        model.Field(p => p.City);
+                                                        model.Field(p => p.ZipCode);
+                                                        model.Field(p => p.CheckPayrollAddress);
+                                                        model.Field(p => p.CorrespondenceAddress);
+                                                        model.Field(p => p.IsPrimaryAddress);
+                                                    }
+                                                )
+                                                .PageSize(10)
+                                        .Batch(false)
+                                        .Events(events =>
+                                        {
+                                            events.Error("refreshGrid");
+                                            events.RequestEnd("gridRequestEnd");
+                                        })
+                                    )
+                                )
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Close</button>
+</div>
+<style>
+    .k-grid-header th.k-header {
+        min-width: 150px;
+    }
+
+    .k-grid {
+        overflow-x: scroll;
+    }   
+   
+</style>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

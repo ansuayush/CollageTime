@@ -1,0 +1,99 @@
+﻿@model ExecViewHrk.Models.TimeOffVM
+
+@*<script src="~/Scripts/application/AllEmp_TimeOffRequestsMatrixPartial.js"></script>*@
+@Html.ValidationSummary(true)
+
+@using (Html.BeginForm("AddResposeTimeOffRequest_Ajax", "TimeOffRequests", FormMethod.Post, new { role = "form", id = "TimeOffRequestsByDateFormDdl" }))
+{
+    <form id="TimeOffRequestsByDate">
+        <div class="form-group" style="margin-top: 3em">
+            @if (Model.TimeOffEmpDetailsList != null)
+            {
+                <div class="table-responsive">
+                    <table class="table" style="font-size:14px;">
+                        @if (Model.TimeOffEmpDetailsList.Count() != 0)
+                        {
+                            for (int i = 0; i < Model.TimeOffEmpDetailsList.Count(); i++)
+                            {
+                                @Html.HiddenFor(model => Model.TimeOffEmpDetailsList[i].TimeOffRequestId)
+                                @Html.HiddenFor(model => Model.TimeOffEmpDetailsList[i].TimeOffRequest)
+                                @Html.HiddenFor(model => Model.TimeOffEmpDetailsList[i].EmployeeId)
+                                @Html.HiddenFor(model => Model.TimeOffEmpDetailsList[i].CompanyCodeId)
+                                <tr>
+                                    <td style="vertical-align:middle">
+                                        @Html.TextBoxFor(m => Model.TimeOffEmpDetailsList[i].PersonName, new { @readonly = "readonly" })
+
+                                        @*@Html.LabelFor(m=>Model.TimeOffEmpDetailsList[i].PersonName, Model.TimeOffEmpDetailsList[i].PersonName, new { })*@
+
+                                    </td>
+                                    <td style="vertical-align:middle">
+                                        @Html.TextBoxFor(m => Model.TimeOffEmpDetailsList[i].HoursCodeCode, new { @readonly = "readonly" })
+                                    </td>
+                                    <td style="vertical-align:middle">
+                                        @Html.TextBoxFor(m => Model.TimeOffEmpDetailsList[i].TimeOfftHours, new { @readonly = "readonly" })
+                                    </td>
+                                    <td style="vertical-align:middle">
+                                        @if (Model.TimeOffEmpDetailsList[i].RequestStatus == 0)
+                                        {
+                                            @Html.RadioButtonFor(m => m.TimeOffEmpDetailsList[i].RequestStatus, 1)@Html.Label("Aprrove", new { @class = "radioBtnApprove" })
+                                            @Html.RadioButtonFor(m => m.TimeOffEmpDetailsList[i].RequestStatus, 2)@Html.Label("Deny", new { @class = "radioBtnDeny" })
+                                        }
+                                        else if (Model.TimeOffEmpDetailsList[i].RequestStatus == 1)
+                                        {
+                                            @Html.RadioButtonFor(m => m.TimeOffEmpDetailsList[i].RequestStatus, 1, new { @checked = "true" })@Html.Label("Aprrove", new { @class = "radioBtnApprove" })
+                                            @Html.RadioButtonFor(m => m.TimeOffEmpDetailsList[i].RequestStatus, 2)@Html.Label("Deny", new { @class = "radioBtnDeny" })
+                                        }
+                                        else if (Model.TimeOffEmpDetailsList[i].RequestStatus == 2)
+                                        {
+                                            @Html.RadioButtonFor(m => m.TimeOffEmpDetailsList[i].RequestStatus, 1)@Html.Label("Aprrove", new { @class = "radioBtnApprove" })
+                                            @Html.RadioButtonFor(m => m.TimeOffEmpDetailsList[i].RequestStatus, 2, true)@Html.Label("Deny", new { @class = "radioBtnDeny" })
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="panel" style="margin-top: 2em">
+            <div class="panel-footer">
+                @*<input type="button" value="Delete" class="btn btn-default pull-left" />*@
+
+                <div class='btn-toolbar pull-right'>
+                    <div class='btn-group'>
+                        @{ if (Model.TimeOffEmpDetailsList.Count() != 0)
+                            {
+                                <input type="submit" name="SubmitButton" value="Submit" class="btn btn-primary" />
+                            }
+                            else
+                            {
+                                <input type="submit" name="SubmitButton" value="Submit" class="btn btn-primary" disabled />
+                            }
+                        }
+                        @*<input type="button" value="Submit" onclick=AddTimeOffRequest() class="btn btn-default" />*@
+                        <input type="button" value="Cancel" onclick=onCloseTimeOffDateWindow() class="btn btn-primary" id="btn_closeRangeSelection" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+}
+
+<style>
+    .radioBtnDeny {
+        font-weight: normal;
+        padding-left: 5px;
+    }
+
+    .radioBtnApprove {
+        font-weight: normal;
+        padding-left: 5px;
+        padding-right: 20px
+    }
+</style>
+
+

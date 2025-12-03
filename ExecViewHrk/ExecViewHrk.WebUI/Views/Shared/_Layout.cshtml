@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        ::: Qloud Next :::
+    </title>
+    <!-- Meta -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+
+    <link rel="icon" href="~/assets/images/hr-knowledge.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/assets/icon/simple-line-icons/css/simple-line-icons.css" />
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/assets/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="~/assets/css/custom.css" />
+</head>
+
+<body class="horizontal-fixed fixed">
+    <div class="wrapper main-wrapper">
+        <!-- Header-Nav-->
+        <header class="main-header-top hidden-print">
+
+            <a href="@Url.Content("~/")" class="logo"> <img class="img-fluid able-logo" src="~/assets/images/Logonew.png" alt="HR Next" /> </a>
+            <nav class="navbar navbar-static-top">
+                <a href="#!" data-toggle="offcanvas" class="sidebar-toggle hidden-md-up"></a>
+                <div class="navbar-custom-menu">
+                    <ul class="top-nav">
+                        <li class="pc-rheader-submenu"> <a href="@Url.Action("Login", "Account")" class="drop icon-circle"> <i class="fa fa-sign-in"></i> </a> </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <aside class="main-sidebar hidden-print ">
+            <section class="sidebar" id="sidebar-scroll">
+                <div class="user-panel">
+                    <div class="f-left image"> <img src="~/assets/images/avatar-01.png" alt="User Image" class="img-circle" /> </div>
+                    <div class="f-left info">
+                        <p></p>
+                    </div>
+                </div>
+                <ul class="sidebar-menu">
+                    <li class="treeview" id="History"> <a href="@Url.Content("~/")"><span>History Viewer</span></a> </li>
+                    <li class="treeview" id="Position">
+                        <a href="@Url.Content("~/")"><span>Position Control</span></a>
+                    </li>
+                    <li class="treeview" id="ACA">
+                        <a href="@Url.Content("~/")"><span>Check Detail & ACA</span></a>
+                    </li>
+                    <li class="treeview" id="WebTime">
+                        <a href="@Url.Content("~/")"><span>Web Time</span></a>
+                    </li>
+                    <li class="treeview" id="Statements">
+                        <a href="@Url.Content("~/")"><span>Total Compensation Statements</span></a>
+                    </li>
+                    <li class="treeview" id="College">
+                        <a href="@Url.Content("~/")"><span>College Time</span></a>
+                    </li>
+                    <li class="treeview" id="Pay">
+                        <a href="@Url.Content("~/")"><span>Pay Stub Viewer</span></a>
+                    </li>
+                    <li class="treeview" id="InvoiceR">
+                        <a href="@Url.Content("~/")"><span>InvoiceR</span></a>
+                    </li>
+                    <li class="treeview" id="eTracker">
+                        <a href="@Url.Content("~/")"><span>eTracker</span></a>
+                    </li>
+                </ul>
+            </section>
+        </aside>
+
+        <div class="content-wrapper">
+            @RenderBody()
+            <footer class="f-fix">
+                <div class="footer-bg b-t-muted text-center footer-area f-13">
+                    &copy; @DateTime.Now.Year - ExecView @ExecViewHrk.Domain.Helper.ExecViewHrkConstants.ExecviewVersionNumber
+                </div>
+            </footer>
+        </div>
+
+    </div>
+
+
+    <script type="text/javascript" src="~/assets/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/tether.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/assets/plugins/js/waves.min.js"></script>
+    <script type="text/javascript" src="~/assets/plugins/js/jquery.slimscroll.js"></script>
+    <script type="text/javascript" src="~/assets/plugins/js/jquery.nicescroll.min.js"></script>
+    <script src="~/assets/plugins/modal/js/classie.js"></script>
+    <script src="~/assets/plugins/modal/js/modalEffects.js"></script>
+    <script type="text/javascript" src="~/assets/js/main.js"></script>
+    @*<script type="text/javascript" src="~/assets/Datatable/js/pixel-admin.min.js"> </script>
+        <script type="text/javascript" src="~/assets/Datatable/js/datatables.responsive.js"></script>
+        <script type="text/javascript" src="~/assets/Datatable/js/dataTables.tableTools.js"></script>*@
+
+
+</body>
+</html>
+
+@*
+
+    <title>@ViewBag.Title - ExecView</title>
+
+
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/base.css" rel="stylesheet" />
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    @Styles.Render("~/Content/kendo/2016.1.226/bundles")
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/ErrorStyles.css" rel="stylesheet" />
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/kendo")
+
+    <script src="~/Scripts/jquery-migrate-1.2.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/Common")
+
+
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+
+*@

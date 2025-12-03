@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [evhrk]
+    WITH PASSWORD = N'dtd`x{`qhg4wrchjkyGr;k16msFT7_&#$!~<sakm>fneresg', SID = 0xF5996861235EAB4BA5178B8CEFB72A5D, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

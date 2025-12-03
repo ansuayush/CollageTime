@@ -1,0 +1,82 @@
+﻿@model ExecViewHrk.Models.ManagerDepartmentVM
+@{
+    ViewBag.Title = "Manager Department";
+    Layout = null;
+}
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Manager Department</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("ManagerDepartment", "ManagerDepartment", FormMethod.Post, new { role = "form", id = "frmManagerDepartment" }))
+            {
+                @Html.HiddenFor(model => model.ManagerDepartmentId, new { @Id = "hiddenManagerDepartmentId" })
+                @*@Html.HiddenFor(model => model.TimeCardTypeId)*@
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Manager</label>
+                        @Html.DropDownListFor(model => model.ManagerId,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["managersList"], "ManagerId", "PersonName"), "--Select One--", new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.ManagerId)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        @*<label><span style="color:red">*</span>CompCode-DeptCode-DeptDescription</label>*@
+                        <label><span style="color:red">*</span>Department</label>
+                        @Html.DropDownListFor(model => model.DepartmentId,
+                                     new SelectList((System.Collections.IEnumerable)ViewData["departmentsList"], "DepartmentId", "CompCode_DeptCode_DeptDescription"), "--Select One--", new { @class = "form-control", data_required = "Y" })
+                        @Html.ValidationMessageFor(x => x.DepartmentId)
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSubmit">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+    });
+    $("#btnSubmit").click(function (e) {
+        
+        e.preventDefault();
+        if (!ValidateForm("frmManagerDepartment")) {
+            loading(false);
+            return;
+        }
+        var postData = $("#frmManagerDepartment").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "ManagerDepartments/ManagerDepartmentsSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenDepartmentId = $("#hiddenManagerDepartmentId").val();
+                //LoadMenu("DepartmentsMatrixPartial", "Departments");
+                resetGrid("gridManagerDepartment");
+                $("#btnSubmit").parent().find(".md-close").click();
+                if (_oldhiddenDepartmentId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>

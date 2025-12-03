@@ -1,0 +1,118 @@
+﻿
+@model ExecViewHrk.WebUI.Models.SkillVM
+@{
+
+    Layout = null;
+}
+ 
+            @using (Html.BeginForm("SkillSaveAjax", "LookupTables", FormMethod.Post, new { role = "form", id = "SkillEditForm" }))
+            {
+                @Html.HiddenFor(model => model.SkillId, new { id = "hiddenSkillId" })
+                @*@Html.ValidationSummary(true)*@
+                <div class="md-content p-10">
+                    <div class="card p-15">
+                        <div class="card-header">
+                            <h5 class="card-header-text">Skill Detail </h5>
+                        </div>
+                        <div class="card-block">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label><span style="color:red">*</span>Code</label>
+                                        @Html.TextBoxFor(m => m.Code, new { @class = "form-control", data_required = "Y" })
+                                        @*@Html.ValidationMessageFor(x => x.Code)*@
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Skill Type
+                                        </label>
+                                        @Html.DropDownListFor(m => m.SkillTypeId, new SelectList(Model.SkillTypeDrop, "keyvalue", "keydescription", Model.SkillTypeId), new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>
+                                            <span style="color:red">*</span> Description
+                                        </label>
+
+                                        @Html.TextBoxFor(m => m.Description, new { @class = "form-control" , data_required = "Y" })
+                                        @*@Html.ValidationMessageFor(x => x.Description)*@
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 p-t-30">
+                                    <div class="form-group">
+                                       <div class="checkbox-color checkbox-primary">
+                                            @if (Model.Active == true)
+                                            {
+                                                <input id="@Html.NameFor(m => m.Active)" type="checkbox" value="@Model.Active" checked="checked" />
+                                            }
+                                            else
+
+                                            {
+                                                <input id="@Html.NameFor(m => m.Active)" value="@Model.Active" type="checkbox" />
+                                            }
+                                            @Html.LabelFor(x => x.Active)
+                                            @Html.HiddenFor(x => x.Active)
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                            
+                            
+                           
+                        </div>
+                    </div>
+                    <div class="p-15 text-right">
+                        <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+                        <input type="button" id="btnSkillSave" name="Done" value="Done" class="btn btn-primary waves-effect myButton">
+                    </div>
+                </div>
+            }
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+       
+    });
+
+   
+    $("#btnSkillSave").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("SkillEditForm")) {
+            loading(false);
+            return;
+        }
+        var form = $("#SkillEditForm");
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#SkillEditForm").serializeArray();
+        var formURL = appBaseUrl + "DdlSkills/SkillSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                }
+                else if (data.succeed == true) {
+                    LoadMenu("DdlSkillsListMaintenance", "DdlSkills")
+                    $("#btnSkillSave").parent().find(".md-close").click();
+                    loading(false);
+                    formService.isLoadingInProgress = true;
+                    killTimer();
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+            }
+        });
+    });
+
+</script>

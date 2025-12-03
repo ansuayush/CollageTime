@@ -1,0 +1,54 @@
+﻿
+@model List<ExecViewHrk.WebUI.Models.E_PositionSalaryHistoryVm>
+<div class="col-lg-12 col-md-12 p-0">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="theme-grid">
+                @(Html.Kendo().Grid(Model)
+                .Name("grid_PositionEmpList")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.E_PositionId).Visible(false);
+            columns.Bound(c => c.EmpName).Title("Employee Name").ClientFooterTemplate("Total");
+            columns.Bound(c => c.AverageSalary).Title("Average Salary").ClientTemplate("$#= AverageSalary !== null ? kendo.toString(AverageSalary,'n2') : '0.00'#").ClientFooterTemplate("$#= kendo.format('{0:n2}', sum)#");
+            columns.Bound(p => p.BudgetSalary).Title("Budgeted Salary").ClientTemplate("$#= BudgetSalary !== null ? kendo.toString(BudgetSalary,'n2') : '0.00'#").ClientFooterTemplate("$#= kendo.format('{0:n2}', sum)#");
+            columns.Bound(c => c.AnnualSalary).Title("Annual Salary").ClientTemplate("$#= AnnualSalary !== null ? kendo.toString(AnnualSalary,'n2') : '0.00'#").ClientFooterTemplate("$#= kendo.format('{0:n2}', sum)#");
+            columns.Bound(p => p.SalaryVariance).Title("Salary Variance").ClientTemplate("$#= SalaryVariance !== null ? kendo.toString(SalaryVariance,'n2') : '0.00'#").ClientFooterTemplate("$#= kendo.format('{0:n2}', sum)#");
+
+        })
+
+        //   .ClientDetailTemplateId("template")
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(true).PageSizes(true))
+        //   .Events(e => e.DataBound("gridDataBound"))
+        .DataSource(dataSource => dataSource
+                    .Ajax()
+                     .Aggregates(aggregates =>
+                     {
+                         aggregates.Add(p => p.AverageSalary).Sum();
+                         aggregates.Add(p => p.BudgetSalary).Sum();
+                         aggregates.Add(p => p.AnnualSalary).Sum();
+                         aggregates.Add(p => p.SalaryVariance).Sum();
+                     })
+                .Model(model =>
+                {
+                    model.Id(p => p.E_PositionId);
+                    model.Field(p => p.EmpName);
+                    model.Field(p => p.AverageSalary);
+                    model.Field(p => p.AnnualSalary);
+                    model.Field(p => p.SalaryVariance);
+                    model.Field(p => p.BudgetSalary);
+                }
+                        )
+                    .Batch(false)
+
+                )
+                )
+
+            </div>
+        </div>
+    </div>
+</div>

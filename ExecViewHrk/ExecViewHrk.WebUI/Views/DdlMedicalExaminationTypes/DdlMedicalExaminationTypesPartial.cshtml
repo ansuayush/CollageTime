@@ -1,0 +1,57 @@
+﻿<div class="theme-grid">
+    @(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlMedicalExaminationType>()
+                    .Name("gridDdlMedicalExaminationType")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridEdit");
+                command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridDelete");
+            });
+            columns.Bound(c => c.MedicalExaminationTypeId).Visible(false);
+            columns.Bound(c => c.Code);
+            columns.Bound(c => c.Description);
+            columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'Yes' : 'No' #"); ;
+
+        })
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .Events(e => e.DataBound("gridDataBound"))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                                        .Read(read => read.Action("DdlMedicalExaminationTypesList_Read", "DdlMedicalExaminationTypes"))
+                                            .Create(create => create.Action("DdlMedicalExaminationTypesList_Create", "DdlMedicalExaminationTypes"))
+                                            .Update(update => update.Action("DdlMedicalExaminationTypesList_Update", "DdlMedicalExaminationTypes"))
+                                            .Destroy(destroy => destroy.Action("DdlMedicalExaminationTypesList_Destroy", "DdlMedicalExaminationTypes"))
+            .Model(model =>
+            {
+                model.Id(p => p.MedicalExaminationTypeId);
+                model.Field(p => p.MedicalExaminationTypeId).Editable(false);
+                model.Field(p => p.Code);
+                model.Field(p => p.Description);
+            }
+                  )
+.Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+    )
+</div>
+    <script type="text/javascript">
+        $(".k-grid-add").click(function () {
+            setTimeout(function () {
+                $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+            }, 1)
+        });
+
+    </script>
+
+
+

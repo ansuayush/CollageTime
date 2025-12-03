@@ -1,0 +1,98 @@
+﻿@(Html.Kendo().Grid<ExecViewHrk.EfClient.DdlSkill>()
+        .Name("gridDdlSkill")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .ToolBar(toolbar => toolbar.Create())
+
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Edit();
+                command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");
+            }).Width(170);
+            columns.Bound(c => c.SkillId).Visible(false);
+            columns.Bound(c => c.Code);           
+            columns.ForeignKey(c => c.SkillTypeId, (System.Collections.IEnumerable)ViewData["skillTypesList"], "SkillTypeId", "SkillTypeDescription")
+            .Title("Skill Type");
+            
+            columns.Bound(c => c.Description);
+            columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'Yes' : 'No' #");
+        })
+
+
+        .ToolBar(toolBar => toolBar.Custom().Name("AddSkillType").Text("Add Skill Type").Url("#").HtmlAttributes(new { onclick = "customCommand()" }))
+
+
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .Selectable()
+
+        .Pageable(pageable => pageable
+            .Refresh(false)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                        .Read(read => read.Action("DdlSkillsList_Read", "DdlSkills"))
+                        .Create(create => create.Action("DdlSkillsList_Create", "DdlSkills"))
+                        .Update(update => update.Action("DdlSkillsList_Update", "DdlSkills"))
+                        .Destroy(destroy => destroy.Action("DdlSkillsList_Destroy", "DdlSkills"))
+            .Model(model =>
+                    {
+                        model.Id(p => p.SkillId);
+                        model.Field(p => p.SkillId).Editable(false);
+                        model.Field(p => p.Code);
+                        model.Field(p => p.Description);
+                        model.Field(p => p.SkillTypeId).DefaultValue(0);
+                    }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+)
+
+@(Html.Kendo().Window().Name("skillTypesWindow")
+        .Title("Skill Types")
+        .Visible(false)
+        .Modal(true)
+        .Draggable(true)
+        .Width(900)
+        .Height(400)
+        .Position(x=>x.Top(300).Left(120))
+        .Content(Html.Partial("~/Views/DdlSkillTypes/DdlSkillTypesPartial.cshtml").ToHtmlString())
+        
+            )
+)
+
+<script type="text/javascript">
+   
+
+    function onCloseSkillTypesWindow() {
+       
+        $("#SkillTypeId").data().kendoGrid.dataSource.read();
+        $('#SkillTypeId').data().kendoGrid.refresh();
+    }
+
+    function customCommand(e) {
+        var wnd = $("#skillTypesWindow").kendoWindow({
+            actions: ["Minimize", "Maximize", "Close"],
+            visible: false,
+            scrollable: true,
+            modal: true,
+            
+        }).data("kendoWindow");
+
+        wnd.center();
+        wnd.open();
+    }
+</script>
+
+
+

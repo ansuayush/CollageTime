@@ -1,0 +1,91 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Time Card Configuration";
+    Layout = null;
+}
+@model ExecViewHrk.Models.TimeCardSessionInOutConfigsVm
+
+@{
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Time Card Configuration</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("TimeCardColumnsList_Update", "TimeCardConfigurations", FormMethod.Post, new { role = "form", id = "TimeCardSessionConfigurationsForm" }))
+            {
+                @Html.HiddenFor(model => model.TimeCardSessionId, new { @Id = "hiddentimeCardsessionId" })
+                @Html.ValidationSummary(true)
+                <div class="row col-sm-12">
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>MaxIn</label>
+                            @Html.TextBoxFor(m => m.MaxIn, new { @class = "form-control", data_required = "N" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>MaxOut</label>
+                            @Html.TextBoxFor(m => m.MaxOut, new { @class = "form-control", data_required = "N" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+
+                            <label>@Html.DisplayNameFor(m => m.Toggle)</label>
+                            @Html.CheckBoxFor(x => x.Toggle)
+                        </div>
+                    </div>
+                </div>
+
+
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSave">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+    });
+
+
+    $("#btnSave").click(function (e) {
+        e.preventDefault();
+        var postData = $("#TimeCardSessionConfigurationsForm").serializeArray();       
+        var formURL = $("#ApplicationUrl").val() + "TimeCardSessionInOutConfig/TimeCardSessionInOut_Update";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonTestId = $("#hiddentimeCardsessionId").val();
+                resetGrid("gridTimeCardSession");
+                $("#btnSave").parent().find(".md-close").click();
+                if (_oldhiddenPersonTestId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+               
+            }
+        });
+    });
+   
+</script>

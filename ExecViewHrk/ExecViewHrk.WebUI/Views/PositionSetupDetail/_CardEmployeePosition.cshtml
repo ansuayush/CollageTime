@@ -1,0 +1,32 @@
+﻿
+@model List<ExecViewHrk.WebUI.Models.E_PositionSalaryHistoryVm>
+<div class="theme-grid">
+    @(Html.Kendo().Grid(Model)
+    .Name("CardPositionEmployeelst")
+    .HtmlAttributes(new { style = "height:270px" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.EmpName).Title("Employee");
+        columns.Bound(p => p.AverageSalary).Title("AverageSal").ClientTemplate("$#= AverageSalary !== null ? kendo.toString(AverageSalary,'n2') : '0.00'#");
+        columns.Bound(p => p.BudgetSalary).Title("Averge Budget Salary").ClientTemplate("$#= BudgetSalary !== null ? kendo.toString(BudgetSalary,'n2') : '0.00'#");
+        columns.Bound(p => p.AnnualSalary).Title("EmpAnnualSal").ClientTemplate("$#= AnnualSalary !== null ? kendo.toString(AnnualSalary,'n2') : '0.00'#");
+        columns.Bound(p => p.SalaryVariance).Title("SalVariance").ClientTemplate("$#= SalaryVariance !== null ? kendo.toString(SalaryVariance,'n2') : '0.00'#");
+    })
+     .Scrollable()
+    //.Pageable(pageable => pageable.Refresh(false).PageSizes(false))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+         .Model(model =>
+         {
+             model.Field(p => p.EmpName);
+             model.Field(p => p.AverageSalary);
+             model.Field(p => p.AnnualSalary);
+             model.Field(p => p.SalaryVariance);
+             model.Field(p => p.BudgetSalary);
+             //model.Field(p => p.FTE);
+         }
+
+        )
+     )
+    )
+</div>

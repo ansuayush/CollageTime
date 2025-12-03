@@ -1,0 +1,274 @@
+﻿@model ExecViewHrk.WebUI.Models.BusinessLevelsDetailVm
+
+
+
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Business Level Detail</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("BusinessLevels", "BusinessLevels", FormMethod.Post, new { role = "form", id = "BusinessLevelsForm" }))
+            {
+                @Html.HiddenFor(model => model.BusinessLevelNbr, new { id = "BusinessLevelNbr" })
+                @*@Html.ValidationSummary(true)*@
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Business Code</label>
+                        @Html.TextBoxFor(x => x.BusinessLevelCode, new { @class = "form-control", data_required = "Y" })
+                        @*@Html.ValidationMessageFor(x => x.BusinessLevelCode)*@
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Business Title</label>
+                        @Html.TextBoxFor(x => x.BusinessLevelTitle, new { @class = "form-control", data_required = "Y" })
+                        @*@Html.ValidationMessageFor(x => x.BusinessLevelTitle)*@
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span> Department (Parent BU level)</label>
+                        <div class="drop-kendo" id="form">
+                            @(Html.Kendo().DropDownListFor(m => m.ParentBULevelNbr).Name("ParentBULevelNbr")
+.DataTextField("keydescription").DataValueField("keyvalue").Filter("contains")
+.BindTo(Model.ParentBULevelDropDownList).HtmlAttributes(new { @class = "form-control input-sm", style = "width:100%", required="required" }) )
+                            @*@Html.ValidationMessageFor(x => x.ParentBULevelNbr)*@
+                        </div>
+                        @*@Html.DropDownListFor(model => model.ParentBULevelNbr,
+        new SelectList(Model.ParentBULevelDropDownList, "keyvalue", "keydescription", Model.ParentBULevelNbr), new { @class = "form-control input-sm", data_required = "Y" })*@
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Division (Location)</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.LocationId,
+                                 new SelectList(Model.LocationDropDownList, "keyvalue", "keydescription", Model.LocationId), new { @class = "form-control" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLEIN(event, 'Locations');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 p-t-30">
+                    <div class="form-group">
+                        <div class="checkbox-color checkbox-primary">
+
+                            @if (Model.BusinessLevelNbr != 0)
+                            {
+                                if (Model.Active == true)
+                                {
+                                    <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="@Model.Active" checked="checked">
+                                }
+                                else
+
+                                {
+                                    <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="@Model.Active">
+                                }
+                            }
+                            else
+                            {
+                                <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="@Model.Active" checked="checked">
+                            }
+                            @Html.LabelFor(x => x.Active)
+                            @Html.HiddenFor(x => x.Active,new { @id="hiddenActive"})
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Federal EIN</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.FedralEINNbr,
+                                new SelectList(Model.EINDropDownList, "keyvalue", "keydescription", Model.FedralEINNbr), new { @class = "form-control" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                    <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddPopupFedralEIN();">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>EEO</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.EEoFileStatusNbr,
+                                 new SelectList(Model.EEODropDownList, "keyvalue", "keydescription", Model.EEoFileStatusNbr), new { @class = "form-control" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLEIN(event, 'ddlEEOFileStatuses');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Budget Reporting</label>
+                            <div class="col-sm-12 p-0 form-radio">
+                                <div class="radio radio-inline">
+                                    <label>
+                                        @if (Model.BudgetReported == "Gross only" || Model.BudgetReported == null)
+                                        { <input type="radio" name="BudgetReported" checked="checked" value="Gross">}
+                                        else
+                                        {<input type="radio" name="BudgetReported" value="Gross"> }
+                                        <i class="helper"></i>Gross only
+                                    </label>
+                                </div>
+                                <div class="radio radio-inline">
+                                    <label>
+                                        @if (Model.BudgetReported == "All taxes-Ded")
+                                        {
+                                            <input type="radio" name="BudgetReported" checked="checked" value="Taxes">
+                                        }
+                                        else
+                                        {
+                                            <input type="radio" name="BudgetReported" value="Taxes">
+                                        }
+                                        <i class="helper"></i>All taxes-Ded
+                                    </label>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 p-0">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Pay Frequency</label>
+
+                                @Html.DropDownListFor(model => model.PayFrequencyId,
+                             new SelectList(Model.PayFrequencyDropDownLiat, "keyvalue", "keydescription", Model.PayFrequencyId), new { @class = "form-control" })
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Schedule Hours</label>
+                                @Html.TextBoxFor(x => x.SchedeuledHours, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Business Level Type</label>
+                                <div class="input-group">
+
+                                    @Html.DropDownListFor(model => model.BusinessLevelTypeNbr,
+                                 new SelectList(Model.BusinessLevelTypeDropDownLiat, "keyvalue", "keydescription", Model.BusinessLevelTypeNbr), new { @class = "form-control" })
+                                    @if (!User.IsInRole("ClientEmployees"))
+                                    {
+                                        <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="AddDDLEIN(event, 'ddlBusinessLevelTypes');">
+                                            <span class="fa fa-plus"></span>
+
+                                        </span> }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Notes</label>
+                            @Html.TextAreaFor(x => x.BusinessLevelNotes, new { @class = "form-control", @style = "height:80px;" })
+                        </div>
+                    </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveBusinessLevelsAjax">Done</button>
+  
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+        $('#BusinessLevelTypeNbr').removeAttr('data-val-required');
+        $('#ParentBULevelNbr').removeAttr('data-val-required');
+
+    });
+    $("#btnSaveBusinessLevelsAjax").click(function (e) {
+       
+        e.preventDefault();
+        var validator = $("#form").kendoValidator().data('kendoValidator');
+        if (validator.validate()) {
+          
+        } else {
+            toastr.error("Department (Parent BU level) field is required");
+            $("#ParentBULevelNbr_validationMessage").css("display","none")
+        }
+        if (!ValidateForm("BusinessLevelsForm")) {
+            loading(false);
+            return;
+        }
+        var activevalue = $('#Active').prop("checked");
+        if (activevalue)
+        {
+            $('#hiddenActive').val("true");
+        }
+        else
+        {
+            $('#hiddenActive').val("false");
+        }
+      
+        var form = $("#BusinessLevelsForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            return;
+        }
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }; 
+      
+        var postData = $("#BusinessLevelsForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "BusinessLevels/BusinessLevelsSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                    return;
+                }
+                else {
+                    if (data.recordIsNew == true) {
+                        LoadMenu("BusinessLevelsListMatrixPartial", "BusinessLevels")
+                        $("#btnSaveBusinessLevelsAjax").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.saved);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    }
+                    else {
+                        var BusinessLevelsData = { BusinessLevelNbr: data.BusinessLevelsVM.BusinessLevelNbr };
+                        LoadDetailView("BusinessLevelsDetailMatrixPartial", "BusinessLevels", BusinessLevelsData)
+                        $("#btnSaveBusinessLevelsAjax").parent().find(".md-close").click();
+                        formService.isLoadingInProgress = true;
+                        killTimer();
+                        timeOutFn = setTimeout(function () {
+                            formService.isSavingInProgress = false;
+                            toastr.success(formService.messages.updated);
+                            formService.isLoadingInProgress = false;
+                        }, 0);
+                    }
+                }
+            }
+            else {
+                toastr.error(data.Message);
+            }
+        });
+    });
+
+</script>

@@ -1,0 +1,96 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionDetailsVm
+<div class="row">
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Standard Hours</label>
+                @Html.TextBoxFor(x => x.ScheduledHours, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Pay Frequency</label>
+                @Html.DropDownListFor(model => model.PayFrequencyCode, new SelectList(Model.DdlPayFrequency, "keyvalue", "keydescription", Model.PayFrequencyCode), new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Salary Amount</label>
+                @Html.TextBoxFor(x => x.SalaryAmount, "{0:0.00}", new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Salary Plan Code</label>
+               @Html.TextBoxFor(x => x.SalaryPlanCode, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Salary Grade Code</label>
+                @Html.DropDownListFor(model => model.SalaryGrade, new SelectList(Model.DropDownSalaryGrade, "keyvalue", "keydescription", Model.SalaryGrade), new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Salary Step</label>
+                @Html.TextBoxFor(x => x.SalaryStep, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Reg/Temp</label> 
+                @Html.DropDownListFor(model => model.SalaryType, new SelectList(Model.DropDownWorkStatusType, "keyvalue", "keydescription", Model.SalaryType), new { @class = "form-control" })
+                @*<select class="form-control">
+                    <option>Regular</option>
+                    <option>Temp</option>
+                </select>*@
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <div class="form-group">
+                    <label>Work Status</label>
+                    @Html.DropDownListFor(model => model.WorkClassificationId, new SelectList(Model.DDEmpType, "keyvalue", "keydescription", Model.WorkClassificationId), new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Pay Group</label>
+                @Html.DropDownListFor(model => model.SalaryPayGroup, new SelectList(Model.PayGroupList, "PayGroupId", "Description", Model.SalaryPayGroup), new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Units</label>
+               @Html.TextBoxFor(x => x.UnitsID, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <!--<hr class="my-2">-->
+        <div class="card-header p-l-0">
+            <h5 class="card-header-text">Salary Grade </h5> 
+            
+            <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" data-toggle="modal" data-target="#SalaryGradeHistoryList">
+                <i class="fa fa-history" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="row">
+            <div class="card-title">
+                <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" data-toggle="modal" data-target="#SalaryDetailsModal">
+                    <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                </button>
+            </div>
+            <div class="col-lg-12 col-md-12">
+                @Html.Partial("_SalaryGradeListPartial", Model.SalaryGradeHistory)
+            </div>
+        </div>
+    </div>
+    
+</div>

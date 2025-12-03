@@ -1,0 +1,84 @@
+﻿@model IList<ExecViewHrk.WebUI.Models.ExportPayPeriodVM>
+
+@{
+    ViewBag.Title = "Export Preview Pay Period";
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-primary table-striped">
+            <table class="table table-striped table-bordered" id="Exports" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th data-class="expand">Company Code</th>
+                        <th data-hide="phone">Batch ID</th>
+                        <th data-hide="phone">File Num</th>
+                        <th data-hide="phone">Cancel Pay</th>
+                        <th data-hide="phone">Pay Number</th>
+                        <th data-hide="phone,tablet">Reg Hours</th>
+                        <th data-hide="phone,tablet">OT Hours</th>
+                        <th data-hide="phone,tablet,desktop">Hours3 Code</th>
+                        <th data-hide="phone,tablet,desktop">Hours3 Amount</th>
+                        <th data-hide="phone,tablet,desktop">Hours4 Code</th>
+                        <th data-hide="phone,tablet,desktop">Hours4 Amount</th>
+                        <th data-hide="phone,tablet,desktop">Reg Earnings</th>
+                        <th data-hide="phone,tablet,desktop">OT Earnings</th>
+                        <th data-hide="phone,tablet">Earnings3 Code</th>
+                        <th data-hide="phone,tablet">Earnings3 Amount</th>
+                        <th data-hide="phone,tablet">Earnings4 Code</th>
+                        <th data-hide="phone,tablet">Earnings4 Amount</th>
+                        <th data-hide="phone,tablet">Earnings5 Code</th>
+                        <th data-hide="phone,tablet">Earnings5 Amount</th>
+                        <th data-hide="phone,tablet,desktop">Cost Number</th>
+                        <th data-hide="phone,tablet,desktop">Department</th>
+                        <th data-hide="phone,tablet,desktop">Temp Rate</th>
+                        <th data-hide="phone,tablet,desktop">Memo Code1</th>
+                        <th data-hide="phone,tablet,desktop">Memo Amount1</th>
+                        <th data-hide="phone,tablet,desktop">Memo Code2</th>
+                        <th data-hide="phone,tablet,desktop">Memo Amount2</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+
+                        foreach (var item in Model)
+                        {
+                    <tr>
+
+                        <td><a href="#">@Html.DisplayFor(m => item.CoCode)</a></td>
+                        <td>@Html.DisplayFor(m => item.BatchID)</td>
+                        <td>@Html.DisplayFor(m => item.FileNumber)</td>
+                        <td>@Html.DisplayFor(m => item.CancelPay)</td>
+                        <td>@Html.DisplayFor(m => item.PayNumber)</td>
+                        <td>@Html.DisplayFor(m => item.RegHours)</td>
+                        <td>@Html.DisplayFor(m => item.OTHours)</td>
+                        <td>@Html.DisplayFor(m => item.Hours3Code)</td>
+                        <td>@Html.DisplayFor(m => item.Hours3Amount)</td>
+                        <td>@Html.DisplayFor(m => item.Hours4Code)</td>
+                        <td>@Html.DisplayFor(m => item.Hours4Amount)</td>
+                        <td>@Html.DisplayFor(m => item.RegEarnings)</td>
+                        <td>@Html.DisplayFor(m => item.OTEarnings)</td>
+                        <td>@Html.DisplayFor(m => item.Earnings3Code)</td>
+                        <td>@Html.DisplayFor(m => item.Earnings3Amount)</td>
+                        <td>@Html.DisplayFor(m => item.Earnings4Code)</td>
+                        <td>@Html.DisplayFor(m => item.Earnings4Amount)</td>
+                        <td>@Html.DisplayFor(m => item.Earnings5Code)</td>
+                        <td>@Html.DisplayFor(m => item.Earnings5Amount)</td>
+                        <td>@Html.DisplayFor(m => item.CostNumber)</td>
+                        <td>@Html.DisplayFor(m => item.Department)</td>
+                        <td>@Html.DisplayFor(m => item.TempRate)</td>
+                        <td>@Html.DisplayFor(m => item.MemoCode1)</td>
+                        <td>@Html.DisplayFor(m => item.MemoAmount1)</td>
+                        <td>@Html.DisplayFor(m => item.MemoCode2)</td>
+                        <td>@Html.DisplayFor(m => item.MemoAmount2)</td>
+                    </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

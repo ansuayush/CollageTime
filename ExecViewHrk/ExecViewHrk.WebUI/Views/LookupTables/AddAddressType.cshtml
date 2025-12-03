@@ -1,0 +1,73 @@
+﻿@model ExecViewHrk.EfClient.DdlAddressType
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Address Type</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmAddressType">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseAddresType">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveAddresType">Save</button>
+</div>
+<script>
+    $("#btnSaveAddresType").click(function (e) {
+        e.preventDefault();
+        if ($("#Code").val() == "") {
+            toastr.error("The Code field is required.");
+            return;
+        }
+        if ($("#Description").val() == "") {
+            toastr.error("The Description field is required.");
+            return;
+        }
+        var postData = $("#frmAddressType").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/DdlAddressType_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadAddressTypeDropDown();
+                $("#btnCloseAddresType").trigger('click');
+            }
+        });
+    });
+    function reloadAddressTypeDropDown() {
+        var _selectedValue = $("#AddressTypeId").val();
+        $.get($("#appBaseUrl").val() + "LookupTables/GetDdlAddressTypeList", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#AddressTypeId").empty();
+                $("#AddressTypeId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#AddressTypeId").append("<option value='" + list[i].AddressTypeId + "' selected >" + list[i].Description + "</option>");
+                    } else {
+                        $("#AddressTypeId").append("<option value='" + list[i].AddressTypeId + "' >" + list[i].Description + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

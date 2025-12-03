@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ExecViewHrk.Models.PersonVm>
+
+@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "TimeCardsIndex";
+}
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Timecards <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div>
+                Employee:
+                @Html.DropDownList("Emp", new SelectList(@Model, "PersonId", "PersonName"), "--Select--", new { @Class = "form-control", onchange = "GetTimecrdbyEmployee()" })
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div id="timecardData">
+                    @*@{Html.RenderPartial("TimeCardsMatrixPartial");}*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

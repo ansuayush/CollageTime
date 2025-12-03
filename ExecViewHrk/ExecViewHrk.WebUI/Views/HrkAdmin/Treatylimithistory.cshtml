@@ -1,0 +1,110 @@
+﻿@model ExecViewHrk.Models.TreatylimithistoriesVm
+
+@{
+    ViewBag.Title = "Treaty Limit History";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $("#trtlimityear").change(function () {
+            var tlyear = $("#trtlimityear").val();
+            var postData = { treatyyear: tlyear}
+            var formURL = $("#ApplicationUrl").val() + "HrkAdmin/TreatyLimitYearchange";
+            $.post(formURL, postData, function (data, status) {
+                resetGrid("gridtreatyhistory");
+            });
+        });
+    });
+   
+    function SelectedYear() {
+        return { treatyyear: $("#trtlimityear").val() }
+    }
+</script>
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Treaty Limit History<span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            Year
+                        </label>
+                        @Html.DropDownListFor(m => m.Treatyyear, new SelectList(Model.lstTreatyyears, "keyvalue", "keydescription", Model.Treatyyear), new { @class = "form-control input-sm", @id = "trtlimityear" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.TreatylimithistoriesVm>()
+                                                            .Name("gridtreatyhistory")
+.Resizable(resize => resize.Columns(true))
+.Filterable()
+.Editable(editable => editable.Mode(GridEditMode.InLine))
+.Columns(columns =>
+{
+columns.Bound(c => c.EmployeeName).Title("Employee Name");
+columns.Bound(c => c.CompanyCodeDescription).Title("Company Code");
+columns.Bound(c => c.TreatyLimit).Title("Treaty Limit");
+columns.Bound(c => c.UsedAmount).Title("Used Amount");
+columns.Bound(c => c.RemainingAmount).Title("Remaining Amount");
+columns.Bound(c => c.CreatedBy).Title("Created By");
+columns.Bound(c => c.CreatedDate).Title("Created Date").ClientTemplate("#= CreatedDate == null ? '' : kendo.toString(CreatedDate, \"MM/dd/yyyy\") #");
+
+})
+.ToolBar(tools => { tools.Excel(); tools.Pdf(); })
+.Pdf(pdf => pdf
+.AllPages()
+.Landscape()
+.FileName("Treaty Limit History.pdf")
+)
+.Excel(excel => excel.AllPages(true)
+.FileName("Treaty Limit History Report.xlsx")
+.Filterable(true))
+
+.Sortable()
+
+.Selectable()
+.Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+.DataSource(dataSource => dataSource.Ajax()
+
+.Read(read => read.Action("TreatyLimitHistory_Read", "HrkAdmin").Type(HttpVerbs.Post).Data("SelectedYear"))
+
+.Model(model =>
+{
+model.Id(p => p.ID);
+
+model.Field(p => p.ID).Editable(false);
+model.Field(p => p.EmployeeId);
+model.Field(p => p.CompanyCodeId);
+model.Field(p => p.TreatyLimit);
+}
+                                                          )
+.Batch(false)
+.Events(events =>
+{
+events.Error("refreshGrid");
+events.RequestEnd("gridRequestEnd");
+}
+)
+)
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

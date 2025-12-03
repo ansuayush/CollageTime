@@ -1,0 +1,267 @@
+﻿@using System.Web.Routing;
+@{
+    ViewBag.Title = "Person License";
+    Layout = null;
+}
+@model ExecViewHrk.Models.PersonLicensVm
+
+@{
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person License</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonLicenses", "PersonLicenses", FormMethod.Post, new { role = "form", id = "PersonLicenseForm" }))
+            {
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonLicenseId, new { id = "hiddenPersonLicenseId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>License Type</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.LicenseTypeId,
+                        new SelectList(Model.LicenseDropDownList, "keyvalue", "keydescription", Model.LicenseTypeId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'LicenseType');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.LicenseTypeId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+
+                        <label><span style="color:red">*</span>Country</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.CountryId,
+                  new SelectList(Model.CountryDropDownList, "keyvalue", "keydescription", Model.CountryId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'Country');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.CountryId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+
+                        <label><span style="color:red">*</span>State</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.StateId,
+                  new SelectList(Model.StateDropDownList, "keyvalue", "keydescription", Model.StateId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'State');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.StateId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Expiration Date</label>
+                        @Html.TextBoxFor(model => model.ExpirationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.ExpirationDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Revoked Date</label>
+                        @Html.TextBoxFor(model => model.RevokedDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.RevokedDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Reinstated Date</label>
+                        @Html.TextBoxFor(model => model.ReinstatedDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.ReinstatedDate)
+                        </div>
+                    </div>
+                </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label><span style="color:red">*</span>License Number</label>
+                            @Html.TextBoxFor(x => x.LicenseNumber, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(x => x.LicenseNumber)
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+
+                        <div class="form-group ">
+                            <label>Notes</label>
+                            @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                            @Html.ValidationMessageFor(x => x.Notes)
+                        </div>
+                    </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="licenseTypesWindow" style="display:none">
+    <div id="licenseTypesContent">
+        @Html.Partial("~/Views/DdlLicenseTypes/DdlLicenseTypesPartial.cshtml")
+    </div>
+</div>
+
+<div id="statesWindow" style="display:none">
+    <div id="statesContent">
+        @Html.Partial("~/Views/DdlStates/DdlStatesPartial.cshtml")
+
+    </div>
+</div>
+
+<div id="countriesWindow" style="display:none">
+    <div id="countriesContent">
+        @Html.Partial("~/Views/DdlCountries/DdlCountriesPartial.cshtml")
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSavePersonLicenseAjax">Done</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false)
+    });
+    $("#btnSavePersonLicenseAjax").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("PersonLicenseForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#PersonLicenseForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonLicenses/PersonLicensesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonLicenseId = $("#hiddenPersonLicenseId").val();
+                resetGrid("gridPersonLicense");
+                $("#btnSavePersonLicenseAjax").parent().find(".md-close").click();
+                if (_oldhiddenPersonLicenseId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    function newKendoWindow(title, onClose) {
+        var obj = {
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: title,
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+            close: onClose
+        }
+        return obj;
+    };
+
+    var licenseTypesWindow = $("#licenseTypesWindow");
+    if (!licenseTypesWindow.data("kendoWindow")) {
+        licenseTypesWindow.kendoWindow(
+            newKendoWindow("License Types", onCloseLicensesWindow)
+        );
+    }
+
+    function onCloseLicensesWindow() {
+        resetKenoComboBox('LicenseDescription');
+        resetGrid('gridDdlLicenseType');
+    }
+
+    $("#btnAddLicenseType").click(function (e) {
+
+        e.preventDefault();
+        var kendoWindow = $("#licenseTypesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var statesWindow = $("#statesWindow");
+    if (!statesWindow.data("kendoWindow")) {
+        statesWindow.kendoWindow(
+            newKendoWindow("States", onCloseStateWindow)
+        );
+    }
+
+    function onCloseStateWindow() {
+        resetKenoComboBox('StateTitle');
+        resetGrid('gridDdlState');
+    }
+
+    $("#btnAddState").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#statesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    var countriesWindow = $("#countriesWindow");
+    if (!countriesWindow.data("kendoWindow")) {
+        countriesWindow.kendoWindow(
+            newKendoWindow("Countries", onClosecountriesWindow)
+        );
+    }
+
+    function onClosecountriesWindow() {
+        resetKenoComboBox('CountryDescription');
+        resetGrid('gridDdlCountry');
+    }
+
+    $("#btnAddCountry").click(function (e) {
+        e.preventDefault();
+        var kendoWindow = $("#countriesWindow").data("kendoWindow");
+        $('.k-grid-cancel').click();
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+</script>

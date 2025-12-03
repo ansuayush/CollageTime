@@ -1,0 +1,572 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Person Education";
+
+}
+
+@model ExecViewHrk.WebUI.Models.PersonEducationVm
+
+
+@*@{
+        var id = ViewContext.RouteData.Values["id"];
+        var requestType = ViewContext.RouteData.Values["RequestType"];
+        var controller = ViewContext.RouteData.Values["controller"];
+        var action = ViewContext.RouteData.Values["action"];
+    }*@
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+<script src="~/Scripts/application/PersonEducationsMatrixPartial.js"></script>
+
+
+@Html.ValidationSummary(true)
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+
+            <div class="col-md-6 ">
+                Person Education <span id="personNameLabel">@(" - " + @Model.PersonName + "   ")</span>
+                <div style="color:red; font-size:x-small">* denotes required field</div>
+
+            </div>
+            <div class="col-md-6 ">
+
+                @using (Html.BeginForm("PersonEducationsSelectedIndexChanged", "PersonEducations", FormMethod.Post, new { role = "form", id = "PersonEducationFormDdl" }))
+                {
+                    <label>My Educations</label>
+
+                    @(Html.Kendo().DropDownListFor(model => model.PersonEducationId)
+                                            .Name("PersonEducationIdDdl")
+                                            .HtmlAttributes(new { style = "width:300px" })
+                                            .DataTextField("PersonEducationDescription")
+                                            .DataValueField("PersonEducationId")
+                                            .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetPersonEducationsList", "PersonEducations").Type(HttpVerbs.Post);//.Data("additionalData");
+
+                                                  });
+                                                  //.ServerFiltering(true);
+                                              })
+                                            .Value(@Model.PersonEducationId.ToString())
+                                            .OptionLabel("- select one -")
+                                            .Events(e =>
+                                            {
+                                                e.DataBound("onDataBoundPersonEducationDdl")
+                                                    .Select("onSelectPersonEducationDdl");
+                                            })
+                    )
+                    
+                    
+                }
+
+
+                <div id="noEducationRecordsFound" style="color:red; font-size:x-small">no records found</div>
+
+
+            </div>
+
+        </div>
+    </div>
+    <div id="formDiv" class="panel-body">
+
+        @*need this for validation*@
+        @using (Html.BeginForm("PersonEducations", "PersonEducations", FormMethod.Post, new { role = "form", id = "PersonEducationForm" }))
+        {
+            @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+            @Html.HiddenFor(model => model.PersonEducationId, new { id = "hiddenPersonEducationId" })
+            <div class="row ">
+
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="col-md-5 ">
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Qualification Type</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("QualificationTypeDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("QualificationDescription")
+                                        .DataValueField("QualificationTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetQualificationTypes", "DdlQualificationTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Qualification Type")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddQualificationType" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.QualificationTypeDescription)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Major Program</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("MajorDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("DegreeDescription")
+                                        .DataValueField("DegreeTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetDegreeTypes", "DdlDegreeTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select a Major")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddMajor" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.QualificationTypeDescription)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Minor Program</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("MinorDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("DegreeDescription")
+                                        .DataValueField("DegreeTypeId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetDegreeTypes", "DdlDegreeTypes").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select a Minor")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddMinor" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.QualificationTypeDescription)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group ">
+                                <div>
+                                    <label><span style="color:red">*</span>Level Achieved</label>
+                                </div>
+                                @(Html.Kendo().ComboBox()
+                                        .Name("LevelDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("EducationLevelDescription")
+                                        .DataValueField("EducationLevelId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetEducationLevels", "DdlEducationLevels").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Education Level")
+                                )
+
+                                @if (!User.IsInRole("ClientEmployees"))
+                                {
+                                    <button id="btnAddEducationLevel" class="btn btn-info">+</button>
+                                }
+
+
+                                <div>
+                                    @Html.ValidationMessageFor(model => model.LevelDescription)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group ">
+                                <label><span style="color:red">*</span>Grade</label>
+                                @Html.TextBoxFor(x => x.Grade, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.Grade)
+                            </div>
+
+                            <div class="form-group ">
+                                <label><span style="color:red">*</span>Gpa</label>
+                                @Html.TextBoxFor(x => x.Gpa, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.Gpa)
+                            </div>
+
+                            <div class="form-group ">
+                                <label><span style="color:red">*</span>Credits Earned</label>
+                                @Html.TextBoxFor(x => x.CreditsEarned, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.CreditsEarned)
+                            </div>
+
+                            <div class="form-group">
+                                <label>Planned Start</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.PlannedStart)
+                                        .Name("PlannedStart")
+                                        .Min(new DateTime(1915, 1, 1))
+                                        .Max(new DateTime(2099, 12, 31))
+                                    )
+                                    @Html.ValidationMessageFor(x => x.PlannedStart)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Planned Completion</label>
+                                <div>
+                                    @(Html.Kendo().DatePickerFor(x => x.PlannedCompletion)
+                                        .Name("PlannedCompletion")
+                                    )
+                                </div>
+                                <div>
+                                    @Html.ValidationMessageFor(x => x.PlannedCompletion)
+                                </div>
+                            </div>
+  
+                        </div>
+
+                        <div class="col-md-offset-1 col-md-5">
+
+                            <div>
+
+                                <div class="form-group">
+                                    <label>Actual Completion</label>
+                                    <div>
+                                        @(Html.Kendo().DatePickerFor(x => x.ActualCompletion)
+                                        .Name("ActualCompletion")
+                                        )
+                                    </div>
+                                    <div>
+                                        @Html.ValidationMessageFor(x => x.ActualCompletion)
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group ">
+                                    <div>
+                                        <label><span style="color:red">*</span>Educational Establishment</label>
+                                    </div>
+                                    @(Html.Kendo().ComboBox()
+                                        .Name("EducationEstablishmentDescription")
+                                        .HtmlAttributes(new { style = "width:300px" })
+                                        .DataTextField("Description")
+                                        .DataValueField("EducationEstablishmentId")
+                                        .Filter(FilterType.Contains)
+                                          .DataSource(source =>
+                                          {
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetEducationEstablishments", "DdlEducationEstablishments").Type(HttpVerbs.Post);
+
+                                              })
+                                              .ServerFiltering(true);
+                                          })
+                                        .Placeholder("select an Educational establishment")
+                                    )
+
+                                    @if (!User.IsInRole("ClientEmployees"))
+                                    {
+                                        <button id="btnAddEducationEstablishment" class="btn btn-info">+</button>
+                                    }
+
+
+                                    <div>
+                                        @Html.ValidationMessageFor(model => model.EducationEstablishmentDescription)
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group ">
+                                    <label>Notes</label>
+                                    @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                                    @Html.ValidationMessageFor(x => x.Notes)
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered By:</label>
+                                    <label id="enteredByLabel" style="font-weight:normal;">@Model.EnteredBy</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Entered Date:</label>
+                                    <label id="enteredDateLabel" style="font-weight:normal;">@Model.EnteredDate</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Modified By:</label>
+                                    <label id="modifiedByLabel" style="font-weight:normal;">@Model.ModifiedBy</label>
+                                </div>
+
+                                <div class=" form-group ">
+                                    <label style="width:100px">Modified Date:</label>
+                                    <label id="modifiedDateLabel" style="font-weight:normal;">@Model.ModifiedDate</label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="form-group">
+
+                        <input id="btnSavePersonEducationAjax" type="button" value="Save" class="btn btn-info" />
+                        <input id="btnClearPersonEducationAjax" type="button" value="Clear" class="btn btn-info" />
+                        <input id="btnDeletePersonEducationAjax" type="button" value="Delete" class="btn btn-info" />
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+
+
+
+
+    @*<div id="medicalExaminationTypesWindow" style="display:none">
+        <div id="medicalExaminationTypesContent">*@
+    @*@Html.Partial("~/Views/LookupTables/DdlAccommodationTypesPartial.cshtml")*@
+    @*@Html.Action("DdlMedicalExaminationTypesPartial", "DdlMedicalExaminationTypes")
+
+            </div>
+        </div>*@
+
+
+
+    <div id="qualificationTypesWindow" style="display:none">
+        <div id="qualificationTypesContent">
+            @Html.Partial("~/Views/DdlQualificationTypes/DdlQualificationTypesPartial.cshtml")
+        </div>
+    </div>
+
+    <div id="majorProgramsWindow" style="display:none">
+        <div id="majorProgramsContent">
+            @Html.Partial("~/Views/DdlDegreeTypes/DdlDegreeTypesPartial.cshtml")
+        </div>
+    </div>
+
+    <div id="minorProgramsWindow" style="display:none">
+        <div id="minorProgramsContent">
+            @Html.Partial("~/Views/DdlDegreeTypes/DdlDegreeTypesPartial.cshtml")
+        </div>
+    </div>
+
+    <div id="educationLevelsWindow" style="display:none">
+        <div id="educationLevelsContent">
+            @Html.Partial("~/Views/DdlEducationLevels/DdlEducationLevelsPartial.cshtml")
+        </div>
+    </div>
+
+    @*<div id="educationEstablishmentsWindow" style="display:none">
+        <div id="educationEstablishmentsContent">
+            @Html.Partial("~/Views/DdlEducationEstablishments/DdlEducationEstablishmentsPartial.cshtml")
+        </div>
+    </div>*@
+
+</div>
+
+
+<script>
+
+    //Qualification Type
+    var qualificationTypesWindow = $("#qualificationTypesWindow");
+    if (!qualificationTypesWindow.data("kendoWindow")) {
+        qualificationTypesWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Qualification Types",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseQualificationTypesWindow
+        });
+    }
+
+    function onCloseQualificationTypesWindow() {
+        $("#QualificationTypeDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddQualificationType").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#qualificationTypesWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+    //Major
+    var majorProgramsWindow = $("#majorProgramsWindow");
+    if (!majorProgramsWindow.data("kendoWindow")) {
+        majorProgramsWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Major Programs",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseMajorProgramsWindow
+        });
+    }
+
+    function onCloseMajorProgramsWindow() {
+        $("#MajorDescription").data("kendoComboBox").dataSource.read();
+    }
+
+    $("#btnAddMajor").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#majorProgramsWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+   
+    //$("#btnAddMinor").click(function (e) {
+    //    e.preventDefault();
+
+    //    var kendoWindow = $("#majorProgramsWindow").data("kendoWindow");
+    //    kendoWindow.center();
+    //    kendoWindow.open();
+    //});
+
+    //Education Level
+    var educationLevelsWindow = $("#educationLevelsWindow");
+    if (!educationLevelsWindow.data("kendoWindow")) {
+        educationLevelsWindow.kendoWindow({
+            width: "900px",
+            height: "400px",
+            position: { top: 300, left: 120 },
+            title: "Education Levels",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            scrollable: true,
+            modal: true,
+
+            close: onCloseEducationLevelsWindow
+        });
+    }
+
+    function onCloseEducationLevelsWindow() {
+        $("#LevelDescription").data("kendoComboBox").dataSource.read();
+    }
+    
+    $("#btnAddEducationLevel").click(function (e) {
+        e.preventDefault();
+
+        var kendoWindow = $("#educationLevelsWindow").data("kendoWindow");
+        kendoWindow.center();
+        kendoWindow.open();
+    });
+
+
+    //Education Establishment
+    //var educationEstablishmentsWindow = $("#educationEstablishmentsWindow");
+    //if (!educationEstablishmentsWindow.data("kendoWindow")) {
+    //    educationEstablishmentsWindow.kendoWindow({
+    //        width: "900px",
+    //        height: "400px",
+    //        position: { top: 300, left: 120 },
+    //        title: "Education Establishments",
+    //        actions: [
+    //            "Maximize",
+    //            "Close"
+    //        ],
+    //        scrollable: true,
+    //        modal: true,
+
+    //        close: onCloseEducationEstablishmentsWindow
+    //    });
+    //}
+
+    //function onCloseEducationLevelsWindow() {
+    //    $("#EducationLevelAchieved").data("kendoComboBox").dataSource.read();
+    //}
+
+    //$("#btnAddEducationLevel").click(function (e) {
+    //    e.preventDefault();
+
+    //    var kendoWindow = $("#educationLevelsWindow").data("kendoWindow");
+    //    kendoWindow.center();
+    //    kendoWindow.open();
+    //});
+
+</script>
+
+
+
+
+
+
+
+
+
+

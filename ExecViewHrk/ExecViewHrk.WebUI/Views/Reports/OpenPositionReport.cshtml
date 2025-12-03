@@ -1,0 +1,94 @@
+﻿
+@{
+    ViewBag.Title = "Open Position Report";
+    Layout = null;
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Open Position Report <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.OpenPositionReportVm>()
+        .Name("gridOpenPostionReports")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.PositionCode).Title("Position Code");
+            columns.Bound(c => c.PositionTitle).Title("Position Title");
+            columns.Bound(c => c.TotalSlots).Title("Budgeted Slots").ClientFooterTemplate(" Sum: #= sum # ");
+            columns.Bound(c => c.SlotsFilled).Title("Slots Filled").ClientFooterTemplate(" Sum: #= sum # ");
+            columns.Bound(c => c.SlotsLeft).Title("Slots Left").ClientFooterTemplate(" Sum: #= sum # ");
+
+        })
+
+        .ToolBar(tools => { tools.Excel(); tools.Pdf(); })
+        .Pdf(pdf => pdf
+            .AllPages()
+            .Landscape()
+            .FileName("Open Position Report.pdf")
+        )
+        .Sortable()
+        .Excel(excel => excel.AllPages(true)
+        .FileName("Open Position Report.xlsx")
+        .Filterable(true))
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .DataSource(dataSource => dataSource.Ajax()
+         .Aggregates(aggregates =>
+            {
+                aggregates.Add(p => p.TotalSlots).Sum();
+                aggregates.Add(p => p.SlotsFilled).Sum();
+                aggregates.Add(p => p.SlotsLeft).Sum();
+            })
+        .Read(read => read.Action("OpenPositionReport_Read", "Reports"))
+            .Model(model =>
+            {
+                model.Id(p => p.PositionCode);
+            }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+           
+        )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .k-grid-header th.k-header {
+        min-width: 150px;
+    }
+
+    .k-grid {
+        overflow-x: scroll;
+    }
+
+    .k-pdf-export .k-grid-toolbar,
+    .k-pdf-export .k-pager-wrap {
+        display: none;
+    }
+    .k-grid-toolbar, .k-pager-wrap {
+        background: transparent !important;
+        border: 0;
+    }
+    .k-footer-template td {
+        font-weight: 700 !important;
+    }
+</style>

@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Benefit Providers";
+    Layout = "~/Views/Shared/_MatrixBlockHeader2.cshtml";
+}
+
+
+@section TitleSectionOfHeader2
+{
+    <label>Benefit Providers</label>
+}
+
+@*Body*@
+<div class="row ">
+    <div class="col-md-12">
+
+        <div class="form-group ">
+
+            @(Html.Kendo().Grid<ExecViewHrk.EfClient.BenefitProvider>()
+                        .Name("gridBenefitProvider")
+                        .Resizable(resize => resize.Columns(true))
+                        .Filterable()
+                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                        .ToolBar(toolbar => toolbar.Create())
+
+                        .Columns(columns =>
+                        {
+                            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(170);
+                            columns.Bound(c => c.BenefitProviderId).Title("Id").Hidden();
+                            columns.ForeignKey(c => c.CompanyCodeId, (System.Collections.IEnumerable)ViewData["companycodesList"], "CompanyCodeId", "CompanyCodeDescription")
+                            .Title("Company Code").Width(150);
+                            columns.Bound(c => c.BenefitProviderCode).Title("Code").Width(100);
+                            columns.Bound(c => c.BenefitProviderDescription).Title("Description").Width(150);
+                        })
+                        .HtmlAttributes(new { style = "height: 480px;" })
+
+                        .Scrollable()
+                        .Groupable()
+                        .Sortable()
+                        .Selectable()
+
+                        .Pageable(pageable => pageable
+                            .Refresh(false)
+                            .PageSizes(true)
+                            .ButtonCount(5))
+                        .DataSource(dataSource => dataSource
+                            .Ajax()
+
+
+                        .Read(read => read.Action("BenefitProvidersList_Read", "BenefitProviders"))
+                        .Create(create => create.Action("BenefitProvidersList_Create", "BenefitProviders"))
+                        .Update(update => update.Action("BenefitProvidersList_Update", "BenefitProviders"))
+                        .Destroy(destroy => destroy.Action("BenefitProvidersList_Destroy", "BenefitProviders"))
+                        .Model(model =>
+                        {
+                            model.Id(p => p.BenefitProviderId);
+                            model.Field(p => p.BenefitProviderId).Editable(false);
+                            model.Field(p => p.CompanyCodeId);
+                            model.Field(p => p.BenefitProviderCode);
+                            model.Field(p => p.BenefitProviderDescription);
+                        }
+                                )
+                        .Batch(false)
+                        .Events(events =>
+                        {
+                            events.Error("refreshGrid");
+                            events.RequestEnd("gridRequestEnd");
+                        })
+                            )
+            )
+
+            @*<div>
+                    @Html.ValidationMessageFor(model => model.BenefitGroupId)
+                </div>*@
+        </div>
+    </div>
+
+</div>
+
+
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+     
+</script>
+
+
+

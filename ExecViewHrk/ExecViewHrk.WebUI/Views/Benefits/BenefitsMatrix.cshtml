@@ -1,0 +1,136 @@
+﻿<script src="~/Scripts/application/EvHelpers.js"></script>
+@{
+    ViewBag.Title = "BenefitsMatrix";
+    //Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+    Layout = "~/Views/Shared/_MatrixHeader.cshtml";
+}
+
+@section TitleSection
+{
+    <h2>Benefits</h2>
+}
+
+<style>
+    #matrix a:hover {
+        background-color: red;
+    }
+
+    #matrix img {
+        border: 0px solid red;
+    }
+
+        #matrix img:hover {
+            outline: 2px solid white;
+        }
+
+    #matrix > div {
+        text-align: center;
+    }
+
+    #a {
+        margin: 5px;
+    }
+</style>
+
+@*Matrix*@
+<div id="matrix" class="container-fluid" style="background-color:black; border-width:3px; border-color:red; border-style:solid">
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")BenefitGroups/BenefitGroupsMatrixPartial/NSS"><img src="~/images/BenefitsNewBlock/BenefitGroups.png" style="width:210px;height:210px; margin-top:10px; margin-bottom:15px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")BenefitProviders/BenefitProvidersMatrixPartial/NSS"><img src="~/images/BenefitsNewBlock/BenefitProviders.png" style="width:210px;height:210px; margin-top:10px; margin-bottom:15px;"></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")BenefitOptions/BenefitOptionsMatrixPartial/NSS"><img src="~/images/BenefitsNewBlock/BenefitOptions.png" style="width:210px;height:210px; margin-top:10px; margin-bottom:15px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")BenefitOESchedules/BenefitOESchedulesMatrixPartial/NSS"><img src="~/images/BenefitsNewBlock/OpenEnrollmentSchedules.png" style="width:210px;height:210px; margin-top:10px; margin-bottom:15px; "></a>
+
+        </div>
+
+
+        <div class="col-md-12 ">
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")BenefitExpansionFields/BenefitExpansionFieldsMatrixPartial/NSS"><img src="~/images/BenefitsNewBlock/BenefitExpansionFields.png" style="width:210px;height:210px; margin-top:10px; margin-bottom:15px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")BenefitDeductionCodes/BenefitDeductionCodesMatrixPartial/NSS"><img src="~/images/BenefitsNewBlock/BenefitDeductionCodes.png" style="width:210px;height:210px; margin-top:10px; margin-bottom:15px; "></a>
+
+            <a style="margin:5px; padding-top:5px" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")BenefitPlans/BenefitPlansMatrixPartial/NSS"><img src="~/images/BenefitsNewBlock/BenefitPlans.png" style="width:210px;height:210px; margin-top:10px; margin-bottom:15px;"></a>
+
+            <a style="margin:5px;" data-ajax="true" data-ajax-begin="OnBeginAjax" data-ajax-complete="OnCompleteAjax" data-ajax-failure="OnFailureAjax"
+               data-ajax-mode="replace" data-ajax-success="OnSuccessAjax" data-ajax-update="#FormEntryDiv"
+               href="@Url.Content("~/")BenefitPlanDetails/BenefitPlanDetailsMatrixPartial/NSS"><img src="~/images/BenefitsNewBlock/BenefitPlanDetails.png" style="width:210px;height:210px; margin-top:10px; margin-bottom:15px; "></a>
+
+        </div>
+       
+    </div>
+
+</div>
+
+<div id="FormEntryDiv">
+
+</div>
+
+<script type="text/javascript">
+
+            $(document).ready(function () {
+                var formEntryDiv = $("#FormEntryDiv");
+
+
+                $("#matrix a").click(function (e) {
+                    //e.preventDefault();
+                    $('#matrix').hide(1500);
+                    $('#closeButtonDiv').show(1500);
+                    $('#FormEntryDiv').show(1500);
+
+                });
+
+                $("#closeButtonDiv").click(function (e) {
+                    e.preventDefault();
+                    $('#matrix').show(1500);
+                    $('#closeButtonDiv').hide(1500);
+                    $('#FormEntryDiv').hide(1500);
+                });
+
+                // this works if the button is in the partial view
+                $(document).on("click", "#closeButtonDiv", function (e) {
+                    e.preventDefault();
+                    $('#matrix').show(1500);
+                    $('#closeButtonDiv').hide(1500);
+                    $('#FormEntryDiv').hide(1500);
+                });
+            });
+
+            function OnBeginAjax() {
+
+            }
+
+            function OnSuccessAjax(data) {
+                //
+                //alert("Got to On Success Ajax");
+            }
+
+            function OnFailureAjax(request, error) {
+                //alert("Got to On Failure Ajax");
+            }
+
+            function OnCompleteAjax(request, status) {
+                //alert("Got to On Complete Ajax");
+            }
+
+
+
+</script>

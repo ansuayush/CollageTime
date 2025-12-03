@@ -1,0 +1,295 @@
+﻿@model ExecViewHrk.WebUI.Models.PositionDetailsVm
+<div class="row">
+    <div class="col-sm-12 p-0">
+        @*<div class="col-sm-3">
+                <div class="form-group">
+                    <label>Business Level</label>
+                    @Html.DropDownListFor(m => m.BusinessLevelNbr, new SelectList(Model.positionBusinessLevelsList, "BusinessLevelNbr", "BusinessLevelTitle", Model.BusinessLevelNbr), new { @class = "form-control input-sm" })
+                    @Html.ValidationMessageFor(x => x.BUCode)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Job</label>
+                    @Html.DropDownListFor(m => m.JobId, new SelectList(Model.JobList, "JobId", "JobDescription", Model.JobId), new { @class = "form-control input-sm" })
+                    @Html.ValidationMessageFor(x => x.JobId)
+                </div>
+            </div>*@
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label><span style="color:red">*</span>Position Code</label>
+                @Html.TextBoxFor(m => m.PositionCode, new { @class = "form-control", data_required = "Y", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label><span style="color:red">*</span>Position Title</label>
+                @Html.TextBoxFor(m => m.PositionDescription, new { @class = "form-control", data_required = "Y" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>BU Code</label>
+                @Html.TextBoxFor(m => m.BUCode, new { @class = "form-control", disabled = "disabled" })
+                @Html.ValidationMessageFor(x => x.BUCode)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>BU Title</label>
+                @Html.TextBoxFor(m => m.BUTitle, new { @class = "form-control", disabled = "disabled" })
+                @Html.ValidationMessageFor(x => x.BUTitle)
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">       
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Job Code</label>
+                @Html.TextBoxFor(m => m.JobCode, new { @class = "form-control", disabled = "disabled" })
+                @Html.ValidationMessageFor(x => x.JobCode)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Job Title</label>
+                @Html.TextBoxFor(m => m.JobTitle, new { @class = "form-control", disabled = "disabled" })
+                @Html.ValidationMessageFor(x => x.JobTitle)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Created Date</label>
+                @if (Model.CreatedDate != null)
+                {
+                    <span class="f-13 block f-w-600">@Model.CreatedDate.Value.ToString("MM/dd/yyyy") &nbsp;</span>
+                }
+                else
+                {
+                    <span class="f-13 block f-w-600">@Model.CreatedDate &nbsp;</span>
+                }
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Closed Date</label>
+                @Html.TextBoxFor(m => m.ClosedDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control " })
+                @Html.ValidationMessageFor(x => x.ClosedDate)
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">  
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Projected End Date</label>
+                @Html.TextBoxFor(m => m.ProjectEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control " })
+                @Html.ValidationMessageFor(x => x.ProjectEndDate)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Actual End Date</label>
+                @Html.TextBoxFor(m => m.ActualEnddate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control " })
+                @Html.ValidationMessageFor(x => x.ActualEnddate)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Position Type</label>
+                @Html.DropDownListFor(m => m.PositionTypeID, new SelectList(Model.ddlPositionType, "PositionTypeID", "description", Model.PositionTypeID), new { @class = "form-control input-sm" })
+                @Html.ValidationMessageFor(x => x.PositionTypeID)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Reports To Position</label>
+                @Html.DropDownListFor(m => m.ReportsToPositionId, new SelectList(Model.ReportToList, "keyvalue", "keydescription", Model.ReportsTo), new { @class = "form-control input-sm" })
+                @Html.ValidationMessageFor(x => x.ReportsToPositionId)
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Position Status</label>
+                <div class="col-sm-12 p-0 form-radio">
+                    <div class="radio radio-inline">
+                        <label>
+                            <input type="radio" id="PositionStatusRadio1" onclick="PositionStatusOnChange(1)"><i class="helper"></i>Active
+                        </label>
+                    </div>
+                    <div class="radio radio-inline">
+                        <label>
+                            <input type="radio" id="PositionStatusRadio2" onclick="PositionStatusOnChange(2)"><i class="helper"></i>Frozen
+                        </label>
+                    </div>
+                    <div class="radio radio-inline">
+                        <label>
+                            <input type="radio" id="PositionStatusRadio3" onclick="PositionStatusOnChange(3)"><i class="helper"></i>Closed
+                        </label>
+                    </div>
+                    @Html.HiddenFor(m => m.CurrentStatus)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>FTE</label>
+                @Html.TextBoxFor(m => m.FTE, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                @Html.ValidationMessageFor(x => x.FTE)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Position Categories</label>
+                @Html.DropDownListFor(m => m.PositionCategoryID, new SelectList(Model.ddlPositionCategory, "PositionCategoryID", "description", Model.PositionCategoryID), new { @class = "form-control input-sm" })
+                @Html.ValidationMessageFor(x => x.PositionCategoryID)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Total Slots</label>
+                @Html.TextBoxFor(m => m.TotalSlots, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                @Html.ValidationMessageFor(x => x.TotalSlots)
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 p-0">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Slots Filled</label>
+                <span class="f-13 block f-w-600">@Model.FilledSlots</span>
+            </div>
+        </div>    
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Start Date</label>
+                @Html.TextBoxFor(m => m.StartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control " })
+                @Html.ValidationMessageFor(x => x.StartDate)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Frozen Date</label>
+                @Html.TextBoxFor(m => m.FrozenDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control " })
+                @Html.ValidationMessageFor(x => x.FrozenDate)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Last Modified Date</label>
+                @Html.TextBoxFor(m => m.LastModifiedDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control " })
+                @Html.ValidationMessageFor(x => x.LastModifiedDate)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label><span style="color:red"></span>Cost Number</label>
+                @Html.TextBoxFor(m => m.CostNumber, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Suffix</label>
+                @Html.TextBoxFor(m => m.Suffix, new { @class = "form-control", data_required = "Y", @maxlength = "2", @readonly = "readonly" })
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        PositionStatusValue();
+    });
+    function PositionStatusValue()
+    {
+        if ($("#CurrentStatus").val() == "Active") {
+            $("#PositionStatusRadio1").attr("checked", "checked");
+        }
+        else if ($("#CurrentStatus").val() == "Frozen") {
+            $("#PositionStatusRadio2").attr("checked", "checked");
+        }
+        else if ($("#CurrentStatus").val() == "Closed") {
+            $("#PositionStatusRadio3").attr("checked", "checked");
+        }
+    }
+    function PositionStatusOnChange(element)
+    {
+        if (element == 1) {
+            $("#CurrentStatus").val("Active");
+            $("#PositionStatusRadio2").removeAttr("checked");
+            $("#PositionStatusRadio3").removeAttr("checked");
+        }
+        else if (element == 2) {
+            $("#CurrentStatus").val("Frozen");
+            $("#PositionStatusRadio1").removeAttr("checked");
+            $("#PositionStatusRadio3").removeAttr("checked");
+        }
+        else if (element == 3) {
+            $("#CurrentStatus").val("Closed");
+            $("#PositionStatusRadio1").removeAttr("checked");
+            $("#PositionStatusRadio2").removeAttr("checked");
+        }
+    }
+    $("#JobId").change(function () {
+        if ($("#JobId").val() != 0)
+        {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetJobCode", "PositionSetupDetail")" + "?JobDescription=" + $("#JobId option:selected").text(),
+                success: function (data) {
+                    if (data != "failed") {
+                        if (data == null) {
+                            $("#JobCode").val('');
+                        }
+                        else {
+                            $("#JobCode").val(data);
+                            $("#JobTitle").val($("#JobId option:selected").text());
+                        }
+                    }
+                    else {
+                        DisplayNotification(ERR0038, "error");
+                    }
+                },
+                error: function (data) {
+                },
+            });      
+    }
+    else
+    {
+            $("#JobCode").val('');
+            $("#JobTitle").val('');
+        }
+    });
+
+    $("#BusinessLevelNbr").change(function () {
+        if ($("#BusinessLevelNbr").val() != 0)
+        {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetBuCode", "PositionSetupDetail")" + "?BUDescription=" + $("#BusinessLevelNbr option:selected").text(),
+                success: function (data) {
+                    if (data != "failed") {
+                        if (data == null) {
+                            $("#BUCode").val('');
+                        }
+                        else {
+                            $("#BUCode").val(data);
+                            $("#BUTitle").val($("#BusinessLevelNbr option:selected").text());
+                        }
+                    }
+                    else {
+                        DisplayNotification(ERR0038, "error");
+                    }
+                },
+            error: function (data) {
+            },
+            });      
+    }
+    else
+    {
+            $("#BUCode").val('');
+            $("#BUTitle").val('');
+    }
+    });
+</script>

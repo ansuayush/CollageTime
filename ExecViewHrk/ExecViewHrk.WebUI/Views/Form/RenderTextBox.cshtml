@@ -1,0 +1,8 @@
+﻿
+@model ExecViewHrk.WebUI.Models.FormTemplateFieldVm
+<div class="form-group ">
+    <label><span style="color:red">*</span>@Model.Label</label>
+    @*@Html.TextBox(fields.HtmlId, null, new { @class = "form-control", required = "required" })*@
+    @Html.TextBox(Model.HtmlId, null, new { @class = "form-control" })
+    @Html.ValidationMessage(Model.HtmlId)
+</div>

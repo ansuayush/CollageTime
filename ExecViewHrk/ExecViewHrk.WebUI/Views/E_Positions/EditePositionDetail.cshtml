@@ -1,0 +1,765 @@
+﻿@model ExecViewHrk.Models.E_PositioVm 
+<div class="md-content p-0">
+    <div class="card p-15">
+        <div class="card-block">
+            <div class="row">
+                <ul class="nav nav-tabs nav-tabs-new md-tabs m-0 p-0" role="tablist">
+                    <li class="nav-item nav-item-new">
+                        <a class="nav-link active f-w-600" id="EmpPosition_tab" data-toggle="tab" href="#PositionTab1" role="tab" aria-expanded="true"><i class="fa fa-list f-14"></i> Employee Position</a>
+                        <div class="slide"></div>
+                    </li>
+                    <li class="nav-item nav-item-new">
+                        <a class="nav-link f-w-600" id="CollegeCont_tab" style="width: 250px;" data-toggle="tab" href="#PositionTab2" role="tab" aria-expanded="false"><i class="fa fa-list-alt"></i> Collegetime Stipends (Contracts)</a>
+                        <div class="slide" style="width: 250px !important;"></div>
+                    </li>
+                    <li class="nav-item nav-item-new">
+                        <a class="nav-link f-w-700" id="NonStandpay_tab" style="width: 420px;" data-toggle="tab" href="#PositionTab3" role="tab" aria-expanded="false"><i class="fa fa-money"></i> Non-Standard Salary Payments</a>
+                        <div class="slide" style="width: 250px !important;"></div>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="PositionTab1" role="tabpanel" aria-expanded="true">
+                        <div class="card-header">
+                            <h5 class="card-header-text">Employee Position</h5>
+                        </div>
+                        <div id="dvPosition" class="card-block">
+                            <div class="row">
+                                @using (Html.BeginForm("E_Positions", "E_Positions", FormMethod.Post, new { role = "form", id = "E_PositionForm" }))
+                {
+                    @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                    @Html.HiddenFor(model => model.PersonName)
+                    @Html.HiddenFor(model => model.E_PositionId, new { id = "hiddenE_PositionId" })
+                    @Html.HiddenFor(m => m.PositionCode)
+                    @Html.ValidationSummary(true)
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Position Title</label>
+                            @Html.TextBoxFor(model => model.PositionDescription, new { @class = "form-control", @readonly = true })
+                            <div>
+                                @Html.ValidationMessageFor(model => model.PositionDescription)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Business Level</label>
+                            @Html.TextBoxFor(model => model.BusinessLevel, new { @class = "form-control", @readonly = true })
+                            @Html.ValidationMessageFor(model => model.BusinessLevel)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Job</label>
+                            @Html.TextBoxFor(model => model.Job, new { @class = "form-control", @readonly = true })
+                            @Html.ValidationMessageFor(model => model.Job)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Start Date</label>
+                            @Html.TextBoxFor(model => model.StartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Projected End Date</label>
+                            @Html.TextBoxFor(model => model.projectedEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                            <div>
+                                @Html.ValidationMessageFor(x => x.ProjectEndDate)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Actual End Date</label>
+                            @Html.TextBoxFor(model => model.actualEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                            <div>
+                                @Html.ValidationMessage("actualenddate")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 p-t-30">
+                        <div class="form-group ">
+                            @Html.EditorFor(model => model.PrimaryPosition, new { @class = "checkbox-color checkbox-primary" })
+                            <label>Primary</label>
+                            @Html.ValidationMessageFor(x => x.PrimaryPosition)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label><span style="color:red">*</span>Pay Frequency</label>
+                            <div class="input-group">
+                                @if (Model != null)
+                {
+                    @Html.DropDownListFor(model => model.PayFrequencyId,
+new SelectList(Model.PayFrequencyDropDownList, "keyvalue", "keydescription", Model.PayFrequencyId), new { @class = "form-control" })
+}
+else
+{
+                @Html.DropDownList("PayFrequencyId", new SelectList(ViewBag.PayFrequency, "keyvalue", "keydescription"), new { @class = "form-control" })
+}
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'PayFrequency');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(model => model.PayFrequencyId)
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>FTE</label>
+                            @Html.TextBoxFor(model => model.FTE, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.FTE)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Position Category</label>
+                            <div class="input-group">
+                                @if (Model != null)
+                {
+                    @Html.DropDownListFor(model => model.PositionCategoryID,
+new SelectList(Model.PositionCategoryDropDownList, "keyvalue", "keydescription", Model.PositionCategoryID), new { @class = "form-control" })
+}
+else
+{
+                @Html.DropDownList("PositionCategoryID", new SelectList(ViewBag.PositionCategory, "keyvalue", "keydescription"), new { @class = "form-control" })
+}
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'PositionCategory');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(model => model.PositionCategoryID)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Position Type</label>
+                            <div class="input-group">
+                                @if (Model != null)
+                {
+                    @Html.DropDownListFor(model => model.PositionTypeID,
+new SelectList(Model.PositionTypeDropDownList, "keyvalue", "keydescription", Model.PositionTypeID), new { @class = "form-control" })
+}
+else
+{
+                @Html.DropDownList("PositionTypeID", new SelectList(ViewBag.PositionTypes, "keyvalue", "keydescription"), new { @class = "form-control" })
+}
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'PositionType');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            </div>
+                            @*<div>
+                    @Html.ValidationMessageFor(model => model.PositionTypeID)
+                </div>*@
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Rate Type</label>
+                            <div class="input-group">
+
+                                @Html.DropDownListFor(model => model.RateTypeId,
+new SelectList(Model.RateTypeDropDownList, "keyvalue", "keydescription", Model.RateTypeId), new { @class = "form-control" })
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'RateTypeId');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label>Employee Type</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(model => model.EmployeeTypeId,
+new SelectList(Model.EmployeeTypeDropDownList, "keyvalue", "keydescription", Model.EmployeeTypeId), new { @class = "form-control" })
+                                @Html.HiddenFor(m => m.EmployeeTypeId, new { @id = "hdnemployeetypeid" })
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'EmployeeTypeID');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label><span style="color:red">*</span>Pay Group</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(model => model.PayGroupId,
+new SelectList(Model.PayGroupDropDownList, "keyvalue", "keydescription", Model.PayGroupId), new { @class = "form-control", @id = "PayGroupId1" })
+
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'PayGroupId');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Report To</label>
+                                            <div class="input-group">
+                                                @Html.DropDownListFor(model => model.ReportsToID,
+                  new SelectList(Model.ReportsToIdDropDownList, "keyvalue", "keydescription", Model.ReportsToID), new { @class = "form-control" })                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                      <div class="col-sm-3">
+                                          <div class="form-group">
+                                              <label>Adp Year</label>
+                                              @Html.TextBoxFor(model => model.AdpYear, new { @class = "datepicker form-control" })
+                                              <div>
+                                                  @Html.ValidationMessageFor(x => x.AdpYear)
+                                              </div>
+                                          </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Adp WSLimit </label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.AdpWSLimit, new { @class = "form-control" })   
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                    <div class="form-group ">
+                                        <label><span style="color:red">*</span>Employee Class</label>
+                                        <div class="input-group">
+                                            @Html.DropDownListFor(model => model.EmployeeClassId,
+                                            new SelectList(Model.EmployeeClassList, "keyvalue", "keydescription", Model.EmployeeClassId), "Select", new { @class = "form-control", data_required = "Y" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Suffix</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.Suffix, new { @class = "form-control", @readonly=true})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number Effective Date</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumberEffectiveDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number1 Percent</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber1Percent, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number2 Account</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber2Account, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number2 Percent</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber2Percent, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number3 Account</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber3Account, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number3 Percent</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber3Percent, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number4 Account</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber4Account, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number4 Percent</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber4Percent, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number5 Account</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber5Account, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number5 Percent</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber5Percent, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number6 Account</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber6Account, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Cost Number6 Percent</label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.CostNumber6Percent, new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                }                            
+                            </div>
+                        </div>
+                        @Html.Partial("~/Views/E_Positions/SalaryGridEditPartial.cshtml", Model)
+                    </div>
+
+                    <div class="tab-pane" id="PositionTab2" role="tabpanel" aria-expanded="false">
+                        @Html.Partial("~/Views/E_Positions/ContractGridEditPartial.cshtml", Model)
+                        @*<div class="p-10">
+                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light b-radius-2 text-tranform-normal" data-toggle="modal" data-target="#CollegeTime">
+                    <i class="fa fa-plus"></i><span class="m-l-10">Add Contracts</span>
+                </button>
+            </div>*@
+
+                        @*<div class="col-sm-12 p-0">
+                <div class="table-primary table-striped">
+                    <table class="table table-striped table-bordered" id="DraftItems" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th data-hide="phone" style="width:70px;" class="no-sorting"></th>
+                                <th>Start Date</th>
+                                <th data-hide="phone">End Date</th>
+                                <th data-hide="phone,tablet">Amount (in $$)</th>
+                                <th data-hide="phone,tablet">No.of Pay Period</th>
+                                <th data-hide="phone,tablet" style="width:150px;">Amount To Be Paid</th>
+                                <th data-hide="phone,tablet">Department</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="width:70px;"></td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>*@
+                    </div>
+                    
+                    <div class="tab-pane" id="PositionTab3" role="tabpanel" aria-expanded="false">
+                        @Html.Partial("~/Views/E_Positions/NonStdSalaryGrid.cshtml", Model)
+
+                    </div>
+                    @*<div class="tab-pane" id="PositionTab3" role="tabpanel" aria-expanded="false">
+                        @Html.Partial("~/Views/E_Positions/NonStandardSalaryPaymentMatrixPartial.cshtml", Model)
+
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dvSubmit" class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveEmployeePositionAjax">Done</button>
+</div>
+
+<div class="modal fade" id="CollegeTime" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Add New Contracts1</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="padding-left:15px; padding-right:15px;">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Amount (in $$)</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select class="form-control">
+                                <option>49102</option>
+                                <option>028105</option>
+                                <option>028105</option>
+                                <option>048008</option>
+                                <option>028111</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Semester</label>
+                            <select class="form-control">
+                                <option>Full Contract</option>
+                                <option>Spring</option>
+                                <option>Stipend</option>
+                                <option>Fall</option>
+                                <option>Intersession</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>No.of Pay Periods</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Job</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Amount To Be Paid</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>GL Code</label>
+                            <select class="form-control">
+                                <option>Select</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Add New Contract</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group ">
+                            <label>Status 1 Flag Code</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(model => model.EmployeeTypeId,
+                                                         new SelectList(Model.EmployeeTypeDropDownList, "keyvalue", "keydescription", Model.EmployeeTypeId), new { @class = "form-control" })
+
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event,'EmployeeTypeID');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group ">
+                            <label>Pay period</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(model => model.BusinessLevel, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group ">
+                            <label>Earnings Code</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(model => model.BusinessLevel, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group ">
+                            <label>Memo Code 1</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(model => model.EmployeeTypeId,
+                                                         new SelectList(Model.EmployeeTypeDropDownList, "keyvalue", "keydescription", Model.EmployeeTypeId), new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group ">
+                            <label>Memo Code 1 Amount</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(model => model.PositionDescription, new { @class = "form-control", @readonly = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group ">
+                            <label>Memo Code 2</label>
+                            <div class="input-group">
+                                @Html.DropDownListFor(model => model.EmployeeTypeId,
+                                                         new SelectList(Model.EmployeeTypeDropDownList, "keyvalue", "keydescription", Model.EmployeeTypeId), new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group ">
+                            <label>Memo Code 2 Amount</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(model => model.PositionDescription, new { @class = "form-control", @readonly = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea type="text" class="form-control" style="height:100px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary waves-effect waves-light " data-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        setAddNewButtonByTabs(); //Third Tab: Sets Addnew button by Tabs
+
+        $("#AdpYear").keypress(function (e) {
+            var adpYears = $("#AdpYear").val();
+            if (adpYears != null && adpYears != "")
+                if (adpYears.length > 4) {
+                    return false;
+                }
+            //if the letter is not digit then display error and don't type anything
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {                
+                return false;
+            }
+        });
+        $("#AdpWSLimit").keypress(function (e) {
+            //if the letter is not digit then display error and don't type anything
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 46) {                
+                return false;
+            }
+        });
+        $("#AdpYear").focus(function () {
+            $(".ui-datepicker-month").hide();
+            $('.ui-datepicker-calendar').hide();
+            $("#AdpYear").val('');
+            $("#AdpYear").val($('.ui-datepicker-year').val());
+            $('#AdpYear-error').hide();
+        });
+        $('#spSalaryGradeID').click(function (e) {
+            var salaryGradeID = $('#PositionGradeID').val();
+            formURL = $("#ApplicationUrl").val() + "LookupTables/AddPositionGrade?salaryGradeID=" + salaryGradeID;
+            if (formURL != "") {
+                $("#QuickAddModal .modal-content").html("");
+                $("#QuickAddModal .modal-content").load(formURL);
+                $("#QuickAddModal").modal({ show: true });
+            }
+        });
+
+        //Third Tab: Sets Addnew button by Tabs
+        function setAddNewButtonByTabs() {
+            $('#NonStandpay_tab').on('click',
+                function () {
+                    $(".btn-addsalary").css("display", "none");
+                    $(".hdnempt").css("display", "initial");
+                });
+            $('#EmpPosition_tab').on('click',
+                function () {
+                    $(".btn-addsalary").css("display", "initial");
+                    $(".hdnempt").css("display", "none");
+                });
+        }
+    });
+    $("#btnSaveEmployeePositionAjax").click(function (e) {
+        
+        e.preventDefault();
+        var form = $("#E_PositionForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            return;
+        }
+        //var errorMessage = formService.validate(form);
+        //if (errorMessage) {
+        //    return;
+        //}
+        var startDate = $("#StartDate").val();
+        var actualEndDate = $("#actualEndDate").val();
+        var projectedEndDate = $("#projectedEndDate").val();
+        var positionGrade = $("#SalaryGradeID option:selected").val();
+        var payFrequency = $("#PayFrequencyId option:selected").val();
+        //var positionCategory = $("#PositionCategoryID option:selected").val();
+        //var positionType = $("#PositionTypeID option:selected").val();
+        var payGroupId = $("#PayGroupId option:selected").val();
+        var employeeClassId = $("#EmployeeClassId option:selected").val();
+        var errormsg = "Please Enter the following Fields</br>";
+        if (startDate == "") {
+            errormsg += "Start Date</br>";
+        }
+        if (positionGrade == "" || positionGrade == "0") {
+            errormsg += "Position Grade</br>";
+        }
+        if (payFrequency == "") {
+            errormsg += "Pay frequency</br>";
+        }
+        //if (positionCategory == "") {
+        //    errormsg += "Position Category</br>";
+        //}
+        //if (positionType == "") {
+        //    errormsg += "Position Type</br>";
+        //}
+        if (payGroupId == "") {
+            errormsg += "Group</br>";
+        }
+        if (employeeClassId == "") {
+            errormsg += "Employee Class</br>";
+        }
+        if (startDate == "" || positionGrade == "" || positionGrade == "0" || payFrequency == "" /*|| positionCategory == "" || positionType == ""*/ || payGroupId == "" || employeeClassId == "") {
+            toastr.error(errormsg);
+            return false;
+        }
+        var adpYears = $("#AdpYear").val();
+        if (adpYears != null && adpYears != "")
+            if (adpYears.length < 4 || adpYears.length > 4) {
+                toastr.error("Please Select a Valid Adp Year");
+                return false;
+            }
+
+        if (startDate != '' && projectedEndDate != '') {
+            if (Date.parse(startDate) > Date.parse(projectedEndDate)) {
+                $("#projectedEndDate").val('');
+                toastr.error("Projected End Date can't be less than Start Date. ");
+                return false;
+            }
+        }
+        if (startDate != '' && actualEndDate != '') {
+            if (Date.parse(startDate) > Date.parse(actualEndDate)) {
+                $("#actualEndDate").val('');
+                toastr.error("Actual End Date can't be less than Start Date. ");
+                return false;
+            }
+        }
+
+        var postData = $("#E_PositionForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "E_Positions/E_PositionsSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                formService.isSavingInProgress = false;
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenE_PositionId = $("#hiddenE_PositionId").val();
+                resetGrid("gridEmployeePosition");
+                $("#btnSaveEmployeePositionAjax").parent().find(".md-close").click();
+                formService.isLoadingInProgress = true;
+                killTimer();
+                if (_oldhiddenE_PositionId != "0") {
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+                else {
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+            }
+        });
+    });
+
+    //Third Tab: Resets the Third Tab Grid.
+    $("#NonStandpay_tab").click(function () {
+        $("#gridEmployeeSalPosition1").data("kendoGrid").dataSource.read();
+        //$("#gridnonstandardsalaryPayments").data("kendoGrid").dataSource.read();
+        //var appBaseUrl = $("#appBaseUrl").val();
+        //var _oldhiddenE_PositionId = $("#hiddenE_PositionId").val();
+        //$.ajax({
+        //    url: appBaseUrl + "E_Positions/NonStandardSalaryPayment_Read",
+        //    type: "Get",
+        //    data: {
+        //        e_PositionId: _oldhiddenE_PositionId
+        //    },
+        //    success: function (response) {
+        //        if (response != null) {//          
+        //            //$("#gridnonstandardsalaryPayments").data("kendoGrid").dataSource.read();
+        //        }
+        //    }
+        //    // $('#GridName').data('kendoGrid').refresh();
+        //});
+    });
+</script>

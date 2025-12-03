@@ -1,0 +1,73 @@
+﻿
+@model ExecViewHrk.Models.EmployeeClassVm
+<div class="card p-15">
+    <div class="modal-header">
+        @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>*@
+        <h4 class="modal-title">Employee Class</h4>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            <form id="frmEmployeeType">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Class Name</label>
+                        @Html.TextBoxFor(x => x.ClassName, new { @class = "form-control", data_required = "Y" })
+                    </div>
+                </div>
+                @*<div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Description</label>
+                        @Html.TextBoxFor(x => x.EmployeeClassId, new { @class = "form-control", data_required = "Y" })
+                    </div>
+                </div>*@
+
+                <div class="col-sm-3 p-t-30">
+                    <div class="form-group ">
+                        <div class="checkbox-primary">
+                            @Html.ValidationMessageFor(model => model.IsActive)                                    
+                <input id="@Html.NameFor(x => x.IsActive)" type="checkbox" value="">
+                            @Html.LabelFor(x => x.IsActive)
+                            @Html.HiddenFor(x => x.IsActive)
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+     </div>
+    </div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15" id="btnCancelEmployeesaveStatus">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveEmployeesaveStatus">Done</button>
+
+</div>
+    <script>
+        $("#btnSaveEmployeesaveStatus").click(function (e) {
+            e.preventDefault();
+            if (!ValidateForm("frmEmployeeType")) {
+                loading(false);
+                return;
+            }
+            var postData = $("#frmEmployeeType").serializeArray();
+            var formURL = $("#ApplicationUrl").val() + "DdlEmployeeClass/EmployeeSaveAjax";
+            $.post(formURL, postData, function (data, status) {
+                var formURL1 = $("#ApplicationUrl").val() + '/DdlEmployeeClass/DdlEmployeeClassList_Read';
+                $("#EditDetailDiv .md-content").html("");       
+                $("#EditDetailDiv .md-content").load(formURL1);
+                $('#EditDetailDiv').toggle('slide', { direction: 'right' }, 500);
+                $("#btnSaveEmployeesaveStatus").parent().find(".md-close").click();
+                resetGrid("gridemployeeclass");
+                
+            });
+        });
+
+        $("#btnCancelEmployeesaveStatus").click(function (e) {            
+            $('#EditDetailDiv').hide();            
+            $(".md-overlay").css("display", "none");
+        });
+       
+    </script>
+
+
+

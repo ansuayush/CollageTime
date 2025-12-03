@@ -1,0 +1,113 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Time Card Configuration";
+}
+
+
+
+@{
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+@*<link href="~/Content/TimeCardPanelStyle.css" rel="stylesheet" />*@
+
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Timecard Configuration <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.TimeCardDisplayColumnVM>()
+                .Name("gridTimeCardColumns")
+                .Resizable(resize => resize.Columns(true))
+                .Filterable()
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                //.ToolBar(toolbar => toolbar.Create())
+
+                .Columns(columns =>
+                {
+                    columns.Command(command =>
+                    {
+                        command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridTimeCardConfigEdit");
+                    }).Width(50);
+                    columns.Bound(c => c.TimeCardTypeId).Visible(false).Width(100);
+                    columns.ForeignKey(c => c.TimeCardTypeId, (System.Collections.IEnumerable)ViewData["timecardTypesList"], "timeCardTypeId", "timeCardTypeCode_Description")
+                                            .Title("Timecard Type").Width(160);
+                    columns.Bound(c => c.ActualDate).ClientTemplate("#= ActualDate ? 'Yes' : 'No' #").Width(120);
+                    columns.Bound(c => c.Day).ClientTemplate("#= Day ? 'Yes' : 'No' #").Width(80);
+                    columns.Bound(c => c.DailyHours).ClientTemplate("#= DailyHours ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.HoursCodeId).ClientTemplate("#= HoursCodeId ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.Hours).ClientTemplate("#= Hours ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.EarningsCodeId).ClientTemplate("#= EarningsCodeId ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.EarningsAmount).ClientTemplate("#= EarningsAmount ? 'Yes' : 'No' #").Width(160);
+                    columns.Bound(c => c.TempDeptId).ClientTemplate("#= TempDeptId ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.TempJobId).ClientTemplate("#= TempJobId ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.TimeIn).ClientTemplate("#= TimeIn ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.LunchOut).ClientTemplate("#= LunchOut ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.LunchBack).ClientTemplate("#= LunchBack ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.TimeOut).ClientTemplate("#= TimeOut ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.Total).ClientTemplate("#= Total ? 'Yes' : 'No' #").Width(150);
+                    columns.Bound(c => c.IsApproved).ClientTemplate("#= IsApproved ? 'Yes' : 'No' #").Width(150);
+                    //columns.Bound(c => c.AutoFill).ClientTemplate("#= AutoFill ? 'Yes' : 'No' #").Width(150);
+                })
+                .Sortable()
+                .Selectable()
+                // .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                .Scrollable()
+
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                             .Read(read => read.Action("TimeCardColumnsList_Read", "TimeCardConfigurations"))
+                             .Update(update => update.Action("TimeCardColumnsList_Update", "TimeCardConfigurations"))
+                    .Model(model =>
+                    {
+                        model.Id(p => p.TimeCardTypeId);
+                        model.Field(p => p.TimeCardTypeId).Editable(false);
+                        //model.Field(p => p.Day);
+                        //model.Field(p => p.);
+                    }
+                          )
+                    .Batch(false)
+                    .Events(events =>
+                    {
+                        events.Error("refreshGrid");
+                        events.RequestEnd("gridRequestEnd");
+                    })
+                )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .k-grid {
+        font-size: 11px;
+    }
+
+        .k-grid td {
+            line-height: 2em;
+        }
+    .k-grid-content {
+        height: 100% !important;
+    }
+</style>

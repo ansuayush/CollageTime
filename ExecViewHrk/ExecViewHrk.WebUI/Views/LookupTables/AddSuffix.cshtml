@@ -1,0 +1,71 @@
+﻿@model ExecViewHrk.EfClient.DdlSuffix
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Suffix</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmSuffix">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseSuffix">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveSuffix">Save</button>
+</div>
+<script>
+    $("#btnSaveSuffix").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmSuffix")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmSuffix").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/DdlSuffixList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadSuffixDropDown();
+                $("#btnCloseSuffix").trigger('click');
+            }
+        });
+    });
+    function reloadSuffixDropDown() {
+        var _selectedValue = $("#SuffixId").val();
+        $.get($("#appBaseUrl").val() + "LookupTables/GetDdlSuffixList", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#SuffixId").empty();
+                $("#SuffixId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#SuffixId").append("<option value='" + list[i].SuffixId + "' selected >" + list[i].Description + "</option>");
+                    } else {
+                        $("#SuffixId").append("<option value='" + list[i].SuffixId + "' >" + list[i].Description + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

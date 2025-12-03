@@ -1,0 +1,127 @@
+﻿@model ExecViewHrk.Models.PersonPhoneNumberVm
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Person Phone Number Details</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        @using (Html.BeginForm("PersonPhoneNumbers", "PersonPhoneNumbersList_Update", FormMethod.Post, new { role = "form", id = "PersonPhoneNumberForm" }))
+            {
+            @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+            @Html.HiddenFor(model => model.PersonPhoneNumberId, new { id = "hiddenPersonPhoneNumberId" })
+            @Html.ValidationSummary(true)
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Phone Number Type</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.PhoneTypeId, new SelectList(Model.GetPersonPhoneTypeList, "keyvalue", "keydescription", Model.PhoneTypeId), new { @class = "form-control", data_required = "Y" })
+                        @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal"  id="btnAddPhoneType">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.PhoneTypeDescription)
+                    </div>
+                </div>
+            </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>Phone Number</label>
+                            @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control", data_required = "Y" })
+                            <div>
+                                @Html.ValidationMessageFor(x => x.PhoneNumber)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group ">
+                            <label>Extension</label>
+                            @Html.TextBoxFor(x => x.Extension, new { @class = "form-control" , @maxlength = "5" })
+                            @Html.ValidationMessageFor(x => x.Extension)
+                        </div>
+                    </div>
+                    <div class="col-sm-12 p-t-10">
+                        <div class="form-group ">
+                            <label>Primary Phone</label><br />
+                            @Html.EditorFor(model => model.IsPrimaryPhone, new { @class = "checkbox-color checkbox-primary" })
+                            @Html.ValidationMessageFor(x => x.IsPrimaryPhone)
+                        </div>
+                    </div>
+                    <div class="col-sm-12 p-t-10">
+                        <div class="form-group ">
+                            <label><span style="color:red">*</span>Provider </label>
+                            @Html.DropDownListFor(model => model.ProviderId, new SelectList(Model.GetProvidersList, "keyvalue", "keydescription"),"--Select--", new { @class = "form-control",data_required = "Y" })
+                            @Html.ValidationMessageFor(x => x.ProviderId)
+                        </div>
+                    </div>
+        }
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnClosePhoneDetail">Close</button>
+    <button type="button" class="btn btn-primary" id="btnSavePersonPhoneNumberAjax">Save</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $('#PhoneNumber').focusin(function () {
+            $('#PhoneNumber').mask("(999)999-9999",{ placeholder: "x" }); 
+        });
+    });
+
+    $("#btnAddPhoneType").click(function (e) {
+        e.preventDefault();
+        var formURL = $("#ApplicationUrl").val() + "PersonPhoneNumbers/AddPhoneType";
+        $("#QuickAddModal .modal-content").html("");
+        $("#QuickAddModal .modal-content").load(formURL);
+        $("#QuickAddModal").modal({ show: true });
+    });
+
+    $("#btnSavePersonPhoneNumberAjax").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("PersonPhoneNumberForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#PersonPhoneNumberForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonPhoneNumbers/PersonPhoneNumbersSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                //formService.isSavingInProgress = false;
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldpersonPhoneNumberId = $("#hiddenPersonPhoneNumberId").val();
+                $("#btnClosePhoneDetail").trigger('click');
+                resetGrid("gridPhoneNumberList");
+                LoadMenu("Person", "Person")
+                //formService.isLoadingInProgress = true;
+                //killTimer();
+                if (_oldpersonPhoneNumberId != "0") {
+                   // timeOutFn = setTimeout(function () {
+                     //   formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                      //  formService.isLoadingInProgress = false;
+                    //}, 0);
+                }
+                else {
+                  //  timeOutFn = setTimeout(function () {
+                  //      formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                   //     formService.isLoadingInProgress = false;
+                  //  }, 0);
+                }
+            }
+        });
+    });
+</script>
+
+
+

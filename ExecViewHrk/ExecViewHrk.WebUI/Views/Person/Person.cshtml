@@ -1,0 +1,564 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonBasicVm
+@{
+    Layout = null;
+    var phoneListCount = 0;
+    var addressListCount = 0;
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            @Html.Action("PersonRoloDex", "Person")
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-user f-20 m-r-5"></i> Name</h5> <span class="pull-right icon-edit-block btnPerosnalDetail"><i class="fa fa-pencil f-20 txt-primary"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 card-bg-primary-oth profile-block-tag">
+                                            <h6 class="f-14 txt-white">@Model.FirstName @Model.LastName</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">First Name</label>
+                                                    <span class="f-13 block f-w-600">@Model.FirstName</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Middle Name</label>
+                                                    <span class="f-13 block f-w-600">@Model.MiddleName</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Last Name</label>
+                                                    <span class="f-13 block f-w-600">@Model.LastName</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Preferred Name</label>
+                                                    <span class="f-13 block f-w-600">@Model.PreferredName</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="col-sm-12 col-md-12 text-center p-0 m-b-10">
+                                                    @{
+                                                        if (Model.PersonImage != null)
+                                                        {
+                                                            string groupLogo = Convert.ToBase64String(Model.PersonImage);
+                                                            string imageSrc = string.Format("data:image/jpeg;base64,{0}", groupLogo);
+                                                            <img src="@imageSrc" class="img img-circle" id="imgGroupLogo" style="height: 123px; width: 123px;" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <img class="img img-circle" src="~/images/PersonSilhouette.jpg" alt="img cap">
+                                                        }
+                                                    }
+                                                    @{
+                                                        if (TempData["message"] != null)
+                                                        {
+                                                            <script type="text/javascript">
+                                                                toastr.success(@Html.Raw(Json.Encode(TempData["message"])));
+                                                            </script>
+                                                        }
+                                                    }
+                                                    @{
+                                                        if (TempData["Recorddelete"] != null)
+                                                        {
+                                                            <script type="text/javascript">
+                                                                toastr.error(@Html.Raw(Json.Encode(TempData["Recorddelete"])));
+                                                            </script>
+                                                        }
+                                                    }
+                                                </div>
+                                                <div class="col-sm-12 col-md-12 p-0 text-center">
+                                                    <span class="icon-edit-block"><i id="DeletePersonImage" class="fa fa-trash-o f-20 txt-danger m-r-10" ></i> <i class="fa fa-pencil f-20 txt-primary" onclick="editPersonImage();"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div><div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-pie-chart f-20 m-r-5"></i> Demographics</h5><span class="pull-right icon-edit-block btnPerosnalDetail"><i class="fa fa-pencil f-20 txt-primary"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 card-bg-success profile-block-tag">
+                                            <div class="col-md-5 p-0">
+                                                @*<h6 class="f-14 txt-white">Personal Email</h6>*@
+                                            </div>
+                                            <div class="col-md-7 p-0">
+                                                @*<h6 class="f-14 txt-white m-0">Work Email (For Notification)</h6>
+                                                    <span class="f-13 f-w-600">mreid@reidplan.com</span>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-12 form-inline">
+                                                <label class="block" style="margin-bottom:0px !important;">Birth Date</label>
+                                                <div class="form-group m-r-20 v-top">
+                                                    @if (Model.DateOfBirth != null)
+                                                    {
+                                                    <span class="f-13 f-w-600" id="lblDOB">@Model.DateOfBirth.Value.ToString("MM/dd/yyyy")</span>
+                                                    }
+                                                </div>
+                                                @if (Model.DateOfBirth != null)
+                                                {
+                                                    <div class="form-group m-r-20 v-top">
+                                                        <label class="f-13 m-r-10">Years</label>
+                                                        <span class="f-13 f-w-600" id="lblYears">24</span>
+                                                    </div>
+                                                    <div class="form-group m-r-20 v-top">
+                                                        <label class="f-13 m-r-10">Month</label>
+                                                        <span class="f-13 f-w-600" id="lblMonths">3</span>
+                                                    </div>
+                                                    <div class="form-group m-r-20 v-top">
+                                                        <label class="f-13 m-r-10">Days</label>
+                                                        <span class="f-13 f-w-600" id="lblDays">6</span>
+                                                </div>
+                                                }
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Marital Status</label>
+                                                    <span class="f-13 block f-w-600">@Model.MaritialStatus</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Gender</label>
+                                                    <span class="f-13 block f-w-600">@Model.Gender</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Is Dependent</label>
+                                                    <span class="f-13 block f-w-600">@Model.IsDependent</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Is Student</label>
+                                                    <span class="f-13 block f-w-600">@Model.IsStudent</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Is Trainer</label>
+                                                    <span class="f-13 block f-w-600">@Model.IsTrainer</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Is Applicant</label>
+                                                    <span class="f-13 block f-w-600">@Model.IsApplicant</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-shield f-20 m-r-5"></i> Email & Tax ID</h5><span class="pull-right icon-edit-block btnPerosnalDetail"><i class="fa fa-pencil f-20 txt-primary"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 card-bg-warning profile-block-tag">
+                                            <div class="col-md-5 p-0">
+                                                <h6 class="f-14 txt-white">@Model.Email</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label class="m-0">Personal Email</label>
+                                                    <span class="f-13 block f-w-600">@Model.Email</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Alternate Email</label>
+                                                    <span class="f-13 block f-w-600">@Model.AlternateEmail</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">SSN</label>
+                                                    @if (!string.IsNullOrEmpty(Model.Ssn))
+                                                    {
+                                                        string mySSN = "";
+                                                        if (Model.Ssn.Length == 9)
+                                                        {
+                                                            mySSN = Model.Ssn.Substring(5, 4);
+                                                            mySSN = "XXX-XX-" + mySSN;
+                                                        }
+                                                        <span class="f-13 block f-w-600">@mySSN</span>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-phone f-20 m-r-5"></i> Phone</h5><span class="pull-right icon-edit-block btnPhoneDetail"><i class="fa fa-pencil f-20 txt-primary"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">  
+                                            <div class="col-sm-12 col-md-12">
+                                                @if(Model.personPhoneNumberVm !=null)
+                                                {
+                                                foreach (var item in Model.personPhoneNumberVm)
+                                                {
+                                                    
+                                                        if (phoneListCount <= 5)
+                                                        {
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div class="form-group ">
+                                                                    <label class="m-0">Phone Type</label>
+                                                                    @*<label class="m-0">@item.PhoneTypeDescription</label>*@
+                                                                    <span class="f-13 block f-w-600">@item.PhoneTypeDescription</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <div class="form-group ">
+                                                                    <label class="m-0">Phone Number</label>
+                                                                    @*<label class="m-0">@item.PhoneNumber</label>*@
+                                                                    <span class="f-13 block f-w-600">@item.PhoneNumber</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <div class="form-group ">
+                                                                    <label class="m-0">Extension</label>
+                                                                    @*<label class="m-0">@item.Extension</label>*@
+                                                                    <span class="f-13 block f-w-600">@item.Extension</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                            phoneListCount = phoneListCount + 1;
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-map-marker f-20 m-r-5"></i> Addresses</h5><span class="pull-right icon-edit-block btnAddressDetail"><i class="fa fa-pencil f-20 txt-primary"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-12">
+                                                @*<div class="form-group">
+            <label class="m-0">Primary Address</label>
+            <span class="f-13 block f-w-600" id="lblemgPrimaryAddress"></span>
+        </div>
+        <div class="form-group">
+            <label class="m-0">
+                Secondary Address
+            </label>
+            <span class="f-13 block f-w-600" id="lblemgSecondaryAddress"></span>
+        </div>
+        <div class="form-group">
+            <label class="m-0 m-r-10">Works From Home</label>
+            <span class="f-13 block f-w-600" id="lblemgWorksFrom"></span>
+
+        </div>
+        <div class="form-group">
+            <label class="m-0 m-r-10">Work Address</label>
+            <span class="f-13 block f-w-600" id="lblemgWorkAddress"></span>
+        </div>*@
+                                                @if (Model.personAddressVm != null)
+                                                {
+                                                    foreach (var item in Model.personAddressVm)
+                                                    {
+                                                        if (addressListCount <= 5)
+                                                        {
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <div class="form-group ">
+                                                        <label class="m-0">Primary Address</label>
+                                                        @*<label class="m-0">@item.PhoneTypeDescription</label>*@
+                                                        <span class="f-13 block f-w-600">@item.AddressLineOne</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group ">
+                                                        <label class="m-0">Secondary Address</label>
+                                                        @*<label class="m-0">@item.PhoneNumber</label>*@
+                                                        <span class="f-13 block f-w-600">@item.AddressLineTwo</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group ">
+                                                        <label class="m-0">Works From Home</label>
+                                                        @*<label class="m-0">@item.PhoneNumber</label>*@
+                                                        <span class="f-13 block f-w-600">@item.AddressDescription</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                            addressListCount = addressListCount + 1;
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <section class="panels-wells edit-block">
+                            <div class="card m-b-15">
+                                <div class="card-header"><h5 class="card-header-text"><i class="fa fa-ambulance f-20 m-r-5"></i> Emergency Contacts</h5><span class="pull-right icon-edit-block btnPerosnalEmergencyDetail"><i class="fa fa-pencil f-20 txt-primary"></i></span></div>
+                                <div class="card-block p-t-0">
+                                    <div class="row p-t-10">
+                                        <div class="col-sm-12 col-md-12 p-0">
+                                            <div class="col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label class="m-0">Contact</label>
+                                                    <span class="f-13 block f-w-600" id="lblemgContact"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Person Name</label>
+                                                    <span class="f-13 block f-w-600" id="lblemgFullName"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Relationship</label>
+                                                    <span class="f-13 block f-w-600" id="lblemgRelationship"></span>
+                                                </div>
+                                                @*<div class="form-group">
+                                                    <label class="m-0">Doctor</label>
+                                                    <span class="f-13 block f-w-600" id="lblemgDoctor"></span>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="m-0">Hospital</label>
+                                                    <span class="f-13 block f-w-600" id="lblemgHospital"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="m-0">Phone Number</label>
+                                                    <span class="f-13 block f-w-600 phone" id="lblemgPhoneNumber"></span>
+                                                </div>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+            @*<input id="btnSavePersonAjax" type="button" value="Save" class="btn btn-info" />
+                <input id="btnClearPersonAjax" type="button" value="Clear" class="btn btn-info" />*@
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $("#Email").attr("readonly", true);
+
+        $("#lblYears").text(getAge($("#lblDOB").text()).years);
+        $("#lblMonths").text(getAge($("#lblDOB").text()).months);
+        $("#lblDays").text(getAge($("#lblDOB").text()).days);
+
+        $(".btnPerosnalDetail").click(function () {
+            openPersonPopup($("#SelectedPersonID").val());
+        })
+        $(".btnPerosnalEmergencyDetail").click(function () {
+            openPersonEmergencyPopup($("#SelectedPersonID").val());
+        });
+        PersonBasicEmergencyDetail($("#SelectedPersonID").val());
+    
+        $(".btnPhoneDetail").click(function () {
+            openPhonePopup($("#SelectedPersonID").val());
+        })
+        $(".btnAddressDetail").click(function () {
+            openAddressPopup($("#SelectedPersonID").val());
+        })
+        
+    });
+    function openPhonePopup(_personId) {
+        var formURL = $("#ApplicationUrl").val() + '/PersonPhoneNumbers/PersonPhoneNumbersListMatrixPartial';
+
+        $("#EditDetailDiv .md-content").html("");
+        $("#EditDetailDiv .md-content").load(formURL);
+
+        $('#EditDetailDiv').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv').addClass('md-show');
+
+    }
+    function openAddressPopup(_personId) {
+        var formURL = $("#ApplicationUrl").val() + '/PersonAddresses/PersonAddressesMatrixPartial';
+        $("#EditDetailDiv .md-content").html("");
+        $("#EditDetailDiv .md-content").load(formURL);
+        $('#EditDetailDiv').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv').addClass('md-show');
+
+    }
+
+
+    function PhoneMasking(object) {
+        if (object.length > 0) {
+            var n = (object.length) - 6;
+            var regex = new RegExp('(\\d{3})(\\d{3})(\\d{4})');
+            var object = object.replace(regex, "($1) $2-$3");
+        }
+        return object;
+    }
+    
+    function getAge(dateString) {
+        var now = new Date();
+        var today = new Date(now.getYear(), now.getMonth(), now.getDate());
+
+        var yearNow = now.getYear();
+        var monthNow = now.getMonth();
+        var dateNow = now.getDate();
+
+        var dob = new Date(dateString.substring(6, 10),
+            dateString.substring(0, 2) - 1,
+            dateString.substring(3, 5)
+        );
+
+        var yearDob = dob.getYear();
+        var monthDob = dob.getMonth();
+        var dateDob = dob.getDate();
+        var age = {};
+        var ageString = "";
+        var yearString = "";
+        var monthString = "";
+        var dayString = "";
+
+
+        yearAge = yearNow - yearDob;
+
+        if (monthNow >= monthDob)
+            var monthAge = monthNow - monthDob;
+        else {
+            yearAge--;
+            var monthAge = 12 + monthNow - monthDob;
+        }
+
+        if (dateNow >= dateDob)
+            var dateAge = dateNow - dateDob;
+        else {
+            monthAge--;
+            var dateAge = 31 + dateNow - dateDob;
+
+            if (monthAge < 0) {
+                monthAge = 11;
+                yearAge--;
+            }
+        }
+
+        age = {
+            years: yearAge,
+            months: monthAge,
+            days: dateAge
+        };
+        return age;
+        //alert(age.years); alert(age.months); alert(age.days);
+        //if (age.years > 1) yearString = " years";
+        //else yearString = " year";
+        //if (age.months > 1) monthString = " months";
+        //else monthString = " month";
+        //if (age.days > 1) dayString = " days";
+        //else dayString = " day";
+
+
+        //if ((age.years > 0) && (age.months > 0) && (age.days > 0))
+        //    ageString = age.years + yearString + ", " + age.months + monthString + ", and " + age.days + dayString + " old.";
+        //else if ((age.years == 0) && (age.months == 0) && (age.days > 0))
+        //    ageString = "Only " + age.days + dayString + " old!";
+        //else if ((age.years > 0) && (age.months == 0) && (age.days == 0))
+        //    ageString = age.years + yearString + " old. Happy Birthday!!";
+        //else if ((age.years > 0) && (age.months > 0) && (age.days == 0))
+        //    ageString = age.years + yearString + " and " + age.months + monthString + " old.";
+        //else if ((age.years == 0) && (age.months > 0) && (age.days > 0))
+        //    ageString = age.months + monthString + " and " + age.days + dayString + " old.";
+        //else if ((age.years > 0) && (age.months == 0) && (age.days > 0))
+        //    ageString = age.years + yearString + " and " + age.days + dayString + " old.";
+        //else if ((age.years == 0) && (age.months > 0) && (age.days == 0))
+        //    ageString = age.months + monthString + " old.";
+        //else ageString = "Oops! Could not calculate age!";
+
+        //return ageString;
+    }
+
+    function openPersonEmergencyPopup(_personId) {
+       // loading(true);
+        var formURL = $("#ApplicationUrl").val() + '/PersonEmergencyContacts/PersonEmergencyContactsMatrixPartial';//?personId=' + _personId;
+
+        $("#EditDetailDiv .md-content").html("");
+        $("#EditDetailDiv .md-content").load(formURL);
+
+        $('#EditDetailDiv').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv').addClass('md-show');
+
+    }
+    function PersonBasicEmergencyDetail(_personID) {
+        var appBaseUrl = $("#appBaseUrl").val();
+        $.ajax({
+            url: appBaseUrl + "PersonAdditionals/GetPersonEmergencyRecord?personId=" + _personID,
+            type: "GET",
+            success: function (response) {
+                $("#lblemgContact").text(PhoneMasking(response.Contact));
+                $("#lblemgFullName").text(response.FullName);
+                $("#lblemgRelationship").text(response.Relationship);
+                //****Code for Emergency Contact(Hospital)***
+                //$("#lblemgDoctor").text(response.Doctor);
+                //$("#lblemgHospital").text(response.Hospital);
+                //$("#lblemgPhoneNumber").text(PhoneMasking(response.PhoneNumber));
+                //********************************************
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('#DeletePersonImage').click(function () {
+            var formURL = $("#ApplicationUrl").val() + '/Person/DeletePersonImage';
+            confirmDialog("", function () {
+                $.ajax({
+                            url: formURL,
+                            type: "POST",
+                            contentType: false, // Not to set any content header  
+                            processData: false, // Not to process data  
+                            data: '',
+                            success: function (result) {
+                                LoadMenu("Person", "Person");
+                            },
+                            error: function (err) {
+                            }
+                        });
+            });
+        });
+    });
+
+</script>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,234 @@
+﻿
+@model ExecViewHrk.WebUI.Models.FedralEinVM
+@{ 
+
+    Layout = null;
+}
+
+@using (Html.BeginForm("FedralEINSaveAjax", "LookupTables", FormMethod.Post, new { role = "form", id = "FedralEINForm" }))
+{
+    @Html.ValidationSummary(true)
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Federal EIN Detail </h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label><span style="color:red">*</span>EIN</label>
+                           @Html.TextBoxFor(m => m.EIN, new { @class = "form-control" ,  @maxlenght = "9", @placeholder = "XX-XXXXXXX" })
+                           @Html.ValidationMessageFor(x => x.EIN)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Description
+                            </label>
+
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.Description)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Address Line One
+                            </label>                           
+                            @Html.TextBoxFor(m => m.addressLineOne, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Address Line Two
+                            </label>@Html.TextBoxFor(m => m.addressLineTwo, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                City
+                            </label>
+                            @Html.TextBoxFor(m => m.city, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                State
+                            </label>
+                            @Html.DropDownListFor(m => m.stateID, new SelectList(Model.lstStates, "keyvalue", "keydescription", Model.stateID), new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Zip Code
+                            </label>
+                            @Html.TextBoxFor(m => m.zipCode, new { @class = "form-control", @data_type = "zip" , @maxlenght="10" ,@placeholder= "XXXXX-XXXX" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Country
+                            </label>
+                            @Html.DropDownListFor(m => m.countryID, new SelectList(Model.lstCountries, "keyvalue", "keydescription", Model.countryID), new { @class = "form-control input-sm" })
+                        </div>
+                    </div>                
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Phone Number
+                            </label>
+                            @Html.TextBoxFor(m => m.phoneNumber, new { @class = "form-control", @maxlenght = "10", @placeholder = "(XXX)XXX-XXXX" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Fax Number
+                            </label>
+                            @Html.TextBoxFor(m => m.faxNumber, new { @class = "form-control" , @maxlenght = "10" , @placeholder = "(XXX)XXX-XXXX" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                EEO File Status
+                            </label>
+                            @Html.DropDownListFor(m => m.EEOFileStatusID, new SelectList(Model.lstEEOFileStatuses, "keyvalue", "keydescription", Model.EEOFileStatusID), new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @*<label>
+                                Active
+                            </label>*@
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.Active == true)
+                                {
+                                    <input id="@Html.NameFor(m => m.Active)" type="checkbox" value="@Model.Active" checked="checked" />
+                                }
+                                else
+
+                                {
+                                    <input id="@Html.NameFor(m => m.Active)" value="@Model.Active" type="checkbox" />
+                                }
+                                @Html.LabelFor(x => x.Active)
+                                @Html.HiddenFor(x => x.Active)
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+                <div class="row">                          
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>
+                                Notes
+                            </label>
+                            @Html.TextBoxFor(m => m.notes, new { @class = "form-control" })
+                        </div>
+                    </div>
+                @Html.HiddenFor(m => m.FedralEINNbr)
+                </div>
+            </div>
+        </div>
+        <div class="p-15 text-right">
+            <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+            <input type="button" id="btnFedralEINSave" name="Done" value="Done" class="btn btn-primary waves-effect myButton">
+        </div>        
+    </div>
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        pageSetup();
+        $("#FedralEINForm *").filter(':input').not("input[type=hidden]").each(function () {
+            $(this).attr("onchange", "FedralEINFormOnChange(this)");
+        });
+        $('#faxNumber,#phoneNumber,#zipCode').keydown(function (e) { EntryOnlyInteger(e); });
+        $("#zipCode").mask("99999?-9999");
+        $("#EIN").mask("99?-9999999");
+        $("#phoneNumber,#faxNumber").mask("(999)999-9999");
+    });  
+
+    function FedralEINFormOnChange(fldEle) {
+        ValidateElements(fldEle.id);
+        var FiledID = fldEle.id;
+        switch (FiledID) {
+            case "EIN":
+                ValidateEIN(FiledID);
+                break;
+        }
+    }
+    function ValidateEIN(FiledID) {
+        var ein = $("#" + FiledID).val().replace(/\D/g, '');
+        var caption = $("#" + FiledID).attr('name');
+        if (ein != "") {
+            if (ein.length < 9 || ein.length > 9) {
+                $("#" + FiledID).val('');
+                toastr.error(caption + " : Please provide complete EIN.", "error");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function EntryOnlyInteger(e) {
+        if (e.shiftKey || e.ctrlKey || e.altKey) { 
+            e.preventDefault();        
+        }
+        else {
+            var n = e.keyCode;
+            if (!((n == 8)            
+                    || (n == 9)
+                    || (n == 46)                
+                    || (n >= 35 && n <= 40)    
+                    || (n >= 48 && n <= 57)     
+                    || (n >= 96 && n <= 105)) 
+                    ) {
+                e.preventDefault();
+            };
+        };
+    }
+    $("#btnFedralEINSave").click(function (e) {
+        e.preventDefault();
+        var form = $("#FedralEINForm");
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#FedralEINForm").serializeArray();
+        var formURL = appBaseUrl + "LookupTables/FedralEINSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                if (data.succeed == false) {
+                    toastr.error(data.Message);
+                }
+                else if (data.succeed == true) {
+                    LoadMenu("FedralEINListMaintenance", "LookupTables")
+                    $("#btnFedralEINSave").parent().find(".md-close").click();
+                    loading(false);
+                    formService.isLoadingInProgress = true;
+                    killTimer();
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }               
+            }
+        });
+    });
+
+</script>

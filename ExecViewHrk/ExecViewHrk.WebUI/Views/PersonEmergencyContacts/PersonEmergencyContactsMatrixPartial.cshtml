@@ -1,0 +1,75 @@
+﻿@using System.Web.Routing;
+@model ExecViewHrk.WebUI.Models.PersonEmergencyContactVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Emergency Contacts</h5>
+    </div>
+    <div class="card-block">
+        <div class="col-lg-12 col-md-12 p-0">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="theme-grid">
+                        @(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.PersonEmergencyContactVm>()
+                                        .Name("gridPersonEmergencyContact")
+                                    .Resizable(resize => resize.Columns(true))
+                                    .Filterable()
+
+                                    .Columns(columns =>
+                                    {
+                                        columns.Command(command =>
+                                        {
+                                            command.Custom("gridEditCommand").Text("<i class='fa fa-phone txt-primary f-18'></i>").Click("showDetails");
+                                        }).Width(30);
+                                        columns.Bound(c => c.RelationPersonId).Title("Relation Person Id");
+                                        columns.Bound(c => c.PersonName).Title("Person Name");
+                                        columns.Bound(c => c.RelationshipType).Title("Relationship Type");
+                                        columns.Bound(c => c.DOB).Format("{0:MM/dd/yyyy}").Title("DOB");
+                                    })
+                                    .Sortable()
+                                    .Selectable()
+                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                    .Events(e => e.DataBound("gridDataBound"))
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                              .Read(read => read.Action("EmergencyContactsList_Read", "PersonEmergencyContacts"))
+                                        .Model(model =>
+                                        {
+                                            model.Id(p => p.RelationPersonId);
+                                            model.Field(p => p.PersonName).Editable(false);
+                                            model.Field(p => p.RelationshipType);
+                                            model.Field(p => p.DOB.Value.ToShortDateString());
+                                        }
+                                              )
+                                        .Batch(false)
+                                         .Events(events =>
+                                         {
+                                             events.Error("refreshGrid");
+                                             events.RequestEnd("gridRequestEnd");
+                                         })
+                                            )
+                        )
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.PersonName)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @(Html.Kendo().Window().Name("EmegencyPhoneNumbersDetails")
+    .Title("Emegency Phone Numbers")
+    .Visible(false)
+    .Modal(true)
+    .Draggable(false)
+    .Width(300)
+    )
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Close</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+    });
+</script>

@@ -1,0 +1,47 @@
+﻿@model List<ExecViewHrk.EfClient.PositionHistory>
+<div class="col-lg-12 col-md-12 p-0">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="theme-grid">
+                @(Html.Kendo().Grid<ExecViewHrk.EfClient.PositionHistory>()
+                        .Name("grid_PositionHistoryList")
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.PositionId);
+                    columns.Bound(c => c.Field);
+                    columns.Bound(p => p.OldValue);
+                    columns.Bound(c => c.NewValue);
+                    columns.Bound(c => c.StartDate).Format("{0: MM/dd/yyyy}");
+                    columns.Bound(p => p.EndDate).Format("{0: MM/dd/yyyy}");
+
+                })
+
+
+                .Sortable()
+                .Selectable()
+                .Pageable(pageable => pageable.Refresh(true).PageSizes(true))
+                .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Read(read=>read.Action("GridPositionHistoryRead","PositionSetupDetail"))
+                            .Batch(false)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Id);
+                            model.Field(p => p.PositionId);
+                            model.Field(p => p.Field);
+                            model.Field(p => p.OldValue);
+                            model.Field(p => p.NewValue);                           
+                            model.Field(p => p.StartDate);
+                            model.Field(p => p.EndDate);
+                            
+                        })
+
+
+                        )
+                )
+
+            </div>
+        </div>
+    </div>
+</div>
+

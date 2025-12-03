@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[Jobs] (
+    [JobId]                  INT           IDENTITY (1, 1) NOT NULL,
+    [CompanyCodeId]          INT      NOT NULL,
+    [JobCode]                VARCHAR (10)  NOT NULL,
+    [IsJobActive]            BIT           CONSTRAINT [DF_vJobs_Active] DEFAULT ((1)) NOT NULL,
+    [JobDescription]         VARCHAR (50)  NULL,
+    [title]                  VARCHAR (50)  NOT NULL,
+    [jobClassID]             SMALLINT      NULL,
+    [workersCompensationID]  SMALLINT      NULL,
+    [eeoJobCodeID]           SMALLINT      NULL,
+    [eeoJobTrainingStatusID] SMALLINT      NULL,
+    [FLSAID]                 SMALLINT      NULL,
+    [createdDate]            SMALLDATETIME NOT NULL,
+    [endDate]                SMALLDATETIME NULL,
+    [lastEvaluationDate]     SMALLDATETIME NULL,
+    [unionID]                SMALLINT      NULL,
+    [requirements]           TEXT          NULL,
+    [enteredBy]              VARCHAR (50)  NULL,
+    [enteredDate]            SMALLDATETIME NULL,
+    [salaryRange]            VARCHAR (100) NULL,
+    [Notes]                  VARCHAR (MAX) NULL,
+    [JobFamilyId]            SMALLINT      NULL,
+    CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED ([JobId] ASC),
+    CONSTRAINT [FK_Jobs_CompanyCodes] FOREIGN KEY ([CompanyCodeId]) REFERENCES [dbo].[CompanyCodes] ([CompanyCodeId]),
+    CONSTRAINT [uq_Jobs] UNIQUE NONCLUSTERED ([CompanyCodeId] ASC, [JobCode] ASC)
+);
+

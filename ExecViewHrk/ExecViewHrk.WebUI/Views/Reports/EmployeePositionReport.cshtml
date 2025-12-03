@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Position Report - General";
+    Layout = null;
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Employee Position Report <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.EmployeeStatusReportVM>()
+        .Name("gridEmployeeReports")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.EmployeeName).Title("Employee Name");
+            columns.Bound(c => c.CompanyCodeDescription).Title("Company Code");
+            columns.Bound(c => c.filenumber).Title("File Number");
+            columns.Bound(c => c.Status);
+            columns.Bound(c => c.PositionCode).Title("Position Code");
+            columns.Bound(c => c.positionTitle).Title("Position Title");
+            columns.Bound(c => c.BuTitle).Title("BU Title");
+            columns.Bound(c => c.jobCode).Title("Job Code");
+            columns.Bound(c => c.JobTitle).Title("Job Title");
+            columns.Bound(c => c.primaryPosition).Title("Primary Position").ClientTemplate("#= primaryPosition ? 'Yes' : 'No' #");
+            columns.Bound(c => c.StartDate).Title("Start Date").ClientTemplate("#= StartDate == null ? '' : kendo.toString(StartDate, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.EndDate).Title("Actual End Date").ClientTemplate("#= EndDate == null ? '' : kendo.toString(EndDate, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.PayFrequencyCode).Title("Pay Frequency");
+            columns.Bound(c => c.EnteredDate).Title("Entered Date").ClientTemplate("#= EnteredDate == null ? '' : kendo.toString(EnteredDate, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.PayRate).Format("{0:c2}");
+            columns.Bound(c => c.HoursPerPayPeriod);
+            columns.Bound(c => c.EffectiveDate).Title("Effective Date").ClientTemplate("#= EffectiveDate == null ? '' : kendo.toString(EffectiveDate, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.AnnualSalary).Title("Annual Salary").Format("{0:c2}");
+        })
+        .ToolBar(tools => { tools.Excel(); tools.Pdf(); })
+        .Pdf(pdf => pdf
+            .AllPages()
+            .Landscape()
+            .FileName("Employee Position Report.pdf")
+        )
+        .Sortable()
+        .Excel(excel => excel.AllPages(true)
+        .FileName("Employee Position Report.xlsx")
+        .Filterable(true))
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .DataSource(dataSource => dataSource.Ajax()
+        .Read(read => read.Action("EmployeePositionReport_Read", "Reports"))
+            .Model(model =>
+            {
+                model.Id(p => p.Code);
+            }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .k-grid-header th.k-header {
+        min-width: 150px;
+    }
+
+    .k-grid {
+        overflow-x: scroll;
+    }
+    .k-pdf-export .k-grid-toolbar,
+    .k-pdf-export .k-pager-wrap {
+        display: none;
+    }
+    .k-grid-toolbar, .k-pager-wrap {
+        background: transparent !important;
+        border: 0;
+    }
+    .k-footer-template td {
+        font-weight: 700 !important;
+    }
+</style>

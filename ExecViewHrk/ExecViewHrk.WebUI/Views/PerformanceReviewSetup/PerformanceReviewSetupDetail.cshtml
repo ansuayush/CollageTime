@@ -1,0 +1,115 @@
+﻿@model ExecViewHrk.Models.PerformanceReviewSetupVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Performance Review Setup</h5>
+    </div>
+    <div id="dvPosition" class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PerformanceReviewSetup", "PerformanceReviewSetup", FormMethod.Post, new { role = "form", id = "PerformanceReviewForm" }))
+            {
+                @Html.HiddenFor(model => model.PerProfileId, new { id = "hiddenPerformanceId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Code</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.Code)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Description</label>
+                        @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group p-t-30">
+                        <div class="checkbox-color checkbox-primary">
+
+                            @if (Model.Active == true)
+                            {
+                                <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="@Model.Active" checked="checked" />
+                            }
+                            else
+
+                            {
+                                <input id="@Html.NameFor(x => x.Active)" type="checkbox" value="@Model.Active" />
+                            }
+                            <label for="Active"> Active</label>
+                            @Html.HiddenFor(x => x.Active)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    @if (Model.PerProfileId != 0)
+    {
+        @Html.Partial("~/Views/PerformanceReviewSetup/PerformanceProfilePartial.cshtml", Model)
+    }
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15" id="btnClosePerformanceReview">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSavePerformanceReview">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+    });
+    $("#btnSavePerformanceReview").click(function (e) {
+        e.preventDefault();
+        var form = $("#PerformanceReviewForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            return;
+        }
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            return;
+        }
+        var errormsg = "Please Enter the following Fields</br>";
+        if ($("#Code").val() == "") {
+            errormsg += " Code </br>";
+        }
+        if ($("#Description").val() == "") {
+            errormsg += "Description </br>";
+        }
+        if ($("#Code").val() == "" || $("#Description").val() == "") {
+            toastr.error(errormsg);
+            return;
+        }
+        var postData = $("#PerformanceReviewForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PerformanceReviewSetup/Performance_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                formService.isSavingInProgress = false;
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPerformanceId = $("#hiddenPerformanceId").val();
+                resetGrid("gridPerformanceProfile");
+                $("#btnClosePerformanceReview").trigger('click');
+                formService.isLoadingInProgress = true;
+                killTimer();
+                if (_oldhiddenPerformanceId != "0") {
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+                else {
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+            }
+        });
+    });
+</script>

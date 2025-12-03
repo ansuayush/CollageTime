@@ -1,0 +1,70 @@
+﻿@model ExecViewHrk.EfClient.DdlPropertyType
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Property Type</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmPropertiesType">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnClosePropertyType">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSavePropertyType">Save</button>
+</div>
+<script>
+    $("#btnSavePropertyType").click(function (e) {
+        e.preventDefault();
+        if (!ValidateForm("frmPropertiesType")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmPropertiesType").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "DdlPropertyTypes/DdlPropertyTypesList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadInnoculationTypeDropDown();
+                $("#btnClosePropertyType").trigger('click');
+            }
+        });
+    });
+    function reloadInnoculationTypeDropDown() {
+        var _selectedValue = $("#PropertyTypeId").val();
+        $.get($("#appBaseUrl").val() + "DdlPropertyTypes/GetPropertyTypes", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#PropertyTypeId").empty();
+                $("#PropertyTypeId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#PropertyTypeId").append("<option value='" + list[i].PropertyTypeId + "' selected >" + list[i].PropertyDescription + "</option>");
+                    } else {
+                        $("#PropertyTypeId").append("<option value='" + list[i].PropertyTypeId + "' >" + list[i].PropertyDescription + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

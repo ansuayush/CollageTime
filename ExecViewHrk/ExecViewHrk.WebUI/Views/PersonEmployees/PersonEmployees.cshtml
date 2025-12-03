@@ -1,0 +1,712 @@
+﻿@model ExecViewHrk.Models.PersonEmployeeVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Employee</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonEmployees", "PersonEmployees", FormMethod.Post, new { role = "form", id = "PersonEmployeeForm" }))
+    {
+        @Html.HiddenFor(model => model.EmployeeId, new { id = "hiddenemployeeId" })
+        @Html.ValidationSummary(true)
+
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label><span style="color:red">*</span>Employee</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.PersonId,
+                               new SelectList(Model.PersonsList, "keyvalue", "keydescription", Model.PersonId), new { @class = "form-control", disabled = "disabled" })
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.PersonsList)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label><span style="color:red"> *</span> Company Code</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.CompanyCodeId,
+                               new SelectList(Model.CompanyCodeList, "keyvalue", "keydescription"), new { @class = "form-control", @id = "CompanyCodeId" })
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(x => x.CompanyCodeId)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label><span style="color:red"> *</span> BusinessLevel Code</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.BusinessLevelNbr,
+                               new SelectList(Model.BusinessLevelCodeList, "keyvalue", "keydescription"), new { @class = "form-control",@id= "BusinessLevelId" })
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.TimeCardTypeId)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group ">
+                <label><span style="color:red">*</span> File Number</label>
+                @Html.TextBoxFor(x => x.FileNumber, new { @class = "form-control", @style = "height:30px;", @type = "number" })
+                @Html.ValidationMessageFor(x => x.FileNumber)
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group ">
+                <label> Rate</label>
+                @Html.TextBoxFor(x => x.Rate, "{0:N}", new { @class = "form-control txtprice", @style = "height:30px;" })
+                @Html.ValidationMessageFor(x => x.Rate)
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group ">
+                <label><span style="color:red">*</span>Employment Number</label>
+                @Html.TextBoxFor(x => x.EmploymentNumber, new { @class = "form-control", disabled = "disabled" })
+                @Html.ValidationMessageFor(x => x.EmploymentNumber)
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label><span style="color:red">*</span>Employee Status</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.code,
+                               new SelectList(Model.EmploymentStatusList, "keyvalue", "keydescription", Model.code), new { @id = "testEmpStatusId", @class = "form-control" })
+                    @if (!User.IsInRole("ClientEmployees"))
+            {
+                <span class="input-group-addon bg-dark-primary-theme" id="EmpStatusId" data-toggle="modal" onclick="quickAdd(event,'EmploymentStatusId');">
+                    <span class="fa fa-plus"></span>
+                </span>
+    }
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.EmploymentStatusId)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Employee Type</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.EmployeeTypeID,
+                               new SelectList(Model.EmployeeTypeList, "keyvalue", "keydescription", Model.EmployeeTypeID), new { @class = "form-control" })
+                    @if (!User.IsInRole("ClientEmployees"))
+            {
+                <span class="input-group-addon bg-dark-primary-theme" id="EmpTypeId" data-toggle="modal" onclick="quickAdd(event, 'EmployeeTypeID');">
+                    <span class="fa fa-plus"></span>
+                </span>
+    }
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.EmployeeTypeList)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label><span style="color:red"> *</span>Hire Date </label>
+                @Html.TextBoxFor(model => model.HireDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.HireDate)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Termination Date</label>
+                @Html.TextBoxFor(model => model.TerminationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.TerminationDate)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label><span style="color:red">*</span>Pay Frequency</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.PayFrequencyId,
+                               new SelectList(Model.PayFrequencyList, "keyvalue", "keydescription", Model.PayFrequencyId), new { @class = "form-control" })
+                    @*@if (!User.IsInRole("ClientEmployees"))
+                {
+                    <span class="input-group-addon bg-dark-primary-theme" id="PayfreId" data-toggle="modal" onclick="quickAdd(event, 'PayFrequency');">
+                        <span class="fa fa-plus"></span>
+                    </span>
+                }*@
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.PayFrequencyList)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group ">
+                <label> Fed Exemptions</label>
+                @Html.TextBoxFor(x => x.FedExemptions, new { @class = "form-control", @style = "height:30px;" })
+                @Html.ValidationMessageFor(x => x.FedExemptions)
+            </div>
+        </div>
+
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Marital Status</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.MaritalStatusID,
+                               new SelectList(Model.MaritalStatusList, "keyvalue", "keydescription", Model.MaritalStatusID), new { @class = "form-control" })
+                    @if (!User.IsInRole("ClientEmployees"))
+            {
+                <span class="input-group-addon bg-dark-primary-theme" id="maritalId" data-toggle="modal" onclick="quickAdd(event, 'MaritalStatus');">
+                    <span class="fa fa-plus"></span>
+                </span>
+    }
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.MaritalStatusID)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Worked State Tax Code</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.WorkedStateTaxCodeId,
+                               new SelectList(Model.WorkedStateCodeList, "keyvalue", "keydescription", Model.WorkedStateTaxCodeId), new { @class = "form-control" })
+
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.WorkedStateTaxCodeId)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group ">
+                <label>Hours</label>
+                @Html.TextBoxFor(x => x.Hours, new { @class = "form-control", @style = "height:30px;" })
+                @Html.ValidationMessageFor(x => x.Hours)
+            </div>
+        </div>
+
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Actual Service Start Date</label>
+                @Html.TextBoxFor(model => model.ActualServiceStartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.ActualServiceStartDate)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Planned Service Start Date</label>
+                @Html.TextBoxFor(model => model.PlannedServiceStartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.PlannedServiceStartDate)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Probation End Date</label>
+                @Html.TextBoxFor(model => model.ProbationEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.ProbationEndDate)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Training End Date</label>
+                @Html.TextBoxFor(model => model.TrainingEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.TrainingEndDate)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label> Seniority Date</label>
+                @Html.TextBoxFor(model => model.SeniorityDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                <div>
+                    @Html.ValidationMessageFor(x => x.SeniorityDate)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label><span style="color:red">*</span>Time Card Type</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.TimeCardTypeId,
+                           new SelectList(Model.TimeCardTypeList, "keyvalue", "keydescription", Model.TimeCardTypeId), new { @class = "form-control" })
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.TimeCardTypeId)
+                </div>
+            </div>
+        </div>
+        @*<div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Department Code</label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.DepartmentCodeId,
+                           new SelectList(Model.DepartmentCodeList, "keyvalue", "keydescription", Model.DepartmentCodeId), new { @class = "form-control", @id = "DepartmentCodeId" })
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.DepartmentCodeId)
+                </div>
+            </div>
+        </div>*@
+        <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
+            <div class="form-group">
+                <label>Earning Code </label>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.EarningsCodeId,
+                           new SelectList(Model.EarningsCodeList, "keyvalue", "keydescription", Model.EarningsCodeId), new { @class = "form-control", @id = "ddlEarningsCodeId" })
+                </div>
+            </div>
+        </div>
+        @*<div class="col-sm-3" id="earningsDiv">
+            <div class="form-group">
+                <label>Earning Code Type</label>
+
+                @Html.TextBoxFor(x => x.EarningsCode, new { @class = "form-control", @disabled = "disabled", @id = "txtEarningsCode" })
+            </div>
+        </div>*@
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Remaining Amount</label>
+                @Html.TextBoxFor(x => x.Amount, new { @class = "form-control", id = "txtAmount",@readonly="readonly" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Treaty Limit </label>
+                @Html.TextBoxFor(x => x.TreatyLimit, new { @class = "form-control", id = "txtTreatyLimit" })
+            </div>
+            @*@Html.HiddenFor(r => r.EarningTreatyCode, new { @id = "hdnEarningsCodeTreaty" })*@
+        </div>
+         <div class="col-sm-3">
+            <div class="form-group ">
+                <label>Used Amount</label>
+                @Html.TextBoxFor(x => x.UsedAmount, new { @class = "form-control", id = "txtUsedAmount", @readonly="readonly"})
+            </div>
+        </div>
+        @*<div class="col-sm-3">
+            <div class="form-group ">
+                <label>Non Treaty Amount</label>
+                @Html.TextBoxFor(x => x.NonTreatyLimit, new { @class = "form-control", id = "txtNonTreatyLimit",@readonly="readonly"})
+            </div>
+        </div>*@
+        @*<div class="col-sm-3">
+        <div class="form-group ">
+            <label>Report To</label>
+            <div class="input-group">
+                @Html.DropDownListFor(model => model.ReportToPersonId,
+                     new SelectList(Model.ReportToList, "keyvalue", "keydescription", Model.ReportToPersonId), new { @class = "form-control", @id = "ddlReportTo" })
+            </div>
+        </div>
+
+    </div>*@
+         <div class="col-sm-3">
+             <label></label>
+             <div class="form-group">
+
+                 <div class="checkbox-color checkbox-primary">
+
+                     @if (Model.IsStudent == true)
+            {
+             <input id="@Html.NameFor(x => x.IsStudent)" type="checkbox" value="@Model.IsStudent" checked="checked">
+}
+else
+{
+         <input id="@Html.NameFor(x => x.IsStudent)" type="checkbox" value="@Model.IsStudent">
+}
+                     @Html.LabelFor(x => x.IsStudent, new { @style = "color: #333;" })
+                     @Html.HiddenFor(x => x.IsStudent)
+                 </div>
+             </div>
+         </div>
+        <div class="col-sm-3" style="display:none">
+            <div class="form-group">
+                <div class="checkbox-color checkbox-primary">
+                    @if (Model.IsManager == true)
+            {
+                <input id="@Html.NameFor(x => x.IsManager)" type="checkbox" value="@Model.IsManager" checked="checked">
+    }
+    else
+    {
+        <input id="@Html.NameFor(x => x.IsManager)" type="checkbox" value="@Model.IsManager">
+}
+                    @Html.LabelFor(x => x.IsManager, new { @style = "color: #333;" })
+                    @Html.HiddenFor(x => x.IsManager)
+                </div>
+            </div>
+        </div>
+
+}
+            <div class="col-sm-3">
+                <div id="evaluationTestsWindow" style="display:none">
+                    <div id="evaluationTestsContent">
+                        @Html.Partial("~/Views/DdlEvaluationTests/DdlEvaluationTestsPartial.cshtml")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveEmployeeAjax">Done</button>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        loading(false);
+        var TerminationDate = $("#TerminationDate").val();
+        if (TerminationDate != '' && getCurrentDate < TerminationDate) {
+            $("#IsStudent").attr("disabled", "disabled");
+            $("#CompanyCodeId").attr("disabled", "disabled");
+            $("#HireDate").attr("disabled", "disabled");
+            $("#TrainingEndDate").attr("disabled", "disabled");
+            $("#PlannedServiceStartDate").attr("disabled", "disabled");
+            $("#IsStudent").attr("disabled", "disabled");
+            $("#ActualServiceStartDate").attr("disabled", "disabled");
+            $("#ProbationEndDate").attr("disabled", "disabled");
+            $("#testEmpStatusId").attr("disabled", "disabled");
+            $("#FileNumber").attr("disabled", "disabled");
+            $("#Rate").attr("disabled", "disabled");
+            $("#TerminationDate").attr("disabled", "disabled");
+            $("#Hours").attr("disabled", "disabled");
+            $("#EmployeeTypeID").attr("disabled", "disabled");
+            $("#MaritalStatusID").attr("disabled", "disabled");
+            $("#FedExemptions").attr("disabled", "disabled");
+            $("#WorkedStateTaxCodeId").attr("disabled", "disabled");
+            $("#PayFrequencyId").attr("disabled", "disabled");
+            $("#SeniorityDate").attr("disabled", "disabled");
+            $("#TimeCardTypeId").attr("disabled", "disabled");
+            $("#btnSaveEmployeeAjax").attr("disabled", "disabled");
+            $("#maritalId").attr("disabled", "disabled");
+            // $("#PayfreId").attr("disabled", "disabled");
+            $("#EmpStatusId").attr("disabled", "disabled");
+            $("#EmpTypeId").attr("disabled", "disabled");
+            $("#DepartmentCodeId").attr("disabled", "disabled");
+            $("#CompanyCode").attr("disabled", "disabled");
+            document.getElementById("maritalId").style.visibility = "hidden"
+            //  document.getElementById("PayfreId").style.visibility = "hidden"
+            document.getElementById("EmpStatusId").style.visibility = "hidden"
+            document.getElementById("EmpTypeId").style.visibility = "hidden"
+
+            $("#PersonEmployeeForm :input select").prop("disabled", true);
+        }
+        var treatyLimit = $("#txtTreatyLimit").val();
+        if (treatyLimit != '') {
+            $("#txtTreatyLimit").attr("readonly", true);
+            var usedamount = $("#txtUsedAmount").val();
+            var calremainingbal = $("#txtAmount").val();
+            if (usedamount != '' || usedamount != null) {
+                if (parseFloat(usedamount) >= parseFloat(treatyLimit)) {
+                    $("#txtAmount").val(0);
+                }
+                else
+                {
+                    var calremainingbal = treatyLimit - usedamount;
+                    var caldecimal = calremainingbal.toFixed(2);
+                    var calremainingbal = $("#txtAmount").val(caldecimal);
+                }
+            }
+        }
+        else
+        {
+            $("#txtTreatyLimit").attr("readonly", false);
+        }
+    });
+    $('.txtprice').keypress(function (event) {
+        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
+    $("#CompanyCodeId").on('change', function () {
+
+        var appBaseUrl = $("#appBaseUrl").val();
+        var CompanyCodeid = $("#CompanyCodeId").val();
+        $.ajax({
+            url: appBaseUrl + "PersonEmployees/GetDepartments",
+            type: "Get",
+            data: {
+                companycodeid: CompanyCodeid
+            },
+            success: function (response) {
+                if (response != null) {
+                    $("#DepartmentCodeId").empty();
+                    $("#ddlEarningsCodeId").empty();
+                    $.each(response.departments, function () {
+                        $("#DepartmentCodeId").append($("<option />").val(this.keyvalue).text(this.keydescription));
+                    });
+                    $.each(response.earnings, function (index) {
+                        if (index > 0) {
+                            $("#ddlEarningsCodeId").append($("<option />").val(this.keyvalue).text(this.keydescription));
+                            //  $("#earningsDiv").css('display', 'none');
+                        }
+                        else {
+                            //if (response.earnings.length ==1) {
+                            //    $("#ddlEarningsCodeId").html('');
+                            //    $("#ddlEarningsCodeId").append(new Option('--select--', 'true'));
+                            //}
+                        }
+                        $("#hdnEarningsCodeTreaty").val("false");
+                    });
+                }
+            }
+        });
+    });
+
+    $("#btnSaveEmployeeAjax").click(function (e) {
+        e.preventDefault();
+        var HireDate = $("#HireDate").val();
+        var ProbationEndDate = $("#ProbationEndDate").val();
+        if (HireDate != '' && ProbationEndDate != '') {
+            if (Date.parse(HireDate) > Date.parse(ProbationEndDate)) {
+                $("#ExpirationDate").val('');
+                toastr.error("Probation End Date can't be less than Hire Date. ");
+                return false;
+            }
+        }
+        var TrainingEndDate = $("#TrainingEndDate").val();
+        if (HireDate != '' && TrainingEndDate != '') {
+            if (Date.parse(HireDate) > Date.parse(TrainingEndDate)) {
+                $("#TrainingEndDate").val('');
+                toastr.error("Training End Date can't be less than Hire Date. ");
+                return false;
+            }
+        }
+        var SeniorityDate = $("#SeniorityDate").val();
+        if (HireDate != '' && SeniorityDate != '') {
+            if (Date.parse(HireDate) > Date.parse(SeniorityDate)) {
+                $("#SeniorityDate").val('');
+                toastr.error("Seniority Date can't be less than Hire Date. ");
+                return false;
+            }
+        }
+        var PlannedServiceStartDate = $("#PlannedServiceStartDate").val();
+        if (HireDate != '' && PlannedServiceStartDate != '') {
+            if (Date.parse(HireDate) > Date.parse(PlannedServiceStartDate)) {
+                $("#PlannedServiceStartDate").val('');
+                toastr.error("Planned Service Start Date can't be less than Hire Date. ");
+                return false;
+            }
+        }
+        var ActualServiceStartDate = $("#ActualServiceStartDate").val();
+        if (HireDate != '' && ActualServiceStartDate != '') {
+            if (Date.parse(HireDate) > Date.parse(ActualServiceStartDate)) {
+                $("#ActualServiceStartDate").val('');
+                toastr.error("Actual Service Start Date can't be less than Hire Date. ");
+                return false;
+            }
+        }
+        var TerminationDate = $("#TerminationDate").val();
+        if (HireDate != '' && TerminationDate != '') {
+            if (Date.parse(HireDate) > Date.parse(TerminationDate)) {
+                $("#TerminationDate").val('');
+                toastr.error("Termination Date can't be less than Hire Date. ");
+                return false;
+            }
+        }
+
+
+        var SeniorityDate = $("#SeniorityDate").val();
+        var ProbationEndDate = $("#ProbationEndDate").val();
+        if (SeniorityDate != '' && ProbationEndDate != '') {
+            if (Date.parse(ProbationEndDate) > Date.parse(SeniorityDate)) {
+                $("#ProbationEndDate").val('');
+                $("#SeniorityDate").val('');
+                toastr.error("Probation End Date can't be greater than Seniority Date ");
+                return false;
+            }
+        }
+        var SeniorityDate = $("#SeniorityDate").val();
+        var ProbationEndDate = $("#HireDate").val();
+        if (SeniorityDate != '' && ProbationEndDate != '') {
+            if (Date.parse(ProbationEndDate) > Date.parse(SeniorityDate)) {
+                $("#HireDate").val('');
+                $("#SeniorityDate").val('');
+                toastr.error("Hire Date can't be greater than Seniority Date ");
+                return false;
+            }
+        }
+
+        var SeniorityDate = $("#SeniorityDate").val();
+        var ProbationEndDate = $("#TrainingEndDate").val();
+        if (SeniorityDate != '' && ProbationEndDate != '') {
+            if (Date.parse(TrainingEndDate) > Date.parse(SeniorityDate)) {
+                $("#TrainingEndDate").val('');
+                $("#SeniorityDate").val('');
+                toastr.error("Training End Date can't be greater than Seniority Date ");
+                return false;
+            }
+        }
+
+        var TerminationDate = $("#TerminationDate").val();
+        if (TerminationDate != '' && SeniorityDate != '') {
+            if (Date.parse(SeniorityDate) > Date.parse(TerminationDate)) {
+                $("#TerminationDate").val('');
+                toastr.error("Seniority Date can't be greater than Termination Date. ");
+                return false;
+            }
+        }
+
+        var TrainingEndDate = $("#TrainingEndDate").val();
+        var ProbationEndDate = $("#ProbationEndDate").val();
+        if (ProbationEndDate != '' && TrainingEndDate != '') {
+            if (Date.parse(ProbationEndDate) > Date.parse(TrainingEndDate)) {
+                $("#TrainingEndDate").val('');
+                toastr.error("Training End Date can't be less than Probation End Date. ");
+                return false;
+            }
+        }
+
+        var TerminationDate = $("#TerminationDate").val();
+        var HireDate = $("#HireDate").val();
+        if (TerminationDate != '' && HireDate != '') {
+            if (Date.parse(HireDate) > Date.parse(TerminationDate)) {
+                $("#TerminationDate").val('');
+                toastr.error("Hire Date can't be greater than Termination Date.");
+                return false;
+            }
+        }
+        var TerminationDate = $("#TerminationDate").val();
+        var TrainingEndDate = $("#TrainingEndDate").val();
+        if (TerminationDate != '' && TrainingEndDate != '') {
+            if (Date.parse(TrainingEndDate) > Date.parse(TerminationDate)) {
+                $("#TerminationDate").val('');
+                toastr.error(" Training End Date can't be greater than Termination Date.");
+                return false;
+            }
+        }
+        var TerminationDate = $("#TerminationDate").val();
+        var ProbationEndDate = $("#ProbationEndDate").val();
+        if (TerminationDate != '' && ProbationEndDate != '') {
+            if (Date.parse(ProbationEndDate) > Date.parse(TerminationDate)) {
+                $("#TerminationDate").val('');
+                toastr.error("Probation End Date can't be greater than Termination Date. ");
+                return false;
+            }
+        }
+
+        var errormsg = "Please Enter the following Fields</br>";
+      
+        if ($("#CompanyCodeId").val() == "" || $("#CompanyCodeId").val().trim() == "0") {
+            errormsg += "Company Code </br>";
+        }
+        if ($("#EmploymentNumber").val() == "" || $("#EmploymentNumber").val().trim() == "0") {
+            errormsg += "Employment Number </br>";
+        }
+        //if ($("#DepartmentCodeId").val() == "" || $("#DepartmentCodeId").val() == "0") {
+        //    errormsg += "Department Code </br>";
+        //}
+        if ($("#CompanyCode").val() == "") {
+            errormsg += "BusinessLevel Code </br>";
+        }
+
+        if ($("#HireDate").val() == "") {
+            errormsg += "Hire Date </br>";
+        }
+        if ($("#testEmpStatusId").val() == "") {
+            errormsg += " Employment Status </br>";
+        }
+        //if ($("#ddlEarningsCodeId").val() == "" || $("#ddlEarningsCodeId").val() == "0") {
+        //    errormsg += " Earnings Code</br>";
+        //}
+        if ($("#FileNumber").val() == "") {
+            errormsg += "File Number </br>";
+        }
+        if ($("#PayFrequencyId").val() == "") {
+            errormsg += "Pay Frequency </br>";
+        }
+        if ($("#TimeCardTypeId").val() == "") {
+            errormsg += "Time Card Type</br>";
+        }
+        if ($("#BusinessLevelId").val() == "" || $("#BusinessLevelId").val() == "0") {
+             errormsg += "BusinessLevel Code</br>";
+        }
+
+        if ($("#CompanyCodeId").val() == "" || $("#EmploymentNumber").val() == "" || $("#HireDate").val() == "" || /*$("#ddlEarningsCodeId").val() == "" || $("#ddlEarningsCodeId").val() == "0" ||*/
+            $("#testEmpStatusId").val() == "" || $("#testEmpStatusId").val() == "Select" || $("#CompanyCodeId").val().trim() == "0" || $("#BusinessLevelId").val() == "Select" || $("#BusinessLevelId").val() == "" || $("#CompanyCode").val() == "" || $("#FileNumber").val() == "" || $("#PayFrequencyId").val() == "" || $("#TimeCardTypeId").val() == "" ) {
+            loading(false);
+            toastr.error(errormsg);
+            return;
+        }
+
+        var treaty = $("#hdnEarningsCodeTreaty").val();
+        if (treaty == "true" || treaty == "True") {
+            var treatyLimit = $("#txtTreatyLimit").val();
+            var amount = $("#txtAmount").val();
+            if (parseInt(treatyLimit) > parseInt(amount)) {
+                var errorMessage = "Treaty Limit is not greather than  Amount";
+                toastr.error(errorMessage);
+                return;
+            }
+        }
+
+        if (!ValidateForm("PersonEmployeeForm")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#PersonEmployeeForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonEmployees/PersonEmployeesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldhiddenPersonTestId = $("#hiddenemployeeId").val();
+                resetGrid("gridPersonTest");
+                $("#btnSaveEmployeeAjax").parent().find(".md-close").click();
+                if (_oldhiddenPersonTestId != "0") {
+                    toastr.success(formService.messages.updated);
+                }
+                else {
+                    toastr.success(formService.messages.saved);
+                }
+            }
+        });
+    });
+
+    $("#ddlEarningsCodeId").on('change', function () {
+
+        var appBaseUrl = $("#appBaseUrl").val();
+        var earningCodeId = $("#ddlEarningsCodeId").val();
+        if (earningCodeId != "0" && earningCodeId != "") {
+            $.ajax({
+                url: appBaseUrl + "PersonEmployees/OnChangeEarningsCodes",
+                type: "Get",
+                data: {
+                    earningCodeId: earningCodeId
+                },
+                success: function (response) {
+                    if (response != null) {
+                        $("#hdnEarningsCodeTreaty").val(response.TreatyCode);
+                        //  $("#earningsDiv").css('display', 'inline');
+                        var earningsCode = response.TreatyCode ? "Treaty" : "Non Treaty";
+                        $("#txtEarningsCode").val(earningsCode);
+                    }
+                }
+            });
+        } else {
+            // $("#earningsDiv").css('display', 'none');
+            $("#txtEarningsCode").val('');
+            $("#hdnEarningsCodeTreaty").val("false");
+        }
+    });
+    $("#FedExemptions").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+    });
+</script>

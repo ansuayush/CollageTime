@@ -1,0 +1,72 @@
+﻿
+@model ExecViewHrk.EfClient.DdlDisabilityType
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Disability</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmDisability">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseDisability">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveDisability">Save</button>
+</div>
+<script>
+    $("#btnSaveDisability").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmDisability")) {
+            loading(false);
+            return;
+        }
+
+        var postData = $("#frmDisability").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "LookupTables/DdlDisabilityTypesList_Create";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadDisabilityDropDown();
+                $("#btnCloseDisability").trigger('click');
+            }
+        });
+    });
+    function reloadDisabilityDropDown() {
+        var _selectedValue = $("#DisabilityTypeId").val();
+        $.get($("#appBaseUrl").val() + "LookupTables/GetDisabilityTypes", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#DisabilityTypeId").empty();
+                $("#DisabilityTypeId").append("<option value=''>Select</option>");
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#DisabilityTypeId").append("<option value='" + list[i].AssociatedDisabilityTypeId + "' selected >" + list[i].AssociatedDisabilityDescription + "</option>");
+                    } else {
+                        $("#DisabilityTypeId").append("<option value='" + list[i].AssociatedDisabilityTypeId + "' >" + list[i].AssociatedDisabilityDescription + "</option>");
+                    }
+
+
+                }
+            }
+        });
+    }
+</script>

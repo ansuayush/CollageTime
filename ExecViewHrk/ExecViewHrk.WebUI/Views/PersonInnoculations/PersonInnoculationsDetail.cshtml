@@ -1,0 +1,149 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonInnoculationVm
+<div class="card p-15">
+    <div class="card-header">
+        <h5 class="card-header-text">Person Innoculation</h5>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            @using (Html.BeginForm("PersonInnoculations", "PersonInnoculations", FormMethod.Post, new { role = "form", id = "PersonInnoculationForm" }))
+            {
+                @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+                @Html.HiddenFor(model => model.PersonInnoculationId, new { id = "hiddenPersonInnoculationsId" })
+                @Html.ValidationSummary(true)
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label><span style="color:red">*</span>Innoculation Type</label>
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.InnoculationTypeId,
+
+                      new SelectList(Model.InnoculationDropDownList, "keyvalue", "keydescription", Model.InnoculationTypeId), new { @class = "form-control", data_required = "Y" })
+                            @if (!User.IsInRole("ClientEmployees"))
+                            {
+                                <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'InnoculationTypes');">
+                                    <span class="fa fa-plus"></span>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            @Html.ValidationMessageFor(model => model.InnoculationDescription)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label><span style="color:red">*</span>Innoculation Date</label>
+                        @Html.TextBoxFor(model => model.InnoculationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control", data_required = "Y" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.InnoculationDate)
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Innoculation Description</label>
+                        @Html.TextBoxFor(x => x.InnoculationDescription, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.InnoculationDescription)
+                    </div>
+                </div>*@
+                <div class="col-sm-3">
+                    <div class="form-group ">
+                        <label>Expiration Date</label>
+                        @Html.TextBoxFor(model => model.ExpirationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
+                        <div>
+                            @Html.ValidationMessageFor(x => x.ExpirationDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group ">
+                        <label>Notes</label>
+                        @Html.TextAreaFor(x => x.Notes, new { @class = "form-control", @style = "height:80px;" })
+                        @Html.ValidationMessageFor(x => x.Notes)
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+<div class="p-15 text-right">
+    <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+    <button type="button" class="btn btn-primary" id="btnSaveInnoculationAjax">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+    });
+
+
+
+    $("#btnSaveInnoculationAjax").click(function (e) {
+        e.preventDefault();
+       
+        if (!ValidateForm("PersonInnoculationForm")) {
+            loading(false);
+            return;
+        }
+        var isOk = CompareDatesInn("InnoculationDate", "ExpirationDate", 'Expiration Date', 'Innoculation Date');
+       
+        if (!isOk) {
+            loading(false);
+            return
+        }
+        var postData = $("#PersonInnoculationForm").serializeArray(); 
+      
+        var formURL = $("#ApplicationUrl").val() + "PersonInnoculations/PersonInnoculationsSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+
+             if (data.succeed == false) {
+                //formService.isSavingInProgress = false;
+                toastr.error(data.Message);
+            }
+            else {
+                 var _oldhiddenPersonInnoculationsId = $("#hiddenPersonInnoculationsId").val();
+                 resetGrid("gridPersonInnoculation");
+                 $("#btnSaveInnoculationAjax").parent().find(".md-close").click();
+                //formService.isLoadingInProgress = true;
+               // killTimer();
+                 if (_oldhiddenPersonInnoculationsId != "0") {
+                    //timeOutFn = setTimeout(function () {
+                     //   formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                     //   formService.isLoadingInProgress = false;
+                    //}, 0);
+                }
+                else {
+                   // timeOutFn = setTimeout(function () {
+                   //     formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                    //    formService.isLoadingInProgress = false;
+                   // }, 0);
+                }
+            }
+        });
+    });
+
+    function CompareDatesInn(startDateField, endDateField, startDateLabel, endDateLabel) {
+        var first = getTimeFn(startDateField);
+        var last = getTimeFn(endDateField);
+        var isOk = true;
+        if (first != null && last != null) {
+            var dateDifference = Math.ceil((first - last) / (1000 * 3600 * 24));
+            if (dateDifference > 0) {
+                toastr.error(endDateLabel + " should not be less than " + startDateLabel + " .");
+                isOk = false;
+            }
+        }
+        return isOk;
+    }
+    function getTimeFn(selector) {
+        var selectedDate = $("#" + selector)[0].value;
+        if (selectedDate && (selectedDate != '' || typeof (selectedDate) != undefined)) {
+            var time = new Date(moment.utc(new Date(selectedDate), 'MM/DD/YYYY')).getTime();
+            return time;
+        } else {
+            return null;
+        }
+
+    }
+</script>

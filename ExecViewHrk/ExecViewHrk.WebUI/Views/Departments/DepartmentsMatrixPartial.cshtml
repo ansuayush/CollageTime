@@ -1,0 +1,98 @@
+﻿@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Departments";
+    Layout = null;
+}
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Departments <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+                    <div class="col-md-9 p-0">
+                        <button type="button" class="btn btn-primary waves-effect waves-light b-radius-2 text-tranform-normal" onclick="addDepartment()">
+                            <i class="fa fa-plus"></i><span class="m-l-10">Add New Record</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="theme-grid">
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.DepartmentVm>()
+                            .Name("gridDepartments")
+                            .Resizable(resize => resize.Columns(true))
+                            .Filterable()
+                            //.Editable(editable => editable.Mode(GridEditMode.InLine))
+                            //.ToolBar(toolbar => toolbar.Create())
+
+                            .Columns(columns =>
+                            {
+                                columns.Command(command =>
+                                {
+                                    command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridDepartmentEdit");
+                                    command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("gridDepartmentDelete");
+                                }).Width(70);
+                                columns.Bound(c => c.DepartmentId).Title("Id").Visible(false);
+                                columns.Bound(c => c.Comapnycodecode).Title("Company Code");
+                                columns.Bound(c => c.DepartmentCode).Title("Department Code").Width(300);
+                                columns.Bound(c => c.DepartmentDescription).Title("Department Description").Width(300);
+                                columns.Bound(c => c.Active).ClientTemplate("#= Active ? 'Yes' : 'No' #").Title("Active");
+                            })
+                            .HtmlAttributes(new { style = "height: 480px;" })
+
+                            .Scrollable()
+                            //.Groupable()
+                            .Sortable()
+                            .Selectable()
+
+                            .Pageable(pageable => pageable
+                                .Refresh(false)
+                                .PageSizes(true)
+                                .ButtonCount(5))
+                            .DataSource(dataSource => dataSource
+                                .Ajax()
+
+
+                            .Read(read => read.Action("DepartmentsList_Read", "Departments"))
+                            //.Create(create => create.Action("DepartmentsList_Create", "Departments"))
+                            //.Update(update => update.Action("DepartmentsList_Update", "Departments"))
+                            //.Destroy(destroy => destroy.Action("DepartmentsList_Destroy", "Departments"))
+                            .Model(model =>
+                            {
+                                model.Id(p => p.DepartmentId);
+                                model.Field(p => p.DepartmentId).Editable(false);
+                                model.Field(p => p.CompanyCodeId).DefaultValue(0);
+                                model.Field(p => p.DepartmentCode);
+                                model.Field(p => p.DepartmentDescription);
+                                model.Field(p => p.Active);
+                            }
+                                  )
+                            .Batch(false)
+                            .Events(events => events.Error("error_handler"))
+                            )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Employees Allowed Taken";
+
+    if (ViewBag.Message != null)
+    {
+        Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+    };
+
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Employees Allowed Taken<span class="pull-right icon-edit-block m-l-30"> <i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+                            @using (Html.BeginForm("TimeOffEmployeeTaken", "TimeOffEmployeesAllowedTaken", FormMethod.Post, new { id="frm", enctype = "multipart/form-data" }))
+                            {
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group  ">
+                                            <label for="example-text-input" class="col-xs-5 col-form-label form-control-label">Employees Allowed Taken</label>
+
+                                            <div class="col-sm-8">
+                                                <input type="file" name="postedFile" id="postedFileId" />
+                                                <input type="submit" value="Import"  onClick="return sendform()"/>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <a href="~/Sample/TimeOffEmployeesAllowedTaken.csv" class="txt-primary">Download Sample TimeOff Employees Allowed Taken</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @*@if (ViewBag.message != null)
+                                    {
+                                        <div class="col-sm-4">
+                                            <div class="form-group  ">
+                                                <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Message</label>
+                                                    @Html.Raw(ViewBag.message)
+                                            </div>
+                                        </div>
+                                    }*@
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12" style="margin-top:20px">
+                                        @(Html.Kendo().Grid<ExecViewHrk.Models.TimeoffSummaryVM>()
+                                                    .Name("GridTimeoffSummary")
+                                                    .Resizable(resize => resize.Columns(true))
+                                                    .Filterable()
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(c => c.EmployeesAllowedTakenId).Visible(false);
+                                                        columns.Bound(c => c.EmployeeId).Title("Employee");
+                                                        columns.Bound(c => c.Typecode).Title("Type code");
+                                                        columns.Bound(c => c.Allowed).Title("Allowed");
+                                                        columns.Bound(c => c.Taken).Title("Taken");
+                                                        columns.Bound(c => c.Remainder).Title("Remainder");
+                                                    })
+                                                    //.Scrollable()
+                                                    .Sortable()
+                                                    .Selectable()
+                                                    .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+                                                    .Events(e => e.DataBound("gridDataBound"))
+                                                    .DataSource(dataSource => dataSource.Ajax()
+                                                    .Read(read => read.Action("GetTimeoffSummary_Read", "TimeOffEmployeesAllowedTaken"))
+                                                    .Model(model =>
+                                                    {
+                                                        model.Id(p => p.EmployeesAllowedTakenId);
+                                                        model.Field(p => p.Typecode);
+                                                        model.Field(p => p.Allowed);
+                                                        model.Field(p => p.Taken);
+                                                        model.Field(p => p.Remainder);
+                                                    }
+                                                )
+                                                .PageSize(10)
+
+                                                    .Batch(false)
+                                                    .Events(events => events.Error("error_handler"))
+                                                    )
+                                        )
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sendform() {
+        if ($('#postedFileId').val() == "")
+        {
+            toastr.error("Please select a file.");
+                return false;
+        }
+
+        else {
+            $("#frm").submit();
+        }
+    }
+   $('#GridTimeoffSummary').data('kendoGrid').refresh();
+
+</script>

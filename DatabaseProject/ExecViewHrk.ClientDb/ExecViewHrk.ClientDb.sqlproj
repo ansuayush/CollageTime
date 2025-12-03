@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>ExecViewHrk.ClientDb</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{f507716c-0706-4998-8a23-87a54f7ca46e}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>ClientDatabaseProject</RootNamespace>
+    <AssemblyName>ClientDatabaseProject</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="PublishProfile" />
+    <Folder Include="DeploymentScripts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\DdlEeoTypes.sql" />
+    <Build Include="dbo\Tables\TimeCardDisplayColumns.sql" />
+    <Build Include="dbo\Tables\DdlApplicantSources.sql" />
+    <Build Include="dbo\Tables\PersonMemberships.sql" />
+    <Build Include="dbo\Tables\Positions.sql" />
+    <Build Include="dbo\Tables\DdlCitizenships.sql" />
+    <Build Include="dbo\Tables\Jobs.sql" />
+    <Build Include="dbo\Tables\PersonPassports.sql" />
+    <Build Include="dbo\Tables\DdlProfessionalBodies.sql" />
+    <Build Include="dbo\Tables\DdlHospitals.sql" />
+    <Build Include="dbo\Tables\PositionBudgetMonths.sql" />
+    <Build Include="dbo\Tables\TimeCardApprovals.sql" />
+    <Build Include="dbo\Tables\DdlRegionalChapters.sql" />
+    <Build Include="dbo\Tables\PersonProperties.sql" />
+    <Build Include="dbo\Tables\PositionBudgetSchedules.sql" />
+    <Build Include="dbo\Tables\ddlSalaryGradeBands.sql" />
+    <Build Include="dbo\Tables\BenefitGroups.sql" />
+    <Build Include="dbo\Tables\PayPeriods.sql" />
+    <Build Include="dbo\Tables\employeeSalaryComponents.sql" />
+    <Build Include="dbo\Tables\DdlSalaryGradeHistories.sql" />
+    <Build Include="dbo\Tables\Persons.sql" />
+    <Build Include="dbo\Tables\DdlSalaryGrades.sql" />
+    <Build Include="dbo\Tables\ddlSalaryComponents.sql" />
+    <Build Include="dbo\Tables\FundHistories.sql" />
+    <Build Include="dbo\Tables\ddlPayTypes.sql" />
+    <Build Include="dbo\Tables\Funds.sql" />
+    <Build Include="dbo\Tables\DdlSkillLevels.sql" />
+    <Build Include="dbo\Tables\DdlEmployeeTypes.sql" />
+    <Build Include="dbo\Tables\BenefitProviders.sql" />
+    <Build Include="dbo\Tables\PositionsFundHistories.sql" />
+    <Build Include="dbo\Tables\DdlSkillTypes.sql" />
+    <Build Include="dbo\Tables\DdlEmploymentStatuses.sql" />
+    <Build Include="dbo\Tables\PerformanceProfileSections.sql" />
+    <Build Include="dbo\Tables\DdlPayFrequencies.sql" />
+    <Build Include="dbo\Tables\DdlRateTypes.sql" />
+    <Build Include="dbo\Tables\ddlPerformancePotentials.sql" />
+    <Build Include="dbo\Tables\ADPFieldMappings.sql" />
+    <Build Include="dbo\Tables\DdlMedicalExaminationTypes.sql" />
+    <Build Include="dbo\Tables\BenefitOptions.sql" />
+    <Build Include="dbo\Tables\ddlJobClasses.sql" />
+    <Build Include="dbo\Tables\DdlSkills.sql" />
+    <Build Include="dbo\Tables\TimeCards.sql" />
+    <Build Include="dbo\Tables\DdlTrainingCoursesGroups.sql" />
+    <Build Include="dbo\Tables\DdlMaritalStatuses.sql" />
+    <Build Include="dbo\Tables\DdlUnits.sql" />
+    <Build Include="dbo\Tables\PersonImages.sql" />
+    <Build Include="dbo\Tables\ddlEEOJobCodes.sql" />
+    <Build Include="dbo\Tables\UserNamesPersons.sql" />
+    <Build Include="dbo\Tables\PersonTrainings.sql" />
+    <Build Include="dbo\Tables\DdlInnoculationTypes.sql" />
+    <Build Include="dbo\Tables\ddlFLSAs.sql" />
+    <Build Include="dbo\Tables\DdlPositionCategories.sql" />
+    <Build Include="dbo\Tables\BusinessUnits.sql" />
+    <Build Include="dbo\Tables\ddlEEOJobTrainingStatuses.sql" />
+    <Build Include="dbo\Tables\Locations.sql" />
+    <Build Include="dbo\Tables\ddlPositionTypes.sql" />
+    <Build Include="dbo\Tables\DdlLicenseTypes.sql" />
+    <Build Include="dbo\Tables\ddlUnions.sql" />
+    <Build Include="dbo\Tables\TimeOffRequests.sql" />
+    <Build Include="dbo\Tables\UserDefinedSegment1s.sql" />
+    <Build Include="dbo\Tables\DdlSuppliers.sql" />
+    <Build Include="dbo\Tables\DdlSuffixes.sql" />
+    <Build Include="dbo\Tables\UserDefinedSegment2s.sql" />
+    <Build Include="dbo\Tables\PositionSalaryGrades.sql" />
+    <Build Include="dbo\Tables\ManagerLockouts.sql" />
+    <Build Include="dbo\Tables\PersonSkills.sql" />
+    <Build Include="dbo\Tables\ddlJobFamilys.sql" />
+    <Build Include="dbo\Tables\DdlPrefixes.sql" />
+    <Build Include="dbo\Tables\DdlMajors.sql" />
+    <Build Include="dbo\Tables\ddlWorkersCompensations.sql" />
+    <Build Include="dbo\Tables\ManagersPositions.sql" />
+    <Build Include="dbo\Tables\ADPAccNumbers.sql" />
+    <Build Include="dbo\Tables\BenefitOESchedules.sql" />
+    <Build Include="dbo\Tables\HoursCodes.sql" />
+    <Build Include="dbo\Tables\PositionBudgets.sql" />
+    <Build Include="dbo\Tables\DdlI9DocumentTypes.sql" />
+    <Build Include="dbo\Tables\FormTemplates.sql" />
+    <Build Include="dbo\Tables\DdlEducationEstablishments.sql" />
+    <Build Include="dbo\Tables\DdlPropertyTypes.sql" />
+    <Build Include="dbo\Tables\DdlEvaluationTests.sql" />
+    <Build Include="dbo\Tables\Employees.sql" />
+    <Build Include="dbo\Tables\DdlGenders.sql" />
+    <Build Include="dbo\Tables\FormTemplateFieldTypes.sql" />
+    <Build Include="dbo\Tables\PersonTests.sql" />
+    <Build Include="dbo\Tables\FormTemplateFields.sql" />
+    <Build Include="dbo\Tables\PerformanceProfiles.sql" />
+    <Build Include="dbo\Tables\FormTemplateSelectionGroups.sql" />
+    <Build Include="dbo\Tables\ddlPositionGrades.sql" />
+    <Build Include="dbo\Tables\EmployeeAllocations.sql" />
+    <Build Include="dbo\Tables\DdlRelationshipTypes.sql" />
+    <Build Include="dbo\Tables\FormTemplateSelectionItems.sql" />
+    <Build Include="dbo\Tables\BenefitExpansionFields.sql" />
+    <Build Include="dbo\Tables\Workflows.sql" />
+    <Build Include="dbo\Tables\PersonEducations.sql" />
+    <Build Include="dbo\Tables\PositionFundingSources.sql" />
+    <Build Include="dbo\Tables\EmployeeI9Documents.sql" />
+    <Build Include="dbo\Tables\PositionFundingSourceHistories.sql" />
+    <Build Include="dbo\Tables\DdlTrainingCourses.sql" />
+    <Build Include="dbo\Tables\DdlPayGroups.sql" />
+    <Build Include="dbo\Tables\PersonAdditionals.sql" />
+    <Build Include="dbo\Tables\PositionClassifications.sql" />
+    <Build Include="dbo\Tables\DdlPhoneTypes.sql" />
+    <Build Include="dbo\Tables\DdlDisabilityTypes.sql" />
+    <Build Include="dbo\Tables\PositionFunds.sql" />
+    <Build Include="dbo\Tables\WorkflowMembers.sql" />
+    <Build Include="dbo\Tables\PersonVehicles.sql" />
+    <Build Include="dbo\Tables\DdlAccommodationTypes.sql" />
+    <Build Include="dbo\Tables\BenefitDeductionCodes.sql" />
+    <Build Include="dbo\Tables\EmployeeMaster.sql" />
+    <Build Include="dbo\Tables\DdlTimeCardTypes.sql" />
+    <Build Include="dbo\Tables\PersonWorkPermits.sql" />
+    <Build Include="dbo\Tables\Departments.sql" />
+    <Build Include="dbo\Tables\PersonPhoneNumbers.sql" />
+    <Build Include="dbo\Tables\FormTemplateWorkflows.sql" />
+    <Build Include="dbo\Tables\DdlQualificationTypes.sql" />
+    <Build Include="dbo\Tables\EarningsCodes.sql" />
+    <Build Include="dbo\Tables\PersonADA.sql" />
+    <Build Include="dbo\Tables\CompanyCodes.sql" />
+    <Build Include="dbo\Tables\DdlDegreeTypes.sql" />
+    <Build Include="dbo\Tables\FormWorkflowFieldPermissions.sql" />
+    <Build Include="dbo\Tables\PersonDisabilities.sql" />
+    <Build Include="dbo\Tables\Managers.sql" />
+    <Build Include="dbo\Tables\E_Positions.sql" />
+    <Build Include="dbo\Tables\DdlAddressTypes.sql" />
+    <Build Include="dbo\Tables\hrBUSINESSLEVELS.sql" />
+    <Build Include="dbo\Tables\DdlEducationLevels.sql" />
+    <Build Include="dbo\Tables\DdlStates.sql" />
+    <Build Include="dbo\Tables\PositionSalaryGradeSourceHistories.sql" />
+    <Build Include="dbo\Tables\ddlEINs.sql" />
+    <Build Include="dbo\Tables\DdlCountries.sql" />
+    <Build Include="dbo\Tables\BudgetImport.sql" />
+    <Build Include="dbo\Tables\PersonExaminations.sql" />
+    <Build Include="dbo\Tables\DdlEducationTypes.sql" />
+    <Build Include="dbo\Tables\E_PositionSalaryHistories.sql" />
+    <Build Include="dbo\Tables\ddlEEOFileStatuses.sql" />
+    <Build Include="dbo\Tables\ddlBusinessLevelTypes.sql" />
+    <Build Include="dbo\Tables\PersonAddresses.sql" />
+    <Build Include="dbo\Tables\PersonInnoculations.sql" />
+    <Build Include="dbo\Tables\ManagerDepartments.sql" />
+    <Build Include="dbo\Tables\PositionBusinessLevels.sql" />
+    <Build Include="dbo\Tables\PersonLicenses.sql" />
+    <Build Include="dbo\Tables\PersonRelationships.sql" />
+    <Build Include="dbo\Stored Procedures\uspBudgetToActualsV01.sql" />
+    <Build Include="dbo\Stored Procedures\uspContractsReport1.sql" />
+    <Build Include="dbo\Stored Procedures\uspContractsReport.sql" />
+    <Build Include="dbo\Stored Procedures\uspPositionInUseReport.sql" />
+    <Build Include="dbo\Stored Procedures\sp_Exec_TimeCardExport.sql" />
+    <Build Include="dbo\Stored Procedures\sp_TimeCardExport.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\USP_GET_ROLODEX_DATA.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Contract_Earn_Burn_Report.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Salary_Fringe_Report.sql" />
+    <Build Include="dbo\Stored Procedures\uspPositionReportNoBudgetYear.sql" />
+    <Build Include="dbo\Stored Procedures\uspOpenPositionReport.sql" />
+    <Build Include="dbo\Stored Procedures\CheckDuplicateDDLData.sql">
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\uspPositionClosedReport.sql" />
+    <Build Include="dbo\Stored Procedures\uspEmployeePositionReportNoBudgetYear.sql" />
+    <Build Include="dbo\Stored Procedures\sp_generate_merge.sql" />
+    <None Include="DeploymentScripts\DataScript.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PublishProfile\ClientTemplate.epmonlineServer.publish.xml" />
+    <None Include="PublishProfile\ClientTemplate.priyanetServer.publish.xml" />
+    <None Include="PublishProfile\ClientTemplate.azureServer.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="DeploymentScripts\Script.PreDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="DeploymentScripts\Script.PostDeployment.sql" />
+  </ItemGroup>
+</Project>

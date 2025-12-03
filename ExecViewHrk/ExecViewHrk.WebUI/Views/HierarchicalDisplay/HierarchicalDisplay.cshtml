@@ -1,0 +1,149 @@
+﻿@{
+    ViewBag.Title = "Organization Hierarchy";
+    Layout = "~/Views/Shared/_MatrixBlockHeader2.cshtml";
+}
+
+
+@section TitleSectionOfHeader2
+{
+    <label>Organization Hierarchy</label>
+}
+
+<script src="~/Scripts/application/HierarchicalDisplay.js"></script>
+
+@using (Html.BeginForm("HierarchicalDisplay", "HierarchicalDisplay", FormMethod.Post, new { role = "form", id = "HierarchicalDisplayForm" }))
+{
+    <div class="row ">
+        <div class="col-md-12">
+
+            <div class="form-group ">               
+
+               @(Html.Kendo().Grid<ExecViewHrk.EfClient.CompanyCode>()
+                        .Name("gridCompanyCode")
+                        .Resizable(resize => resize.Columns(true))
+                        .Filterable()
+
+                        .Columns(columns =>
+                        {
+                            columns.Bound(c => c.CompanyCodeId).Title("Id").Hidden();
+                            columns.Bound(c => c.CompanyCodeCode).Title("Company Code").Width(150); ;
+                            columns.Bound(c => c.CompanyCodeDescription).Title("Company Description").Width(150); ;
+                        })
+ 
+                        .HtmlAttributes(new { style = "height: 480px;" })
+
+                        .Scrollable()
+                        .Groupable()
+                        .Sortable()
+                        .Selectable()
+
+                        .Pageable(pageable => pageable
+                        .Refresh(false)
+                        .PageSizes(true)
+                        .ButtonCount(5))
+                        .ClientDetailTemplateId("templateDepartment")
+                        .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Read(read => read.Action("HierarchyBinding_CompanyCodes_Read", "HierarchicalDisplay"))
+                            .Batch(false)
+                         
+                            )
+                                                        
+                        .Events(events => events.DataBound("dataBound"))
+            )
+
+  
+            </div>
+
+        </div>
+    </div>
+}
+
+<script id="templateDepartment" type="text/kendo-tmpl">
+    *@(Html.Kendo().Grid<ExecViewHrk.EfClient.Department>()
+                .Name("gridDepartment")
+                .Resizable(resize => resize.Columns(true))
+                 .Filterable()
+
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.DepartmentId).Title("Id").Hidden();
+                    columns.Bound(c => c.DepartmentCode).Title("Department Code").Width(150); ;
+                    columns.Bound(c => c.DepartmentCode).Title("Department Description").Width(150); ;
+                })
+            
+                .HtmlAttributes(new { style = "height: 480px;" })
+
+                .Scrollable()
+                .Groupable()
+                .Sortable()
+                .Selectable()
+
+
+                .Pageable(pageable => pageable
+                    .Refresh(false)
+                    .PageSizes(true)
+                    .ButtonCount(5)
+                 )
+
+                .ClientDetailTemplateId("templateManagerDepartment")
+                .DataSource(dataSource => dataSource
+                       .Ajax()
+                       .Read(read => read.Action("HierarchyBinding_Departments", "HierarchicalDisplay", new { companyCodeId = "#=CompanyCodeId#" }))
+                       .Batch(false)
+                       
+                 )
+                .AutoBind(true)
+            
+                .ToClientTemplate()
+    )
+</script>
+
+
+<script id="templateManagerDepartment" type="text/kendo-tmpl">
+    *@(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.HierarchicalDisplayManagerVm>()
+                .Name("gridManagerDepartment")
+                .Resizable(resize => resize.Columns(true))
+                .Filterable()
+
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.ManagerId).Title("Id").Hidden();
+                    columns.Bound(c => c.Manager).Title("Manager").Width(150); ;
+                })
+
+                .HtmlAttributes(new { style = "height: 480px;" })
+
+                .Scrollable()
+                .Groupable()
+                .Sortable()
+                .Selectable()
+
+
+                .Pageable(pageable => pageable
+                    .Refresh(false)
+                    .PageSizes(true)
+                    .ButtonCount(5)
+                 )
+
+                .DataSource(dataSource => dataSource
+                       .Ajax()
+                              .Read(read => read.Action("HierarchyBinding_ManagerDepartments", "HierarchicalDisplay", new { departmentId = "#=DepartmentId#" }))
+                       .Batch(false)
+
+                 )
+                 .AutoBind(true)
+                .ToClientTemplate()
+    )
+</script>
+
+
+
+
+
+
+
+
+
+
+

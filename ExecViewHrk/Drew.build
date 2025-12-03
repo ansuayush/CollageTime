@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+************************************************************
+******************* VERSION BUILD FILE *********************
+-->
+<project default="compile">
+	<property name="nant.settings.currentframework" value="net-4.0" />	
+	<property name="project.rootdirectory" value="./" />	
+	<property name="solution.dir" value="./"/>     	
+	<property name="solution.file" value="ExecViewDrewUniversity.sln"/>     	
+	<property name="build.configuration" value="Release" /> 
+<property name="framework-get-assembly-directory" value="${framework::get-assembly-directory('net-4.0')}" />
+<property name="dotNetReferenceAssemblyPath" value="${framework-get-assembly-directory}\" />
+	
+	<!--<call target="reporting"/>-->
+	
+	<target name="clean">			
+		<exec program="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\msbuild.exe"  
+			commandline="${solution.file} /t:clean /p:Configuration=${build.configuration} /v:q" 
+			workingdir="./" />     	
+	</target> 
+	
+	<target name="compile">			
+		<exec program="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\msbuild.exe"  
+			commandline="${solution.file} /t:Build /p:Configuration=${build.configuration};DeployOnBuild=True /v:q" 
+			workingdir="./" />       	
+	</target> 
+</project>

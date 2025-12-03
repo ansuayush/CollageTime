@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "Contract Earn vs Burn Report";
+    Layout = null;
+}
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Contract Earn vs Burn Report <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>           
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="theme-grid">
+
+                            @(Html.Kendo().Grid<ExecViewHrk.Models.ContractEarnBurnReport>()
+        .Name("grdContractEarnBurnReport")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .Columns(columns =>
+        {
+
+
+
+
+            columns.Bound(c => c.FundingSource).Title("Funding Source");
+            columns.Bound(c => c.FundingSourceDescription).Title("Funding Source Description");
+            columns.Bound(c => c.StartDate).Title("Start Date").ClientTemplate("#= StartDate == null ? '' : kendo.toString(StartDate, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.EndDate).Title("End Date").ClientTemplate("#= EndDate == null ? '' : kendo.toString(EndDate, \"MM/dd/yyyy\") #");
+            columns.Bound(c => c.FundingSourceComments).Title("FundingSource Comments");
+            columns.Bound(c => c.BudgetCenter).Title("Budget Center");
+            columns.Bound(c => c.BudgetCenterDescription).Title("Budget Center Description");
+            columns.Bound(c => c.ContractAmount).Title("Contract Amount").Format("{0:c2}");
+            columns.Bound(c => c.AmountSpent).Title("Amount Spent").Format("{0:c2}");
+            columns.Bound(c => c.BalanceRemaining).Title("Balance Remaining").Format("{0:c2}");
+            columns.Bound(c => c.TimeElapsed).Title("% of Time Elapsed");
+            columns.Bound(c => c.ContractSpent).Title("% of Contract Spent");
+            columns.Bound(c => c.BudgetComments).Title("Budget Comments");
+
+          
+        })
+        .ToolBar(tools => { tools.Excel(); tools.Pdf(); })
+        .Pdf(pdf => pdf
+            .AllPages()
+            .Landscape()
+            .FileName("Contract Earn Vs Burn Report.pdf")
+        )
+        .Sortable()
+        .Excel(excel => excel.AllPages(true)
+        .FileName("Contract Earn Vs Burn Report.xlsx")
+        .Filterable(true))
+        .Selectable()
+        .Pageable(pageable => pageable.Refresh(false).PageSizes(true))
+        .DataSource(dataSource => dataSource.Ajax()
+        .Read(read => read.Action("ContractEarnBurnReport_Read", "Reports"))
+            .Model(model =>
+            {
+                model.Id(p => p.BudgetCenter);
+            }
+                  )
+            .Batch(false)
+            .Events(events =>
+            {
+                events.Error("refreshGrid");
+                events.RequestEnd("gridRequestEnd");
+            })
+        )
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .k-grid-header th.k-header {
+        min-width: 150px;
+    }
+
+    .k-grid {
+        overflow-x: scroll;
+    }
+
+    .k-pdf-export .k-grid-toolbar,
+    .k-pdf-export .k-pager-wrap {
+        display: none;
+    }
+    .k-grid-toolbar, .k-pager-wrap {
+        background: transparent !important;
+        border: 0;
+    }
+    .k-footer-template td {
+        font-weight: 700 !important;
+    }
+</style>

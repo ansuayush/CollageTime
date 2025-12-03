@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ExecViewHrk.WebUI.Models.FundHistoryVm>
+
+<div class="theme-grid">
+    @(Html.Kendo().Grid(Model)
+            .Name("grid_Fund_History_List")
+            .Resizable(resize => resize.Columns(true))
+
+            .Filterable()
+            .Columns(columns =>
+            {
+                //columns.Command(command =>
+                //{
+                //    command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>");//.Click("gridPositionBudgetEdit");
+                //    command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i></a>");//.Click("gridPositionBudgetDelete");
+
+                //}).Width(70);
+
+                columns.Bound(c => c.FundCode).Title("Fund Code");
+                columns.Bound(c => c.FundDescription).Title("Fund Description");
+                columns.Bound(c => c.EffectiveDate).Title("Effective Date").ClientTemplate("#= EffectiveDate == null ? '' : kendo.toString(EffectiveDate, \"MM/dd/yyyy\") #"); 
+                columns.Bound(c => c.Amount).Title("Amount").ClientTemplate("$#= Amount !== null ? kendo.toString(Amount,'n2') : ''#"); 
+            })
+
+            .Sortable()
+            .Selectable()
+            .Pageable(pageable => pageable.Refresh(false).PageSizes(false))
+
+            .DataSource(dataSource => dataSource
+                        .Ajax()
+                    .Model(model =>
+                    {
+                        model.Field(p => p.FundCode);
+                        model.Field(p => p.FundDescription);
+                        model.Field(p => p.EffectiveDate) ;
+                        model.Field(p => p.Amount);
+                    }
+                )
+     ))
+</div>

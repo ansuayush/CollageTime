@@ -1,0 +1,96 @@
+﻿@model ExecViewHrk.Models.HoursCodeVm
+
+@Html.HiddenFor(model => model.HoursCodeId)
+
+<div class="container" typeof="text/x-kendo-template">
+    <div class="row">
+
+        <div class="col-md-11">
+            <div class="col-md-5">
+              
+                    <div class="k-edit-label">
+                        @Html.Label("Company Code")
+                    </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.CompanyCodeId)
+                        @Html.ValidationMessageFor(model => model.CompanyCodeId)
+                    </div>
+
+                    <div class="k-edit-label">@Html.Label("Hours Code") </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.HoursCodeCode)
+                        @Html.ValidationMessageFor(model => model.HoursCodeCode)
+                    </div>
+                
+                    <div class="k-edit-label">@Html.Label("Hour Code Description") </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.HoursCodeDescription)
+                        @Html.ValidationMessageFor(model => model.HoursCodeDescription)
+                    </div>
+
+                    <div class="k-edit-label">@Html.Label("ADP Field Mapping") </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.ADPFieldMappingId)
+                        @Html.ValidationMessageFor(model => model.ADPFieldMappingId)
+                    </div>
+                
+                    <div class="k-edit-label">@Html.Label("ADP Account Number") </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.ADPAccNumberId)
+                        @Html.ValidationMessageFor(model => model.ADPAccNumberId)
+                    </div>
+
+                    <div class="k-edit-label">@Html.Label("Rate Override") </div>
+                    <div class="k-edit-field">
+                        <div class="k-textbox">
+                            @Html.EditorFor(model => model.RateOverride)
+                            @Html.ValidationMessageFor(model => model.RateOverride)
+                        </div>
+                    </div>
+
+                    <div class="k-edit-label">@Html.Label("Rate Multiplier") </div>
+                    <div class="k-edit-field">
+                        <div class="k-textbox">
+                            @Html.EditorFor(model => model.RateMultiplier)
+                            @Html.ValidationMessageFor(model => model.RateMultiplier)
+                        </div>
+                    </div>
+
+            </div>
+
+                <div class="col-md-offset-1 col-md-5">
+
+                    <div class="k-edit-label">@Html.Label("Exclude From OT") </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.ExcludeFromOT)
+                        @Html.ValidationMessageFor(model => model.ExcludeFromOT)
+                    </div>
+
+
+                    <div class="k-edit-label">@Html.Label("Subtract from Regular") </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.SubtractFromRegular)
+                        @Html.ValidationMessageFor(model => model.SubtractFromRegular)
+                    </div>
+
+
+                    <div class="k-edit-label">@Html.Label("Non Pay Code") </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.NonPayCode)
+                        @Html.ValidationMessageFor(model => model.NonPayCode)
+                    </div>
+
+                    <div class="k-edit-label">@Html.Label("Hours code Active") </div>
+                    <div class="k-edit-field">
+                        @Html.EditorFor(model => model.IsHoursCodeActive)
+                        @Html.ValidationMessageFor(model => model.IsHoursCodeActive)
+                    </div>
+                    
+            </div>
+          </div>
+
+
+    </div>
+</div>
+
+

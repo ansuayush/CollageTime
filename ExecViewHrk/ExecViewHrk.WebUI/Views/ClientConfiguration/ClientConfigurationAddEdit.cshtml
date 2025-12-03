@@ -1,0 +1,110 @@
+﻿@model ExecViewHrk.Models.ClientConfigurationVM
+@using (Html.BeginForm("ClientConfigurationSaveAjax", "ClientConfiguration", FormMethod.Post, new { role = "form", id = "clientConfigurationForm" }))
+{
+    @Html.HiddenFor(model => model.ClientConfigId)
+    @Html.HiddenFor(model => model.EmployerId)
+    @Html.ValidationSummary(true)
+    <div class="md-content p-10">
+        <div class="card p-15">
+            <div class="card-header">
+                <h5 class="card-header-text">Client Configurations Detail</h5>
+            </div>
+            <div class="card-block">
+                <div class="row">
+                </div>
+                @if (Model.ClientConfigId == 1)
+                {
+                    <div class="col-sm-3" id="EnableCollegeTimeContractsDiv">
+                        <div class="form-group p-t-30">
+                            <div class="checkbox-color checkbox-primary">
+                                @if (Model.ConfigurationValue == 1)
+                                {
+                                    <input type="checkbox" name="ConfigurationValue" id="ConfigurationValue" value="1" checked>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="ConfigurationValue" id="ConfigurationValue" value="0">
+                                }
+
+                                <label for="ConfigurationValue">@Model.ConfigurationName</label>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (Model.ClientConfigId == 2)
+                {
+                    <div class="col-sm-3" id="FiscalMonthDiv">
+                        <div class="form-group">
+                            <label>
+                                <span style="color:red">*</span>Fiscal Month
+                            </label>
+                            @Html.DropDownListFor(m => m.ConfigurationValue, new SelectList(Model.FiscalMonthList, "keyvalue", "keydescription", Model.ConfigurationValue), new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="p-15 text-right">
+            <button type="button" class="btn btn-default waves-effect md-close m-r-15">Cancel</button>
+            <input type="button" id="btnClientConfigurationSave" name="Done" value="Done" class="btn btn-primary">
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $("#clientConfigurationForm *").filter(':input').not("input[type=hidden]").each(function () {
+            $(this).attr("onchange", "clientConfigurationOnChange(this)");
+        });
+    });
+    function clientConfigurationOnChange(fldEle) {
+        ValidateElements(fldEle.id);
+        var FiledID = fldEle.id;
+        var FieldValue = $("#" + FiledID).val();        
+        switch (FiledID) {
+            case "ConfigurationValue":
+                if ($('input:checkbox[name=ConfigurationValue]').is(':checked') && !$('#FiscalMonthDiv').is(':visible')) {
+                    $('#ConfigurationValue').val(1);
+                }
+                else if (!$('input:checkbox[name=ConfigurationValue]').is(':checked') && !$('#FiscalMonthDiv').is(':visible')) {
+                    $('#ConfigurationValue').val(0);
+                }
+                break;
+        }
+    }
+
+    $("#btnClientConfigurationSave").click(function (e) {
+        e.preventDefault();
+        loading(true);
+        if (!ValidateForm("clientConfigurationForm")) {
+            loading(false);
+            return;
+        }        
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = $("#clientConfigurationForm").serializeArray();
+        if (!$('input:checkbox[name=ConfigurationValue]').is(':checked') && !$('#FiscalMonthDiv').is(':visible')) {           
+            postData.push({ name: "ConfigurationValue", value: "0" });
+        }
+        var formURL = appBaseUrl + "ClientConfiguration/ClientConfigurationSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (status == "success") {
+                if (data.succeed == false)
+                    toastr.error(data.Message);
+                else {
+                    LoadMenu("ClientConfigurationList", "ClientConfiguration")
+                    $("#btnClientConfigurationSave").parent().find(".md-close").click();
+                    formService.isLoadingInProgress = true;
+                    killTimer();
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+            }
+            else {
+                toastr.error(data.Message);
+            }
+        });
+    });
+</script>

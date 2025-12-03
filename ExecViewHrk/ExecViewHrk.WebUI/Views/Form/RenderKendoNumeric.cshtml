@@ -1,0 +1,9 @@
+﻿
+@model ExecViewHrk.WebUI.Models.FormTemplateFieldVm
+<div class="form-group ">
+    <label><span style="color:red">*</span>@Model.Label</label>
+    <div>
+        @Html.Kendo().NumericTextBox().Name(@Model.HtmlId)
+        @Html.ValidationMessage(@Model.HtmlId)
+    </div>
+</div>

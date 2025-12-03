@@ -1,0 +1,12 @@
+﻿@model DateTime?
+
+@(Html.Kendo().TimePickerFor(m => m)
+    .Format("hh:mm tt")
+        //.DisableDates(DayOfWeek.Saturday, DayOfWeek.Sunday)
+    .Value(DateTime.Now)
+    .Interval(15)
+    //.HtmlAttributes(new { onkeydown = "javascript:return false;" })
+        //.Min(new DateTime(2016, 9, 30))
+        //.Max(new DateTime(2016, 10, 4))
+)
+

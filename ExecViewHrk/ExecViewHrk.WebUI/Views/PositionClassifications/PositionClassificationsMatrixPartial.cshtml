@@ -1,0 +1,105 @@
+﻿@using System.Web.Routing;
+@using ExecViewHrk.WebUI.Models;
+@using ExecViewHrk.EfClient;
+
+@{
+    ViewBag.Title = "Position Classifications";
+    //Layout = "~/Views/Shared/_MatrixHeader.cshtml";
+}
+
+@model ExecViewHrk.WebUI.Models.PositionClassificationVm
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+            <div class="col-md-6 ">
+                <label>Position Classifications</label>
+            </div>
+
+            <div class="col-md-6 ">
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="formDiv" class="panel-body">
+
+        @using (Html.BeginForm("PositionClassificationsSave", "PositionClassifications", FormMethod.Post, new { role = "form", id = "PositionClassificationForm" }))
+        {
+        <div class="row ">
+
+            <div class="row ">
+                <div class="col-md-12">
+                    
+                        @*<div class="col-md-5 ">*@
+                    <div class="form-group">
+                        <div class=" form-group row" style="font-size: 18px;">
+                            @for (var i = 0; i < Model.ClassificationColumns.Count(); i++)
+                           {
+
+                                if (Model.ClassificationColumns[i].ClassificationCriteria.ToUpper().Equals(PositionClassificationConst.B.ToUpper()))
+                                {<div class="col-md-1"> <div class="ClassPad"> @Html.Label("Business Unit") </div></div>}
+                                else if (Model.ClassificationColumns[i].ClassificationCriteria.ToUpper().Equals(PositionClassificationConst.D.ToUpper()))
+                                {<div class="col-md-2"> <div class="ClassPad"> @Html.Label("Department") </div></div>}
+                                else if (Model.ClassificationColumns[i].ClassificationCriteria.ToUpper().Equals(PositionClassificationConst.J.ToUpper()))
+                                {<div class="col-md-offset-1 col-md-2"> <div class="ClassPad"> @Html.Label("Job") </div></div>}
+                                else if (Model.ClassificationColumns[i].ClassificationCriteria.ToUpper().Equals(PositionClassificationConst.L.ToUpper()))
+                                {<div class="col-md-2"> <div class="ClassPad"> @Html.Label("Locations") </div></div>}
+                                else if (Model.ClassificationColumns[i].ClassificationCriteria.ToUpper().Equals(PositionClassificationConst.U1.ToUpper()))
+                                {<div class="col-md-2"> <div class="ClassPad"> @Html.Label("Segment 1") </div></div>}
+                                else if (Model.ClassificationColumns[i].ClassificationCriteria.ToUpper().Equals(PositionClassificationConst.U2.ToUpper()))
+                                {<div class="col-md-2"> <div class="ClassPad"> @Html.Label("Segment 2") </div></div>}
+
+
+                                @Html.HiddenFor(x => x.ClassificationColumns[i].ClassificationCriteria)
+                                <div class="col-md-2">
+                                    @Html.CheckBoxFor(x => x.ClassificationColumns[i].IsCriteriaApplicable , new { Style = "width:20px; height:20px; display:inline-block; margin-left: 10px; margin-top:17px" })
+                                </div>
+                                @Html.ValidationMessageFor(x => x.ClassificationColumns[i].IsCriteriaApplicable)
+                                
+                            }
+
+                        </div>
+                    </div>
+
+
+                        @*<div>
+                @Html.ValidationMessageFor(model => model.ClassificationColumns)
+            </div>*@
+                        @*</div>
+
+            <div class="col-md-offset-1 col-md-5">
+
+            </div>*@
+
+                    </div>
+
+            </div>
+
+        </div>
+
+        <input id="Submit1" type="submit" value="Save" class="btn btn-info" />
+        }
+
+    </div>
+
+</div>
+
+
+<style>
+    .ClassPad { margin-right: 125px;  padding: 10px;}
+</style>
+

@@ -1,0 +1,121 @@
+﻿@model ExecViewHrk.EfClient.DdlRelationshipType
+@{
+
+    Layout = null;
+}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Add Relationship Types</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form id="frmDDlRelTypes">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Code</label>
+                    @Html.TextBoxFor(x => x.Code, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", data_required = "Y" })
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="checkbox-color checkbox-primary">
+                        @if (Model.IsSpouse == true)
+                        {
+                            <input id="@Html.NameFor(m => m.IsSpouse)" type="checkbox" value="@Model.IsSpouse" checked="checked" />
+                        }
+                        else
+
+                        {
+                            <input id="@Html.NameFor(m => m.IsSpouse)" value="@Model.IsSpouse" type="checkbox" />
+                        }
+                        @Html.LabelFor(x => x.IsSpouse, "Is Spouse")
+                        @Html.HiddenFor(x => x.IsSpouse)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="checkbox-color checkbox-primary">
+                        @if (Model.CobraEligible == true)
+                        {
+                            <input id="@Html.NameFor(m => m.CobraEligible)" type="checkbox" value="@Model.CobraEligible" checked="checked" />
+                        }
+                        else
+
+                        {
+                            <input id="@Html.NameFor(m => m.CobraEligible)" value="@Model.CobraEligible" type="checkbox" />
+                        }
+                        @Html.LabelFor(x => x.CobraEligible, "Cobra Eligible")
+                        @Html.HiddenFor(x => x.CobraEligible)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="checkbox-color checkbox-primary">
+                        @if (Model.Active == true)
+                        {
+                            <input id="@Html.NameFor(m => m.Active)" type="checkbox" value="@Model.Active" checked="checked" />
+                        }
+                        else
+                        {
+                            <input id="@Html.NameFor(m => m.Active)" value="@Model.Active" type="checkbox" />
+                        }
+                        @Html.LabelFor(x => x.Active)
+                        @Html.HiddenFor(x => x.Active)
+                    </div>
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Active)
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseRelationType">Close</button>
+    <button type="button" class="btn btn-primary waves-effect waves-light " id="btnSaveRelationType">Save</button>
+</div>
+<script>
+    $("#btnSaveRelationType").click(function (e) {
+        e.preventDefault();
+
+        if (!ValidateForm("frmDDlRelTypes")) {
+            loading(false);
+            return;
+        }
+        var postData = $("#frmDDlRelTypes").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonRelationships/DdlRelationshipTypesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (data.Errors != null) {
+                toastr.error(data.Errors[""].errors[0]);
+            }
+            else {
+                reloadRelationshipTypeDropDown();
+                $("#btnCloseRelationType").trigger('click');
+            }
+        });
+    });
+    function reloadRelationshipTypeDropDown() {
+        var _selectedValue = $("#RelationshipTypeId").val();
+        $.get($("#appBaseUrl").val() + "PersonRelationships/reloadDdlPersonRelationshipTypes", function (data, status) {
+            var list = data;
+            if (list.length > 0) {
+                $("#RelationshipTypeId").empty();
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].keyvalue == _selectedValue) {
+                        $("#RelationshipTypeId").append("<option value='" + list[i].keyvalue + "' selected >" + list[i].keydescription + "</option>");
+                    } else {
+                        $("#RelationshipTypeId").append("<option value='" + list[i].keyvalue + "' >" + list[i].keydescription + "</option>");
+                    }
+                }
+            }
+        });
+    }
+</script>

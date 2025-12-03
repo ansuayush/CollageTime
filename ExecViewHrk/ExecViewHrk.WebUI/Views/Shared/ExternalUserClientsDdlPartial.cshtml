@@ -1,0 +1,80 @@
+﻿@using ExecViewHrk.WebUI.Infrastructure;
+
+        @if (User.Identity.GetExternalUserSelectedClientID() != null)
+        {
+            
+            @(Html.Kendo().DropDownList()
+                                  .Name("ddlEmployerId")
+                                  .HtmlAttributes(new { style = "width:300px" })
+                                  .OptionLabel("Select client...")
+                                  .DataTextField("EmployerName")
+                                  .DataValueField("EmployerId")
+                                      .Value(User.Identity.GetExternalUserSelectedClientID())
+                                  .DataSource(source =>
+                                  {
+
+                                      source.Read(read =>
+                                      {
+                                          read.Action("ExternalUserClientsDdlList_Read", "HrkAdmin").Type(HttpVerbs.Post);
+                                      })
+                                      .ServerFiltering(false);
+
+                                  })
+                                .Events(e =>
+                                {
+                                    e.Select("onSelectClient");
+                                })
+
+
+
+            )
+        }
+        
+
+
+<script>
+
+    function onSelectClient(e) {
+        //
+
+        var dataItem = this.dataItem(e.item.index()+1);
+
+        var selectedEmployerId = dataItem.EmployerId;
+
+        //alert("got to on person ddl selected index change xxxxx");
+        $.ajax({
+
+            url: "@Url.Action("UpdateClientDatabaseConnectionAjax", "HrkAdmin")",
+
+            type: "POST",
+
+            data: {
+
+                employerId: selectedEmployerId
+            },
+
+            success: function (response) {
+                //
+                if (response == "database doesn't exist")
+                {
+                    alert(response);
+                    $("#ddlEmployerId").data("kendoDropDownList").dataSource.read();
+                    $("#ddlEmployerId").data("kendoDropDownList").refresh();
+                }
+                    
+                //window.location.reload(true);
+                //location.href = "http://www.example.com/ThankYou.html"
+                else
+                    location.href = "@Url.Action("Index", "HrkAdmin")"
+
+            },
+
+            error: function (jqHXHR, status, err) {
+                //
+                alert(status + err);
+            }
+
+        });
+    }
+</script>
+

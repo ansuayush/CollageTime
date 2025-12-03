@@ -1,0 +1,240 @@
+﻿@model ExecViewHrk.WebUI.Models.PersonAddressVm
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">Person Addresses Details</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        @using (Html.BeginForm("PersonAddresses", "PersonAddress_Update", FormMethod.Post, new { role = "form", id = "PersonAddressDetailForm" }))
+            {
+            @Html.HiddenFor(model => model.PersonId, new { id = "hiddenPersonId" })
+            @Html.HiddenFor(model => model.PersonAddressId, new { id = "hiddenPersonAddressId" })
+            @Html.HiddenFor(model => model.CorrespondenceAddress, new { id = "hiddenCorrespondenceAddress" })
+            @Html.ValidationSummary(true)
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Address Type</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.AddressTypeId, new SelectList(Model.GetAddressTypes, "AddressTypeId", "Description", Model.AddressTypeId), new { @class = "form-control input-sm", data_required = "Y" })
+                        @*@Html.DropDownListFor(model => model.AddressTypeId, new SelectList(Model.GetAddressTypes, "keyvalue", "keydescription", Model.AddressTypeId), new { @class = "form-control" })*@
+                        @if (!User.IsInRole("ClientEmployees"))
+                        {
+                        <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'AddressType');">
+                            <span class="fa fa-plus"></span>
+                        </span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>State</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.StateId, new SelectList(Model.GetStates, "StateId", "Title", Model.StateId), new { @class = "form-control input-sm", data_required = "Y" })
+                        @*@Html.DropDownListFor(model => model.StateId, new SelectList(Model.GetStates, "keyvalue", "keydescription", Model.StateId), new { @class = "form-control" })*@
+                        @if (!User.IsInRole("ClientEmployees"))
+                        {
+                        <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'State');">
+                            <span class="fa fa-plus"></span>
+                        </span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group ">
+                    <label><span style="color:red">*</span>Country</label>
+                    <div class="input-group">
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(Model.GetCountries, "CountryId", "Description", Model.CountryId), new { @class = "form-control input-sm", data_required = "Y" })
+                        @*@Html.DropDownListFor(model => model.CountryId, new SelectList(Model.GetCountries, "keyvalue", "keydescription", Model.CountryId), new { @class = "form-control" })*@
+                        @if (!User.IsInRole("ClientEmployees"))
+                        {
+                        <span class="input-group-addon bg-dark-primary-theme" data-toggle="modal" onclick="quickAdd(event, 'Country');">
+                            <span class="fa fa-plus"></span>
+                        </span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label><span style="color:red">*</span>Address Line 1</label>
+                    @Html.TextBoxFor(model => model.AddressLineOne, new { @class = "form-control", data_required = "Y" })
+                    <div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Address Line 2</label>
+                    @Html.TextBoxFor(model => model.AddressLineTwo, new { @class = "form-control" })
+                    <div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>City</label>
+                    @Html.TextBoxFor(model => model.City, new { @class = "form-control" })
+                    <div>
+
+                    </div>
+                </div>
+            </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Zip Code</label>
+                                @Html.TextBoxFor(model => model.ZipCode, new { @class = "form-control", @maxlength = "10"})
+                                <div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 p-t-30">
+                            <div class="form-group">
+                                <div class="checkbox-color checkbox-primary">
+                                    @if (Model.CheckPayrollAddress == true)
+                                        {
+                                    <input id="@Html.NameFor(x => x.CheckPayrollAddress)" type="checkbox" value="@Model.CheckPayrollAddress" checked="checked">
+                                        }
+                                        else
+
+                                        {
+                                    <input id="@Html.NameFor(x => x.CheckPayrollAddress)" type="checkbox" value="@Model.CheckPayrollAddress">
+                                        }
+                                    @Html.LabelFor(x => x.CheckPayrollAddress, "Check Payroll Address")
+                                    @Html.HiddenFor(x => x.CheckPayrollAddress)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 p-t-30">
+                            <div class="form-group">
+                                <div class="checkbox-color checkbox-primary">
+                                    @if (Model.CorrespondenceAddress == true)
+                                    {
+                                    <input id="@Html.NameFor(x => x.CorrespondenceAddress)" type="checkbox" value="@Model.CorrespondenceAddress" checked="checked">
+                                    }
+                                    else
+
+                                    {
+                                    <input id="@Html.NameFor(x => x.CorrespondenceAddress)" type="checkbox" value="@Model.CorrespondenceAddress">
+                                    }
+                                    @Html.LabelFor(x => x.CorrespondenceAddress, "Correspondence Address")
+                                    @Html.HiddenFor(x => x.CorrespondenceAddress)
+                                </div>
+                            </div>
+                        </div>
+
+                        @*<div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label>Check Payroll Address</label>
+                                                @Html.CheckBoxFor(model => model.CheckPayrollAddress)
+                                                <div>
+                                                </div>
+                                            </div>
+                                        </div>
+                            <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label>Correspondence Address</label>
+                                                @Html.CheckBoxFor(m => m.CorrespondenceAddress)
+                                                <div>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Notes</label>
+                                @Html.TextAreaFor(model => model.Notes, new { @class = "form-control" })
+                                @*<textarea name="" cols="" rows="4" value="@Model.Notes" class="form-control" style="height:auto;"></textarea>*@
+                            </div>
+                        </div>
+                        <div class="col-sm-3 p-t-30">
+                            <div class="form-group">
+                                <div class="checkbox-color checkbox-primary">
+                         @if (Model.IsPrimaryAddress == true)
+                            {
+                            <input id="@Html.NameFor(x => x.IsPrimaryAddress)" type="checkbox" value="@Model.IsPrimaryAddress" checked="checked">
+                            }
+                            else
+
+                            {
+                            <input id="@Html.NameFor(x => x.IsPrimaryAddress)" type="checkbox" value="@Model.IsPrimaryAddress">
+                            }
+                            @Html.LabelFor(x => x.IsPrimaryAddress, "IsPrimary")                                   
+                            @Html.HiddenFor(x => x.IsPrimaryAddress)
+                                </div>
+                            </div>
+                        </div>
+        }
+
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default waves-effect m-r-15" data-dismiss="modal" id="btnCloseAddressDetail">Close</button>
+    <button type="button" class="btn btn-primary" id="btnSavePersonAddressAjax">Done</button>
+</div>
+<script>
+    $(document).ready(function () {
+        pageSetup();
+        $("#ZipCode").mask("99999?-9999");
+    });
+
+    $("#btnSavePersonAddressAjax").click(function (e) {
+        e.preventDefault();
+
+       // $("#btnSavePersonAddressAjax").attr("disabled", true);
+        if (!ValidateForm("PersonAddressDetailForm")) {
+            loading(false);
+            $("#btnSavePersonAddressAjax").attr("disabled", false);
+            return;
+        }
+        var form = $("#PersonAddressDetailForm");
+        var staus = formService.getStatus();
+        if (staus) {
+            $("#btnSavePersonAddressAjax").attr("disabled", false);
+            return;
+        }
+        var errorMessage = formService.validate(form);
+        if (errorMessage) {
+            $("#btnSavePersonAddressAjax").attr("disabled", false);
+            return;
+        }
+        var postData = $("#PersonAddressDetailForm").serializeArray();
+        var formURL = $("#ApplicationUrl").val() + "PersonAddresses/PersonAddressesSaveAjax";
+        $.post(formURL, postData, function (data, status) {
+            if (data.succeed == false) {
+                formService.isSavingInProgress = false;
+                toastr.error(data.Message);
+            }
+            else {
+                var _oldpersonPhoneNumberId = $("#hiddenPersonAddressId").val();
+                $("#btnCloseAddressDetail").trigger('click');
+                resetGrid("gridPersonAddress");
+                LoadMenu("Person", "Person")
+                formService.isLoadingInProgress = true;
+                killTimer();
+                if (_oldpersonPhoneNumberId != "0") {
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.updated);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+                else {
+                    timeOutFn = setTimeout(function () {
+                        formService.isSavingInProgress = false;
+                        toastr.success(formService.messages.saved);
+                        formService.isLoadingInProgress = false;
+                    }, 0);
+                }
+            }
+        });
+    });
+</script>
+
+
+

@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "FormTemplate";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+@*@model ExecViewHrk.WebUI.Models.FormTemplateVm*@
+
+<h2>Form Templates</h2>
+
+
+<div>
+
+
+    @(Html.Kendo().Grid<ExecViewHrk.EfClient.FormTemplate>()
+            .Name("gridFormTemplate")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .ToolBar(toolbar => toolbar.Create())
+
+        .Columns(columns =>
+        {
+            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete");  }).Width(170);
+            columns.Bound(m => m.FormTemplateId).Title("").Width(150).Groupable(false).Filterable(false)
+                                .ClientTemplate(Html.ActionLink("<span class=\"k-icon k-edit\"></span>Define Fields"
+                                    , "FormTemplateFields", new { requestType = "id" }
+                                    , new { @class = "k-button k-button-icontext k-grid-edit" }).ToHtmlString().Replace("id", "#=FormTemplateId#"));
+            columns.Bound(c => c.FormTemplateId).Width(100);
+            columns.Bound(c => c.FormTemplateName).Width(400);
+            columns.Bound(c => c.Description);
+
+        })
+        .HtmlAttributes(new { style = "height: 480px;" })
+
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .Selectable()
+
+        .Pageable(pageable => pageable
+            .Refresh(false)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                    .Read(read => read.Action("FormTemplates_Read", "Form"))
+                            .Create(create => create.Action("FormTemplate_Create", "Form"))
+                            .Update(update => update.Action("FormTemplate_Update", "Form"))
+                            .Destroy(destroy => destroy.Action("FormTemplate_Destroy", "Form"))
+                    .Model(model =>
+                            {
+                                model.Id(p => p.FormTemplateId);
+                                model.Field(p => p.FormTemplateId).Editable(false);
+                                model.Field(p => p.FormTemplateName);
+                                model.Field(p => p.Description);
+                            }
+                          )
+            .Batch(false)
+            .Events(events => events.Error("error_handler"))
+        )
+    )
+
+
+</div>
+
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+
+    function error_handler(e) {
+        
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+
+            $('#gridFormTemplate').data('kendoGrid').dataSource.read();
+            $('#gridFormTemplate').data('kendoGrid').refresh();
+        }
+    }
+</script>

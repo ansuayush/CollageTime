@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "ExternalUserClientAssignmentListMaintenance";
+    Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+
+<h2>External User Client Assignments </h2>
+@Html.ValidationSummary(true)
+@(Html.Kendo().Grid<ExecViewHrk.WebUI.Models.ExternalUserClientAssignmentViewModel>()
+        .Name("grid")
+        .Resizable(resize => resize.Columns(true))
+        .Filterable()
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .ToolBar(toolbar => toolbar.Create())
+        .Columns(columns =>
+        {
+            columns.Command(command => { command.Edit(); command.Custom("gridDeleteCommand").Text("<span class='k-icon k-delete'></span> Delete").Click("gridDelete"); }).Width(200);
+            
+            columns.ForeignKey(c => c.UserName, (System.Collections.IEnumerable)ViewData["usersList"], "UserName", "UserName")
+               .Title("User Name").Width(150); 
+            //columns.Bound(c => c.UserName).Width(200);
+            
+            columns.ForeignKey(c => c.EmployerName, (System.Collections.IEnumerable)ViewData["employersList"], "EmployerName", "EmployerName")
+                .Title("Company Name").Width(150); 
+            //columns.Bound(c => c.EmployerName).Width(100);
+            
+        })
+        .HtmlAttributes(new { style = "height: 480px;" })
+
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .Selectable()
+        .Pageable(pageable => pageable
+            .Refresh(false)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+                    .Read(read => read.Action("ExternalUserClientAssignmentList_Read", "HrkAdmin"))
+                    //.Sort(a => a.Add("UserName"))
+                        .Create(create => create.Action("ExternalUserClientAssignmentList_Create", "HrkAdmin"))
+                        .Update(update => update.Action("ExternalUserClientAssignmentList_Update", "HrkAdmin"))
+                        .Destroy(destroy => destroy.Action("ExternalUserClientAssignmentList_Destroy", "HrkAdmin"))
+            .Events(events => events.Error("error_handler").Sync("sync_handler"))//.Change("OnChangeGrid"))
+            .Model(model =>
+                    {
+                        model.Id(p => p.UserName);
+                        model.Field(p => p.UserName).DefaultValue("--select one--");
+                        
+                        
+                        model.Field(p => p.EmployerName).DefaultValue("--select one--");
+                        
+ 
+                        
+                        
+                    }
+                  )
+        )
+)
+
+<script type="text/javascript">
+    $(".k-grid-add").click(function () {
+        setTimeout(function () {
+            $('a[class*="k-grid-update"]').html('<span class="k-icon k-update"></span>Create');
+        }, 1)
+    });
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+
+            $('#grid').data('kendoGrid').dataSource.read();
+            $('#grid').data('kendoGrid').refresh();
+        }
+    }
+
+    function OnChangeGrid(e) {
+
+        alert("Grid Changed");
+
+        //$('#grid').data('kendoGrid').dataSource.read();
+        $('#grid').data('kendoGrid').refresh();
+
+    }
+
+    // not sure this does what I think - needs more testing
+    function sync_handler(e) {
+        this.read();
+        //$('#grid').data('kendoGrid').refresh();
+    }
+
+</script>

@@ -1,0 +1,57 @@
+﻿@*@{
+        Layout = null;
+    }
+
+    <!DOCTYPE html>
+
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>_MatrixBlockHeader2</title>
+    </head>
+    <body>
+        <div>
+        </div>
+    </body>
+    </html>*@
+
+@using System.Web.Routing;
+
+@{
+    ViewBag.Title = "Matrixs";
+}
+
+@*@model ExecViewHrk.WebUI.Models.DepartmentVm*@
+
+@{
+
+    string alert = "";
+
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+
+@Html.ValidationSummary(true)
+
+<div class="panel panel-info">
+
+    <div class="panel-heading  ">
+
+        <div class="row">
+            <div class="col-md-6 ">
+                @RenderSection("TitleSectionOfHeader2", required: false)
+            </div>
+
+            <div class="col-md-offset-4 col-md-2 ">
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="formDiv" class="panel-body">
+        @RenderBody()                   
+    </div>
+
+</div>

@@ -1,0 +1,16 @@
+@(Html.Kendo().ComboBox()
+                                    .Name("DegreeTypeId")
+                                    .HtmlAttributes(new { style = "width:300px" })
+                                    .Placeholder("Select a degree type...")
+                                    .DataTextField("DegreeTypeName")
+                                    .DataValueField("DegreeTypeId")
+                                    .Filter(FilterType.Contains)
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                            read.Action("GetDegreeTypes", "JobSeeker");
+                                        });
+                                    })
+
+)

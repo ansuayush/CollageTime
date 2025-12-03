@@ -1,0 +1,500 @@
+﻿@{
+    ViewBag.Title = "Retro hours";
+}
+@model ExecViewHrk.Models.RetrohoursVm
+
+@{
+    string alert = "";
+    if (ViewBag.AlertMessage != null)
+    {
+        alert = (string)ViewBag.AlertMessage;
+    }
+}
+<script type="text/javascript">
+    $(".md-closeHour").click(function (e) {
+        e.preventDefault();
+        if ((_lookUpTablesObject.grid) && (_lookUpTablesObject.grid.dataSource.hasChanges()) && $('#LookupTablesDiv').hasClass("md-show")) {
+            _lookUpTablesObject.grid.cancelChanges();
+            //_lookUpTablesObject.grid.read();
+            _lookUpTablesObject.grid.dataSource.sync()
+        }
+        $(this).parents(".EditSlideRight").toggle('slide', { direction: 'right' }, 500).removeClass("md-show");
+    });
+    function filterByArchive() {
+        return {
+            IsArchived: $("#hiddenIsArchived").val()
+        }
+    }
+    function filterEmployeesByCompanyCode() {
+        var dropdownlist = $("#EmployeesListID").data("kendoDropDownList");
+        var filterInput = "";
+        if (dropdownlist != null)
+            filterInput = dropdownlist.filterInput[0].value;
+        return {
+            CompanyCodeIdDdl: $("#CompanyCodeIdDdl").val(),
+            //IsArchived: $("#hiddenIsArchived").val(),
+            filterInput: filterInput
+        };
+    }
+    function filterHourCodesByCompanyCode() {
+        var dropdownlist = $("#HoursCodesDDl").data("kendoDropDownList");
+        var filterInput = "";
+        if (dropdownlist != null)
+            filterInput = dropdownlist.filterInput[0].value;
+        return {
+            CompanyCodeIdDdl: $("#CompanyCodeIdDdl").val(),
+           /// IsArchived: $("#hiddenIsArchived").val(),
+            filterInput: filterInput
+        };
+    }
+    function filterPositionListByEmployee() {
+        var dropdownlist = $("#PositionsListID").data("kendoDropDownList");
+        var filterInput = "";
+        if (dropdownlist != null)
+            filterInput = dropdownlist.filterInput[0].value;
+        return {
+            Employeeid: $("#EmployeesListID").val(),
+            //IsArchived: $("#hiddenIsArchived").val(),
+            filterInput: filterInput,
+        };
+    }
+    function filterRetroHoursrecords() {
+        return {
+            EmployeeId: $("#EmployeesListID").val(),
+            CompanyCodeId: $("#CompanyCodeIdDdl").val(),
+            PositionId: $("#PositionsListID").val()
+        };
+    }
+    function filterPayPeriodIdDdlByCompanyCode() {
+        var dropdownlist = $("#PayPeriodIdDdl").data("kendoDropDownList");
+        var filterInput = "";
+        if (dropdownlist != null)
+            filterInput = dropdownlist.filterInput[0].value;
+        return {
+            CompanyCodeIdDdl: $("#CompanyCodeIdDdl").val(),
+            //IsArchived: $("#hiddenIsArchived").val(),
+            filterInput: filterInput
+        };
+    }
+    function gridRetroHourEdit(e) {
+        e.preventDefault();
+        var grid = this;
+        var row = $(e.currentTarget).closest("tr");
+        var data = grid.dataItem(row);
+        openRetroHourPopup(data.Id);
+    }
+    function openRetroHourPopup(_Id) {
+        var appBaseUrl = $("#appBaseUrl").val();
+        var formURL = $("#ApplicationUrl").val() + '/RetroHours/RetroHourEdit?Id=' + _Id;
+        $("#EditDetailDiv .md-content").html("");
+        $("#EditDetailDiv .md-content").load(formURL);
+        $('#EditDetailDiv').toggle('slide', { direction: 'right' }, 500);
+        $('#EditDetailDiv').addClass('md-show');
+    }
+    function RetroHourDelete(e) {
+        e.preventDefault();
+        var grid = this;
+        var row = $(e.currentTarget).closest("tr");
+        var data = grid.dataItem(row);
+        var RetroHourId = data.Id;
+        var postData = { RetroHourId: data.Id };
+        var formURL = $("#ApplicationUrl").val() + "RetroHours/DeleteRetrohour?RetroHourId " + RetroHourId;
+            confirmDialog("", function () {
+                $.post(formURL, postData, function (data, status) {
+                    if (data.succeed == false) {
+                        toastr.error(data.Message);
+                    } else {
+                        toastr.success('Record deleted successfully.');
+                        resetGrid("gridRetroGrid");
+                    }
+                });
+            });
+    }
+    function filterPayPeriodIdDdlByEmployee() {
+        return {
+            EmployeeIdDdl: $("#EmployeesListID").val(),
+        };
+    }
+    $(document).ready(function () {
+        $("#btnClear").click(function () {
+            $("#RetroHoursDate").val("");
+            $("#Retrohours").val("");
+        });
+    });
+    $(function () {
+        $('#RetroHourDate').change(function () {
+            
+            var value = $('#RetroHourDate').val();
+            if (value == '') return;
+            var RetrohourDate = value;
+            var employeeId = $("#EmployeesListID").val();
+            var companyCodeId = $("#CompanyCodeIdDdl").val();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetEmployeePositionList", "RetroHours")',
+                data: { companyCodeId: companyCodeId, employeeId: employeeId, RetrohourDate: RetrohourDate },
+                cache: false,
+                success: function (data) {
+                    var ddl = $("#PositionsListID").kendoDropDownList({
+                        autoBind: false,
+                        dataTextField: "PositionDescription",
+                        dataValueField: "E_PositionId",
+                    }).data("kendoDropDownList");
+                    $("#PositionsListID").empty();
+                    ddl.setDataSource(data);
+
+                },
+                error: function (ex) {
+
+                }
+            });
+
+        });
+    });
+</script>
+
+@Html.ValidationSummary(true)
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Retro Hours <span class="pull-right icon-edit-block m-l-30"><i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+
+            @using (Html.BeginForm("RetroHoursSaveAjx", "RetroHours", FormMethod.Post, new { role = "form", id = "RetroHoursForm" }))
+            {
+                <div class="row p-t-15">
+                    <div class="col-lg-12 col-md-12 ">
+                        <div class="row">
+                            @if (Model.Id == 0)
+                            {
+                                <div class="col-md-2 " id="divcmp">
+                                    <label><span style="color:red">*</span>Company Codes</label>
+                                    <br />
+                                    @if (User.IsInRole("ClientEmployees"))
+                                    {
+                                        @(Html.Kendo().DropDownListFor(model => model.CompanyCodeId)
+                                                                                                                                                                                                                .HtmlAttributes(new { id = "CompanyCodeIdDdl", @class = "form-control" })
+                                                                                                                                                                                                                .DataTextField("CompanyCodeDescription")
+                                                                                                                                                                                                                .DataValueField("CompanyCodeId")
+                                                                                                                                                                                                                .Filter(FilterType.Contains)
+                                                                                                                                                                                                                .DataSource(source =>
+                                                                                                                                                                                                                {
+                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                        source.Read(read =>
+                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                            read.Action("GetCompanyCodes", "LookupTables").Type(HttpVerbs.Post);
+                                                                                                                                                                                                                        })
+                                                                                                                                                                                                                               .ServerFiltering(true);
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                })
+                                                                                                                                                                                                                .Value(@Model.CompanyCodeId.ToString())
+                                        )
+                                    }
+                                    else
+                                    {
+                                        @(Html.Kendo().DropDownListFor(model => model.CompanyCodeId)
+                                                                                                                                                                                                           .HtmlAttributes(new { id = "CompanyCodeIdDdl", @class = "form-control" })
+                                                                                                                                                                                                           .DataTextField("CompanyCodeDescription")
+                                                                                                                                                                                                           .DataValueField("CompanyCodeId")
+                                                                                                                                                                                                           .Filter(FilterType.Contains)
+                                                                                                                                                                                                           .DataSource(source =>
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                                source.Read(read =>
+                                                                                                                                                                                                                      {
+                                                                                                                                                                                                                          read.Action("GetCompanyCodes", "LookupTables").Type(HttpVerbs.Post);  //.Data("additionalData");
+                                                                                                                                                                                                                                  })
+                                                                                                                                                                                                                           .ServerFiltering(true);
+                                                                                                                                                                                                            })
+                                                                                                                                                                                                                     .Value(@Model.CompanyCodeId.ToString())
+                                        )
+                                    }
+                                    @Html.ValidationMessageFor(model => model.CompanyCodeId)
+                                </div>
+                            }
+
+                            @if (Model.Id == 0)
+                            {
+                                <div class="col-md-2 " id="divemp">
+                                    <label><span style="color:red">*</span>Employees</label>
+                                    <br />
+                                    @(Html.Kendo().DropDownListFor(model => model.EmployeeId)
+                                                                                                                                                                                                     .HtmlAttributes(new { id = "EmployeesListID", @class = "form-control" })
+                                                                                                                                                                                                      .DataTextField("EmployeeFullName")
+                                                                                                                                                                                                       .DataValueField("EmployeeId")
+                                                                                                                                                                                                          .Filter(FilterType.Contains)
+                                                                                                                                                                                                           .DataSource(source =>
+                                                                                                                                                                                                               {
+                                                                                                                                                                                                                   source.Custom()
+                                                                                                                                                                                                                          .Transport(transport => transport
+                                                                                                                                                                                                                                .Read(read =>
+                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                         read.Action("GetEmployees", "LookupTables").Data("filterEmployeesByCompanyCode").Type(HttpVerbs.Post); //.Data("additionalData");
+                                                                                                                                                                                                                                                 }))
+                                                                                                                                                                                                                                               .ServerFiltering(true);
+                                                                                                                                                                                                               })
+                                                                                                                                                                                                                                             .AutoBind(true)
+                                                                                                                                                                                                                                             .CascadeFrom("CompanyCodeIdDdl")
+                                                                                                                                                                                                                                             .Value(@Model.EmployeeId.ToString())
+                                    )
+                                    @Html.ValidationMessageFor(model => model.EmployeeId)
+                                </div>
+                            }
+
+                            <div class="col-sm-2">
+                                <label><span style="color:red">*</span>Retro Hour Date</label>
+                                @Html.TextBoxFor(model => model.RetroHoursDate, "{0:MM/dd/yyyy}", new { @class = "RetroHourDate form-control", id= "RetroHourDate" })
+                            </div>
+                            @if (Model.Id == 0)
+                            {
+                                <div class="col-md-2 " id="divPos">
+                                    <label><span style="color:red">*</span>Positions</label>
+                                    <br />
+                                    @if (Model.PositionList != null)
+                                    {
+                                        @Html.DropDownListFor(m => Model.E_PositionId, new SelectList(Model.PositionList, "E_PositionId", "PositionDescription"), new { @class = "form-control", @id = "PositionsListID" })
+
+                                        @Html.ValidationMessageFor(model => model.PositionId)
+                                    }
+                                    else
+                                    {
+
+                                        @(Html.Kendo().DropDownListFor(model => model.PositionId)
+                                                                                                                                                                                                   .HtmlAttributes(new { id = "PositionsListID", @class = "form-control" })
+                                                                                                                                                                                                    .DataTextField("PositionCode")
+                                                                                                                                                                                                    .DataValueField("PositionId")
+                                                                                                                                                                                                    .Filter(FilterType.Contains)
+                                                                                                                                                                                                    .DataSource(source =>
+                                                                                                                                                                                                    {
+                                                                                                                                                                                                        source.Custom()
+                                                                                                                                                                                                            .Transport(transport => transport
+                                                                                                                                                                                                            .Read(read =>
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                                read.Action("GetPositionList", "LookupTables").Data("filterPositionListByEmployee"); //.Data("additionalData");
+                                                                                                                                                                                                                        }))
+                                                                                                                                                                                                               .ServerFiltering(true);
+                                                                                                                                                                                                    })
+                                                                                                                                                                                                            .AutoBind(true)
+                                                                                                                                                                                                            .CascadeFrom("EmployeesListID")
+                                                                                                                                                                                                            .Value(@Model.PositionId.ToString())
+                                        )
+
+                                    }
+                                </div>
+                            }
+
+                            <div class="col-sm-2">
+                                <label><span style="color:red">*</span>Retro Hours</label>
+                                @Html.TextBoxFor(x => x.Retrohours, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.Retrohours)
+                            </div>
+                            @if (Model.Id == 0)
+                            {
+                                <div class="col-md-2 " id="DivHrCode">
+                                    <label><span style="color:red">*</span>Hours Code</label>
+                                    <br />
+                                    @(Html.Kendo().DropDownListFor(model => model.HoursCodeId)
+                                                                                                                                                                                                                 .HtmlAttributes(new { id = "HoursCodesDDl", @class = "form-control" })
+                                                                                                                                                                                                                  .DataTextField("HoursCodeCode")
+                                                                                                                                                                                                                   .DataValueField("HoursCodeId")
+                                                                                                                                                                                                                      .Filter(FilterType.Contains)
+                                                                                                                                                                                                                       .DataSource(source =>
+                                                                                                                                                                                                                       {
+                                                                                                                                                                                                                           source.Custom()
+                                                                                                                                                                                                                                  .Transport(transport => transport
+                                                                                                                                                                                                                                        .Read(read =>
+                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                            read.Action("GetHoursCode", "LookupTables").Data("filterHourCodesByCompanyCode").Type(HttpVerbs.Post); ;
+                                                                                                                                                                                                                                        }))
+                                                                                                                                                                                                                                                       .ServerFiltering(true);
+                                                                                                                                                                                                                       })
+                                                                                                                                                                                                                                                         .AutoBind(true)
+                                                                                                                                                                                                                                                         .CascadeFrom("CompanyCodeIdDdl")
+                                                                                                                                                                                                                                                         .Value(@Model.HoursCodeId.ToString())
+                                    )
+                                    @Html.ValidationMessageFor(model => model.HoursCodeId)
+                                </div>
+                            }
+                            @if (Model.Id == 0)
+                            {
+                                <div class="col-md-2" id="payperiodID">
+                                    <label><span style="color:red">*</span>Pay Period</label>
+                                    @(Html.Kendo().DropDownListFor(model => model.PayPeriodId)
+                                                                                                                                                                                                                    .HtmlAttributes(new { id = "PayPeriodIdDdl", @class = "form-control", @style = "width:180px" })
+                                                                                                                                                                                                                    .DataTextField("PayPeriod")
+                                                                                                                                                                                                                    .DataValueField("PayPeriodId")
+                                                                                                                                                                                                                    .Filter(FilterType.Contains)
+                                                                                                                                                                                                                    .DataSource(source =>
+                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                        source.Read(read =>
+                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                            read.Action("GetHourPayPeriodsList", "LookupTables").Data("filterPayPeriodIdDdlByEmployee");//.Type(HttpVerbs.Post);
+
+                                                                                                                                                                                                                                    })
+                                                                                                                                                                                                                            .ServerFiltering(true);
+                                                                                                                                                                                                                    })
+                                                                                                                                                                                                                    .AutoBind(true)
+                                                                                                                                                                                                                    .CascadeFrom("EmployeesListID")
+                                                                                                                                                                                                                    .Value(@Model.PayPeriodId.ToString())
+
+                                    )
+                                    @Html.ValidationMessageFor(model => model.PayPeriodId)
+                                </div>
+                            }
+                        </div>
+                        <div class="p-10 text-left" style="margin-left: 350px; margin-top: -43px;">
+                            <button type="button" class="btn btn-primary" id="EmployeeHourSaveAjx">Save</button>
+                            <button type="button" id="btnClear" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <br /><br />
+                        <div class="col-lg-12 col-md-12 p-0">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 notedit">
+                                    @Html.ValidationSummary(true)
+                                    <div class="theme-grid">
+                                        @(Html.Kendo().Grid<ExecViewHrk.Models.RetrohoursVm>()
+                                                                                                                                            .Name("gridRetroGrid")
+                                                                                                                                            .Resizable(resize => resize.Columns(true))
+                                                                                                                                            .Filterable()
+                                                                                                                                            .Columns(columns =>
+                                                                                                                                            {
+                                                                                                                                                columns.Command(command =>
+                                                                                                                                                {
+                                                                                                                                                    command.Custom("gridEditCommand").Text("<i class='fa fa-pencil txt-primary f-18'></i>").Click("gridRetroHourEdit");
+                                                                                                                                                    command.Custom("gridDeleteCommand").Text("<i class='fa fa-trash-o m-0 txt-danger f-18'></i>").Click("RetroHourDelete");
+                                                                                                                                                }).Width(70);
+                                                                                                                                                columns.Bound(c => c.Id).Width(100).Visible(false);
+                                                                                                                                                columns.Bound(c => c.CompanyCodeDescription).Title("Company Code").Width(20);
+                                                                                                                                                columns.Bound(c => c.EmployeeFullName).Title("Employee").Width(100);
+                                                                                                                                                columns.Bound(c => c.strRatroHourDate).Title("Retro Hours Date").Width(50);
+                                                                                                                                                columns.Bound(c => c.PositionCode).Title("Position").Title("Positions").Width(100);
+                                                                                                                                                columns.Bound(c => c.Retrohours).Title("Retro Hours").Width(20);
+                                                                                                                                                columns.Bound(c => c.HoursCodedesc).Title("Hours Code").Width(100);
+                                                                                                                                                columns.Bound(c => c.PayperiodDate).Title("Pay period").Width(100);
+                                                                                                                                                columns.Bound(c => c.Username).Title("User Id").Width(100);
+                                                                                                                                                //PayperiodDate
+                                                                                                                                            })
+                                                                                                                                            .ToolBar(tools => { tools.Excel(); })
+                                                                                                                                            .Excel(excel => excel.AllPages(true)
+                                                                                                                                            .FileName("RetroHours Report.xlsx"))
+                                                                                                                                            .Sortable()
+                                                                                                                                            .Selectable()
+                                                                                                                                            .Pageable(pageable => pageable.Refresh(true).PageSizes(true))
+                                                                                                                                            .Events(e => e.DataBound("gridDataBound"))
+                                                                                                                                            .DataSource(dataSource => dataSource.Ajax()
+                                                                                                                                                            .Read(read => read.Action("RetroHours_Read", "RetroHours").Data("filterRetroHoursrecords"))
+
+                                                                                                                                                            .Model(model =>
+                                                                                                                                                            {
+                                                                                                                                                                model.Id(p => p.Id);
+                                                                                                                                                                model.Field(p => p.Id);
+                                                                                                                                                                model.Id(p => p.CompanyCodeId);
+                                                                                                                                                                model.Field(p => p.EmployeeId);
+                                                                                                                                                                model.Field(p => p.PositionId);
+                                                                                                                                                                model.Field(p => p.Retrohours);
+                                                                                                                                                            }
+                                                                                                                                                        )
+                                                                                                                                                        .PageSize(10)
+                                                                                                                                                .Batch(false)
+                                                                                                                                                .Events(events =>
+                                                                                                                                                {
+                                                                                                                                                    events.Error("refreshGrid");
+                                                                                                                                                    events.RequestEnd("gridRequestEnd");
+                                                                                                                                                })
+                                                                                                                                            )
+                                        )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+            @Html.HiddenFor(x => x.CompanyCodeId, new { @id = "cmpid" })
+            @Html.HiddenFor(x => x.Id)
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function ()
+    {
+        $(".RetroHourDate").each(function ()
+        {
+            var a = $(this),
+                b = a.attr("data-dateformat") || "mm/dd/yy",
+                c = a.attr("data-maxdate") || null;
+            a.datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1900:+83",
+                "dateFormat": b,
+                "prevText": '<', "nextText": '>',
+                maxDate: c
+            }),
+                a = null;
+        });
+        var hiddenid = $("#Id").val();
+        if (hiddenid > 0) {
+            $('.notedit').css('pointer-events', 'none');
+        }
+    });
+    $("#EmployeeHourSaveAjx").click(function (e) {
+        e.preventDefault();
+        var errormsg = "Please Enter the following Fields</br>";
+        if ($("#Retrohours").val() == "") {
+            errormsg += "Retro hours </br>";
+        }
+        if ($("#RetroHourDate").val() == "") {
+            errormsg += "Retro Hour Date </br>";
+        }
+        if ($("#Retrohours").val() == "" || $("#RetroHourDate").val() == "") {
+            loading(false);
+            toastr.error(errormsg);
+            return;
+        }
+        if (!ValidateForm("RetroHoursForm")) {
+            loading(false);
+            return;
+        }
+        var hiddenid = $("#Id").val();
+        var PostData = $("#RetroHoursForm").serializeArray();
+        PostData.push({ name: "Id", value: hiddenid });
+        var formURL = $("#ApplicationUrl").val() + "RetroHours/RetroHoursSaveAjx";
+        $.post(formURL, PostData, function (data, status) {
+            if (data.succeed == false) {
+                toastr.error(data.Message);
+                //resetGrid("gridRetroGrid");
+                //$.ajax({
+                //    url: $("#ApplicationUrl").val() + "RetroHours/RetroHoursMatrixPartial",
+                //    type: "POST",
+                //    success: function (data) {
+                //        $('.Form').html(data);
+                //    }
+                //});
+
+            }
+            else
+            {
+                toastr.success(formService.messages.saved);
+                $(".btnchange").text("Save");
+                resetGrid("gridRetroGrid");
+                $("#Retrohours").val("");
+                $("#RetroHoursDate").val("");
+                $('.notedit').css('pointer-events', '');
+            }
+
+        });
+    });
+    $("#Retrohours").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+    });
+</script>

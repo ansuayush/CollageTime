@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[PositionBusinessLevels] (
+    [BusinessLevelNbr]     INT             IDENTITY (1, 1) NOT NULL,
+    [BusinessLevelNotes]   NVARCHAR (700)  NULL,
+    [BusinessLevelTitle]   NVARCHAR (250)  NOT NULL,
+    [BusinessLevelTypeNbr] TINYINT         NULL,
+    [ParentBULevelNbr]     INT             NULL,
+    [LocationId]           INT        NULL,
+    [EEoFileStatusNbr]     INT             NULL,
+    [FedralEINNbr]         INT             NULL,
+    [PayFrequencyId]       int         NULL,
+    [SchedeuledHours]      INT             NULL,
+    [Active]               BIT             NULL,
+    [EnteredDate]          DATETIME        NULL,
+    [EnteredBy]            NVARCHAR (250)  NULL,
+    [ModifiedDate]         DATETIME        NULL,
+    [ModifiedBy]           NVARCHAR (250)  NULL,
+    [BusinessLevelCode]    NVARCHAR (1000) NOT NULL,
+    [BudgetReported]       VARCHAR (20)    NULL,
+    CONSTRAINT [PK_PositionBusinessLevels] PRIMARY KEY CLUSTERED ([BusinessLevelNbr] ASC),
+    CONSTRAINT [FK_PositionBusinessLevels_ddlBusinessLevelTypes] FOREIGN KEY ([BusinessLevelTypeNbr]) REFERENCES [dbo].[ddlBusinessLevelTypes] ([BusinessLevelTypeNbr]),
+    CONSTRAINT [FK_PositionBusinessLevels_DdlEEOFileStatuses] FOREIGN KEY ([EEoFileStatusNbr]) REFERENCES [dbo].[ddlEEOFileStatuses] ([EEoFileStatusNbr]),
+    CONSTRAINT [FK_PositionBusinessLevels_ddlEINs] FOREIGN KEY ([FedralEINNbr]) REFERENCES [dbo].[ddlEINs] ([FedralEINNbr]),
+    CONSTRAINT [FK_PositionBusinessLevels_DdlPayFrequencies] FOREIGN KEY ([PayFrequencyId]) REFERENCES [dbo].[DdlPayFrequencies] ([PayFrequencyId]),
+    CONSTRAINT [FK_PositionBusinessLevels_Locations] FOREIGN KEY ([LocationId]) REFERENCES [dbo].[Locations] ([LocationId]),
+    CONSTRAINT [PositionBusinessLevels_BusinessLevelTitle] UNIQUE NONCLUSTERED ([BusinessLevelTitle] ASC)
+);
+
