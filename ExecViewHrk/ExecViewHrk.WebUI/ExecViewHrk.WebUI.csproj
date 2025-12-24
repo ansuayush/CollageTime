@@ -1998,6 +1998,7 @@
     <Compile Include="Controllers\E_PositionsController.cs" />
     <Compile Include="Controllers\FinancialAidCustomReportController.cs" />
     <Compile Include="Controllers\FormController.cs" />
+    <Compile Include="Controllers\GeofenceController.cs" />
     <Compile Include="Controllers\HierarchicalDisplayController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HoursCodesController.cs" />
@@ -2128,6 +2129,7 @@
     <Compile Include="Models\FormTemplateHardCodedVm.cs" />
     <Compile Include="Models\FundHistoryVm.cs" />
     <Compile Include="Models\FundsVm.cs" />
+    <Compile Include="Models\GeofenceVM.cs" />
     <Compile Include="Models\HierarchicalDisplayManagerVm.cs" />
     <Compile Include="Models\JobSetupDetail.cs" />
     <Compile Include="Models\JobSetupVM.cs" />
@@ -2667,6 +2669,8 @@
     <Content Include="Views\HrkAdmin\Treatylimithistory.cshtml" />
     <Content Include="Views\RetroHours\RetroHoursMatrixPartial.cshtml" />
     <Content Include="Views\RetroHours\RetroHourEdit.cshtml" />
+    <Content Include="Views\Geofence\Index.cshtml" />
+    <Content Include="Views\Geofence\_NewGeofenceCoordinate.cshtml" />
     <None Include="Web.Debug.config">
     </None>
     <Content Include="Views\PositionBudgetSchedules\PositionBudgetSchedulesAddEdit.cshtml" />

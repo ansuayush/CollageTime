@@ -146,7 +146,13 @@
                                                             }
                                                             @if ((User.IsInRole("HrkAdministrators")) || (User.IsInRole("ClientManagers")) || (User.IsInRole("ClientAdministrators")))
                                                             {
-                                                            <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("Index", "DesignateSupervisor")'><i class="icon-arrow-right"></i> Designate Supervisor Override</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("Index", "DesignateSupervisor")'><i class="icon-arrow-right"></i> Designate Supervisor Override</a></li>
+
+                                                            }
+
+                                                            @if ((User.IsInRole("HrkAdministrators")) || (User.IsInRole("ClientManagers")) || (User.IsInRole("ClientAdministrators")))
+                                                            {
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" )' onclick='LoadMenu("Index", "Geofence")'><i class="icon-arrow-right"></i>Geofence</a></li>
                                                             }
                                                         </ul>
                                                     </li>

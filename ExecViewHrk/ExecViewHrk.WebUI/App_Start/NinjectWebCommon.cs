@@ -115,6 +115,8 @@ namespace ExecViewHrk.WebUI.App_Start
             // #1484 Designated Supervisor
             kernel.Bind<IDesignatedSupervisorRepository>().To<DesignatedSupervisorRepository>();
 
+            kernel.Bind<IGeofenceRepository>().To<GeofenceRepository>();
+
             System.Web.Mvc.DependencyResolver.SetResolver(new  ExecViewHrk.WebUI.Infrastructure.NinjectDependencyResolver(kernel));
 
             

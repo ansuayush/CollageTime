@@ -1,0 +1,132 @@
+﻿@model ExecViewHrk.WebUI.Models.GeofenceVM
+
+@using (Html.BeginForm("SaveGeofenceCoordinate", "Geofence", FormMethod.Post, new { id = "geofenceForm" }))
+{
+
+    <div class="form-horizontal">
+        <h4>Geofence Coordinate</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+        <style type="text/css">
+            .form-control {
+                width: 100% !important;
+            }
+        </style>
+        <div class="modal-content">
+            @*<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Add Geofence Coordinate</h4>
+            </div>*@
+            <div class="modal-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label><span style="color:red">*</span>Geofence Name</label>
+                        @Html.TextBoxFor(m => m.GeofenceName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.GeofenceName)
+                    </div>
+
+                    <div class="col-md-3">
+                        <label><span style="color:red">*</span>latitude</label>
+                        @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+
+                    <div class="col-md-3">
+                        <label><span style="color:red">*</span>longitude</label>
+                        @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+
+                    <div class="col-md-4">
+                        <label><span style="color:red">*</span>Radius(InFt)</label>
+                        @Html.TextBoxFor(m => m.Radius, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Radius)
+                    </div>
+
+                </div>
+
+                <hr />
+                @*<div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label><span style="color:red">*</span>Geofence Name</label>
+                            @Html.TextBoxFor(x => x.GeofenceName, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(x => x.GeofenceName)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label><span style="color:red">*</span>latitude</label>
+                            @Html.TextBoxFor(x => x.latitude, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(x => x.latitude)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label><span style="color:red">*</span>longitude</label>
+                            @Html.TextBoxFor(x => x.longitude, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(x => x.longitude)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ">
+                            <label><span style="color:red">*</span>Radius(InFt)</label>
+                            @Html.TextBoxFor(x => x.Radius, new { @class = "form-control", data_required = "Y" })
+                            @Html.ValidationMessageFor(x => x.Radius)
+                        </div>
+                    </div>
+                </div>*@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect m-r-15" id="btnClose" data-dismiss="modal">Close</button>
+                <button type="button" id="btnAddGeofenceName" class="btn btn-primary waves-effect waves-light" onclick="this.disabled = 'disabled';" ondblclick="return false">Save</button>
+            </div>
+        </div>
+    </div>
+}
+@*<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>*@
+<script type="text/javascript">
+    $("#btnAddGeofenceName").click(function (e) {
+        e.preventDefault();
+        var form = $("#geofenceForm");
+        if (!ValidateForm("geofenceForm")) {
+            loading(false);
+            return;
+        }
+        var appBaseUrl = $("#appBaseUrl").val();
+        var postData = form.serializeArray();
+        var formURL = appBaseUrl + "Geofence/SaveGeofenceCoordinate";
+        loading(true);
+        $.ajax({
+            type: 'POST',
+            url: formURL,
+            data: postData,
+            success: function (data) {
+                if (data.succeed) {
+                    $("#btnClose").click();
+                    loading(false);
+                    toastr.success(formService.messages.saved);
+                    LoadContents("Index", "Geofence", postData);
+                } else {
+                    toastr.error(data.Message);
+                    $("#btnClose").click();
+                    loading(false);
+                }
+            },
+            complete: function () {
+                $("#btnClose").click();
+                loading(false);
+            },
+            error: function (data) {
+                toastr.error(data.Message);
+                $("#btnClose").click();
+                loading(false);
+            },
+            async: false,
+            cache: false
+        });
+    });    
+</script>

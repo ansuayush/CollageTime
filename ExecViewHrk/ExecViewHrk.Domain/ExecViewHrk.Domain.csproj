@@ -99,6 +99,7 @@
     <Compile Include="Interface\IEmployeeForecast.cs" />
     <Compile Include="Interface\IEmployeeRetroHours.cs" />
     <Compile Include="Interface\IFinancialRepository.cs" />
+    <Compile Include="Interface\IGeofenceRepository.cs" />
     <Compile Include="Interface\IHoursCodesRepository.cs" />
     <Compile Include="Interface\IHrkAdminRepository.cs" />
     <Compile Include="Interface\ILookupTablesRepository.cs" />
@@ -153,6 +154,7 @@
     <Compile Include="Models\E_PositionSalaryHistorVm.cs" />
     <Compile Include="Models\E_PositionVm.cs" />
     <Compile Include="Models\FinancialCustomVm.cs" />
+    <Compile Include="Models\GeofenceDM.cs" />
     <Compile Include="Models\HoursCodeDropDownVM.cs" />
     <Compile Include="Models\HoursCodeVm.cs" />
     <Compile Include="Models\JobsVM.cs" />
@@ -221,6 +223,7 @@
     <Compile Include="Repositories\EmployeeRetroHoursRepository.cs" />
     <Compile Include="Repositories\EPositionRepository.cs" />
     <Compile Include="Repositories\FinancialRepository.cs" />
+    <Compile Include="Repositories\GeofenceRepository.cs" />
     <Compile Include="Repositories\HoursCodesRepository.cs" />
     <Compile Include="Repositories\HrkAdminRepository.cs" />
     <Compile Include="Repositories\LookupTablesRepository.cs" />

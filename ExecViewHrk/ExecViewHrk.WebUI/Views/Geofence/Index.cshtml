@@ -1,0 +1,1220 @@
+﻿@model List<ExecViewHrk.WebUI.Models.GeofenceVM>
+@{
+    ViewBag.Title = "Geofence";
+    Layout = null;
+    //Layout = "~/Views/Shared/_HrkAdminLayout.cshtml";
+}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet" />
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzJLujdxN768-ax6KWJL_xeFpYM8eJ4nk&sensor=false&callback=initMap&libraries=drawing,places"
+        defer></script>
+@*<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script type="text/javascript" src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.13.2/js/dataTables.bootstrap5.min.js"></script>
+<link rel="stylesheet" href=" https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" />
+
+<style type="text/css">
+    html,
+    body {
+        height: 500px;
+        margin: 0;
+        padding: 0;
+    }
+
+    #map {
+        height: 100%;
+    }
+
+    #map {
+        height: 100%;
+    }
+
+    /*
+    * Optional: Makes the sample page fill the window.
+    */
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+    }
+
+    #infowindow-content .title {
+        font-weight: bold;
+    }
+
+    #infowindow-content {
+        display: none;
+    }
+
+    #map #infowindow-content {
+        display: inline;
+    }
+
+    .pac-card {
+        background-color: #fff;
+        border: 0;
+        border-radius: 2px;
+        box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+        margin: 10px;
+        padding: 0 0.5em;
+        font: 400 18px Roboto, Arial, sans-serif;
+        overflow: hidden;
+        font-family: Roboto;
+        padding: 0;
+    }
+
+    #pac-container {
+        padding-bottom: 12px;
+        margin-right: 12px;
+        padding-top: 14px;
+    }
+
+    .pac-controls {
+        display: inline-block;
+        padding: 5px 11px;
+    }
+
+        .pac-controls label {
+            font-family: Roboto;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+    #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+        #pac-input:focus {
+            border-color: #4d90fe;
+        }
+
+    #title {
+        color: #fff;
+        background-color: #4d90fe;
+        font-size: 25px;
+        font-weight: 500;
+        padding: 6px 12px;
+    }
+
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999;
+    }
+
+    .popup-box {
+        background: #fff;
+        width: 500px;
+        margin: 100px auto;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .close-btn {
+        float: right;
+        cursor: pointer;
+        font-size: 20px;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function OnClientClose(oWnd, args) {
+        var arg = args.get_argument();
+        if (arg) {
+            var coordinate = arg.IDs;
+            const response = coordinate.split("~");
+            DrawCircleMap(response[0], response[1], response[2]);
+        }
+    }
+
+    //function ShowGeofenceLocation(coordinate) {
+    //    window.radopen('../RadWindowPopup/GeofenceCoordinate.aspx?Coordinate=' + coordinate, 'windowGeofenceLocation');
+    //    return false;
+    //}
+
+    function openPopup(id) {
+
+        var encodedLocation = encodeURIComponent(id);
+
+        $.ajax({
+            url: '@Url.Action("_NewGeofenceCoordinate", "Geofence")',//'/Geofence/GeofenceCoordinatePartial',
+            type: 'GET',
+            data: { coordinates: encodedLocation },
+            success: function (result) {
+                $('#popupContent').html(result);
+                $('#popupModal').show();
+            }
+        });
+    }
+
+    function closePopup() {
+        $('#popupModal').hide();
+    }
+
+    var circle;
+    function initMap() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const map = new google.maps.Map(document.getElementById("dvMap"), {
+                    center: { lat: parseFloat(40.749933), lng: parseFloat(-73.98633) },
+                    zoom: 13,
+                    mapTypeControl: false,
+                });
+
+                const card = document.getElementById("pac-card");
+                const input = document.getElementById("pac-input");
+                const biasInputElement = document.getElementById("use-location-bias");
+                const strictBoundsInputElement = document.getElementById("use-strict-bounds");
+                const options = {
+                    fields: ["formatted_address", "geometry", "name"],
+                    strictBounds: false,
+                };
+
+                map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
+
+                const autocomplete = new google.maps.places.Autocomplete(input, options);
+                // Add radius overlay to map
+                const set_radius = new google.maps.Circle({
+                    strokeColor: "#f38038",
+                    strokeOpacity: 0.4,
+                    strokeWeight: 2,
+                    fillColor: "#f38038",
+                    fillOpacity: 0.25,
+                    map: map,
+                    center: new google.maps.LatLng(map.center.lat, map.center.lng),
+                    radius: 20 * 1000, // 20km
+                });
+
+                var all_overlays = [];
+                var selectedShape;
+                var drawingManager = new google.maps.drawing.DrawingManager({
+                    drawingMode: google.maps.drawing.OverlayType.MARKER,
+                    drawingControl: true,
+                    drawingControlOptions: {
+                        position: google.maps.ControlPosition.TOP_CENTER,
+                        drawingModes: [
+                            google.maps.drawing.OverlayType.RECTANGLE,
+                            google.maps.drawing.OverlayType.POLYGON,
+                            google.maps.drawing.OverlayType.CIRCLE
+                        ]
+                    },
+                    markerOptions: {
+                        icon: 'images/beachflag.png'
+                    },
+                    circleOptions: {
+                        fillColor: '#ffff00',
+                        fillOpacity: 0.2,
+                        strokeWeight: 3,
+                        clickable: false,
+                        //draggable: true,
+                        editable: true,
+                        zIndex: 1
+                    },
+                    polygonOptions: {
+                        clickable: true,
+                        draggable: true,
+                        editable: true,
+                        fillColor: '#ffff00',
+                        fillOpacity: 1,
+
+                    },
+                    rectangleOptions: {
+                        clickable: true,
+                        draggable: true,
+                        editable: true,
+                        fillColor: '#ffff00',
+                        fillOpacity: 0.5,
+                    }
+                });
+
+                function clearSelection() {
+                    if (selectedShape) {
+                        selectedShape.setEditable(false);
+                        selectedShape = null;
+                    }
+                }
+
+                function setSelection(shape) {
+                    clearSelection();
+                    selectedShape = shape;
+                    shape.setEditable(true);
+                    google.maps.event.addListener(selectedShape.getPath(), 'insert_at', getPolygonCoords(shape));
+                    // google.maps.event.addListener(selectedShape.getPath(), 'set_at', getPolygonCoords(shape));
+                }
+
+                function deleteSelectedShape() {
+                    debugger;
+                    if (selectedShape) {
+                        selectedShape.setMap(null);
+                    }
+                }
+
+                function deleteAllShape() {
+                    for (var i = 0; i < all_overlays.length; i++) {
+                        all_overlays[i].overlay.setMap(null);
+                    }
+                    all_overlays = [];
+                }
+
+                function CenterControl(controlDiv, map) {
+
+                    // Set CSS for the control border.
+                    var controlUI = document.createElement('div');
+                    controlUI.style.backgroundColor = '#fff';
+                    controlUI.style.border = '2px solid #fff';
+                    controlUI.style.borderRadius = '3px';
+                    controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+                    controlUI.style.cursor = 'pointer';
+                    controlUI.style.marginBottom = '22px';
+                    controlUI.style.textAlign = 'center';
+                    controlUI.title = 'Select to delete the shape';
+                    controlDiv.appendChild(controlUI);
+
+                    // Set CSS for the control interior.
+                    var controlText = document.createElement('div');
+                    controlText.style.color = 'rgb(25,25,25)';
+                    controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+                    controlText.style.fontSize = '16px';
+                    controlText.style.lineHeight = '38px';
+                    controlText.style.paddingLeft = '5px';
+                    controlText.style.paddingRight = '5px';
+                    controlText.innerHTML = 'Delete Selected Area';
+                    controlUI.appendChild(controlText);
+
+                    // Setup the click event listeners: simply set the map to Chicago.
+                    controlUI.addEventListener('click', function () {
+                        deleteSelectedShape();
+                    });
+
+                }
+
+                drawingManager.setMap(map);
+                var getPolygonCoords = function (newShape) {
+
+                    console.log("We are one");
+                    var len = newShape.getPath().getLength();
+                    for (var i = 0; i < len; i++) {
+                        console.log(newShape.getPath().getAt(i).toUrlValue(6));
+                    }
+                };
+
+                google.maps.event.addListener(drawingManager, 'polygoncomplete', function (event) {
+
+                    event.getPath().getLength();
+                    google.maps.event.addListener(event.getPath(), 'insert_at', function () {
+                        var len = event.getPath().getLength();
+                        for (var i = 0; i < len; i++) {
+                            console.log(event.getPath().getAt(i).toUrlValue(5));
+                        }
+                    });
+                    google.maps.event.addListener(event.getPath(), 'set_at', function () {
+                        var len = event.getPath().getLength();
+                        for (var i = 0; i < len; i++) {
+                            console.log(event.getPath().getAt(i).toUrlValue(5));
+                        }
+                    });
+                });
+
+                google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+
+                    all_overlays.push(event);
+                    if (event.type !== google.maps.drawing.OverlayType.MARKER) {
+                        drawingManager.setDrawingMode(null);
+                        //Write code to select the newly selected object.
+
+                        var newShape = event.overlay;
+                        newShape.type = event.type;
+                        google.maps.event.addListener(newShape, 'click', function () {
+                            setSelection(newShape);
+                        });
+
+                        setSelection(newShape);
+                    }
+                });
+
+
+                var centerControlDiv = document.createElement('div');
+                var centerControl = new CenterControl(centerControlDiv, map);
+
+                centerControlDiv.index = 1;
+                map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
+
+                // Bind the map's bounds (viewport) property to the autocomplete object,
+                // so that the autocomplete requests use the current map bounds for the
+                // bounds option in the request.
+                autocomplete.bindTo("bounds", map);
+                const infowindow = new google.maps.InfoWindow();
+                const infowindowContent = document.getElementById("infowindow-content");
+
+                infowindow.setContent(infowindowContent);
+                const marker = new google.maps.Marker({
+                    map,
+                    draggable: true,
+                    anchorPoint: new google.maps.Point(0, -29),
+                });
+
+                autocomplete.addListener("place_changed", () => {
+                    infowindow.close();
+                    marker.setVisible(false);
+                    const place = autocomplete.getPlace();
+                    if (!place.geometry || !place.geometry.location) {
+                        // User entered the name of a Place that was not suggested and
+                        // pressed the Enter key, or the Place Details request failed.
+                        window.alert("No details available for input: '" + place.name + "'");
+                        return;
+                    }
+                    var rowIndex = place.geometry.location + '~' + place.formatted_address + '~' + place.name;
+                    //need to commit tempatry hitews 12/21/2025
+                    // ShowGeofenceLocation(rowIndex);
+                    //alert(rowIndex);
+                     openPopup(rowIndex);
+                    // If the place has a geometry, then present it on a map.
+                    if (place.geometry.viewport) {
+                        map.fitBounds(place.geometry.viewport);
+                    } else {
+                        map.setCenter(place.geometry.location);
+                        map.setZoom(17);
+                    }
+
+                    marker.setPosition(place.geometry.location);
+                    marker.setVisible(true);
+                    infowindowContent.children["place-name"].textContent = place.name;
+                    infowindowContent.children["place-address"].textContent =
+                        place.formatted_address;
+                    infowindow.open(map, marker);
+                });
+
+                // Sets a listener on a radio button to change the filter type on Places
+                // Autocomplete.
+                function setupClickListener(id, types) {
+                    const radioButton = document.getElementById(id);
+
+                    radioButton.addEventListener("click", () => {
+                        autocomplete.setTypes(types);
+                        input.value = "";
+                    });
+                }
+
+                setupClickListener("changetype-all", []);
+                setupClickListener("changetype-address", ["address"]);
+                setupClickListener("changetype-establishment", ["establishment"]);
+                setupClickListener("changetype-geocode", ["geocode"]);
+                setupClickListener("changetype-cities", ["(cities)"]);
+                setupClickListener("changetype-regions", ["(regions)"]);
+                biasInputElement.addEventListener("change", () => {
+                    if (biasInputElement.checked) {
+                        autocomplete.bindTo("bounds", map);
+                    } else {
+                        // User wants to turn off location bias, so three things need to happen:
+                        // 1. Unbind from map
+                        // 2. Reset the bounds to whole world
+                        // 3. Uncheck the strict bounds checkbox UI (which also disables strict bounds)
+                        autocomplete.unbind("bounds");
+                        autocomplete.setBounds({ east: 180, west: -180, north: 90, south: -90 });
+                        strictBoundsInputElement.checked = biasInputElement.checked;
+                    }
+
+                    input.value = "";
+                });
+                strictBoundsInputElement.addEventListener("change", () => {
+                    autocomplete.setOptions({
+                        strictBounds: strictBoundsInputElement.checked,
+                    });
+                    if (strictBoundsInputElement.checked) {
+                        biasInputElement.checked = strictBoundsInputElement.checked;
+                        autocomplete.bindTo("bounds", map);
+                    }
+
+                    input.value = "";
+                });
+            });
+        }
+    }
+
+
+    function DrawCircleMap(lat, lng, radius) {
+
+        var map;
+        map = new google.maps.Map(document.getElementById('dvMap'), {
+            scrollwheel: true,
+            mapTypeControl: false,
+            center: {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng)
+            },
+            zoom: 13,
+            streetViewControl: false,
+            zoomControl: true
+        });
+
+        const card = document.getElementById("pac-card");
+        const input = document.getElementById("pac-input");
+        const biasInputElement = document.getElementById("use-location-bias");
+        const strictBoundsInputElement = document.getElementById("use-strict-bounds");
+        const options = {
+            fields: ["formatted_address", "geometry", "name"],
+            strictBounds: false,
+        };
+
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
+
+        const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+        var all_overlays = [];
+        var selectedShape;
+        var drawingManager = new google.maps.drawing.DrawingManager({
+            drawingMode: google.maps.drawing.OverlayType.MARKER,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: [
+                    google.maps.drawing.OverlayType.CIRCLE
+                ]
+            },
+            markerOptions: {
+                icon: 'images/beachflag.png'
+            },
+            circleOptions: {
+                fillColor: '#ffff00',
+                fillOpacity: 0.2,
+                strokeWeight: 3,
+                clickable: false,
+                //draggable: true,
+                editable: true,
+                zIndex: 1
+            },
+            polygonOptions: {
+                clickable: true,
+                draggable: true,
+                editable: true,
+                fillColor: '#ffff00',
+                fillOpacity: 1,
+
+            },
+            rectangleOptions: {
+                clickable: true,
+                draggable: true,
+                editable: true,
+                fillColor: '#ffff00',
+                fillOpacity: 0.5,
+            }
+        });
+
+        function clearSelection() {
+            if (selectedShape) {
+                selectedShape.setEditable(false);
+                selectedShape = null;
+            }
+        }
+
+        function setSelection(shape) {
+            clearSelection();
+            selectedShape = shape;
+            shape.setEditable(true);
+            google.maps.event.addListener(selectedShape.getPath(), 'insert_at', getPolygonCoords(shape));
+            // google.maps.event.addListener(selectedShape.getPath(), 'set_at', getPolygonCoords(shape));
+        }
+
+        function deleteSelectedShape() {
+
+            if (selectedShape) {
+                selectedShape.setMap(null);
+            }
+        }
+        function CenterControl(controlDiv, map) {
+
+            // Set CSS for the control border.
+            var controlUI = document.createElement('div');
+            controlUI.style.backgroundColor = '#fff';
+            controlUI.style.border = '2px solid #fff';
+            controlUI.style.borderRadius = '3px';
+            controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+            controlUI.style.cursor = 'pointer';
+            controlUI.style.marginBottom = '22px';
+            controlUI.style.textAlign = 'center';
+            controlUI.title = 'Select to delete the shape';
+            controlDiv.appendChild(controlUI);
+
+            // Set CSS for the control interior.
+            var controlText = document.createElement('div');
+            controlText.style.color = 'rgb(25,25,25)';
+            controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+            controlText.style.fontSize = '16px';
+            controlText.style.lineHeight = '38px';
+            controlText.style.paddingLeft = '5px';
+            controlText.style.paddingRight = '5px';
+            controlText.innerHTML = 'Delete Selected Area';
+            controlUI.appendChild(controlText);
+
+            // Setup the click event listeners: simply set the map to Chicago.
+            controlUI.addEventListener('click', function () {
+                deleteSelectedShape();
+            });
+
+        }
+
+        drawingManager.setMap(map);
+        var getPolygonCoords = function (newShape) {
+            console.log("We are one");
+            var len = newShape.getPath().getLength();
+            for (var i = 0; i < len; i++) {
+                console.log(newShape.getPath().getAt(i).toUrlValue(6));
+            }
+        };
+
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+
+            all_overlays.push(event);
+            if (event.type !== google.maps.drawing.OverlayType.MARKER) {
+                drawingManager.setDrawingMode(null);
+                //Write code to select the newly selected object.
+
+                var newShape = event.overlay;
+                newShape.type = event.type;
+                google.maps.event.addListener(newShape, 'click', function () {
+                    setSelection(newShape);
+                });
+
+                setSelection(newShape);
+            }
+        });
+
+
+        var centerControlDiv = document.createElement('div');
+        var centerControl = new CenterControl(centerControlDiv, map);
+
+        centerControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
+
+        // Bind the map's bounds (viewport) property to the autocomplete object,
+        // so that the autocomplete requests use the current map bounds for the
+        // bounds option in the request.
+        autocomplete.bindTo("bounds", map);
+        const infowindow = new google.maps.InfoWindow();
+        const infowindowContent = document.getElementById("infowindow-content");
+
+        infowindow.setContent(infowindowContent);
+
+        // Marker coordinates
+        var markerCoords = { lat: parseFloat(lat), lng: parseFloat(lng) }; // Replace with your desired marker coordinates
+
+        // Create a marker
+        var marker = new google.maps.Marker({
+            position: markerCoords,
+            map: map,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', // Red marker icon
+        });
+
+        var antennasCircle = new google.maps.Circle({
+            strokeColor: "#ffff00",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#ffff00",
+            fillOpacity: 0.35,
+            editable: true,
+            draggable: true, // Allow dragging
+            map: map,
+            center: {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng)
+            },
+            radius: parseFloat(radius) * parseFloat(0.3048)
+        });
+        map.fitBounds(antennasCircle.getBounds());
+        PageRefresh();
+        //hitesh
+        BindGrid();
+    }
+
+    function PageRefresh() {
+        window.location.reload(true);
+    }
+
+    function DrawBindCircleMap(lat, lng, radius) {
+
+        var map;
+        map = new google.maps.Map(document.getElementById('dvMap'), {
+            scrollwheel: true,
+            mapTypeControl: false,
+            center: {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng)
+            },
+            zoom: 13,
+            streetViewControl: false,
+            zoomControl: true
+        });
+
+        const card = document.getElementById("pac-card");
+        const input = document.getElementById("pac-input");
+        const biasInputElement = document.getElementById("use-location-bias");
+        const strictBoundsInputElement = document.getElementById("use-strict-bounds");
+        const options = {
+            fields: ["formatted_address", "geometry", "name"],
+            strictBounds: false,
+        };
+
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
+
+        const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+        var all_overlays = [];
+        var selectedShape;
+        var drawingManager = new google.maps.drawing.DrawingManager({
+            drawingMode: google.maps.drawing.OverlayType.MARKER,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: [
+                    google.maps.drawing.OverlayType.CIRCLE
+                ]
+            },
+            markerOptions: {
+                icon: 'images/beachflag.png'
+            },
+            circleOptions: {
+                fillColor: '#ffff00',
+                fillOpacity: 0.2,
+                strokeWeight: 3,
+                clickable: false,
+                //draggable: true,
+                editable: true,
+                zIndex: 1
+            },
+            polygonOptions: {
+                clickable: true,
+                draggable: true,
+                editable: true,
+                fillColor: '#ffff00',
+                fillOpacity: 1,
+
+            },
+            rectangleOptions: {
+                clickable: true,
+                draggable: true,
+                editable: true,
+                fillColor: '#ffff00',
+                fillOpacity: 0.5,
+            }
+        });
+
+        function clearSelection() {
+            if (selectedShape) {
+                selectedShape.setEditable(false);
+                selectedShape = null;
+            }
+        }
+
+        function setSelection(shape) {
+            clearSelection();
+            selectedShape = shape;
+            shape.setEditable(true);
+            google.maps.event.addListener(selectedShape.getPath(), 'insert_at', getPolygonCoords(shape));
+            // google.maps.event.addListener(selectedShape.getPath(), 'set_at', getPolygonCoords(shape));
+        }
+
+        function deleteSelectedShape() {
+
+            if (selectedShape) {
+                selectedShape.setMap(null);
+            }
+        }
+        function CenterControl(controlDiv, map) {
+
+            // Set CSS for the control border.
+            var controlUI = document.createElement('div');
+            controlUI.style.backgroundColor = '#fff';
+            controlUI.style.border = '2px solid #fff';
+            controlUI.style.borderRadius = '3px';
+            controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+            controlUI.style.cursor = 'pointer';
+            controlUI.style.marginBottom = '22px';
+            controlUI.style.textAlign = 'center';
+            controlUI.title = 'Select to delete the shape';
+            controlDiv.appendChild(controlUI);
+
+            // Set CSS for the control interior.
+            var controlText = document.createElement('div');
+            controlText.style.color = 'rgb(25,25,25)';
+            controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+            controlText.style.fontSize = '16px';
+            controlText.style.lineHeight = '38px';
+            controlText.style.paddingLeft = '5px';
+            controlText.style.paddingRight = '5px';
+            controlText.innerHTML = 'Delete Selected Area';
+            controlUI.appendChild(controlText);
+
+            // Setup the click event listeners: simply set the map to Chicago.
+            controlUI.addEventListener('click', function () {
+                deleteSelectedShape();
+            });
+
+        }
+
+        drawingManager.setMap(map);
+        var getPolygonCoords = function (newShape) {
+            console.log("We are one");
+            var len = newShape.getPath().getLength();
+            for (var i = 0; i < len; i++) {
+                console.log(newShape.getPath().getAt(i).toUrlValue(6));
+            }
+        };
+
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+
+            all_overlays.push(event);
+            if (event.type !== google.maps.drawing.OverlayType.MARKER) {
+                drawingManager.setDrawingMode(null);
+                //Write code to select the newly selected object.
+
+                var newShape = event.overlay;
+                newShape.type = event.type;
+                google.maps.event.addListener(newShape, 'click', function () {
+                    setSelection(newShape);
+                });
+
+                setSelection(newShape);
+            }
+        });
+
+
+        var centerControlDiv = document.createElement('div');
+        var centerControl = new CenterControl(centerControlDiv, map);
+
+        centerControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
+
+        // Bind the map's bounds (viewport) property to the autocomplete object,
+        // so that the autocomplete requests use the current map bounds for the
+        // bounds option in the request.
+        autocomplete.bindTo("bounds", map);
+        const infowindow = new google.maps.InfoWindow();
+        const infowindowContent = document.getElementById("infowindow-content");
+
+        infowindow.setContent(infowindowContent);
+
+        // Marker coordinates
+        var markerCoords = { lat: parseFloat(lat), lng: parseFloat(lng) }; // Replace with your desired marker coordinates
+
+        // Create a marker
+        var marker = new google.maps.Marker({
+            position: markerCoords,
+            map: map,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', // Red marker icon
+        });
+
+        var antennasCircle = new google.maps.Circle({
+            strokeColor: "#ffff00",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#ffff00",
+            fillOpacity: 0.35,
+            editable: true,
+            draggable: true, // Allow dragging
+            map: map,
+            center: {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng)
+            },
+            radius: parseFloat(radius) * parseFloat(0.3048)
+        });
+        map.fitBounds(antennasCircle.getBounds());
+        BindGrid();
+    }
+    function BindGrid() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetDesignatedSupervisors", "Geofence")',
+            contentType: "application/json",
+            datatype: "json",
+            success: function (result) {
+                $('#Geofence').DataTable({
+                    stateSave: true,
+                    responsive: true,
+                    destroy: true,
+                    data: result, //JSON.parse(result.d),
+                    lengthChange: false,
+                    pageLength: 5,
+                    info: true,
+                    fixedColumns: {
+                        left: 2
+                    },
+                    pagingType: "numbers",
+                    columns: [
+                        {
+
+                            "data": "GeofenceName",
+                            "render": function (data, type, row, meta) {
+                                if (type === 'display') {
+                                    data = '<a class="Bule-b13-link" style="cursor:pointer" OnClick = "EditRecord(\'' + row["latitude"] + ', ' + row["longitude"] + ', ' + row["Id"] + ', ' + row["Radius"] + ', ' + row["PlaceName"] + ', \')" >' + data + '</a>';
+                                }
+                                return data;
+                            }
+                        },
+                        {
+                            "data": "Coordinate",
+
+                        },
+                       
+                        {
+                            "data": "Radius",
+
+                        },
+
+                        {
+                            "data": null,
+                            "orderable": false,
+                            "render": function (data, type, row, meta) {
+                                if (type === 'display') {
+                                    data = CssClass = '<a class="buttonImage view" style="width:26px" OnClick = "ViewRecord(' + row["latitude"] + ',' + row["longitude"] + ',' + row["Radius"] + ')" ></a>';
+                                }
+                                return data;
+                            }
+                        },
+                        {
+                            "data": null,
+                            "orderable": false,
+                            "render": function (data, type, row, meta) {
+                                if (type === 'display') {
+                                    data = CssClass = '<a class="buttonImage delete" style="width:26px" OnClick = "DeleteRecord(' + row["Id"] + ')"></a>';
+                                }
+                                return data;
+                            }
+                        }
+                    ]
+                });
+            },
+            failure: function (response) {
+                alert(response.d);
+            },
+            error: function (response) {
+                alert(response.d);
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        BindGrid();
+    });
+
+    function EditRecord(passedData) {
+        //$("#dvAddnew").hide();
+        //var rowDetailsArray = passedData.split(",");
+        //var coordinate = "(" + rowDetailsArray[0] + "," + rowDetailsArray[1] + ")";
+        //var option = "Edit";
+        //var rowIndex = coordinate + '~' + rowDetailsArray[2] + '~' + option;
+        //ShowGeofenceLocation(rowIndex);
+        //DrawBindCircleMap(rowDetailsArray[0], rowDetailsArray[1], rowDetailsArray[3]);
+    }
+
+    function ViewRecord(latitude, longitude, Radius) {
+        //$("#dvAddnew").show();
+        //DrawBindCircleMap(latitude, longitude, Radius);
+    }
+    function DeleteRecord(Id) {
+        //document.getElementById("<%=hfId.ClientID %>").value = Id;
+        //document.getElementById("<%=hfType.ClientID %>").value = "Delete";
+        //document.getElementById('<%= lnkGeofence.ClientID %>').click();
+    }
+
+    function PageRefresh() {
+        window.location.reload(true);
+    }
+
+    function DrawBindCircleMap(lat, lng, radius) {
+
+        var map;
+        map = new google.maps.Map(document.getElementById('dvMap'), {
+            scrollwheel: true,
+            mapTypeControl: false,
+            center: {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng)
+            },
+            zoom: 13,
+            streetViewControl: false,
+            zoomControl: true
+        });
+
+        const card = document.getElementById("pac-card");
+        const input = document.getElementById("pac-input");
+        const biasInputElement = document.getElementById("use-location-bias");
+        const strictBoundsInputElement = document.getElementById("use-strict-bounds");
+        const options = {
+            fields: ["formatted_address", "geometry", "name"],
+            strictBounds: false,
+        };
+
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
+
+        const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+        var all_overlays = [];
+        var selectedShape;
+        var drawingManager = new google.maps.drawing.DrawingManager({
+            drawingMode: google.maps.drawing.OverlayType.MARKER,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: [
+                    google.maps.drawing.OverlayType.CIRCLE
+                ]
+            },
+            markerOptions: {
+                icon: 'images/beachflag.png'
+            },
+            circleOptions: {
+                fillColor: '#ffff00',
+                fillOpacity: 0.2,
+                strokeWeight: 3,
+                clickable: false,
+                //draggable: true,
+                editable: true,
+                zIndex: 1
+            },
+            polygonOptions: {
+                clickable: true,
+                draggable: true,
+                editable: true,
+                fillColor: '#ffff00',
+                fillOpacity: 1,
+
+            },
+            rectangleOptions: {
+                clickable: true,
+                draggable: true,
+                editable: true,
+                fillColor: '#ffff00',
+                fillOpacity: 0.5,
+            }
+        });
+
+        function clearSelection() {
+            if (selectedShape) {
+                selectedShape.setEditable(false);
+                selectedShape = null;
+            }
+        }
+
+        function setSelection(shape) {
+            clearSelection();
+            selectedShape = shape;
+            shape.setEditable(true);
+            google.maps.event.addListener(selectedShape.getPath(), 'insert_at', getPolygonCoords(shape));
+            // google.maps.event.addListener(selectedShape.getPath(), 'set_at', getPolygonCoords(shape));
+        }
+
+        function deleteSelectedShape() {
+
+            if (selectedShape) {
+                selectedShape.setMap(null);
+            }
+        }
+        function CenterControl(controlDiv, map) {
+
+            // Set CSS for the control border.
+            var controlUI = document.createElement('div');
+            controlUI.style.backgroundColor = '#fff';
+            controlUI.style.border = '2px solid #fff';
+            controlUI.style.borderRadius = '3px';
+            controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+            controlUI.style.cursor = 'pointer';
+            controlUI.style.marginBottom = '22px';
+            controlUI.style.textAlign = 'center';
+            controlUI.title = 'Select to delete the shape';
+            controlDiv.appendChild(controlUI);
+
+            // Set CSS for the control interior.
+            var controlText = document.createElement('div');
+            controlText.style.color = 'rgb(25,25,25)';
+            controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+            controlText.style.fontSize = '16px';
+            controlText.style.lineHeight = '38px';
+            controlText.style.paddingLeft = '5px';
+            controlText.style.paddingRight = '5px';
+            controlText.innerHTML = 'Delete Selected Area';
+            controlUI.appendChild(controlText);
+
+            // Setup the click event listeners: simply set the map to Chicago.
+            controlUI.addEventListener('click', function () {
+                deleteSelectedShape();
+            });
+
+        }
+
+        drawingManager.setMap(map);
+        var getPolygonCoords = function (newShape) {
+            console.log("We are one");
+            var len = newShape.getPath().getLength();
+            for (var i = 0; i < len; i++) {
+                console.log(newShape.getPath().getAt(i).toUrlValue(6));
+            }
+        };
+
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+
+            all_overlays.push(event);
+            if (event.type !== google.maps.drawing.OverlayType.MARKER) {
+                drawingManager.setDrawingMode(null);
+                //Write code to select the newly selected object.
+
+                var newShape = event.overlay;
+                newShape.type = event.type;
+                google.maps.event.addListener(newShape, 'click', function () {
+                    setSelection(newShape);
+                });
+
+                setSelection(newShape);
+            }
+        });
+
+
+        var centerControlDiv = document.createElement('div');
+        var centerControl = new CenterControl(centerControlDiv, map);
+
+        centerControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
+
+        // Bind the map's bounds (viewport) property to the autocomplete object,
+        // so that the autocomplete requests use the current map bounds for the
+        // bounds option in the request.
+        autocomplete.bindTo("bounds", map);
+        const infowindow = new google.maps.InfoWindow();
+        const infowindowContent = document.getElementById("infowindow-content");
+
+        infowindow.setContent(infowindowContent);
+
+        // Marker coordinates
+        var markerCoords = { lat: parseFloat(lat), lng: parseFloat(lng) }; // Replace with your desired marker coordinates
+
+        // Create a marker
+        var marker = new google.maps.Marker({
+            position: markerCoords,
+            map: map,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', // Red marker icon
+        });
+
+        var antennasCircle = new google.maps.Circle({
+            strokeColor: "#ffff00",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#ffff00",
+            fillOpacity: 0.35,
+            editable: true,
+            draggable: true, // Allow dragging
+            map: map,
+            center: {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng)
+            },
+            radius: parseFloat(radius) * parseFloat(0.3048)
+        });
+        map.fitBounds(antennasCircle.getBounds());
+        BindGrid();
+    }
+
+</script>
+<div class="container-fluid">
+    <div class="row p-t-15">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-header col-sm-12 p-0 m-b-0">
+                <div class="col-md-9 m-b-15 p-0">
+                    <h4>Geofence <span class="pull-right icon-edit-block m-l-30"> <i class="fa fa-expand f-24" onclick="javascript:toggleFullScreen()"></i></span></h4>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 p-0">
+                <div class="pac-card" id="pac-card">
+                    <div>
+                        <div id="title">Geo Fence</div>
+                        <br />
+                    </div>
+                    <div id="pac-container">
+                        <input id="pac-input" type="text" style="height: 30px" placeholder="Enter a location" />
+                    </div>
+                </div>
+                <div id="dvAddnew" style="padding-left: 0px; height: 100%; width:100%; background-color: #E5E4E2; display:none">
+                    <asp:Button runat="server" Width="200px" CssClass="buttonNew" ID="btnlocation" OnClientClick="javascript:PageRefresh();"
+                                Text="Add a Location" />
+                </div>
+                <div id="dvMap" style="height: 500px"></div>
+                <div id="popupModal" class="popup-overlay" style="display:none;">
+                    <div class="popup-box">
+                        <span class="close-btn" onclick="closePopup()">×</span>
+                        <div id="popupContent"></div>
+                    </div>
+                </div>
+                <div id="infowindow-content">
+                    <span id="place-name" class="title"></span>
+                    <br />
+                    <span id="place-address"></span>
+                </div>
+                <div style="height: 20px"></div>
+                <div id="LocationList">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        @*<tr>
+                                <td>
+                                    <table cellpadding="0" cellspacing="0" width="100%">
+                                        <tr>
+                                            <asp:LinkButton ID="lnkGeofence" runat="server" OnClick="lnkGeofence_Click" Style="display: none"></asp:LinkButton>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>*@
+                        <tr>
+                            <td align="left" valign="top">
+                                <table cellpadding="0" border="0" cellspacing="0" width="100%" style="padding: 0px 7px 7px 7px;">
+                                    <tr>
+                                        <td>
+                                            <table id="Geofence" class="table table-striped display" width="100%" style="padding-top: 1px">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Geofence Name</th>
+                                                        <th>Coordinate</th>
+                                                        <th>Radius(Ft)</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
