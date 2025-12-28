@@ -62,5 +62,8 @@ namespace ExecViewHrk.WebUI.Models
         public List<GeofenceDM> GeofenceslocationList { get; set; }
 
         public int SelectedGeoName { get; set; }
+
+        public string clLatitude { get; set; }
+        public string clLongitude { get; set; }
     }
 }

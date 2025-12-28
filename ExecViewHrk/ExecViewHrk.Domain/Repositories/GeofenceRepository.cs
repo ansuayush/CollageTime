@@ -47,8 +47,13 @@ namespace ExecViewHrk.Domain.Repositories
             return Query<GeofenceDM>("usp_GetGeofenceDetails").ToList();
         }
 
-
-
+        public GeofenceDM GeofenceDetailsById(int geofenceId)
+        {
+            return Query<GeofenceDM>(
+                "usp_GetGeofenceDetailsById",
+                new { GeofenceId = geofenceId }   // 👈 pass parameter here
+            ).FirstOrDefault();
+        }
     }  
 
 }

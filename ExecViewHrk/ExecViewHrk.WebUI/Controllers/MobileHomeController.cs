@@ -70,8 +70,8 @@ namespace ExecViewHrk.WebUI.Controllers
 
                     //geo
                     TempData["GeofancyCodeIndex"] = TempData.Peek("GeofancyCodeIndex") == null ? 0 : (int)TempData.Peek("GeofancyCodeIndex");
-                    TempData["Id"] = TempData.Peek("Id") == null ? geofencesloc[(int)TempData.Peek("GeofancyCodeIndex")].Id : Convert.ToInt32(TempData.Peek("Id"));
-                    model.SelectedGeoName = Convert.ToInt32(TempData.Peek("Id"));
+                    TempData["GeofenceId"] = TempData.Peek("GeofenceId") == null ? geofencesloc[(int)TempData.Peek("GeofancyCodeIndex")].Id : Convert.ToInt32(TempData.Peek("GeofenceId"));
+                    model.SelectedGeoName = Convert.ToInt32(TempData.Peek("GeofenceId"));
 
                     Employee emp = AccessEmployeeDetails.EmpDetails(clientDbContext, User.Identity.Name, model.SelectedCompanyCode);
                     if (emp != null)
@@ -244,7 +244,7 @@ namespace ExecViewHrk.WebUI.Controllers
             return activePositions;
         }
 
-        public ActionResult _PunchButtons(int employeeId, int? positionId, DateTime punchTime, int companyCodeId, string EpositionId)//string geofancyId
+        public ActionResult _PunchButtons(int employeeId, int? positionId, DateTime punchTime, int companyCodeId, string EpositionId,string geofancyId)
         {
             if (EpositionId != null)
             {
@@ -254,18 +254,29 @@ namespace ExecViewHrk.WebUI.Controllers
             //DateTime etcCurrentDate = Utils.ConvertTimeFromUtc(DateTime.UtcNow, ConfigurationManager.AppSettings["TimeZone"]);
             employeeId = Convert.ToInt32(TempData.Peek("EmployeeId"));
             companyCodeId = Convert.ToInt32(TempData.Peek("CompanyCodeId"));
-           // geofancyId = Convert.ToString(TempData.Peek("geofancyId"));
+
+            if (geofancyId == null)
+            {
+                geofancyId = Convert.ToString(TempData.Peek("GeofenceId"));
+            }
 
             if (IsSessionExpired)
                 return new EmptyResult();
             bool disablePunchIn = false, disableLunchOut = false, disableLunchBack = false, disablePunchOut = false;
             bool nightShiftOn = false;
             int nightShiftTimeCardId = 0;
-            // Get all timecards for that day
-            //if(punchTime == null)
+            // checking with Geofancy setup valid or not 
+            //AcceptPunchVM model = new AcceptPunchVM();
+            
+            //var geoId = 0;
+            //int.TryParse(geofancyId, out geoId);
+
+            //var iswithinRange = ValidateCurrentLocation(geoId);
+            //if (!iswithinRange)
             //{
-            //    punchTime = etcCurrentDate;
-            //}
+            //    ViewData["geomessage"] = "Current location is outside the range. You cannot Punch In.";
+            //}    
+
             List<TimeCard> todayTimeCard = _timecardMobileRepo.GetEmployeeTimeCardByDate(null, null, punchTime, null, (int)TempData.Peek("PersonId"));
             if ((todayTimeCard == null) || (todayTimeCard.Count == 0))
             {
@@ -417,6 +428,7 @@ namespace ExecViewHrk.WebUI.Controllers
             ViewData["disablePunchOut"] = disablePunchOut;
             ViewData["nightShiftOn"] = ViewData["nightShiftOn"] = nightShiftOn == true ? 1 : 0;
             ViewData["nightShiftTimeCardId"] = nightShiftTimeCardId;
+           
             return PartialView();
         }
 
@@ -612,5 +624,93 @@ namespace ExecViewHrk.WebUI.Controllers
             }
         }
 
+
+        [HttpGet]
+        public JsonResult ValidateLocationRange(int geofenceId, string latitude, string longitude)
+        {
+            bool isWithinRange = ValidateCurrentLocation(geofenceId, latitude, longitude);
+            if(isWithinRange == true)
+            {
+                ViewData["disablePunchIn"] = true;
+            }
+            else
+            { ViewData["disablePunchIn"] = false; }
+
+            return Json(new { isValid = isWithinRange }, JsonRequestBehavior.AllowGet);
+        }
+        private bool ValidateCurrentLocation(int geofancyId,string latitude,string longitude)
+        {
+            //int companyId = 0;
+            //int.TryParse(Globals.gCompanyId, out companyId);
+            //BLEmployee bLEmployee = new BLEmployee();
+            double kilometer = 0.0003048;
+            double dblatitudevalue = 0;
+            double dblongitudevalue = 0;
+            double clLatitude = 0;
+            double clLongitude = 0;
+            var resultvalue = false;
+            try
+            {
+                GeofenceDM coordinates = _geoRepo.GeofenceDetailsById(geofancyId);
+                //var coordinates = bLEmployee.GetGeofenceCoordinateByEmpno(Globals.gLoginEmployeeNumber, companyId);
+                if (coordinates != null && coordinates.Id !=0)
+                {
+                    //foreach (var coordinate in coordinates)
+                    //{
+                    //browser location 
+                    double.TryParse(latitude, out clLatitude);
+                    double.TryParse(longitude, out clLongitude);
+                    //
+                    double.TryParse(coordinates.latitude, out dblatitudevalue);
+                        double.TryParse(coordinates.longitude, out dblongitudevalue);
+                        var dblatitude = Math.Round(dblatitudevalue, 7);
+                        var dblongitude = Math.Round(dblongitudevalue, 7);
+                        var RadiusInDegrees = Convert.ToDouble(coordinates.Radius) * kilometer;
+                        var radiusInKilometers = RadiusInDegrees;
+                        Location dbLocation = new Location { Latitude = dblatitude, Longitude = dblongitude }; // Database coordinates
+                        Location currentLocation = new Location { Latitude = clLatitude, Longitude = clLongitude }; // Current location coordinates
+                        
+                       var _distance = CalculateDistanceBetweenCoordinates(dbLocation.Latitude, dbLocation.Longitude, currentLocation.Latitude, currentLocation.Longitude);
+                        bool isWithinRange = IsWithinRange(_distance, radiusInKilometers);
+                        if (isWithinRange)
+                        {
+                            return true;
+                        }
+                   // }
+                    return resultvalue;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                
+                return true;
+            }
+        }
+
+        public static double CalculateDistanceBetweenCoordinates(double fromLatitude, double fromLongitude,
+    double toLatitude, double toLongitude)
+        {
+            return (Math.Sqrt(Math.Pow(toLatitude - fromLatitude, 2.0) + Math.Pow(toLongitude - fromLongitude, 2.0)));
+        }
+
+
+
+        private static double ToRadians(double degree)
+        {
+            return degree * (Math.PI / 180);
+        }
+
+        // Check if the current location is within a specified range
+        private static bool IsWithinRange(double distance, double range)
+        {
+            return distance <= range;
+        }
+       
+        public class Location
+        {
+            public Double Latitude { get; set; }
+            public Double Longitude { get; set; }
+        }
     }
 }

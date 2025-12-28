@@ -10,5 +10,7 @@ namespace ExecViewHrk.Domain.Interface
 
 
         List<GeofenceDM> GetGeofenceDetails();
+
+        GeofenceDM GeofenceDetailsById(int geofenceId);
     }
 }
