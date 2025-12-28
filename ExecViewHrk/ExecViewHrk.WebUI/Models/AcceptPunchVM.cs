@@ -1,4 +1,5 @@
-﻿using ExecViewHrk.EfClient;
+﻿using ExecViewHrk.Domain.Models;
+using ExecViewHrk.EfClient;
 using ExecViewHrk.Models;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,9 @@ namespace ExecViewHrk.WebUI.Models
         public double? Week2Hours { get; set; }
         public double? TreatyTime { get; set; }
         public string EpositionId { get; set; }
-       
 
+        public List<GeofenceDM> GeofenceslocationList { get; set; }
+
+        public int SelectedGeoName { get; set; }
     }
 }

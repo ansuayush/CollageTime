@@ -63,10 +63,11 @@
                                         <i class="fa fa-clock-o m-r-10"></i>@Model.CurrentDate.ToString("ddd MMM dd, yyy HH:mm tt")<br />
                                         <i class="fa fa-user m-r-10"></i>Employee: @Model.FullName<br />
                                         <i class="fa fa-clock-o m-r-10"></i>Daily Total: <span id="dailytotal">@String.Format("{0:0.00}", Model.DailyTotal)</span> Hours<br />
-                                        <i class="fa fa-clock-o m-r-10"></i>Pay Period Total:<span id="payperiodtotal" >@String.Format("{0:0.00}", Model.PayPeriodTotal)</span> Hours<br />
+                                        <i class="fa fa-clock-o m-r-10"></i>Pay Period Total:<span id="payperiodtotal">@String.Format("{0:0.00}", Model.PayPeriodTotal)</span> Hours<br />
                                         <i class="fa fa-clock-o m-r-10"></i>Pay Period: @( Model.PayPeriodStartDate.HasValue ? Model.PayPeriodStartDate.Value.ToShortDateString() : "") to @( Model.PayPeriodEndDate.HasValue ? Model.PayPeriodEndDate.Value.ToShortDateString() : "")<br />
                                         Company Code: @Html.DropDownListFor(m => Model.SelectedCompanyCode, new SelectList(Model.CompanyCodeList, "CompanyCodeId", "CompanyCodeDescription"), new { @id = "ddlCompanyCode" })
-                                    </p>
+                                        Location: @Html.DropDownListFor(m => Model.SelectedGeoName, new SelectList(Model.GeofenceslocationList, "Id", "GeofenceName"), new { @id = "ddlGeofenceName" })
+                                    </p>                                    
                                 </div>
                                 @if (Model.IsPayPeriodLocked)
                                 {
@@ -91,32 +92,33 @@
                                 </div>
                                 @if (Model.PositionList != null)
                                 {
-                                    <div class="col-xs-12 col-sm-12 col-md-12 p-0 m-t-15 m-b-15">
+                            <div class="col-xs-12 col-sm-12 col-md-12 p-0 m-t-15 m-b-15">
 
 
-                                        <div class="col-xs-12 col-sm-12 col-md-6 m-b-10 dropdown-warning">
-                                            @Html.DropDownListFor(m => Model.EpositionId, new SelectList(Model.PositionList, "EpositionId", "PositionDescription"), new { @class = "btn btn-xlg btn-inverse-warning dropdown-toggle dropdown-toggle-split waves-effect waves-light btn-block btn-new h-70", @id = "ddlPosition" })
-                                        </div>
-                                        <div id="punchButtonsView">
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6 m-b-10">
-                                            <a href='@Url.Action("Summary", "MobileHome")' class="btn btn-xlg btn-inverse-primary waves-effect waves-light btn-block btn-new">View Summary</a>
-                                        </div>
-                                        @Html.HiddenFor(m => m.PunchType)
-                                        @Html.HiddenFor(m => m.EmployeeId, new { @id = "hdnEmployeeId" })
-                                        @Html.HiddenFor(m => m.CompanyCodeId, new { @id = "hdnCompanyCodeId" })
-                                        @Html.HiddenFor(m => m.CurrentDate, new { @id = "hdnCurrentDate" })
-                                        @Html.HiddenFor(m => m.IsPayPeriodLocked)
-                                        @Html.HiddenFor(m => m.FileName)
-                                        @Html.HiddenFor(m => m.NightShiftOn)
-                                        @Html.HiddenFor(m => m.NightShiftTimeCardId)
-                                        @Html.HiddenFor(m => m.MaxHours)
-                                        @Html.HiddenFor(m => m.Week1Hours)
-                                        @Html.HiddenFor(m => m.Week2Hours)
-                                        @Html.HiddenFor(m => m.PayPeriodStartDate)
-                                        @Html.HiddenFor(m => m.TreatyTime)
-                                        @*@Html.HiddenFor(m=>m.EpositionId)*@
-                                    </div>
+                                <div class="col-xs-12 col-sm-12 col-md-6 m-b-10 dropdown-warning">
+                                    @Html.DropDownListFor(m => Model.EpositionId, new SelectList(Model.PositionList, "EpositionId", "PositionDescription"), new { @class = "btn btn-xlg btn-inverse-warning dropdown-toggle dropdown-toggle-split waves-effect waves-light btn-block btn-new h-70", @id = "ddlPosition" })
+                                </div>
+                                <div id="punchButtonsView">
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-6 m-b-10">
+                                    <a href='@Url.Action("Summary", "MobileHome")' class="btn btn-xlg btn-inverse-primary waves-effect waves-light btn-block btn-new">View Summary</a>
+                                </div>
+                                @Html.HiddenFor(m => m.PunchType)
+                                @Html.HiddenFor(m => m.EmployeeId, new { @id = "hdnEmployeeId" })
+                                @Html.HiddenFor(m => m.CompanyCodeId, new { @id = "hdnCompanyCodeId" })
+                                @Html.HiddenFor(m => m.CurrentDate, new { @id = "hdnCurrentDate" })
+                                @Html.HiddenFor(m => m.IsPayPeriodLocked)
+                                @Html.HiddenFor(m => m.FileName)
+                                @Html.HiddenFor(m => m.NightShiftOn)
+                                @Html.HiddenFor(m => m.NightShiftTimeCardId)
+                                @Html.HiddenFor(m => m.MaxHours)
+                                @Html.HiddenFor(m => m.Week1Hours)
+                                @Html.HiddenFor(m => m.Week2Hours)
+                                @Html.HiddenFor(m => m.PayPeriodStartDate)
+                                @Html.HiddenFor(m => m.TreatyTime)
+                                @Html.HiddenFor(m => m.SelectedGeoName, new { @id = "hdngeofancyId" })
+                                @*@Html.HiddenFor(m=>m.EpositionId)*@
+                            </div>
                                 }
                             </div>
                         </form>
@@ -199,6 +201,7 @@
             var employeeId = $("#hdnEmployeeId").val();
             var currentDate = $("#hdnCurrentDate").val();
             var companyCodeId = $("#hdnCompanyCodeId").val();
+            //var geofancyId = $("#hdngeofancyId").val();
             //alert(currentDate);
             //alert(employeeId);
             //alert(positionId);
@@ -211,7 +214,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("_PunchButtons", "MobileHome")',
-                    data: { employeeId: employeeId, positionId: positionId, punchTime: punchTime, companyCodeId: companyCodeId },
+                    data: { employeeId: employeeId, positionId: positionId, punchTime: punchTime, companyCodeId: companyCodeId},
                     cache: false,
                     success: function (data) {
                         //alert('test1233');
@@ -248,7 +251,7 @@
         //   setInterval(function () { triggerRefresh(); }, 1000 * 60);
         //}
 
-        $("#ddlCompanyCode").on("change", function () {            
+        $("#ddlCompanyCode").on("change", function () {
             var companyCodeId = $("#ddlCompanyCode").val();
             $("#punchButtonsView").html("");
             $("#hdnCompanyCodeId").val(companyCodeId);

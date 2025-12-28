@@ -1,5 +1,6 @@
 ﻿using ExecViewHrk.Domain.Helper;
 using ExecViewHrk.Domain.Interface;
+using ExecViewHrk.Domain.Models;
 using ExecViewHrk.EfClient;
 using ExecViewHrk.Models;
 using ExecViewHrk.WebUI.Filters;
@@ -21,12 +22,14 @@ namespace ExecViewHrk.WebUI.Controllers
         private ILookupTablesRepository _ilookuprepo;
         private ITimeCardMatrixReposotory _timeCardsMatrixRepo;
         private ITimeCardSessionInOutRepository _timeCardSessionInOutRepo;
+        private IGeofenceRepository _geoRepo;
 
         public MobileHomeController(
             IEPositionRepository positionRepo,
             ITimeCardsMobileRepository timecardMobileRepo,
             ILookupTablesRepository ilookuprepo,
             ITimeCardMatrixReposotory timeCardsMatrixRepo,
+            IGeofenceRepository geofenceRepositoryRepo,
             ITimeCardSessionInOutRepository timeCardSessionInOutRepo)
         {
             _positionRepo = positionRepo;
@@ -34,6 +37,7 @@ namespace ExecViewHrk.WebUI.Controllers
             _ilookuprepo = ilookuprepo;
             _timeCardsMatrixRepo = timeCardsMatrixRepo;
             _timeCardSessionInOutRepo = timeCardSessionInOutRepo;
+            _geoRepo = geofenceRepositoryRepo;
         }
 
         // GET: MobileHome
@@ -53,11 +57,21 @@ namespace ExecViewHrk.WebUI.Controllers
                     // Get all Company Codes
                     List<CompanyCode> ccList = _timecardMobileRepo.GetAllCompanyCodes(User.Identity.Name);
                     model.CompanyCodeList = ccList;
+
+                    //Get All Geo Location
+                    List<GeofenceDM> geofencesloc = _geoRepo.GetGeofenceDetails();
+                    model.GeofenceslocationList = geofencesloc;
+
                     TempData["CompanyCodeIndex"] = TempData.Peek("CompanyCodeIndex") == null ? 0 : (int)TempData.Peek("CompanyCodeIndex");
                     //TempData["CompanyCodeId"] = TempData.Peek("CompanyCodeId") == null ? ccList.FirstOrDefault().CompanyCodeId : Convert.ToInt32(TempData.Peek("CompanyCodeId"));
 
                     TempData["CompanyCodeId"] = TempData.Peek("CompanyCodeId") == null ? ccList[(int)TempData.Peek("CompanyCodeIndex")].CompanyCodeId : Convert.ToInt32(TempData.Peek("CompanyCodeId"));
                     model.SelectedCompanyCode = Convert.ToInt32(TempData.Peek("CompanyCodeId"));
+
+                    //geo
+                    TempData["GeofancyCodeIndex"] = TempData.Peek("GeofancyCodeIndex") == null ? 0 : (int)TempData.Peek("GeofancyCodeIndex");
+                    TempData["Id"] = TempData.Peek("Id") == null ? geofencesloc[(int)TempData.Peek("GeofancyCodeIndex")].Id : Convert.ToInt32(TempData.Peek("Id"));
+                    model.SelectedGeoName = Convert.ToInt32(TempData.Peek("Id"));
 
                     Employee emp = AccessEmployeeDetails.EmpDetails(clientDbContext, User.Identity.Name, model.SelectedCompanyCode);
                     if (emp != null)
@@ -230,7 +244,7 @@ namespace ExecViewHrk.WebUI.Controllers
             return activePositions;
         }
 
-        public ActionResult _PunchButtons(int employeeId, int? positionId, DateTime punchTime, int companyCodeId, string EpositionId)
+        public ActionResult _PunchButtons(int employeeId, int? positionId, DateTime punchTime, int companyCodeId, string EpositionId)//string geofancyId
         {
             if (EpositionId != null)
             {
@@ -240,6 +254,7 @@ namespace ExecViewHrk.WebUI.Controllers
             //DateTime etcCurrentDate = Utils.ConvertTimeFromUtc(DateTime.UtcNow, ConfigurationManager.AppSettings["TimeZone"]);
             employeeId = Convert.ToInt32(TempData.Peek("EmployeeId"));
             companyCodeId = Convert.ToInt32(TempData.Peek("CompanyCodeId"));
+           // geofancyId = Convert.ToString(TempData.Peek("geofancyId"));
 
             if (IsSessionExpired)
                 return new EmptyResult();
