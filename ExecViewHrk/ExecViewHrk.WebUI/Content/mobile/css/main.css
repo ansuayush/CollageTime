@@ -10337,3 +10337,31 @@ form .messages {
         #controls p:first-child {
             margin-right: 20px;
         }
+
+
+/* Geo alert box */
+.geo-alert {
+    display: none;
+    background: #ff5a5a;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    animation: slideDown 0.3s ease-out;
+}
+
+/* ANIMATION */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
