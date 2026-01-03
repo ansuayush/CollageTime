@@ -53,7 +53,7 @@ namespace ExecViewHrk.WebUI.Controllers
                 using (ClientDbContext clientDbContext = new ClientDbContext(connString))
                 {
                     DateTime etcCurrentDate = Utils.ConvertTimeFromUtc(DateTime.UtcNow, ConfigurationManager.AppSettings["TimeZone"]);
-                    
+
                     // Get all Company Codes
                     List<CompanyCode> ccList = _timecardMobileRepo.GetAllCompanyCodes(User.Identity.Name);
                     model.CompanyCodeList = ccList;
@@ -93,7 +93,7 @@ namespace ExecViewHrk.WebUI.Controllers
                         TempData["EmployeeName"] = emp.Person.Firstname + " " + emp.Person.Lastname;
                         var epositionid = Session["Epositionid"];
                         var epositionid1 = 0;
-                        if (epositionid==null)
+                        if (epositionid == null)
                         {
                             epositionid1 = 0;
                         }
@@ -115,7 +115,7 @@ namespace ExecViewHrk.WebUI.Controllers
                         model.TreatyTime = Math.Round((double)(model.MaxHours * TreatyTime) / 100, 2);
                         // To get the current Active Pay Period
                         PayPeriodVM empCurrentPayPeriod = _ilookuprepo.GetEmployeeCurrentPayPeriod(emp.EmployeeId, false);
-                        TempData["PayperiodId"]=empCurrentPayPeriod.PayPeriodId;
+                        TempData["PayperiodId"] = empCurrentPayPeriod.PayPeriodId;
                         int? payGroupId = 0;
                         if (empCurrentPayPeriod != null)
                         {
@@ -139,7 +139,7 @@ namespace ExecViewHrk.WebUI.Controllers
                             {
                                 payPeriodTotal = payPeriodTimeCardList.Sum(e => e.WeeklyTotal);
                             }
-                            
+
                             model.PayPeriodTotal = payPeriodTotal.Value;
                             // Get Daily Timecards for Daily Total
                             List<TimeCard> dailyTimeCardList = _timecardMobileRepo.GetEmployeeTimeCardByDate(emp.EmployeeId, null, model.CurrentDate, model.CompanyCodeId ?? 1, (int)TempData.Peek("PersonId"));
@@ -154,7 +154,7 @@ namespace ExecViewHrk.WebUI.Controllers
                             List<E_PositioVm> posList = _positionRepo.GetEPositionList_v2((int)TempData.Peek("PersonId"), emp.EmployeeId, model.SelectedCompanyCode);
                             var activePos = GetActiveE_Positions(posList);
                             model.PositionList = activePos;
-                           // model.EpositionId = activePos[0].EpositionId;
+                            // model.EpositionId = activePos[0].EpositionId;
 
                             if ((activePos == null) || (activePos.Count == 0))
                             {
@@ -244,7 +244,7 @@ namespace ExecViewHrk.WebUI.Controllers
             return activePositions;
         }
 
-        public ActionResult _PunchButtons(int employeeId, int? positionId, DateTime punchTime, int companyCodeId, string EpositionId,string geofancyId)
+        public ActionResult _PunchButtons(int employeeId, int? positionId, DateTime punchTime, int companyCodeId, string EpositionId, string geofancyId)
         {
             if (EpositionId != null)
             {
@@ -267,7 +267,7 @@ namespace ExecViewHrk.WebUI.Controllers
             int nightShiftTimeCardId = 0;
             // checking with Geofancy setup valid or not 
             //AcceptPunchVM model = new AcceptPunchVM();
-            
+
             //var geoId = 0;
             //int.TryParse(geofancyId, out geoId);
 
@@ -422,12 +422,28 @@ namespace ExecViewHrk.WebUI.Controllers
                 disableLunchBack = true;
                 disablePunchOut = true;
             }
+
+            if (Session["IsWithinRange"] != null && (bool)Session["IsWithinRange"])
+            {
+                //ViewData["disablePunchIn"] = true;
+                // If user IsWithinRange has true - Enable Out Punches and Diable In Punches
+                disablePunchIn = false;
+                disableLunchBack = false;
+            }
+            else
+            {
+                disablePunchIn = true;
+                disableLunchBack = true;
+            }
+
+
             ViewData["disablePunchIn"] = disablePunchIn;
             ViewData["disableLunchOut"] = disableLunchOut;
             ViewData["disableLunchBack"] = disableLunchBack;
             ViewData["disablePunchOut"] = disablePunchOut;
             ViewData["nightShiftOn"] = ViewData["nightShiftOn"] = nightShiftOn == true ? 1 : 0;
             ViewData["nightShiftTimeCardId"] = nightShiftTimeCardId;
+
            
             return PartialView();
         }
@@ -447,7 +463,7 @@ namespace ExecViewHrk.WebUI.Controllers
             }
             var Epositionid = model.EpositionId.Split('-');
             var epositionid = Convert.ToInt32(Epositionid[0]);
-           Session["Epositionid"] = epositionid;
+            Session["Epositionid"] = epositionid;
             var positionid = Convert.ToInt32(Epositionid[1]);
             DateTime? effdate = null;
             DateTime estTime = Utils.ConvertTimeFromUtc(DateTime.UtcNow, ConfigurationManager.AppSettings["TimeZone"]);
@@ -478,7 +494,7 @@ namespace ExecViewHrk.WebUI.Controllers
                             }
                         }
                     }
-                   // var effdate = clientDbContext.E_PositionSalaryHistories.Where(x => x.E_PositionId == epositionid && x.EndDate == null).Select(x => x.EffectiveDate).FirstOrDefault();
+                    // var effdate = clientDbContext.E_PositionSalaryHistories.Where(x => x.E_PositionId == epositionid && x.EndDate == null).Select(x => x.EffectiveDate).FirstOrDefault();
                     if (effdate > DateTime.Now)
                     {
                         EmailResults(epositionid, model.EmployeeId);
@@ -541,8 +557,8 @@ namespace ExecViewHrk.WebUI.Controllers
                     TempData["EmployeeId"] = emp.EmployeeId;
                     TempData["CompanyCodeId"] = companyCodeId;
                     int deptid = Convert.ToInt32(TempData["DeptId"]);
-                    int payperiodid=Convert.ToInt32(TempData["PayperiodId"]);
-                    List<TimeCardWeekTotalCollectionVm> payPeriodTimeCardList = _timeCardsMatrixRepo.GetTimeCardWeekTotalList(emp.EmployeeId, deptid, payperiodid, false);                   
+                    int payperiodid = Convert.ToInt32(TempData["PayperiodId"]);
+                    List<TimeCardWeekTotalCollectionVm> payPeriodTimeCardList = _timeCardsMatrixRepo.GetTimeCardWeekTotalList(emp.EmployeeId, deptid, payperiodid, false);
                     var payPeriodTotal = " 0.00";
                     if ((payPeriodTimeCardList != null) && (payPeriodTimeCardList.Count > 0))
                     {
@@ -552,8 +568,8 @@ namespace ExecViewHrk.WebUI.Controllers
                     {
                         Session["Epositionid"] = posList[0].EpositionId;
                     }
-                     result = new { posList = posList, payPeriodTotal = payPeriodTotal };
-                    
+                    result = new { posList = posList, payPeriodTotal = payPeriodTotal };
+
                 };
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -629,16 +645,14 @@ namespace ExecViewHrk.WebUI.Controllers
         public JsonResult ValidateLocationRange(int geofenceId, string latitude, string longitude)
         {
             bool isWithinRange = ValidateCurrentLocation(geofenceId, latitude, longitude);
-            if(isWithinRange == true)
+            if (isWithinRange == true)
             {
-                ViewData["disablePunchIn"] = true;
+                //ViewData["IsWithinRange"] = isWithinRange;
+                Session["IsWithinRange"] = isWithinRange;
             }
-            else
-            { ViewData["disablePunchIn"] = false; }
-
             return Json(new { isValid = isWithinRange }, JsonRequestBehavior.AllowGet);
         }
-        private bool ValidateCurrentLocation(int geofancyId,string latitude,string longitude)
+        private bool ValidateCurrentLocation(int geofancyId, string latitude, string longitude)
         {
             //int companyId = 0;
             //int.TryParse(Globals.gCompanyId, out companyId);
@@ -653,7 +667,7 @@ namespace ExecViewHrk.WebUI.Controllers
             {
                 GeofenceDM coordinates = _geoRepo.GeofenceDetailsById(geofancyId);
                 //var coordinates = bLEmployee.GetGeofenceCoordinateByEmpno(Globals.gLoginEmployeeNumber, companyId);
-                if (coordinates != null && coordinates.Id !=0)
+                if (coordinates != null && coordinates.Id != 0)
                 {
                     //foreach (var coordinate in coordinates)
                     //{
@@ -662,28 +676,28 @@ namespace ExecViewHrk.WebUI.Controllers
                     double.TryParse(longitude, out clLongitude);
                     //
                     double.TryParse(coordinates.latitude, out dblatitudevalue);
-                        double.TryParse(coordinates.longitude, out dblongitudevalue);
-                        var dblatitude = Math.Round(dblatitudevalue, 7);
-                        var dblongitude = Math.Round(dblongitudevalue, 7);
-                        var RadiusInDegrees = Convert.ToDouble(coordinates.Radius) * kilometer;
-                        var radiusInKilometers = RadiusInDegrees;
-                        Location dbLocation = new Location { Latitude = dblatitude, Longitude = dblongitude }; // Database coordinates
-                        Location currentLocation = new Location { Latitude = clLatitude, Longitude = clLongitude }; // Current location coordinates
-                        
-                       var _distance = CalculateDistanceBetweenCoordinates(dbLocation.Latitude, dbLocation.Longitude, currentLocation.Latitude, currentLocation.Longitude);
-                        bool isWithinRange = IsWithinRange(_distance, radiusInKilometers);
-                        if (isWithinRange)
-                        {
-                            return true;
-                        }
-                   // }
+                    double.TryParse(coordinates.longitude, out dblongitudevalue);
+                    var dblatitude = Math.Round(dblatitudevalue, 7);
+                    var dblongitude = Math.Round(dblongitudevalue, 7);
+                    var RadiusInDegrees = Convert.ToDouble(coordinates.Radius) * kilometer;
+                    var radiusInKilometers = RadiusInDegrees;
+                    Location dbLocation = new Location { Latitude = dblatitude, Longitude = dblongitude }; // Database coordinates
+                    Location currentLocation = new Location { Latitude = clLatitude, Longitude = clLongitude }; // Current location coordinates
+
+                    var _distance = CalculateDistanceBetweenCoordinates(dbLocation.Latitude, dbLocation.Longitude, currentLocation.Latitude, currentLocation.Longitude);
+                    bool isWithinRange = IsWithinRange(_distance, radiusInKilometers);
+                    if (isWithinRange)
+                    {
+                        return true;
+                    }
+                    // }
                     return resultvalue;
                 }
                 return true;
             }
             catch (Exception ex)
             {
-                
+
                 return true;
             }
         }
@@ -706,7 +720,7 @@ namespace ExecViewHrk.WebUI.Controllers
         {
             return distance <= range;
         }
-       
+
         public class Location
         {
             public Double Latitude { get; set; }

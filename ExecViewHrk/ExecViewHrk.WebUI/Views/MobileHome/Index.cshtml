@@ -229,6 +229,10 @@
             //    return true;
             //}
 
+        function loadPunchButtons() {
+            $("#ddlPosition").trigger("change");
+        }
+
         $("#ddlPosition").on("change", function () {
             var positionidnew = $("#ddlPosition").val();
             var positionId = positionidnew.split('-')[1];
@@ -301,6 +305,10 @@
 
         //ddlGeofenceName
 
+        function loadPunchButtons() {
+            $("#ddlPosition").trigger("change");
+        }
+
         $("#ddlGeofenceName").on("change", function () {
             var geofenceNameId = $("#ddlGeofenceName").val();
             var clsLatitude = $("#hdnLatitude").val();
@@ -318,7 +326,7 @@
                         showGeoError('Selected location is outside the allowed range.');
                         //$("#punchButtonsView").empty();
                     }
-                    else {
+                    else {                       
                         $('#locationMsg').html('');
                         hideGeoError();
                     }
@@ -330,9 +338,11 @@
         function showGeoError(message) {
             $('#geoAlertText').text(message);
             $('#locationMsg').fadeIn();
+            loadPunchButtons();
         }
 
         function hideGeoError() {
+            loadPunchButtons();
             $('#locationMsg').fadeOut();
         }
 
