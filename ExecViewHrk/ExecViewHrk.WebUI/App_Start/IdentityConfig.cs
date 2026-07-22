@@ -18,9 +18,13 @@ namespace ExecViewHrk.WebUI.App_Start
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
-                ExpireTimeSpan =  TimeSpan.FromMinutes(300),
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/Account/Login"),
+                // Sliding expiration keeps employees authenticated while they keep punching
+                SlidingExpiration = true,
+                ExpireTimeSpan = TimeSpan.FromDays(14),
+                CookieName = ".AspNet.ApplicationCookie",
+                CookieHttpOnly = true
             });
         }
     }

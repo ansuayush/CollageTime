@@ -2,7 +2,6 @@
 
 @using (Html.BeginForm("SaveGeofenceCoordinate", "Geofence", FormMethod.Post, new { id = "geofenceForm" }))
 {
-
     <div class="form-horizontal">
         <h4>Geofence Coordinate</h4>
         <hr />
@@ -13,120 +12,133 @@
             }
         </style>
         <div class="modal-content">
-            @*<div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Add Geofence Coordinate</h4>
-            </div>*@
             <div class="modal-body">
                 <div class="row g-3">
+                    @Html.HiddenFor(m => m.Coordinate)
+                    @Html.HiddenFor(m => m.PlaceName)
+                    @Html.HiddenFor(m => m.PlaceAddress)
 
                     <div class="col-md-6">
                         <label><span style="color:red">*</span>Geofence Name</label>
-                        @Html.TextBoxFor(m => m.GeofenceName, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.GeofenceName, new { @class = "form-control", data_required = "Y" })
                         @Html.ValidationMessageFor(x => x.GeofenceName)
                     </div>
 
                     <div class="col-md-3">
                         <label><span style="color:red">*</span>latitude</label>
-                        @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @readonly = "readonly" })
+                        @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @readonly = "readonly", data_required = "Y" })
                     </div>
 
                     <div class="col-md-3">
                         <label><span style="color:red">*</span>longitude</label>
-                        @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @readonly = "readonly" })
+                        @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @readonly = "readonly", data_required = "Y" })
                     </div>
 
                     <div class="col-md-4">
                         <label><span style="color:red">*</span>Radius(InFt)</label>
-                        @Html.TextBoxFor(m => m.Radius, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Radius, new { @class = "form-control", data_required = "Y", id = "geofenceRadius" })
                         @Html.ValidationMessageFor(x => x.Radius)
                     </div>
-
                 </div>
-
                 <hr />
-                @*<div class="row">
-                    <div class="col-sm-3">
-                        <div class="form-group ">
-                            <label><span style="color:red">*</span>Geofence Name</label>
-                            @Html.TextBoxFor(x => x.GeofenceName, new { @class = "form-control", data_required = "Y" })
-                            @Html.ValidationMessageFor(x => x.GeofenceName)
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="form-group ">
-                            <label><span style="color:red">*</span>latitude</label>
-                            @Html.TextBoxFor(x => x.latitude, new { @class = "form-control", data_required = "Y" })
-                            @Html.ValidationMessageFor(x => x.latitude)
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="form-group ">
-                            <label><span style="color:red">*</span>longitude</label>
-                            @Html.TextBoxFor(x => x.longitude, new { @class = "form-control", data_required = "Y" })
-                            @Html.ValidationMessageFor(x => x.longitude)
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="form-group ">
-                            <label><span style="color:red">*</span>Radius(InFt)</label>
-                            @Html.TextBoxFor(x => x.Radius, new { @class = "form-control", data_required = "Y" })
-                            @Html.ValidationMessageFor(x => x.Radius)
-                        </div>
-                    </div>
-                </div>*@
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default waves-effect m-r-15" id="btnClose" data-dismiss="modal">Close</button>
-                <button type="button" id="btnAddGeofenceName" class="btn btn-primary waves-effect waves-light" onclick="this.disabled = 'disabled';" ondblclick="return false">Save</button>
+                <button type="button" class="btn btn-default waves-effect m-r-15" id="btnClose">Close</button>
+                <button type="button" id="btnAddGeofenceName" class="btn btn-primary waves-effect waves-light">Save</button>
             </div>
         </div>
     </div>
 }
-@*<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>*@
 <script type="text/javascript">
-    $("#btnAddGeofenceName").click(function (e) {
+    $("#btnClose").off("click").on("click", function () {
+        if (typeof closePopup === "function") {
+            closePopup();
+        }
+    });
+
+    $("#geofenceRadius").off("change keyup").on("change keyup", function () {
+        var radiusFt = $(this).val();
+        if (typeof geofenceCircle !== "undefined" && geofenceCircle && radiusFt) {
+            geofenceCircle.setRadius(parseFloat(radiusFt) * 0.3048);
+            if (typeof geofenceMap !== "undefined" && geofenceMap) {
+                geofenceMap.fitBounds(geofenceCircle.getBounds());
+            }
+        }
+    });
+
+    $("#btnAddGeofenceName").off("click").on("click", function (e) {
         e.preventDefault();
+        var $btn = $(this);
         var form = $("#geofenceForm");
-        if (!ValidateForm("geofenceForm")) {
-            loading(false);
+
+        var name = $("#GeofenceName").val();
+        var lat = $("#latitude").val();
+        var lng = $("#longitude").val();
+        var radius = $("#geofenceRadius").val();
+
+        if (!name || !lat || !lng || !radius) {
+            if (typeof toastr !== "undefined") {
+                toastr.error("Please fill Geofence Name, latitude, longitude and Radius.");
+            } else {
+                alert("Please fill Geofence Name, latitude, longitude and Radius.");
+            }
             return;
         }
-        var appBaseUrl = $("#appBaseUrl").val();
-        var postData = form.serializeArray();
-        var formURL = appBaseUrl + "Geofence/SaveGeofenceCoordinate";
-        loading(true);
+
+        if (typeof ValidateForm === "function" && !ValidateForm("geofenceForm")) {
+            return;
+        }
+
+        var formURL = '@Url.Action("SaveGeofenceCoordinate", "Geofence")';
+        var postData = form.serialize();
+        $btn.prop("disabled", true);
+        if (typeof loading === "function") loading(true);
+
         $.ajax({
-            type: 'POST',
+            type: "POST",
             url: formURL,
             data: postData,
+            dataType: "json",
             success: function (data) {
-                if (data.succeed) {
-                    $("#btnClose").click();
-                    loading(false);
-                    toastr.success(formService.messages.saved);
-                    LoadContents("Index", "Geofence", postData);
+                if (data && data.succeed) {
+                    if (typeof toastr !== "undefined") {
+                        toastr.success("Geofence saved successfully");
+                    } else {
+                        alert("Geofence saved successfully");
+                    }
+                    if (typeof closePopup === "function") closePopup();
+                    // Refresh grid only — do not reload whole page (that clears map/circle)
+                    if (typeof BindGrid === "function") {
+                        BindGrid();
+                    }
+                    $btn.prop("disabled", false);
                 } else {
-                    toastr.error(data.Message);
-                    $("#btnClose").click();
-                    loading(false);
+                    if (typeof toastr !== "undefined") {
+                        toastr.error((data && data.Message) ? data.Message : "Save failed");
+                    } else {
+                        alert((data && data.Message) ? data.Message : "Save failed");
+                    }
+                    $btn.prop("disabled", false);
                 }
             },
             complete: function () {
-                $("#btnClose").click();
-                loading(false);
+                if (typeof loading === "function") loading(false);
             },
-            error: function (data) {
-                toastr.error(data.Message);
-                $("#btnClose").click();
-                loading(false);
+            error: function (xhr) {
+                var msg = "Save failed";
+                try {
+                    if (xhr.responseJSON && xhr.responseJSON.Message) {
+                        msg = xhr.responseJSON.Message;
+                    }
+                } catch (ex) { }
+                if (typeof toastr !== "undefined") {
+                    toastr.error(msg);
+                } else {
+                    alert(msg);
+                }
+                $btn.prop("disabled", false);
             },
-            async: false,
             cache: false
         });
-    });    
+    });
 </script>

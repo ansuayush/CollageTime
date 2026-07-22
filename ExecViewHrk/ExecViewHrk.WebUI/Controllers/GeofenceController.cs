@@ -8,6 +8,7 @@ using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Web.Mvc;
 
 namespace ExecViewHrk.WebUI.Controllers
@@ -28,35 +29,70 @@ namespace ExecViewHrk.WebUI.Controllers
         }
         public ActionResult _NewGeofenceCoordinate(string coordinates)
         {
+            if (string.IsNullOrWhiteSpace(coordinates))
+                return PartialView(new GeofenceVM());
+
             coordinates = Uri.UnescapeDataString(coordinates);
-            var quaryString = coordinates;
-            string[] words = quaryString.Split('~');
-            var position = words[0];
-            string[] coordinate = position.Split(',');
-            GeofenceVM obj = new GeofenceVM();
+            string[] words = coordinates.Split(new[] { '~' }, StringSplitOptions.None);
+            var model = new GeofenceVM();
+
+            // Preferred format from map: lat~lng~address~name
+            decimal latVal;
+            decimal lngVal;
+            if (words.Length >= 2
+                && !words[0].Contains("(")
+                && decimal.TryParse(words[0].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out latVal)
+                && decimal.TryParse(words[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out lngVal))
             {
-                obj.latitude = coordinate[0].Replace("(", "");
-                obj.longitude = coordinate[1].Replace(")", "");
+                model.latitude = words[0].Trim();
+                model.longitude = words[1].Trim();
+                model.PlaceAddress = words.Length > 2 ? words[2] : null;
+                model.PlaceName = words.Length > 3 ? words[3] : null;
             }
-            var model = obj;
+            else
+            {
+                // Legacy format: (lat, lng)~address~name
+                var position = words[0];
+                string[] coordinate = position.Split(',');
+                if (coordinate.Length >= 2)
+                {
+                    model.latitude = coordinate[0].Replace("(", "").Trim();
+                    model.longitude = coordinate[1].Replace(")", "").Trim();
+                }
+                model.PlaceAddress = words.Length > 1 ? words[1] : null;
+                model.PlaceName = words.Length > 2 ? words[2] : null;
+            }
+
+            model.Coordinate = string.IsNullOrEmpty(model.latitude) || string.IsNullOrEmpty(model.longitude)
+                ? null
+                : model.latitude + "," + model.longitude;
+            model.Radius = "1000";
+
             return PartialView(model);
-            //return PartialView("_NewGeofenceCoordinate", model);
-            //return PartialView("~/Views/Geofence/_NewGeofenceCoordinate.cshtml", model);
         }
         public ActionResult SaveGeofenceCoordinate(GeofenceVM model)
         {
-
             if (!ModelState.IsValid)
-                return Json(new { Message = "Something went wrong!", succeed = false }, JsonRequestBehavior.AllowGet);
-            GeofenceVM modelDM = Mapper.Map<GeofenceVM, GeofenceVM>(model);
+            {
+                // Keep save usable even if optional VM fields fail binding
+                ModelState.Clear();
+            }
+            if (model == null)
+                return Json(new { Message = "Invalid request.", succeed = false }, JsonRequestBehavior.AllowGet);
+
             try
             {
-                var GeofenceName = modelDM.GeofenceName;
-                var Coordinate = modelDM.Coordinate;
-                var latitude = modelDM.latitude;
-                var longitude = modelDM.longitude;
-                var Radius = modelDM.Radius;    
-        
+                var GeofenceName = (model.GeofenceName ?? "").Trim();
+                var latitude = (model.latitude ?? "").Trim();
+                var longitude = (model.longitude ?? "").Trim();
+                var Radius = (model.Radius ?? "").Trim();
+                var Coordinate = string.IsNullOrWhiteSpace(model.Coordinate)
+                    ? latitude + "," + longitude
+                    : model.Coordinate.Trim();
+
+                if (string.IsNullOrWhiteSpace(GeofenceName) || string.IsNullOrWhiteSpace(latitude) || string.IsNullOrWhiteSpace(longitude) || string.IsNullOrWhiteSpace(Radius))
+                    return Json(new { Message = "Geofence name, latitude, longitude and radius are required.", succeed = false }, JsonRequestBehavior.AllowGet);
+
                 if (_geoRepo.SaveGeofence(GeofenceName, Coordinate, latitude, longitude, Radius, User.Identity.Name))
                     return Json(new { Message = "Success", succeed = true }, JsonRequestBehavior.AllowGet);
                 else
@@ -64,7 +100,8 @@ namespace ExecViewHrk.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { Message = ex.InnerException.Message, succeed = false }, JsonRequestBehavior.AllowGet);
+                var message = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return Json(new { Message = message, succeed = false }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -75,8 +112,10 @@ namespace ExecViewHrk.WebUI.Controllers
         }
         public JsonResult GetDesignatedSupervisors()
         {
-            var data = _geoRepo.GetGeofenceDetails();
-            return Json(data, JsonRequestBehavior.AllowGet);
+            var data = _geoRepo.GetGeofenceDetails() ?? new List<GeofenceDM>();
+            var jsonResult = Json(data, JsonRequestBehavior.AllowGet);
+            jsonResult.MaxJsonLength = int.MaxValue;
+            return jsonResult;
         }
     }
 }

@@ -35,11 +35,11 @@ namespace ExecViewHrk.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            //throw new Exception("AccountController forced exception test");
+            // Keep employee (and other) sessions alive — do not sign out on Login GET.
+            // After first login, Punch In/Out should go straight to MobileHome.
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                Session.Abandon();
-                AuthManager.SignOut();
+                return RedirectAuthenticatedUser(returnUrl);
             }
             ViewBag.returnUrl = returnUrl;
             return View();
@@ -226,9 +226,13 @@ namespace ExecViewHrk.WebUI.Controllers
                     AdminDbContext adminDbContext = new AdminDbContext();
                     string connString = Convert.ToString(ConfigurationManager.ConnectionStrings["execView1"]);
                     ClientDbContext clientDbContext = new ClientDbContext(connString);
-                    //returnUrl = "/HrkAdmin";
-                    //returnUrl = "/EmployeeHome";
-                    if (DetectBrowserCapabilities())
+
+                    // Prefer an explicit MobileHome return URL; otherwise route by device.
+                    if (!string.IsNullOrEmpty(returnUrl) && returnUrl.IndexOf("MobileHome", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // keep MobileHome returnUrl
+                    }
+                    else if (DetectBrowserCapabilities())
                         returnUrl = "/MobileHome";
                     else
                         returnUrl = "/HrkAdmin/Index";
@@ -242,19 +246,24 @@ namespace ExecViewHrk.WebUI.Controllers
 
                     if (!CanAccessDatabase(adminDbContext, databaseName, ref clientConnString))
                         return View();
-                    
 
                     _identityClaimsList.Add(new Claim(SessionStateKeys.CLIENT_DB_CONNECT_STRING.ToString(), clientConnString));
                     _identityClaimsList.Add(new Claim(SessionStateKeys.CLIENT_ADMIN_EMPLOYER_ID.ToString(), userInDb.EmployerId.ToString()));
                     _identityClaimsList.Add(new Claim(SessionStateKeys.SELECTED_CLIENT_ID.ToString(), userInDb.EmployerId.ToString()));
                     _identityClaimsList.Add(new Claim(SessionStateKeys.EMPLOYEE_TIME_CARD_TYPE_CODE.ToString(), Emp_TimeCardsType(clientConnString, user.UserName)));
 
-                    _claimsIdentity.AddClaims(_identityClaimsList);
-
-                    AuthManager.SignIn(new AuthenticationProperties { IsPersistent = false }, _claimsIdentity);
-
+                    // Add person claim BEFORE SignIn so it is stored in the auth cookie
                     if (!SetLoginPersonId(loginModel.Name, ref _identityClaimsList))
                         return View();
+
+                    _claimsIdentity.AddClaims(_identityClaimsList);
+
+                    // Persistent cookie so employee stays authenticated for later Punch In/Out
+                    AuthManager.SignIn(new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14)
+                    }, _claimsIdentity);
                 }
                 else if (userRoles.Contains("ClientManagers"))
                 {
@@ -490,10 +499,12 @@ namespace ExecViewHrk.WebUI.Controllers
         [Authorize]
         public ActionResult Logout()
         {
-            //Session.Clear();
+            bool isEmployee = User.IsInRole("ClientEmployees");
             Session.Abandon();
-            AuthManager.SignOut();
+            AuthManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
 
+            if (isEmployee)
+                return RedirectToAction("Login", "Account");
 
             return RedirectToAction("Index", "Home");
         }
@@ -502,9 +513,33 @@ namespace ExecViewHrk.WebUI.Controllers
         public ActionResult LogoutSessionExpired()
         {
             Session.Abandon();
-            AuthManager.SignOut();
+            AuthManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             TempData["message"] = "Your session has expired ";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
+        }
+
+        /// <summary>
+        /// Routes an already-authenticated user to the correct home (skip login form).
+        /// </summary>
+        private ActionResult RedirectAuthenticatedUser(string returnUrl)
+        {
+            if (User.IsInRole("ClientEmployees"))
+            {
+                if (!string.IsNullOrEmpty(returnUrl)
+                    && returnUrl.IndexOf("MobileHome", StringComparison.OrdinalIgnoreCase) >= 0
+                    && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+                if (DetectBrowserCapabilities())
+                    return RedirectToAction("Index", "MobileHome");
+                return RedirectToAction("Index", "HrkAdmin");
+            }
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+
+            return RedirectToAction("Index", "HrkAdmin");
         }
 
         private IAuthenticationManager AuthManager
