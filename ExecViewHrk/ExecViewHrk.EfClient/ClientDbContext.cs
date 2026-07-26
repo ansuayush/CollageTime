@@ -94,6 +94,7 @@ namespace ExecViewHrk.EfClient
         public virtual DbSet<EarningsCode> EarningsCodes { get; set; }
         public virtual DbSet<EmployeeAllocation> EmployeeAllocations { get; set; }
         public virtual DbSet<EmployeeI9Documents> EmployeeI9Documents { get; set; }
+        public virtual DbSet<EmployeeDocument> EmployeeDocuments { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<EmployeeActuals> EmployeeActuals { get; set; }
         //public virtual DbSet<hrBUSINESSLEVELS> hrBUSINESSLEVELS { get; set; }
@@ -1107,6 +1108,24 @@ namespace ExecViewHrk.EfClient
             modelBuilder.Entity<EmployeeI9Documents>()
                 .Property(e => e.EnteredBy)
                 .IsUnicode(false);
+
+            modelBuilder.Entity<EmployeeDocument>()
+                .Property(e => e.FileName)
+                .IsUnicode(true);
+
+            modelBuilder.Entity<EmployeeDocument>()
+                .Property(e => e.FilePath)
+                .IsUnicode(true);
+
+            modelBuilder.Entity<EmployeeDocument>()
+                .Property(e => e.UploadedBy)
+                .IsUnicode(true);
+
+            modelBuilder.Entity<Employee>()
+                .HasMany(e => e.EmployeeDocuments)
+                .WithRequired(e => e.Employee)
+                .HasForeignKey(e => e.EmployeeId)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Employee>()
                 .Property(e => e.CompanyCode)

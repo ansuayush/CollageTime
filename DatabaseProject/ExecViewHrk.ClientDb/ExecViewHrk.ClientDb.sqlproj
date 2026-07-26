@@ -162,6 +162,7 @@
     <Build Include="dbo\Tables\PersonEducations.sql" />
     <Build Include="dbo\Tables\PositionFundingSources.sql" />
     <Build Include="dbo\Tables\EmployeeI9Documents.sql" />
+    <Build Include="dbo\Tables\EmployeeDocuments.sql" />
     <Build Include="dbo\Tables\PositionFundingSourceHistories.sql" />
     <Build Include="dbo\Tables\DdlTrainingCourses.sql" />
     <Build Include="dbo\Tables\DdlPayGroups.sql" />

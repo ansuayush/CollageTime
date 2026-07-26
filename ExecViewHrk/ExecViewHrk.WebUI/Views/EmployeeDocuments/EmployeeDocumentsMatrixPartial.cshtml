@@ -1,0 +1,250 @@
+@{
+    Layout = null;
+    bool isSelfService = ViewBag.IsSelfService == true;
+    var initialDocs = Model as IEnumerable<ExecViewHrk.WebUI.Models.EmployeeDocumentVm> ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.EmployeeDocumentVm>();
+    var currentEmployee = ViewBag.CurrentEmployee as ExecViewHrk.WebUI.Models.EmployeeDocumentSearchResultVm;
+    string identityMessage = ViewBag.IdentityMessage as string;
+    bool usesSelectedPerson = ViewBag.UsesSelectedPerson == true;
+    bool canSignAsAdmin = User.IsInRole("HrkAdministrators")
+                          || User.IsInRole("HrkAccountManagers")
+                          || User.IsInRole("ClientAdministrators")
+                          || User.IsInRole("ClientAdminsMultipleCompanies")
+                          || User.IsInRole("ClientManagers");
+    bool hasEmployee = currentEmployee != null && currentEmployee.EmployeeId > 0;
+    string employeeLabel = hasEmployee
+        ? (currentEmployee.PersonName
+           + " · Emp #" + currentEmployee.EmploymentNumber
+           + (string.IsNullOrEmpty(currentEmployee.FileNumber) ? "" : (" · File " + currentEmployee.FileNumber))
+           + (string.IsNullOrEmpty(currentEmployee.CompanyCode) ? "" : (" · " + currentEmployee.CompanyCode)))
+        : "";
+}
+<div class="container-fluid portal-page employee-docs" id="employeeDocumentsRoot"
+     data-selfservice="@(isSelfService ? "1" : "0")"
+     data-can-sign-admin="@(canSignAsAdmin ? "1" : "0")"
+     data-can-sign-employee="1"
+     data-can-sign="1"
+     data-employee-id="@(hasEmployee ? currentEmployee.EmployeeId.ToString() : "")"
+     data-employee-name="@(hasEmployee ? currentEmployee.PersonName : "")"
+     data-list-url="@Url.Action("GetDocuments", "EmployeeDocuments")"
+     data-upload-url="@Url.Action("UploadAndSave", "EmployeeDocuments")"
+     data-delete-url="@Url.Action("DeleteDocument", "EmployeeDocuments")"
+     data-download-url="@Url.Action("Download", "EmployeeDocuments")"
+     data-sign-url="@Url.Action("SignDocument", "EmployeeDocuments")">
+    <div class="main-header portal-page-heading p-0">
+        <div class="portal-page-heading__title">
+            <h4>@(isSelfService ? "My Documents" : "Employee Documents")</h4>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(identityMessage))
+    {
+        <div class="alert alert-warning">@identityMessage</div>
+    }
+    else if (hasEmployee)
+    {
+        <div class="card employee-docs__panel">
+            <div class="card-block">
+                <p class="employee-docs__hint">
+                    @(usesSelectedPerson
+                        ? "Documents for the employee selected on Personal Profile. Change the person there, then reopen Documents to switch."
+                        : "Documents for your employee login. Optional signing is available.")
+                    For TWAIN scanning, use the Windows helper <strong>EmployeeDocumentScannerHelper</strong>.
+                </p>
+
+                <div class="employee-docs__identity">
+                    <span class="employee-docs__identity-label">@(usesSelectedPerson ? "Selected employee" : "Employee (from login)")</span>
+                    <div class="employee-docs__selected" id="docSelectedEmployee">@employeeLabel</div>
+                    <input type="hidden" id="selectedEmployeeId" value="@currentEmployee.EmployeeId" />
+                </div>
+
+                <div class="row m-t-15">
+                    <div class="col-md-6">
+                        <label class="f-w-600">1. Document name <span style="color:#b42318">*</span></label>
+                        <input type="text" id="docTitle" class="form-control" placeholder="e.g. Offer Letter.pdf" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="f-w-600">2. Add scanned pages or PDF</label>
+                        <input type="file" id="docPageFiles" class="form-control" accept="image/*,.pdf,application/pdf" multiple />
+                    </div>
+                </div>
+
+                <div class="m-t-15">
+                    <label class="f-w-600">3. Preview pages</label>
+                    <div id="docPreview" class="employee-docs__preview"></div>
+                </div>
+
+                <div class="m-t-15 employee-docs__optional-sign">
+                    <label class="f-w-600">
+                        <input type="checkbox" id="docSignAfterSave" />
+                        Optional: attach signature to document (not required)
+                    </label>
+                    <p class="text-muted m-t-5" style="font-size:12px;margin-bottom:0;">
+                        Optional — not required. When checked, upload a signature image; it is stamped at the <strong>bottom of the last page</strong> (not a new page).
+                    </p>
+                    <div id="docSignAfterSaveFields" class="m-t-10" style="display:none;">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Sign as</label>
+                                <select id="docUploadSignerRole" class="form-control">
+                                    @if (canSignAsAdmin)
+                                    {
+                                        <option value="Admin">Admin</option>
+                                    }
+                                    <option value="Employee">Employee</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label>Typed signature name <span class="text-muted">(optional)</span></label>
+                                <input type="text" id="docUploadSignatureName" class="form-control" placeholder="Full name (optional if you upload an image)" />
+                            </div>
+                        </div>
+                        <div class="m-t-10">
+                            <label>Upload signature image <span class="text-muted">(optional — attached at end of PDF)</span></label>
+                            <input type="file" id="docSignatureFile" class="form-control" accept="image/png,image/jpeg,image/jpg,image/gif,.png,.jpg,.jpeg" />
+                            <div id="docSignaturePreview" class="employee-docs__sig-preview m-t-8" style="display:none;">
+                                <img id="docSignaturePreviewImg" alt="Signature preview" />
+                                <button type="button" id="btnClearSignatureFile" class="btn btn-default btn-sm m-t-5">Remove signature image</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="m-t-15 text-right">
+                    <button type="button" id="btnClearPages" class="btn btn-default">Clear pages</button>
+                    <button type="button" id="btnSaveDocument" class="btn btn-primary">4. Save as PDF &amp; upload</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card employee-docs__panel m-t-15">
+        <div class="card-block">
+            <div class="portal-section-bar">
+                <h4>@(isSelfService ? "Your uploaded documents" : "Selected employee documents")</h4>
+                @if (hasEmployee)
+                {
+                    <button type="button" id="btnRefreshDocs" class="btn btn-default btn-sm">Refresh</button>
+                }
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="employeeDocsTable">
+                    <thead>
+                        <tr>
+                            <th>File name</th>
+                            <th>Uploaded by</th>
+                            <th>Uploaded date</th>
+                            <th>Signature</th>
+                            <th style="width:280px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeDocsBody">
+                        @foreach (var d in initialDocs)
+                        {
+                            <tr data-id="@d.DocumentId">
+                                <td>@d.FileName</td>
+                                <td>@d.UploadedBy</td>
+                                <td>@d.UploadedDate.ToString("MM/dd/yyyy HH:mm")</td>
+                                <td>
+                                    @if (d.IsSigned)
+                                    {
+                                        <span class="employee-docs__signed">
+                                            Signed (@(d.SignerRole)) — @(d.SignatureName)
+                                            @if (d.SignedDate.HasValue)
+                                            {
+                                                <text> · @d.SignedDate.Value.ToString("MM/dd/yyyy")</text>
+                                            }
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not signed</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-default" href="@Url.Action("Download", "EmployeeDocuments", new { documentId = d.DocumentId })">View / Download</a>
+                                    @if (!d.IsSigned)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-primary btn-sign-doc" data-id="@d.DocumentId">Sign</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div id="employeeDocsEmpty" class="text-muted" style="@(initialDocs.Any() ? "display:none" : "")">No documents yet.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="docSignModal" class="employee-docs__modal" style="display:none;" aria-hidden="true">
+        <div class="employee-docs__modal-backdrop"></div>
+        <div class="employee-docs__modal-dialog" role="dialog" aria-labelledby="docSignModalTitle">
+            <h4 id="docSignModalTitle">Sign document</h4>
+            <p class="text-muted">Optional. Provide a typed name and/or upload/draw a signature image. Signature image is stored with the document.</p>
+            <input type="hidden" id="docSignDocumentId" value="" />
+            <div class="form-group">
+                <label>Sign as</label>
+                <select id="docSignRole" class="form-control">
+                    @if (canSignAsAdmin)
+                    {
+                        <option value="Admin">Admin</option>
+                    }
+                    <option value="Employee">Employee</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Typed signature name <span class="text-muted">(optional if image provided)</span></label>
+                <input type="text" id="docSignName" class="form-control" placeholder="Full name" />
+            </div>
+            <div class="form-group">
+                <label>Upload signature image (optional)</label>
+                <input type="file" id="docSignFile" class="form-control" accept="image/png,image/jpeg,image/jpg,image/gif,.png,.jpg,.jpeg" />
+            </div>
+            <div class="form-group">
+                <label>Draw signature (optional)</label>
+                <canvas id="docSignCanvas" width="420" height="140" class="employee-docs__sign-canvas"></canvas>
+                <div class="m-t-5">
+                    <button type="button" id="btnClearSignCanvas" class="btn btn-default btn-sm">Clear pad</button>
+                </div>
+            </div>
+            <div class="text-right m-t-15">
+                <button type="button" id="btnCancelSign" class="btn btn-default">Cancel</button>
+                <button type="button" id="btnConfirmSign" class="btn btn-primary">Sign document</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .employee-docs__panel { border: 1px solid #e4e7eb; border-radius: 10px; background: #fff; }
+    .employee-docs__hint { color: #5c6773; font-size: 13px; margin-bottom: 16px; }
+    .employee-docs__identity { padding: 12px 14px; background: #f3f7f4; border: 1px solid #d7e5db; border-radius: 8px; }
+    .employee-docs__identity-label { display: block; font-size: 12px; color: #5c6773; margin-bottom: 4px; }
+    .employee-docs__selected { font-weight: 600; color: #1c232b; }
+    .employee-docs__preview { display: flex; flex-wrap: wrap; gap: 10px; min-height: 80px; padding: 10px; border: 1px dashed #cfd6dd; border-radius: 8px; background: #f7f8fa; }
+    .employee-docs__thumb { width: 140px; background: #fff; border: 1px solid #e4e7eb; border-radius: 6px; padding: 6px; text-align: center; }
+    .employee-docs__thumb img { max-width: 100%; max-height: 120px; display: block; margin: 0 auto 4px; }
+    .employee-docs__thumb span { font-size: 11px; color: #5c6773; word-break: break-all; display: block; }
+    .employee-docs__thumb-actions { display: flex; gap: 4px; justify-content: center; margin-top: 4px; }
+    .employee-docs__thumb-actions button { padding: 2px 8px; font-size: 12px; line-height: 1.4; }
+    .employee-docs__signed { color: #1b6e3a; font-weight: 600; }
+    .employee-docs__sig-preview img { max-height: 80px; max-width: 240px; border: 1px solid #e4e7eb; border-radius: 6px; background: #fff; padding: 4px; }
+    .employee-docs__sign-canvas { display: block; width: 100%; max-width: 420px; height: 140px; border: 1px solid #cfd6dd; border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; }
+    .employee-docs__modal { position: fixed; inset: 0; z-index: 2000; }
+    .employee-docs__modal-backdrop { position: absolute; inset: 0; background: rgba(28, 35, 43, 0.45); }
+    .employee-docs__modal-dialog { position: relative; max-width: 480px; margin: 8vh auto; background: #fff; border-radius: 12px; padding: 20px 22px; box-shadow: 0 12px 40px rgba(0,0,0,.18); }
+</style>
+
+<script src="@Url.Content("~/Scripts/application/EmployeeDocumentsMatrixPartial.js")"></script>
+<script type="text/javascript">
+    (function () {
+        function start() {
+            if (window.EmployeeDocumentsUI) {
+                EmployeeDocumentsUI.initFromDom();
+            }
+        }
+        start();
+        setTimeout(start, 50);
+        setTimeout(start, 300);
+    })();
+</script>

@@ -42,6 +42,7 @@
                                                         <li class="col-xs-12 col-sm-12">
                                                             <ul>
                                                                 <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PersonEmployeesMatrixPartial", "PersonEmployees")'><i class="icon-arrow-right"></i> Employee</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("EmployeeDocumentsMatrixPartial", "EmployeeDocuments")'><i class="icon-arrow-right"></i> Documents / Scan</a></li>
                                                                 <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PersonRelationshipsList", "PersonRelationships")'><i class="icon-arrow-right"></i> Relationship</a></li>
                                                                 <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("E_PositionsMatrixPartial", "E_Positions")'><i class="icon-arrow-right"></i> Employee Position</a></li>
                                                             </ul>
@@ -564,6 +565,7 @@
                                                             <li class="col-xs-12 col-sm-12">
                                                                 <ul>
                                                                     <li>@Html.ActionLink("Employment Info", "ActionMatrix", "EmploymentInfo", new { RequestType = "IsSelfService" }, null)</li>
+                                                                    <li><a href="javascript:void(0)" onclick='LoadMenu("MyDocumentsPartial", "EmployeeDocuments")'>My Documents</a></li>
                                                                 </ul>
                                                             </li>
                                                         </ul>

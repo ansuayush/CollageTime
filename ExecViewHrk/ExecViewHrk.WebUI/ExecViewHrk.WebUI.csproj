@@ -109,6 +109,10 @@
       <HintPath>..\..\..\ExecViewHrk\ExecViewHrk.WebUI\bin\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PdfSharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\ExecViewHrk\ExecViewHrk.WebUI\bin\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -1449,6 +1453,7 @@
     <Content Include="Scripts\application\DesignateSupervisor.js" />
     <Content Include="Scripts\application\EarningsCodes.js" />
     <Content Include="Scripts\application\EmployeeI9DocumentsMatrixPartial.js" />
+    <Content Include="Scripts\application\EmployeeDocumentsMatrixPartial.js" />
     <Content Include="Scripts\application\EmployeeStatus.js" />
     <Content Include="Scripts\application\EvHelpers.js" />
     <Content Include="Scripts\application\E_PositionsMatrixPartial.js" />
@@ -1994,6 +1999,7 @@
     <Compile Include="Controllers\EmployeeForecastController.cs" />
     <Compile Include="Controllers\EmployeeHomeController.cs" />
     <Compile Include="Controllers\EmployeeI9DocumentsController.cs" />
+    <Compile Include="Controllers\EmployeeDocumentsController.cs" />
     <Compile Include="Controllers\EmploymentInfoController.cs" />
     <Compile Include="Controllers\E_PositionsController.cs" />
     <Compile Include="Controllers\FinancialAidCustomReportController.cs" />
@@ -2141,6 +2147,9 @@
     <Compile Include="Models\PersonEmergencyBasicDetail.cs" />
     <Compile Include="Models\PersonEmergencyContactVm.cs" />
     <Compile Include="Models\EmployeeI9DocumentVm.cs" />
+    <Compile Include="Models\EmployeeDocumentVm.cs" />
+    <Compile Include="Helpers\SimplePdfBuilder.cs" />
+    <Compile Include="Helpers\PdfSignatureHelper.cs" />
     <Compile Include="Models\ExternalUserClientAssignmentViewModel.cs" />
     <Compile Include="Models\EmployerCompanyAssignmentViewModel.cs" />
     <Compile Include="Models\FormWorkflowFieldPermissionVm.cs" />
@@ -2385,6 +2394,9 @@
     <Content Include="Views\DdlSkills\DdlSkillsPartial.cshtml" />
     <Content Include="Views\PersonTests\PersonTestsList.cshtml" />
     <Content Include="Views\EmployeeI9Documents\EmployeeI9DocumentsMatrixPartial.cshtml" />
+    <Content Include="Views\EmployeeDocuments\EmployeeDocumentsMatrixPartial.cshtml" />
+    <Content Include="App_Data\Sql\EmployeeDocuments_Install.sql" />
+    <Content Include="App_Data\EmployeeDocuments\placeholder.txt" />
     <Content Include="Views\DdlTrainingCourses\DdlTrainingCoursesListMaintenance.cshtml" />
     <Content Include="Views\DdlTrainingCourses\DdlTrainingCoursesPartial.cshtml" />
     <Content Include="Views\PersonTrainings\PersonTrainingsMatrixPartial.cshtml" />

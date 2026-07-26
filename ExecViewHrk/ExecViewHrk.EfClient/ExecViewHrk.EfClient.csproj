@@ -145,6 +145,7 @@
     <Compile Include="EmployeeAllocation.cs" />
     <Compile Include="EmployeeClass.cs" />
     <Compile Include="EmployeeI9Documents.cs" />
+    <Compile Include="EmployeeDocument.cs" />
     <Compile Include="EmployeeRetroHours.cs" />
     <Compile Include="employeeSalaryComponents.cs" />
     <Compile Include="EmployeesAllowedTaken.cs" />

@@ -1,0 +1,1 @@
+Employee scanned PDF files are stored in subfolders named by EmployeeId.

@@ -14,6 +14,7 @@ namespace ExecViewHrk.EfClient
             E_Positions = new HashSet<E_Positions>();
             EmployeeAllocations = new HashSet<EmployeeAllocation>();
             EmployeeI9Documents = new HashSet<EmployeeI9Documents>();
+            EmployeeDocuments = new HashSet<EmployeeDocument>();
             TimeCardApprovals = new HashSet<TimeCardApproval>();
             TimeCards = new HashSet<TimeCard>();
             TimeOffRequests = new HashSet<TimeOffRequest>();
@@ -115,6 +116,9 @@ namespace ExecViewHrk.EfClient
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EmployeeI9Documents> EmployeeI9Documents { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EmployeeDocument> EmployeeDocuments { get; set; }
 
         public virtual Person Person { get; set; }
 

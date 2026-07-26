@@ -1,33 +1,22 @@
-﻿
-@{
-    ViewBag.Title = "Index";
+﻿@{
+    ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-<div class="container-fluid p-b-0">
+<div class="portal-hero container-fluid p-b-0">
     <div class="row">
         <div class="col-md-12 p-0">
-            <img src="~/assets/images/backimge.jpg" style="width:100%">
+            <div class="portal-hero__media">
+                <img src="~/assets/images/hr-time-hero.jpg" alt="HR and Time" />
+                <div class="portal-hero__veil"></div>
+            </div>
         </div>
         <div class="col-md-12 p-0">
-            <div class="card card-inner-shadow m-b-0">
-                <div class="card-header f-w-600 f-16 txt-theme text-center" style="font-size: 30px !important; color: #282e3c !important;">
-                    Welcome to HR Next
-                </div>
-                @*<div class="card-block global-cards">
-                        <br /><br /><br /><br /><br /><br />
-                    </div>*@
+            <div class="portal-welcome">
+                <p class="portal-welcome__brand">HRNest</p>
+                <h1 class="portal-welcome__title">A clearer place to start</h1>
+                <p class="portal-welcome__lead">Choose a product from the menu above to continue.</p>
             </div>
         </div>
     </div>
 </div>
-
-
-
-@*@if (TempData["message"] != null)
-    {
-        <div class="alert alert-success">@TempData["message"]</div>
-    }*@
-
-

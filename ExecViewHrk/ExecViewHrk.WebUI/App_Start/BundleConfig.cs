@@ -37,6 +37,7 @@ namespace ExecViewHrk.WebUI.App_Start
                       "~/Scripts/application/PersonSkillsMatrixPartial.js",
                       "~/Scripts/application/PersonTestsMatrixPartial.js",
                       "~/Scripts/application/EmployeeI9DocumentsMatrixPartial.js",
+                      "~/Scripts/application/EmployeeDocumentsMatrixPartial.js",
                       "~/Scripts/application/PersonTrainingsMatrixPartial.js",
                       "~/Scripts/application/PersonEducationsMatrixPartial.js",
                       "~/Scripts/application/E_PositionsMatrixPartial.js",
