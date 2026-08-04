@@ -1,0 +1,138 @@
+@{
+    Layout = null;
+    var list = Model as IEnumerable<ExecViewHrk.WebUI.Models.RecruitingQuestionVm> ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.RecruitingQuestionVm>();
+}
+<div class="container-fluid" id="recruitingQuestionsRoot"
+     data-save-url="@Url.Action("SaveQuestion", "RecruitingSetup")"
+     data-delete-url="@Url.Action("DeleteQuestion", "RecruitingSetup")">
+    <div class="main-header p-0"><h4>Recruiting Question Setup</h4></div>
+    <div class="m-b-10">
+        <button type="button" class="btn btn-primary" id="btnAddQ">Add Question</button>
+        <button type="button" class="btn btn-default" onclick='LoadMenu("RequisitionDashboardPartial", "Requisition")'>Back to Dashboard</button>
+    </div>
+    <table class="table table-bordered table-striped" id="qTable">
+        <thead>
+            <tr>
+                <th style="width:80px;"></th>
+                <th>Question</th>
+                <th>Type</th>
+                <th>Wizard Page</th>
+                <th>Order</th>
+                <th>Required</th>
+                <th>Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var q in list)
+            {
+                <tr data-id="@q.QuestionId"
+                    data-text="@q.QuestionText"
+                    data-type="@q.QuestionType"
+                    data-choices="@(q.Choices ?? "")"
+                    data-page="@q.WizardPage"
+                    data-order="@q.SortOrder"
+                    data-required="@(q.IsRequired ? "1" : "0")"
+                    data-active="@(q.IsActive ? "1" : "0")">
+                    <td>
+                        <a href="javascript:void(0)" class="btn-edit-q"><i class="fa fa-pencil txt-primary"></i></a>
+                        <a href="javascript:void(0)" class="btn-del-q m-l-5"><i class="fa fa-trash-o txt-danger"></i></a>
+                    </td>
+                    <td>@q.QuestionText</td>
+                    <td>@q.QuestionType</td>
+                    <td>@q.WizardPage</td>
+                    <td>@q.SortOrder</td>
+                    <td>@(q.IsRequired ? "Yes" : "No")</td>
+                    <td>@(q.IsActive ? "Yes" : "No")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div id="qEdit" class="card" style="display:none;">
+        <div class="card-block">
+            <h5 id="qEditTitle">Add Question</h5>
+            <input type="hidden" id="qId" value="0" />
+            <div class="row">
+                <div class="col-md-8">
+                    <label>Question text</label>
+                    <input type="text" id="qText" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label>Type</label>
+                    <select id="qType" class="form-control">
+                        <option>Text</option>
+                        <option>YesNo</option>
+                        <option>Choice</option>
+                        <option>TextArea</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row m-t-10">
+                <div class="col-md-6">
+                    <label>Choices (comma-separated, for Choice type)</label>
+                    <input type="text" id="qChoices" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>Wizard page (2-5)</label>
+                    <input type="number" id="qPage" class="form-control" min="2" max="5" value="2" />
+                </div>
+                <div class="col-md-2">
+                    <label>Sort order</label>
+                    <input type="number" id="qOrder" class="form-control" value="0" />
+                </div>
+                <div class="col-md-1">
+                    <label>Required</label>
+                    <input type="checkbox" id="qRequired" checked />
+                </div>
+                <div class="col-md-1">
+                    <label>Active</label>
+                    <input type="checkbox" id="qActive" checked />
+                </div>
+            </div>
+            <div class="m-t-15">
+                <button type="button" class="btn btn-primary" id="btnSaveQ">Save</button>
+                <button type="button" class="btn btn-default" id="btnCancelQ">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var $r = $("#recruitingQuestionsRoot");
+    function reload() { LoadMenu("QuestionsPartial", "RecruitingSetup"); }
+    $("#btnAddQ").click(function () {
+        $("#qId").val(0); $("#qText").val(""); $("#qType").val("Text"); $("#qChoices").val("");
+        $("#qPage").val(2); $("#qOrder").val(0); $("#qRequired").prop("checked", true); $("#qActive").prop("checked", true);
+        $("#qEditTitle").text("Add Question"); $("#qEdit").show();
+    });
+    $("#btnCancelQ").click(function () { $("#qEdit").hide(); });
+    $r.on("click", ".btn-edit-q", function () {
+        var $tr = $(this).closest("tr");
+        $("#qId").val($tr.data("id")); $("#qText").val($tr.data("text")); $("#qType").val($tr.data("type"));
+        $("#qChoices").val($tr.data("choices")); $("#qPage").val($tr.data("page")); $("#qOrder").val($tr.data("order"));
+        $("#qRequired").prop("checked", $tr.data("required") == "1" || $tr.data("required") == 1);
+        $("#qActive").prop("checked", $tr.data("active") == "1" || $tr.data("active") == 1);
+        $("#qEditTitle").text("Edit Question"); $("#qEdit").show();
+    });
+    $r.on("click", ".btn-del-q", function () {
+        if (!confirm("Delete question?")) return;
+        $.post($r.data("delete-url"), { id: $(this).closest("tr").data("id") }, function (res) {
+            if (!res.success) alert(res.message); else reload();
+        });
+    });
+    $("#btnSaveQ").click(function () {
+        $.post($r.data("save-url"), {
+            QuestionId: parseInt($("#qId").val(), 10) || 0,
+            QuestionText: $("#qText").val(),
+            QuestionType: $("#qType").val(),
+            Choices: $("#qChoices").val(),
+            WizardPage: parseInt($("#qPage").val(), 10) || 2,
+            SortOrder: parseInt($("#qOrder").val(), 10) || 0,
+            IsRequired: $("#qRequired").is(":checked"),
+            IsActive: $("#qActive").is(":checked")
+        }, function (res) {
+            if (!res.success) alert(res.message); else reload();
+        });
+    });
+})();
+</script>

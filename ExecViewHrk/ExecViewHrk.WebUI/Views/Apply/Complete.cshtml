@@ -1,0 +1,9 @@
+@{
+    Layout = "~/Views/Shared/_ApplyLayout.cshtml";
+    ViewBag.Title = "Application Submitted";
+}
+<div class="apply-card">
+    <h4>Thank you</h4>
+    <p>Your application has been submitted. HR can see it on the requisition dashboard.</p>
+    <a class="btn btn-primary" href="@Url.Action("Index", "Apply", new { employerId = ViewBag.EmployerId })">Back to open jobs</a>
+</div>

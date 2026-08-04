@@ -14,6 +14,13 @@ namespace ExecViewHrk.WebUI
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "ApplyCareers",
+                url: "Apply/{action}",
+                defaults: new { controller = "Apply", action = "Index" },
+                constraints: new { controller = "Apply" }
+            );
+
+            routes.MapRoute(
                 name: "SelfService",
                 url: "{controller}/{action}/{RequestType}"
                 //defaults: new { controller = "Person", action = "Index", isSelfService = UrlParameter.Optional }

@@ -1,0 +1,121 @@
+@{
+    Layout = null;
+    var jobs = Model as IEnumerable<ExecViewHrk.WebUI.Models.JobPortalOpenJobVm> ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.JobPortalOpenJobVm>();
+    var myApps = ViewBag.MyApplications as IEnumerable<ExecViewHrk.WebUI.Models.JobApplicationListVm> ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.JobApplicationListVm>();
+    string identityMessage = ViewBag.IdentityMessage as string;
+    int employerId = ViewBag.EmployerId != null ? (int)ViewBag.EmployerId : 0;
+}
+<div class="container-fluid portal-page" id="jobPortalRoot"
+     data-start-url="@ViewBag.StartUrl"
+     data-employer="@employerId">
+    <div class="main-header portal-page-heading p-0">
+        <div class="portal-page-heading__title">
+            <h4>Job Portal</h4>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(identityMessage))
+    {
+        <div class="alert alert-warning">@identityMessage</div>
+    }
+    else
+    {
+        <p class="text-muted">Open positions for your company. Apply to start or continue your application wizard.</p>
+
+        <div class="card">
+            <div class="card-block">
+                <h5>Open positions</h5>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Division</th>
+                            <th>Department</th>
+                            <th>Req #</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!jobs.Any())
+                        {
+                            <tr><td colspan="6">No open published positions.</td></tr>
+                        }
+                        @foreach (var j in jobs)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@j.PositionTitle</strong>
+                                    @if (!string.IsNullOrEmpty(j.Description))
+                                    {
+                                        <div class="text-muted" style="font-size:12px;">@(j.Description.Length > 120 ? j.Description.Substring(0, 120) + "…" : j.Description)</div>
+                                    }
+                                </td>
+                                <td>@j.Division</td>
+                                <td>@j.Department</td>
+                                <td>@j.RequisitionNumber</td>
+                                <td>@(j.AlreadyApplied ? j.ApplicationStatus : "Open")</td>
+                                <td>
+                                    @if (j.AlreadyApplied && string.Equals(j.ApplicationStatus, "Submitted", System.StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="text-success">Submitted</span>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-primary btn-sm btn-apply" data-req="@j.RequisitionId">
+                                            @(j.AlreadyApplied ? "Continue" : "Apply")
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card m-t-15">
+            <div class="card-block">
+                <h5>My applications</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Req #</th>
+                            <th>Status</th>
+                            <th>Step</th>
+                            <th>Created</th>
+                            <th>Submitted</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!myApps.Any())
+                        {
+                            <tr><td colspan="7">You have not started any applications.</td></tr>
+                        }
+                        @foreach (var a in myApps)
+                        {
+                            <tr>
+                                <td>@a.PositionTitle</td>
+                                <td>@a.RequisitionNumber</td>
+                                <td>@a.Status</td>
+                                <td>@a.CurrentStep</td>
+                                <td>@a.CreatedDate.ToString("MM/dd/yyyy")</td>
+                                <td>@(a.SubmittedDate.HasValue ? a.SubmittedDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                                <td>
+                                    @if (!string.Equals(a.Status, "Submitted", System.StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <a class="btn btn-default btn-sm" target="_blank"
+                                           href="@Url.Action("Wizard", "Apply", new { employerId = employerId, applicationId = a.ApplicationId, step = a.CurrentStep })">Continue</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/Scripts/application/JobPortal.js"></script>

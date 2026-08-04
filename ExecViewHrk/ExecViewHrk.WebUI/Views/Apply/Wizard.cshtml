@@ -1,0 +1,239 @@
+@{
+    Layout = "~/Views/Shared/_ApplyLayout.cshtml";
+    ViewBag.Title = "Application Wizard";
+    int employerId = (int)ViewBag.EmployerId;
+    int applicationId = (int)ViewBag.ApplicationId;
+    int step = (int)ViewBag.Step;
+    var app = ViewBag.App as ExecViewHrk.EfClient.JobApplication;
+    var cfg = ViewBag.Config as ExecViewHrk.EfClient.RecruitingConfig;
+    string saveUrl = Url.Action("SaveStep", "Apply");
+    string uploadUrl = Url.Action("UploadFile", "Apply");
+    string submitUrl = Url.Action("Submit", "Apply");
+}
+<div class="apply-card">
+    <h4>@(app.JobRequisition != null ? app.JobRequisition.PositionTitle : "Application")</h4>
+    <div class="text-muted">Req #@(app.JobRequisition != null ? app.JobRequisition.RequisitionNumber : "") · Step @step of 10</div>
+    <div class="apply-steps" style="margin-top:12px;">
+        @for (int s = 1; s <= 10; s++)
+        {
+            <span class="@(s == step ? "active" : "")">@s</span>
+        }
+    </div>
+</div>
+
+<div class="apply-card" id="wizardRoot"
+     data-employer="@employerId"
+     data-app="@applicationId"
+     data-step="@step"
+     data-save-url="@saveUrl"
+     data-upload-url="@uploadUrl"
+     data-submit-url="@submitUrl"
+     data-wizard-url="@Url.Action("Wizard", "Apply")">
+
+    @if (step == 1)
+    {
+        <h5>Welcome</h5>
+        @Html.Raw(cfg != null ? cfg.HomePageHtml : "")
+        @Html.Raw(cfg != null ? cfg.IntroductionHtml : "")
+        <p>You are applying for <strong>@(app.JobRequisition != null ? app.JobRequisition.PositionTitle : "")</strong>.</p>
+        <button type="button" class="btn btn-primary btn-next">Continue</button>
+    }
+    else if (step >= 2 && step <= 5)
+    {
+        var questions = ViewBag.Questions as IEnumerable<ExecViewHrk.EfClient.RecruitingQuestion> ?? Enumerable.Empty<ExecViewHrk.EfClient.RecruitingQuestion>();
+        var answers = ViewBag.Answers as IEnumerable<ExecViewHrk.EfClient.JobApplicationAnswer> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationAnswer>();
+        <h5>Questions (page @step)</h5>
+        if (!questions.Any())
+        {
+            <p class="text-muted">No questions configured for this page. Continue to the next step.</p>
+        }
+        foreach (var q in questions)
+        {
+            var ans = answers.FirstOrDefault(a => a.QuestionId == q.QuestionId);
+            string val = ans != null ? ans.AnswerText : "";
+            <div class="form-group">
+                <label>@q.QuestionText @(q.IsRequired ? "*" : "")</label>
+                @if (q.QuestionType == "YesNo")
+                {
+                    <select class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId">
+                        <option value="">Select</option>
+                        <option value="Yes" @(val == "Yes" ? "selected" : "")>Yes</option>
+                        <option value="No" @(val == "No" ? "selected" : "")>No</option>
+                    </select>
+                }
+                else if (q.QuestionType == "Choice")
+                {
+                    <select class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId">
+                        <option value="">Select</option>
+                        @foreach (var c in (q.Choices ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var choice = c.Trim();
+                            <option value="@choice" @(val == choice ? "selected" : "")>@choice</option>
+                        }
+                    </select>
+                }
+                else if (q.QuestionType == "TextArea")
+                {
+                    <textarea class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId" rows="3">@val</textarea>
+                }
+                else
+                {
+                    <input type="text" class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId" value="@val" />
+                }
+            </div>
+        }
+        <button type="button" class="btn btn-default btn-prev">Back</button>
+        <button type="button" class="btn btn-primary btn-next">Save &amp; Continue</button>
+    }
+    else if (step == 6)
+    {
+        var docs = ViewBag.DocSetups as IEnumerable<ExecViewHrk.EfClient.RecruitingDocument> ?? Enumerable.Empty<ExecViewHrk.EfClient.RecruitingDocument>();
+        var files = ViewBag.Files as IEnumerable<ExecViewHrk.EfClient.JobApplicationFile> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationFile>();
+        <h5>Additional documents</h5>
+        if (!docs.Any())
+        {
+            <p class="text-muted">No additional documents required.</p>
+        }
+        foreach (var d in docs)
+        {
+            <div class="form-group" style="border-bottom:1px solid #eee;padding-bottom:12px;">
+                <label>@d.DocumentName @(d.IsRequired ? "*" : "")</label>
+                @if (!string.IsNullOrEmpty(d.Instructions))
+                {
+                    <div class="text-muted" style="font-size:12px;">@d.Instructions</div>
+                }
+                <input type="file" class="form-control doc-file" data-docid="@d.DocumentSetupId" data-sign="@(d.RequiresSignature ? "1" : "0")" />
+                @if (d.RequiresSignature)
+                {
+                    <input type="text" class="form-control m-t-5 doc-signer" data-docid="@d.DocumentSetupId" placeholder="Type your name to sign" style="margin-top:6px;" />
+                }
+                <button type="button" class="btn btn-sm btn-default m-t-5 btn-upload-doc" data-docid="@d.DocumentSetupId">Upload</button>
+                <div class="uploaded-list">
+                    @foreach (var f in files.Where(x => x.DocumentSetupId == d.DocumentSetupId))
+                    {
+                        <div class="text-success" style="font-size:12px;">Uploaded: @f.FileName</div>
+                    }
+                </div>
+            </div>
+        }
+        <button type="button" class="btn btn-default btn-prev">Back</button>
+        <button type="button" class="btn btn-primary btn-next">Continue</button>
+    }
+    else if (step == 7)
+    {
+        var resumes = ViewBag.ResumeFiles as IEnumerable<ExecViewHrk.EfClient.JobApplicationFile> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationFile>();
+        <h5>Resume &amp; documents</h5>
+        <div class="form-group">
+            <label>Upload resume</label>
+            <input type="file" id="resumeFile" class="form-control" />
+            <button type="button" class="btn btn-sm btn-default m-t-5" id="btnUploadResume">Upload resume</button>
+        </div>
+        <div class="form-group">
+            <label>Other supporting document</label>
+            <input type="file" id="otherFile" class="form-control" />
+            <button type="button" class="btn btn-sm btn-default m-t-5" id="btnUploadOther">Upload</button>
+        </div>
+        <ul>
+            @foreach (var f in resumes)
+            {
+                <li>@f.FileCategory: @f.FileName</li>
+            }
+        </ul>
+        <button type="button" class="btn btn-default btn-prev">Back</button>
+        <button type="button" class="btn btn-primary btn-next">Continue</button>
+    }
+    else if (step == 8)
+    {
+        var refs = (ViewBag.References as IEnumerable<ExecViewHrk.EfClient.JobApplicationReference> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationReference>()).ToList();
+        <h5>References</h5>
+        <div id="refList">
+            @for (int i = 0; i < Math.Max(2, refs.Count); i++)
+            {
+                var r = i < refs.Count ? refs[i] : null;
+                <div class="ref-block" style="border:1px solid #eee;padding:10px;margin-bottom:10px;">
+                    <div class="row">
+                        <div class="col-md-4"><label>Name</label><input class="form-control" name="ref_name_@i" value="@(r != null ? r.FullName : "")" /></div>
+                        <div class="col-md-4"><label>Relationship</label><input class="form-control" name="ref_rel_@i" value="@(r != null ? r.Relationship : "")" /></div>
+                        <div class="col-md-4"><label>Company</label><input class="form-control" name="ref_co_@i" value="@(r != null ? r.Company : "")" /></div>
+                    </div>
+                    <div class="row" style="margin-top:8px;">
+                        <div class="col-md-4"><label>Phone</label><input class="form-control" name="ref_phone_@i" value="@(r != null ? r.Phone : "")" /></div>
+                        <div class="col-md-4"><label>Email</label><input class="form-control" name="ref_email_@i" value="@(r != null ? r.Email : "")" /></div>
+                        <div class="col-md-4"><label>Years known</label><input class="form-control" name="ref_years_@i" value="@(r != null ? r.YearsKnown : "")" /></div>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-link" id="btnAddRef">+ Add reference</button>
+        <div>
+            <button type="button" class="btn btn-default btn-prev">Back</button>
+            <button type="button" class="btn btn-primary btn-next">Save &amp; Continue</button>
+        </div>
+    }
+    else if (step == 9)
+    {
+        var emps = (ViewBag.Employments as IEnumerable<ExecViewHrk.EfClient.JobApplicationEmployment> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationEmployment>()).ToList();
+        var edus = (ViewBag.Educations as IEnumerable<ExecViewHrk.EfClient.JobApplicationEducation> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationEducation>()).ToList();
+        <h5>Employment history</h5>
+        <div id="empList">
+            @for (int i = 0; i < Math.Max(1, emps.Count); i++)
+            {
+                var e = i < emps.Count ? emps[i] : null;
+                <div class="emp-block" style="border:1px solid #eee;padding:10px;margin-bottom:10px;">
+                    <div class="row">
+                        <div class="col-md-4"><label>Employer</label><input class="form-control" name="emp_name_@i" value="@(e != null ? e.EmployerName : "")" /></div>
+                        <div class="col-md-4"><label>Title</label><input class="form-control" name="emp_title_@i" value="@(e != null ? e.JobTitle : "")" /></div>
+                        <div class="col-md-2"><label>Start</label><input type="date" class="form-control" name="emp_start_@i" value="@(e != null && e.StartDate.HasValue ? e.StartDate.Value.ToString("yyyy-MM-dd") : "")" /></div>
+                        <div class="col-md-2"><label>End</label><input type="date" class="form-control" name="emp_end_@i" value="@(e != null && e.EndDate.HasValue ? e.EndDate.Value.ToString("yyyy-MM-dd") : "")" /></div>
+                    </div>
+                    <div class="row" style="margin-top:8px;">
+                        <div class="col-md-8"><label>Duties</label><input class="form-control" name="emp_duties_@i" value="@(e != null ? e.Duties : "")" /></div>
+                        <div class="col-md-4"><label>Reason left</label><input class="form-control" name="emp_reason_@i" value="@(e != null ? e.ReasonLeft : "")" /></div>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-link" id="btnAddEmp">+ Add employer</button>
+
+        <h5 style="margin-top:20px;">Education</h5>
+        <div id="eduList">
+            @for (int i = 0; i < Math.Max(1, edus.Count); i++)
+            {
+                var e = i < edus.Count ? edus[i] : null;
+                <div class="edu-block" style="border:1px solid #eee;padding:10px;margin-bottom:10px;">
+                    <div class="row">
+                        <div class="col-md-4"><label>School</label><input class="form-control" name="edu_school_@i" value="@(e != null ? e.SchoolName : "")" /></div>
+                        <div class="col-md-3"><label>Degree</label><input class="form-control" name="edu_degree_@i" value="@(e != null ? e.Degree : "")" /></div>
+                        <div class="col-md-3"><label>Field</label><input class="form-control" name="edu_field_@i" value="@(e != null ? e.FieldOfStudy : "")" /></div>
+                        <div class="col-md-2"><label>Year</label><input class="form-control" name="edu_year_@i" value="@(e != null ? e.GraduationYear : "")" /></div>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-link" id="btnAddEdu">+ Add education</button>
+        <div>
+            <button type="button" class="btn btn-default btn-prev">Back</button>
+            <button type="button" class="btn btn-primary btn-next">Save &amp; Continue</button>
+        </div>
+    }
+    else if (step == 10)
+    {
+        string attestation = !string.IsNullOrWhiteSpace(cfg != null ? cfg.AttestationHtml : null)
+            ? cfg.AttestationHtml
+            : (ViewBag.DefaultAttestation as string);
+        var sigs = ViewBag.Signatures as IEnumerable<ExecViewHrk.EfClient.JobApplicationSignature> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationSignature>();
+        var attestSig = sigs.FirstOrDefault(s => s.SignatureType == "Attestation");
+        <h5>Attestation &amp; review</h5>
+        @Html.Raw(cfg != null ? cfg.ReviewSubmitHtml : "")
+        <div style="background:#f8f9fa;padding:12px;margin:12px 0;">@Html.Raw(attestation)</div>
+        <div class="form-group">
+            <label>Type your full name to sign <span style="color:red">*</span></label>
+            <input type="text" id="attestName" class="form-control" value="@(attestSig != null ? attestSig.SignerName : "")" />
+        </div>
+        <p class="text-muted">Review: references, employment, education, and answers are saved from previous steps. Submit when ready.</p>
+        <button type="button" class="btn btn-default btn-prev">Back</button>
+        <button type="button" class="btn btn-success" id="btnSubmitApp">Sign &amp; Submit Application</button>
+    }
+</div>
+
+<script src="~/Scripts/application/ApplyWizard.js"></script>

@@ -1,0 +1,8 @@
+@{
+    Layout = "~/Views/Shared/_ApplyLayout.cshtml";
+    ViewBag.Title = "Error";
+}
+<div class="apply-card">
+    <h4>Unable to open careers portal</h4>
+    <p class="text-danger">@(ViewBag.Error ?? "An unexpected error occurred.")</p>
+</div>

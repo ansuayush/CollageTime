@@ -95,6 +95,18 @@ namespace ExecViewHrk.EfClient
         public virtual DbSet<EmployeeAllocation> EmployeeAllocations { get; set; }
         public virtual DbSet<EmployeeI9Documents> EmployeeI9Documents { get; set; }
         public virtual DbSet<EmployeeDocument> EmployeeDocuments { get; set; }
+        public virtual DbSet<JobRequisition> JobRequisitions { get; set; }
+        public virtual DbSet<RecruitingQuestion> RecruitingQuestions { get; set; }
+        public virtual DbSet<RecruitingDocument> RecruitingDocuments { get; set; }
+        public virtual DbSet<RecruitingConfig> RecruitingConfigs { get; set; }
+        public virtual DbSet<JobApplicant> JobApplicants { get; set; }
+        public virtual DbSet<JobApplication> JobApplications { get; set; }
+        public virtual DbSet<JobApplicationAnswer> JobApplicationAnswers { get; set; }
+        public virtual DbSet<JobApplicationFile> JobApplicationFiles { get; set; }
+        public virtual DbSet<JobApplicationReference> JobApplicationReferences { get; set; }
+        public virtual DbSet<JobApplicationEmployment> JobApplicationEmployments { get; set; }
+        public virtual DbSet<JobApplicationEducation> JobApplicationEducations { get; set; }
+        public virtual DbSet<JobApplicationSignature> JobApplicationSignatures { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<EmployeeActuals> EmployeeActuals { get; set; }
         //public virtual DbSet<hrBUSINESSLEVELS> hrBUSINESSLEVELS { get; set; }
@@ -1126,6 +1138,53 @@ namespace ExecViewHrk.EfClient
                 .WithRequired(e => e.Employee)
                 .HasForeignKey(e => e.EmployeeId)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<JobRequisition>()
+                .HasMany(e => e.JobApplications)
+                .WithRequired(e => e.JobRequisition)
+                .HasForeignKey(e => e.RequisitionId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<JobApplicant>()
+                .HasMany(e => e.JobApplications)
+                .WithOptional(e => e.JobApplicant)
+                .HasForeignKey(e => e.ApplicantId);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasMany(e => e.Answers)
+                .WithRequired(e => e.JobApplication)
+                .HasForeignKey(e => e.ApplicationId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasMany(e => e.Files)
+                .WithRequired(e => e.JobApplication)
+                .HasForeignKey(e => e.ApplicationId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasMany(e => e.References)
+                .WithRequired(e => e.JobApplication)
+                .HasForeignKey(e => e.ApplicationId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasMany(e => e.Employments)
+                .WithRequired(e => e.JobApplication)
+                .HasForeignKey(e => e.ApplicationId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasMany(e => e.Educations)
+                .WithRequired(e => e.JobApplication)
+                .HasForeignKey(e => e.ApplicationId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasMany(e => e.Signatures)
+                .WithRequired(e => e.JobApplication)
+                .HasForeignKey(e => e.ApplicationId)
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Employee>()
                 .Property(e => e.CompanyCode)

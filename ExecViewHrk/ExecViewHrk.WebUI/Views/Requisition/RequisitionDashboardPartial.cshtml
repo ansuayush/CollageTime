@@ -1,0 +1,154 @@
+@{
+    Layout = null;
+    var list = Model as IEnumerable<ExecViewHrk.WebUI.Models.JobRequisitionVm> ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.JobRequisitionVm>();
+}
+<div class="container-fluid portal-page" id="requisitionDashboardRoot"
+     data-list-url="@Url.Action("GetRequisitions", "Requisition")"
+     data-get-url="@Url.Action("GetRequisition", "Requisition")"
+     data-save-url="@Url.Action("SaveRequisition", "Requisition")"
+     data-delete-url="@Url.Action("DeleteRequisition", "Requisition")"
+     data-applicants-url="@Url.Action("GetApplicants", "Requisition")"
+     data-quickapply-url="@Url.Action("GetQuickApplyUrl", "Requisition")">
+    <div class="main-header portal-page-heading p-0">
+        <div class="portal-page-heading__title">
+            <h4>Job Requisition Dashboard</h4>
+        </div>
+    </div>
+
+    <div class="card-block p-10 m-b-10 b-b-muted b-t-muted">
+        <button type="button" class="btn btn-primary" id="btnAddRequisition"><i class="fa fa-plus"></i> Add New Requisition</button>
+        <button type="button" class="btn btn-default m-l-10" onclick='LoadMenu("QuestionsPartial", "RecruitingSetup")'>Question Setup</button>
+        <button type="button" class="btn btn-default m-l-5" onclick='LoadMenu("DocumentsPartial", "RecruitingSetup")'>Document Setup</button>
+        <button type="button" class="btn btn-default m-l-5" onclick='LoadMenu("ConfigPartial", "RecruitingSetup")'>Recruiting Config</button>
+    </div>
+
+    <div class="card">
+        <div class="card-block">
+            <table class="table table-striped table-bordered" id="reqTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th style="width:90px;"></th>
+                        <th>Division</th>
+                        <th>Department</th>
+                        <th>Position Title</th>
+                        <th>Req #</th>
+                        <th>Req Date</th>
+                        <th>Open</th>
+                        <th>Closed</th>
+                        <th>Status</th>
+                        <th>Applicants</th>
+                        <th>Published</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in list)
+                    {
+                        <tr data-id="@r.RequisitionId">
+                            <td>
+                                <a href="javascript:void(0)" class="btn-edit-req" title="Edit"><i class="fa fa-pencil txt-primary f-18"></i></a>
+                                <a href="javascript:void(0)" class="btn-apps-req m-l-5" title="Applicants"><i class="fa fa-users txt-primary f-18"></i></a>
+                                <a href="javascript:void(0)" class="btn-quick-req m-l-5" title="Quick Apply Link"><i class="fa fa-link txt-primary f-18"></i></a>
+                                <a href="javascript:void(0)" class="btn-del-req m-l-5" title="Delete"><i class="fa fa-trash-o txt-danger f-18"></i></a>
+                            </td>
+                            <td>@r.Division</td>
+                            <td>@r.Department</td>
+                            <td>@r.PositionTitle</td>
+                            <td>@r.RequisitionNumber</td>
+                            <td>@(r.RequisitionDate.ToString("MM/dd/yyyy"))</td>
+                            <td>@(r.OpenDate.HasValue ? r.OpenDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                            <td>@(r.ClosedDate.HasValue ? r.ClosedDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                            <td>@r.Status</td>
+                            <td>@r.ApplicantCount</td>
+                            <td>@(r.IsPublished ? "Yes" : "No")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="reqEditPanel" class="card m-t-15" style="display:none;">
+        <div class="card-block">
+            <h5 id="reqEditTitle">Add Requisition</h5>
+            <input type="hidden" id="reqId" value="0" />
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Requisition # <span style="color:red">*</span></label>
+                    <input type="text" id="reqNumber" class="form-control" />
+                </div>
+                <div class="col-md-5">
+                    <label>Position Title <span style="color:red">*</span></label>
+                    <input type="text" id="reqTitle" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>Status</label>
+                    <select id="reqStatus" class="form-control">
+                        <option>Open</option>
+                        <option>Closed</option>
+                        <option>Draft</option>
+                        <option>On Hold</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Published</label>
+                    <select id="reqPublished" class="form-control">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row m-t-10">
+                <div class="col-md-3">
+                    <label>Division</label>
+                    <input type="text" id="reqDivision" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Department</label>
+                    <input type="text" id="reqDepartment" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Requisition Date</label>
+                    <input type="date" id="reqDate" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Open Date</label>
+                    <input type="date" id="reqOpenDate" class="form-control" />
+                </div>
+            </div>
+            <div class="row m-t-10">
+                <div class="col-md-3">
+                    <label>Closed Date</label>
+                    <input type="date" id="reqClosedDate" class="form-control" />
+                </div>
+                <div class="col-md-9">
+                    <label>Description</label>
+                    <textarea id="reqDescription" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="m-t-15">
+                <button type="button" class="btn btn-primary" id="btnSaveRequisition">Save</button>
+                <button type="button" class="btn btn-default" id="btnCancelRequisition">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reqApplicantsPanel" class="card m-t-15" style="display:none;">
+        <div class="card-block">
+            <h5>Applicants / Candidates <span id="reqAppsTitle"></span></h5>
+            <table class="table table-bordered" id="reqAppsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Step</th>
+                        <th>Created</th>
+                        <th>Submitted</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button type="button" class="btn btn-default" id="btnCloseApps">Close</button>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/application/Requisition.js"></script>

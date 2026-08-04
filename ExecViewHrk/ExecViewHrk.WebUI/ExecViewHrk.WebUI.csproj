@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -2051,6 +2051,27 @@
     <Compile Include="Controllers\PositionSetupDetailController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RequisitionController.cs" />
+    <Content Include="Views\JobPortal\JobPortalPartial.cshtml" />
+    <Content Include="Views\Shared\_ApplyLayout.cshtml" />
+    <Content Include="Views\Apply\ApplyError.cshtml" />
+    <Content Include="Views\Apply\Complete.cshtml" />
+    <Content Include="Views\Apply\Wizard.cshtml" />
+    <Content Include="Views\Apply\Login.cshtml" />
+    <Content Include="Views\Apply\Register.cshtml" />
+    <Content Include="Views\Apply\Index.cshtml" />
+    <Content Include="Views\RecruitingSetup\ConfigPartial.cshtml" />
+    <Content Include="Views\RecruitingSetup\DocumentsPartial.cshtml" />
+    <Content Include="Views\RecruitingSetup\QuestionsPartial.cshtml" />
+    <Content Include="Views\Requisition\RequisitionDashboardPartial.cshtml" />
+    <Content Include="App_Data\Sql\JobRequisition_Install.sql" />
+    <Content Include="Scripts\application\JobPortal.js" />
+    <Content Include="Scripts\application\ApplyWizard.js" />
+    <Content Include="Scripts\application\Requisition.js" />
+    <Compile Include="Models\JobRecruitingVms.cs" />
+    <Compile Include="Helpers\JobRecruitingSchemaHelper.cs" />
+    <Compile Include="Controllers\ApplyController.cs" />
+    <Compile Include="Controllers\JobPortalController.cs" />
+    <Compile Include="Controllers\RecruitingSetupController.cs" />
     <Compile Include="Controllers\RetroHoursController.cs" />
     <Compile Include="Controllers\RoleAdminController.cs" />
     <Compile Include="Controllers\SalaryComponentController.cs" />

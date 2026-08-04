@@ -1,0 +1,109 @@
+@{
+    Layout = null;
+    var list = Model as IEnumerable<ExecViewHrk.WebUI.Models.RecruitingDocumentVm> ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.RecruitingDocumentVm>();
+}
+<div class="container-fluid" id="recruitingDocsRoot"
+     data-save-url="@Url.Action("SaveDocument", "RecruitingSetup")"
+     data-delete-url="@Url.Action("DeleteDocument", "RecruitingSetup")">
+    <div class="main-header p-0"><h4>Recruiting Document Setup</h4></div>
+    <div class="m-b-10">
+        <button type="button" class="btn btn-primary" id="btnAddD">Add Document</button>
+        <button type="button" class="btn btn-default" onclick='LoadMenu("RequisitionDashboardPartial", "Requisition")'>Back to Dashboard</button>
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th style="width:80px;"></th>
+                <th>Document Name</th>
+                <th>Instructions</th>
+                <th>Required</th>
+                <th>Needs Signature</th>
+                <th>Order</th>
+                <th>Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in list)
+            {
+                <tr data-id="@d.DocumentSetupId"
+                    data-name="@d.DocumentName"
+                    data-instr="@(d.Instructions ?? "")"
+                    data-required="@(d.IsRequired ? "1" : "0")"
+                    data-sign="@(d.RequiresSignature ? "1" : "0")"
+                    data-order="@d.SortOrder"
+                    data-active="@(d.IsActive ? "1" : "0")">
+                    <td>
+                        <a href="javascript:void(0)" class="btn-edit-d"><i class="fa fa-pencil txt-primary"></i></a>
+                        <a href="javascript:void(0)" class="btn-del-d m-l-5"><i class="fa fa-trash-o txt-danger"></i></a>
+                    </td>
+                    <td>@d.DocumentName</td>
+                    <td>@d.Instructions</td>
+                    <td>@(d.IsRequired ? "Yes" : "No")</td>
+                    <td>@(d.RequiresSignature ? "Yes" : "No")</td>
+                    <td>@d.SortOrder</td>
+                    <td>@(d.IsActive ? "Yes" : "No")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div id="dEdit" class="card" style="display:none;">
+        <div class="card-block">
+            <h5 id="dEditTitle">Add Document</h5>
+            <input type="hidden" id="dId" value="0" />
+            <div class="row">
+                <div class="col-md-4"><label>Name</label><input type="text" id="dName" class="form-control" /></div>
+                <div class="col-md-5"><label>Instructions</label><input type="text" id="dInstr" class="form-control" /></div>
+                <div class="col-md-1"><label>Order</label><input type="number" id="dOrder" class="form-control" value="0" /></div>
+                <div class="col-md-1"><label>Required</label><input type="checkbox" id="dRequired" checked /></div>
+                <div class="col-md-1"><label>Signature</label><input type="checkbox" id="dSign" /></div>
+            </div>
+            <div class="m-t-10">
+                <label><input type="checkbox" id="dActive" checked /> Active</label>
+            </div>
+            <div class="m-t-15">
+                <button type="button" class="btn btn-primary" id="btnSaveD">Save</button>
+                <button type="button" class="btn btn-default" id="btnCancelD">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var $r = $("#recruitingDocsRoot");
+    function reload() { LoadMenu("DocumentsPartial", "RecruitingSetup"); }
+    $("#btnAddD").click(function () {
+        $("#dId").val(0); $("#dName").val(""); $("#dInstr").val(""); $("#dOrder").val(0);
+        $("#dRequired").prop("checked", true); $("#dSign").prop("checked", false); $("#dActive").prop("checked", true);
+        $("#dEditTitle").text("Add Document"); $("#dEdit").show();
+    });
+    $("#btnCancelD").click(function () { $("#dEdit").hide(); });
+    $r.on("click", ".btn-edit-d", function () {
+        var $tr = $(this).closest("tr");
+        $("#dId").val($tr.data("id")); $("#dName").val($tr.data("name")); $("#dInstr").val($tr.data("instr"));
+        $("#dOrder").val($tr.data("order"));
+        $("#dRequired").prop("checked", $tr.data("required") == 1 || $tr.data("required") == "1");
+        $("#dSign").prop("checked", $tr.data("sign") == 1 || $tr.data("sign") == "1");
+        $("#dActive").prop("checked", $tr.data("active") == 1 || $tr.data("active") == "1");
+        $("#dEditTitle").text("Edit Document"); $("#dEdit").show();
+    });
+    $r.on("click", ".btn-del-d", function () {
+        if (!confirm("Delete?")) return;
+        $.post($r.data("delete-url"), { id: $(this).closest("tr").data("id") }, function (res) {
+            if (!res.success) alert(res.message); else reload();
+        });
+    });
+    $("#btnSaveD").click(function () {
+        $.post($r.data("save-url"), {
+            DocumentSetupId: parseInt($("#dId").val(), 10) || 0,
+            DocumentName: $("#dName").val(),
+            Instructions: $("#dInstr").val(),
+            SortOrder: parseInt($("#dOrder").val(), 10) || 0,
+            IsRequired: $("#dRequired").is(":checked"),
+            RequiresSignature: $("#dSign").is(":checked"),
+            IsActive: $("#dActive").is(":checked")
+        }, function (res) {
+            if (!res.success) alert(res.message); else reload();
+        });
+    });
+})();
+</script>

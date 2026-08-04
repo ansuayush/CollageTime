@@ -1,0 +1,62 @@
+@model IEnumerable<ExecViewHrk.WebUI.Models.JobPortalOpenJobVm>
+@{
+    Layout = "~/Views/Shared/_ApplyLayout.cshtml";
+    ViewBag.Title = "Open Positions";
+    int employerId = (int)ViewBag.EmployerId;
+    string applicantName = ViewBag.ApplicantName as string;
+}
+<div class="apply-card">
+    @Html.Raw(ViewBag.HomeHtml)
+    @Html.Raw(ViewBag.IntroHtml)
+    <div class="m-t-15" style="margin-top:12px;">
+        @if (!string.IsNullOrEmpty(applicantName))
+        {
+            <span>Signed in as <strong>@applicantName</strong></span>
+            <a class="btn btn-default btn-sm" href="@Url.Action("Logout", "Apply", new { employerId })">Sign out</a>
+        }
+        else
+        {
+            <a class="btn btn-primary btn-sm" href="@Url.Action("Register", "Apply", new { employerId })">Create account</a>
+            <a class="btn btn-default btn-sm" href="@Url.Action("Login", "Apply", new { employerId, requisitionId = ViewBag.RequisitionId })">Sign in</a>
+        }
+    </div>
+</div>
+
+<div class="apply-card">
+    <h4>Open Positions</h4>
+    @if (TempData["ApplyError"] != null)
+    {
+        <div class="alert alert-warning">@TempData["ApplyError"]</div>
+    }
+    @if (!Model.Any())
+    {
+        <p>No open positions at this time.</p>
+    }
+    else
+    {
+        foreach (var job in Model)
+        {
+            <div class="job-row">
+                <div style="font-size:18px;font-weight:600;">@job.PositionTitle</div>
+                <div class="text-muted">@job.Division @(!string.IsNullOrEmpty(job.Department) ? " / " + job.Department : "") · Req #@job.RequisitionNumber</div>
+                @if (!string.IsNullOrEmpty(job.Description))
+                {
+                    <p style="margin-top:8px;">@job.Description</p>
+                }
+                @if (!string.IsNullOrEmpty(applicantName))
+                {
+                    using (Html.BeginForm("Start", "Apply", FormMethod.Post))
+                    {
+                        @Html.Hidden("employerId", employerId)
+                        @Html.Hidden("requisitionId", job.RequisitionId)
+                        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                    }
+                }
+                else
+                {
+                    <a class="btn btn-primary btn-sm" href="@Url.Action("Login", "Apply", new { employerId, requisitionId = job.RequisitionId })">Sign in to apply</a>
+                }
+            </div>
+        }
+    }
+</div>
