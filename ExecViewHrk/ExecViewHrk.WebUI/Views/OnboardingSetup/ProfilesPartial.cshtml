@@ -1,0 +1,130 @@
+@model IEnumerable<ExecViewHrk.WebUI.Models.OnboardingProfileVm>
+@{
+    Layout = null;
+    var profiles = Model ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.OnboardingProfileVm>();
+}
+<div class="container-fluid" id="onboardingProfilesRoot"
+     data-save-url="@Url.Action("SaveProfile", "OnboardingSetup")"
+     data-delete-url="@Url.Action("DeleteProfile", "OnboardingSetup")"
+     data-docs-url="@Url.Action("GetProfileDocuments", "OnboardingSetup")"
+     data-save-doc-url="@Url.Action("SaveProfileDocument", "OnboardingSetup")"
+     data-delete-doc-url="@Url.Action("DeleteProfileDocument", "OnboardingSetup")"
+     data-download-doc-url="@Url.Action("DownloadProfileDocument", "OnboardingSetup")"
+     data-lookups-url="@Url.Action("GetLookups", "OnboardingSetup")"
+     data-save-lookup-url="@Url.Action("SaveLookup", "OnboardingSetup")"
+     data-delete-lookup-url="@Url.Action("DeleteLookup", "OnboardingSetup")">
+    <div class="main-header p-0">
+        <h4>Onboarding Profiles</h4>
+        <p class="text-muted">Create profiles and attach library documents for self onboarding.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <button type="button" class="btn btn-primary btn-sm m-b-10" id="btnAddProfile">Add Profile</button>
+            <table class="table table-bordered table-striped" id="profileTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Docs</th>
+                        <th>Active</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in profiles)
+                    {
+                        <tr data-id="@p.ProfileId">
+                            <td>@p.ProfileName</td>
+                            <td>@p.Description</td>
+                            <td>@p.DocumentCount</td>
+                            <td>@(p.IsActive ? "Yes" : "No")</td>
+                            <td>
+                                <button type="button" class="btn btn-xs btn-default btn-edit-profile" data-id="@p.ProfileId" data-name="@p.ProfileName" data-desc="@p.Description" data-active="@(p.IsActive ? "1" : "0")">Edit</button>
+                                <button type="button" class="btn btn-xs btn-info btn-docs-profile" data-id="@p.ProfileId" data-name="@p.ProfileName">Documents</button>
+                                <button type="button" class="btn btn-xs btn-danger btn-del-profile" data-id="@p.ProfileId">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                    @if (!profiles.Any())
+                    {
+                        <tr><td colspan="5">No profiles yet.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-5">
+            <div class="card" id="profileFormPanel" style="display:none;">
+                <div class="card-block">
+                    <h5 id="profileFormTitle">Add Profile</h5>
+                    <input type="hidden" id="profileId" value="0" />
+                    <div class="form-group">
+                        <label>Profile Name</label>
+                        <input type="text" class="form-control" id="profileName" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" id="profileDescription" rows="2"></textarea>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="profileActive" checked /> Active</label>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="btnSaveProfile">Save</button>
+                    <button type="button" class="btn btn-default" id="btnCancelProfile">Cancel</button>
+                </div>
+            </div>
+
+            <div class="card m-t-10" id="docsPanel" style="display:none;">
+                <div class="card-block">
+                    <h5>Documents - <span id="docsProfileName"></span></h5>
+                    <input type="hidden" id="docsProfileId" value="0" />
+                    <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnAddDoc">Add to Library</button>
+                    <table class="table table-bordered table-condensed" id="docsTable">
+                        <thead>
+                            <tr><th>Name</th><th>Type</th><th>Sign</th><th>Upload</th><th></th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <div id="docForm" style="display:none;" class="m-t-10">
+                        <input type="hidden" id="docId" value="0" />
+                        <div class="form-group">
+                            <label>Document Name</label>
+                            <input type="text" class="form-control" id="docName" />
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select class="form-control" id="docType"></select>
+                            <button type="button" class="btn btn-link btn-xs" id="btnManageDocTypes">Add type to lookup</button>
+                        </div>
+                        <div class="form-group">
+                            <label>File (PDF)</label>
+                            <input type="file" id="docFile" accept=".pdf,application/pdf" />
+                        </div>
+                        <div class="checkbox"><label><input type="checkbox" id="docReqSig" checked /> Requires signature</label></div>
+                        <div class="checkbox"><label><input type="checkbox" id="docEnableUpload" /> Enable upload link</label></div>
+                        <div class="form-group">
+                            <label>Sort Order</label>
+                            <input type="number" class="form-control" id="docSort" value="0" />
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnSaveDoc">Save Document</button>
+                        <button type="button" class="btn btn-default btn-sm" id="btnCancelDoc">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card m-t-10" id="lookupPanel" style="display:none;">
+                <div class="card-block">
+                    <h5>Document Types (Lookup)</h5>
+                    <div class="form-inline m-b-10">
+                        <input type="text" class="form-control input-sm" id="newLookupDesc" placeholder="New type description" />
+                        <button type="button" class="btn btn-sm btn-primary" id="btnAddLookup">Add</button>
+                        <button type="button" class="btn btn-sm btn-default" id="btnCloseLookup">Close</button>
+                    </div>
+                    <ul id="lookupList" class="list-unstyled"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/application/OnboardingSetup.js"></script>

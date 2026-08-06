@@ -108,6 +108,16 @@ namespace ExecViewHrk.EfClient
         public virtual DbSet<JobApplicationEmployment> JobApplicationEmployments { get; set; }
         public virtual DbSet<JobApplicationEducation> JobApplicationEducations { get; set; }
         public virtual DbSet<JobApplicationSignature> JobApplicationSignatures { get; set; }
+        public virtual DbSet<OnboardingLookup> OnboardingLookups { get; set; }
+        public virtual DbSet<OnboardingProfile> OnboardingProfiles { get; set; }
+        public virtual DbSet<OnboardingProfileDocument> OnboardingProfileDocuments { get; set; }
+        public virtual DbSet<SelfOnboardingHire> SelfOnboardingHires { get; set; }
+        public virtual DbSet<SelfOnboardingPersonal> SelfOnboardingPersonals { get; set; }
+        public virtual DbSet<SelfOnboardingI9> SelfOnboardingI9s { get; set; }
+        public virtual DbSet<SelfOnboardingTax> SelfOnboardingTaxes { get; set; }
+        public virtual DbSet<SelfOnboardingSignature> SelfOnboardingSignatures { get; set; }
+        public virtual DbSet<SelfOnboardingBankAccount> SelfOnboardingBankAccounts { get; set; }
+        public virtual DbSet<SelfOnboardingUpload> SelfOnboardingUploads { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<EmployeeActuals> EmployeeActuals { get; set; }
         //public virtual DbSet<hrBUSINESSLEVELS> hrBUSINESSLEVELS { get; set; }
@@ -1191,6 +1201,42 @@ namespace ExecViewHrk.EfClient
                 .HasMany(e => e.Signatures)
                 .WithRequired(e => e.JobApplication)
                 .HasForeignKey(e => e.ApplicationId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<OnboardingProfile>()
+                .HasMany(e => e.Documents)
+                .WithRequired(e => e.OnboardingProfile)
+                .HasForeignKey(e => e.ProfileId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<SelfOnboardingHire>()
+                .HasOptional(e => e.Personal)
+                .WithRequired(e => e.SelfOnboardingHire);
+
+            modelBuilder.Entity<SelfOnboardingHire>()
+                .HasOptional(e => e.I9)
+                .WithRequired(e => e.SelfOnboardingHire);
+
+            modelBuilder.Entity<SelfOnboardingHire>()
+                .HasOptional(e => e.Tax)
+                .WithRequired(e => e.SelfOnboardingHire);
+
+            modelBuilder.Entity<SelfOnboardingHire>()
+                .HasMany(e => e.Signatures)
+                .WithRequired(e => e.SelfOnboardingHire)
+                .HasForeignKey(e => e.HireId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<SelfOnboardingHire>()
+                .HasMany(e => e.BankAccounts)
+                .WithRequired(e => e.SelfOnboardingHire)
+                .HasForeignKey(e => e.HireId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<SelfOnboardingHire>()
+                .HasMany(e => e.Uploads)
+                .WithRequired(e => e.SelfOnboardingHire)
+                .HasForeignKey(e => e.HireId)
                 .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Employee>()

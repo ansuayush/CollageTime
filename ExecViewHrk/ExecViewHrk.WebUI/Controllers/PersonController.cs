@@ -13,6 +13,7 @@ using System.Data.Entity.Validation;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 
@@ -117,7 +118,9 @@ namespace ExecViewHrk.WebUI.Controllers
 
             ClientDbContext clientDbContext = new ClientDbContext(connString);
 
-            int personId = requestType == "IsSelfService" ? clientDbContext.Persons.Where(x => x.eMail == User.Identity.Name).Select(x => x.PersonId).SingleOrDefault() : Convert.ToInt32(SessionStateHelper.Get(SessionStateKeys.PERSON_SELECTED_ID));
+            int personId = requestType == "IsSelfService"
+                ? ResolveSelfServicePersonId(clientDbContext)
+                : Convert.ToInt32(SessionStateHelper.Get(SessionStateKeys.PERSON_SELECTED_ID));
 
             if ((personId == 0) && (requestType == "IsSelfService"))
             {
@@ -500,7 +503,8 @@ namespace ExecViewHrk.WebUI.Controllers
 
             string requestType = User.Identity.GetRequestType();
 
-            int employeeId = requestType == "IsSelfService" ? _personRepository.GetEmployeesList().Select(x => x.PersonId).SingleOrDefault()
+            int employeeId = requestType == "IsSelfService"
+                ? ResolveSelfServicePersonId(clientDbContext)
                 : Convert.ToInt32(SessionStateHelper.Get(SessionStateKeys.EMPLOYEE_PERSON_SELECTED_ID));
 
             PersonProfileVm personProfileVm = GetEmployeeProfile(employeeId);
@@ -521,7 +525,8 @@ namespace ExecViewHrk.WebUI.Controllers
 
             string requestType = User.Identity.GetRequestType();
 
-            int personId = requestType == "IsSelfService" ? _personRepository.GetPersonsList("PERSONS", "").Select(x => x.PersonId).SingleOrDefault()
+            int personId = requestType == "IsSelfService"
+                ? ResolveSelfServicePersonId(clientDbContext)
                 : Convert.ToInt32(SessionStateHelper.Get(SessionStateKeys.PERSON_SELECTED_ID));
 
             PersonProfileVm personProfileVm = GetPersonProfile(personId);
@@ -847,6 +852,42 @@ namespace ExecViewHrk.WebUI.Controllers
                 return null;
             else
                 return File(personImage.PersonImageData, personImage.PersonImageMimeType);
+        }
+
+        /// <summary>
+        /// Resolves the logged-in person's id for self-service.
+        /// User.Identity.Name may be username (self onboarding) rather than email.
+        /// </summary>
+        private int ResolveSelfServicePersonId(ClientDbContext db)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                var claim = claimsIdentity.FindFirst(SessionStateKeys.LOGIN_PERSON_ID.ToString());
+                int claimId;
+                if (claim != null && int.TryParse(claim.Value, out claimId) && claimId > 0)
+                    return claimId;
+            }
+
+            string login = (User.Identity.Name ?? "").Trim();
+            if (string.IsNullOrEmpty(login))
+                return 0;
+
+            // Email login
+            var byEmail = db.Persons.Where(p => p.eMail == login).Select(p => p.PersonId).FirstOrDefault();
+            if (byEmail > 0)
+                return byEmail;
+
+            // Username login -> AspNetUsers.Email -> Persons.eMail
+            var aspEmail = db.AspNetUsers.Where(u => u.UserName == login).Select(u => u.Email).FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(aspEmail))
+            {
+                var byAspEmail = db.Persons.Where(p => p.eMail == aspEmail).Select(p => p.PersonId).FirstOrDefault();
+                if (byAspEmail > 0)
+                    return byAspEmail;
+            }
+
+            return 0;
         }
 
         private AppUserManager UserManager

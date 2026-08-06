@@ -635,10 +635,6 @@ function LoadDetailView(_view, _controller, data) {
 
 function LoadContents(viewname, controllername, data, tdiv, isAsync) {
     if (typeof (isAsync) == "undefined") isAsync = true;
-    //this is fire after than no more async task.
-    //$(document).ajaxStop(function () {
-    //    loading(false);
-    //});
     var urlval = $("#ApplicationUrl").val() + controllername + "/" + viewname;
 
     var targetdiv = "content";
@@ -657,6 +653,7 @@ function LoadContents(viewname, controllername, data, tdiv, isAsync) {
                 var obj = JSON.parse(data);
                 if (obj.Message != null) {
                     DisplayNotification(obj.Message, "error");
+                    $("#" + targetdiv).html("<div class='alert alert-danger'>" + (obj.Message || "Request failed.") + "</div>");
                 } else {
                     $("#" + targetdiv).html(obj);
                 }
@@ -671,7 +668,15 @@ function LoadContents(viewname, controllername, data, tdiv, isAsync) {
             loading(false);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            toastr.error(errorThrown, "error");
+            var msg = errorThrown || textStatus || "Request failed";
+            var body = (XMLHttpRequest && XMLHttpRequest.responseText) ? XMLHttpRequest.responseText : ("<div class='alert alert-danger'>" + msg + "</div>");
+            // Prefer showing server HTML/error in content so blank page is diagnosable
+            if (body && body.length < 200000) {
+                $("#" + targetdiv).html(body);
+            } else {
+                $("#" + targetdiv).html("<div class='alert alert-danger'>Failed to load " + controllername + "/" + viewname + ": " + msg + "</div>");
+            }
+            if (typeof toastr !== "undefined") toastr.error(msg, "error");
             loading(false);
         },
         dataType: "html",

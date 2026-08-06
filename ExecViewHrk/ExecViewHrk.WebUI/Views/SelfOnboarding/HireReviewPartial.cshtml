@@ -1,0 +1,75 @@
+@model IEnumerable<ExecViewHrk.WebUI.Models.SelfOnboardingHireVm>
+@{
+    Layout = null;
+    var list = Model ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.SelfOnboardingHireVm>();
+}
+<div class="container-fluid" id="selfOnboardReviewRoot"
+     data-list-url="@Url.Action("GetHires", "SelfOnboarding")"
+     data-detail-url="@Url.Action("GetHireDetails", "SelfOnboarding")"
+     data-approve-url="@Url.Action("ApproveHire", "SelfOnboarding")"
+     data-reject-url="@Url.Action("RejectHire", "SelfOnboarding")">
+    <div class="main-header p-0">
+        <h4>Self Hire Registrations</h4>
+        <p class="text-muted">Review employee-submitted onboarding data and approve as Hired.</p>
+        <button type="button" class="btn btn-default btn-sm m-b-10" onclick='LoadMenu("RulesPartial", "SelfOnboarding")'>Back to Self Onboarding</button>
+    </div>
+
+    <table class="table table-bordered table-striped" id="hireReviewTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Email</th>
+                <th>Badge</th>
+                <th>Username</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var h in list)
+            {
+                string statusLabel = h.Status == "ChangesRequested" ? "Needs Correction" : h.Status;
+                <tr data-id="@h.HireId">
+                    <td>
+                        <a href="javascript:void(0)" class="link-hire-name" data-id="@h.HireId" onclick="openSelfHireWizard(@h.HireId); return false;">@h.FirstName @h.LastName</a>
+                    </td>
+                    <td>@h.PositionTitle</td>
+                    <td>@h.HomeEmail</td>
+                    <td>@h.FileNumber</td>
+                    <td>@h.GeneratedUserName</td>
+                    <td>@statusLabel</td>
+                    <td>@(h.SubmittedDate.HasValue ? h.SubmittedDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                    <td>
+                        <button type="button" class="btn btn-xs btn-info btn-view-hire" data-id="@h.HireId" onclick="openSelfHireWizard(@h.HireId); return false;">View</button>
+                        @if (h.Status == "Submitted")
+                        {
+                            <button type="button" class="btn btn-xs btn-success btn-approve-hire" data-id="@h.HireId">Approve / Hire</button>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!list.Any())
+            {
+                <tr><td colspan="8">No self hire registrations yet.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    function openSelfHireWizard(hireId) {
+        if (!hireId) { alert("Missing hire id."); return; }
+        if (typeof LoadDetailView === "function") {
+            LoadDetailView("ReviewWizardPartial", "SelfOnboarding", { hireId: hireId });
+            return;
+        }
+        if (typeof LoadContents === "function") {
+            LoadContents("ReviewWizardPartial", "SelfOnboarding", { hireId: hireId });
+            return;
+        }
+        var base = ($("#ApplicationUrl").val() || "/");
+        window.location.href = base + "SelfOnboarding/ReviewWizardPartial?hireId=" + encodeURIComponent(hireId);
+    }
+</script>
+<script src="~/Scripts/application/SelfOnboardingReview.js?v=20260806g"></script>

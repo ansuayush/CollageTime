@@ -19,6 +19,7 @@ using System.Data.Entity.Validation;
 using Newtonsoft.Json;
 using ExecViewHrk.Models;
 using ExecViewHrk.Domain.Interface;
+using ExecViewHrk.WebUI.Helpers;
 
 namespace ExecViewHrk.WebUI.Controllers
 {
@@ -33,7 +34,34 @@ namespace ExecViewHrk.WebUI.Controllers
         }
         public ActionResult Index()
         {
+            // Pending self-onboarding hires should not land on employee portal home
+            if (User.IsInRole("ClientEmployees") && HasPendingSelfOnboardingHire())
+                return RedirectToAction("Index", "SelfOnboarding");
+
             return View();
+        }
+
+        private bool HasPendingSelfOnboardingHire()
+        {
+            try
+            {
+                string conn = User.Identity.GetClientConnectionString();
+                if (string.IsNullOrWhiteSpace(conn))
+                    conn = ConfigurationManager.ConnectionStrings["execView1"].ConnectionString;
+                using (var db = new ClientDbContext(conn))
+                {
+                    SelfOnboardingSchemaHelper.EnsureSchema(db);
+                    string u = User.Identity.Name ?? "";
+                    var email = db.AspNetUsers.Where(x => x.UserName == u).Select(x => x.Email).FirstOrDefault() ?? "";
+                    return db.SelfOnboardingHires.Any(h =>
+                        (h.Status == "Invited" || h.Status == "InProgress" || h.Status == "ChangesRequested") &&
+                        (h.GeneratedUserName == u || h.HomeEmail == email || h.HomeEmail == u));
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private AppUserManager UserManager

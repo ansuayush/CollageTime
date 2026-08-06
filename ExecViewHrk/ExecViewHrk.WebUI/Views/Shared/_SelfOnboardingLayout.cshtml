@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title - Self Onboarding</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <style>
+        body { background: #f4f6f8; font-family: "Segoe UI", Arial, sans-serif; margin: 0; }
+        .so-topbar {
+            background: #1a3a4a;
+            color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .so-topbar .brand { font-size: 20px; font-weight: 700; letter-spacing: 0.02em; }
+        .so-topbar a { color: #cfe6df; }
+        .so-wrap { max-width: 980px; margin: 24px auto; padding: 0 16px 40px; }
+        .so-card, .card {
+            background: #fff;
+            border: 1px solid #dfe3e8;
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,.04);
+        }
+        .portal-page-heading__title h4 { margin: 0 0 12px; color: #1a3a4a; }
+        .btn-primary { background: #2f6f5e; border-color: #2f6f5e; }
+        .btn-primary:hover { background: #265a4c; border-color: #265a4c; }
+        .nav-pills > li.active > a,
+        .nav-pills > li.active > a:hover { background: #2f6f5e; }
+        .nav-pills > li > a { color: #1a3a4a; }
+    </style>
+    <script src="~/Scripts/jquery-2.2.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="so-topbar">
+        <div class="brand">HRNest - Self Onboarding</div>
+        <div>
+            <span style="margin-right:12px;">@User.Identity.Name</span>
+            <a href="@Url.Action("Logout", "Account")">Sign out</a>
+        </div>
+    </div>
+    <div class="so-wrap">
+        @RenderBody()
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

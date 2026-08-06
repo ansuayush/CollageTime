@@ -1,0 +1,96 @@
+@{
+    Layout = null;
+}
+<div class="container-fluid" id="selfOnboardRulesRoot"
+     data-lookups-url="@Url.Action("GetRuleLookups", "SelfOnboarding")"
+     data-candidates-url="@Url.Action("GetCandidatesForPosition", "SelfOnboarding")"
+     data-send-url="@Url.Action("SendNewHireNotice", "SelfOnboarding")"
+     data-resend-url="@Url.Action("ResendNewHireNotice", "SelfOnboarding")"
+     data-hires-url="@Url.Action("GetHires", "SelfOnboarding")">
+    <div class="main-header p-0">
+        <h4>Self Onboarding</h4>
+        <p class="text-muted">Select position, onboarding profile, and candidate. Send new hire notice with login credentials.</p>
+        <div class="m-b-10">
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("ProfilesPartial", "OnboardingSetup")'>Onboarding Profiles</button>
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("HireReviewPartial", "SelfOnboarding")'>Hire Registrations</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Position Title</label>
+                        <select class="form-control" id="soPosition"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Onboarding Profile</label>
+                        <select class="form-control" id="soProfile"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Candidate</label>
+                        <select class="form-control" id="soCandidate">
+                            <option value="">-- Select position first --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" class="form-control" id="soFirstName" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" class="form-control" id="soLastName" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Home Email</label>
+                        <input type="email" class="form-control" id="soHomeEmail" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Employee Badge (File #)</label>
+                        <input type="text" class="form-control" id="soFileNumber" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Offer Letter</label>
+                        <select class="form-control" id="soOfferLetter"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Generated Username (preview)</label>
+                        <input type="text" class="form-control" id="soUserNamePreview" readonly />
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="btnSendHireNotice">Send New Hire Notice</button>
+            <div class="alert alert-success m-t-15" id="soNoticeResult" style="display:none;"></div>
+            <div class="alert alert-danger m-t-15" id="soNoticeError" style="display:none;"></div>
+
+            <hr />
+            <h5>Recent invites (resend email)</h5>
+            <table class="table table-bordered table-condensed" id="soRecentHires">
+                <thead><tr><th>Name</th><th>Email</th><th>Username</th><th>Status</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/application/SelfOnboardingRules.js"></script>

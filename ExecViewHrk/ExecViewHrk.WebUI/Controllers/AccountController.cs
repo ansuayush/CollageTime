@@ -227,16 +227,6 @@ namespace ExecViewHrk.WebUI.Controllers
                     string connString = Convert.ToString(ConfigurationManager.ConnectionStrings["execView1"]);
                     ClientDbContext clientDbContext = new ClientDbContext(connString);
 
-                    // Prefer an explicit MobileHome return URL; otherwise route by device.
-                    if (!string.IsNullOrEmpty(returnUrl) && returnUrl.IndexOf("MobileHome", StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        // keep MobileHome returnUrl
-                    }
-                    else if (DetectBrowserCapabilities())
-                        returnUrl = "/MobileHome";
-                    else
-                        returnUrl = "/HrkAdmin/Index";
-
                     var userInDb = adminDbContext.AspNetUsers
                         .Include(x => x.Employer).Where(x => x.Id == user.Id).SingleOrDefault();
                     var personid = clientDbContext.Persons.Where(x => x.eMail == userInDb.Email).Select(x => x.PersonId).FirstOrDefault();
@@ -264,6 +254,20 @@ namespace ExecViewHrk.WebUI.Controllers
                         IsPersistent = true,
                         ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14)
                     }, _claimsIdentity);
+
+                    // New-hire self onboarding: always open wizard welcome page
+                    if (HasPendingSelfOnboarding(clientConnString, loginModel.Name, userInDb != null ? userInDb.Email : null, user.Id))
+                    {
+                        return Redirect("~/SelfOnboarding");
+                    }
+                    else if (!string.IsNullOrEmpty(returnUrl) && returnUrl.IndexOf("MobileHome", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // keep MobileHome returnUrl
+                    }
+                    else if (DetectBrowserCapabilities())
+                        returnUrl = "/MobileHome";
+                    else
+                        returnUrl = "/HrkAdmin/Index";
                 }
                 else if (userRoles.Contains("ClientManagers"))
                 {
@@ -320,6 +324,39 @@ namespace ExecViewHrk.WebUI.Controllers
             {               
                 _identityClaimsList.Add(new Claim(SessionStateKeys.LOGIN_PERSON_ID.ToString(), person.PersonId.ToString()));
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// True when this login has an open self-onboarding registration (not yet submitted/hired).
+        /// </summary>
+        private static bool HasPendingSelfOnboarding(string clientConnString, string userName, string email, string aspNetUserId = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(clientConnString))
+                    clientConnString = ConfigurationManager.ConnectionStrings["execView1"].ConnectionString;
+
+                using (var db = new ClientDbContext(clientConnString))
+                {
+                    SelfOnboardingSchemaHelper.EnsureSchema(db);
+                    string u = (userName ?? "").Trim();
+                    string e = (email ?? "").Trim();
+                    string uid = (aspNetUserId ?? "").Trim();
+
+                    return db.SelfOnboardingHires.Any(h =>
+                        (h.Status == "Invited" || h.Status == "InProgress" || h.Status == "ChangesRequested") &&
+                        (
+                            (!string.IsNullOrEmpty(uid) && h.AspNetUserId == uid) ||
+                            (!string.IsNullOrEmpty(u) && h.GeneratedUserName == u) ||
+                            (!string.IsNullOrEmpty(e) && h.HomeEmail == e) ||
+                            (!string.IsNullOrEmpty(u) && h.HomeEmail == u)
+                        ));
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -525,6 +562,23 @@ namespace ExecViewHrk.WebUI.Controllers
         {
             if (User.IsInRole("ClientEmployees"))
             {
+                string conn = null;
+                try { conn = User.Identity.GetClientConnectionString(); } catch { }
+                string email = null;
+                try
+                {
+                    // Prefer email from AspNetUsers for hire matching
+                    string execConn = ConfigurationManager.ConnectionStrings["execView1"].ConnectionString;
+                    using (var db = new ClientDbContext(string.IsNullOrWhiteSpace(conn) ? execConn : conn))
+                    {
+                        email = db.AspNetUsers.Where(u => u.UserName == User.Identity.Name).Select(u => u.Email).FirstOrDefault();
+                    }
+                }
+                catch { }
+
+                if (HasPendingSelfOnboarding(conn, User.Identity.Name, email))
+                    return Redirect("~/SelfOnboarding");
+
                 if (!string.IsNullOrEmpty(returnUrl)
                     && returnUrl.IndexOf("MobileHome", StringComparison.OrdinalIgnoreCase) >= 0
                     && Url.IsLocalUrl(returnUrl))

@@ -1,0 +1,584 @@
+@model ExecViewHrk.WebUI.Models.SelfOnboardingWizardVm
+@{
+    Layout = null;
+    var wizard = Model ?? new ExecViewHrk.WebUI.Models.SelfOnboardingWizardVm();
+    var hire = wizard.Hire;
+    var personal = wizard.Personal;
+    string identityMessage = ViewBag.IdentityMessage as string;
+    bool showWizard = hire != null;
+    bool isHrReview = wizard.IsHrReview;
+    string readOnlyAttr = wizard.IsReadOnly ? "disabled=\"disabled\"" : string.Empty;
+    int startStep = hire != null ? hire.CurrentStep : 1;
+    string empty = string.Empty;
+
+    string firstName = personal != null && !string.IsNullOrEmpty(personal.FirstName) ? personal.FirstName : (hire != null ? hire.FirstName : empty);
+    string middleName = personal != null ? (personal.MiddleName ?? empty) : empty;
+    string lastName = personal != null && !string.IsNullOrEmpty(personal.LastName) ? personal.LastName : (hire != null ? hire.LastName : empty);
+    string workEmail = personal != null && !string.IsNullOrEmpty(personal.WorkEmail) ? personal.WorkEmail : (hire != null ? hire.WorkEmail : empty);
+    string homeEmail = personal != null && !string.IsNullOrEmpty(personal.HomeEmail) ? personal.HomeEmail : (hire != null ? hire.HomeEmail : empty);
+    string phone = personal != null ? (personal.Phone ?? empty) : empty;
+    string address1 = personal != null ? (personal.Address1 ?? empty) : empty;
+    string city = personal != null ? (personal.City ?? empty) : empty;
+    string zip = personal != null ? (personal.Zip ?? empty) : empty;
+    string emergencyName = personal != null ? (personal.EmergencyName ?? empty) : empty;
+    string emergencyPhone = personal != null ? (personal.EmergencyPhone ?? empty) : empty;
+    string profileName = hire != null && !string.IsNullOrEmpty(hire.ProfileName) ? hire.ProfileName : "Onboarding";
+    string readonlyFlag = wizard.IsReadOnly ? "1" : "0";
+    string hrReviewFlag = isHrReview ? "1" : "0";
+    string hireIdAttr = hire != null ? hire.HireId.ToString() : "";
+    string statusDisplay = hire != null && hire.Status == "ChangesRequested" ? "Needs Correction" : (hire != null ? hire.Status : "");
+    string noHireMsg = !string.IsNullOrEmpty(identityMessage) ? identityMessage : "No self onboarding registration is linked to this login.";
+    bool showRejection = hire != null && (!string.IsNullOrEmpty(hire.RejectionReason) || !string.IsNullOrEmpty(hire.RejectedFormName));
+    bool showHrApprove = isHrReview && hire != null && hire.Status == "Submitted";
+    string stepNavStyle = isHrReview ? "" : "display:none;";
+    string reviewStepStyle = isHrReview ? "" : "display:none;";
+}
+<div class="container-fluid portal-page" id="mySelfOnboardRoot"
+     data-wizard-url="@Url.Action("GetWizardData", "SelfOnboarding")"
+     data-save-url="@Url.Action("SaveStep", "SelfOnboarding")"
+     data-sign-url="@Url.Action("SignDocument", "SelfOnboarding")"
+     data-unsign-url="@Url.Action("UnsignDocument", "SelfOnboarding")"
+     data-bank-save-url="@Url.Action("SaveBankAccount", "SelfOnboarding")"
+     data-bank-del-url="@Url.Action("DeleteBankAccount", "SelfOnboarding")"
+     data-bank-list-url="@Url.Action("GetBankAccounts", "SelfOnboarding")"
+     data-upload-url="@Url.Action("UploadDocument", "SelfOnboarding")"
+     data-submit-url="@Url.Action("SubmitOnboarding", "SelfOnboarding")"
+     data-download-url="@Url.Action("DownloadSigned", "SelfOnboarding")"
+     data-view-doc-url="@Url.Action("DownloadDocument", "SelfOnboarding")"
+     data-i9-url="@Url.Action("GetI9Data", "SelfOnboarding")"
+     data-i9-save-url="@Url.Action("SaveI9", "SelfOnboarding")"
+     data-i9-sign-url="@Url.Action("SaveAndSignI9", "SelfOnboarding")"
+     data-tax-url="@Url.Action("GetTaxData", "SelfOnboarding")"
+     data-tax-save-url="@Url.Action("SaveTax", "SelfOnboarding")"
+     data-w4-sign-url="@Url.Action("SaveAndSignW4", "SelfOnboarding")"
+     data-approve-url="@Url.Action("ApproveHire", "SelfOnboarding")"
+     data-reject-url="@Url.Action("RejectHire", "SelfOnboarding")"
+     data-readonly="@readonlyFlag"
+     data-hr-review="@hrReviewFlag"
+     data-hire-id="@hireIdAttr"
+     data-step="@startStep">
+
+    <div class="main-header portal-page-heading p-0">
+        <div class="portal-page-heading__title">
+            <h4>@(isHrReview ? "Self Onboarding Approval" : "Self Onboarding")</h4>
+        </div>
+        @if (isHrReview)
+        {
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("HireReviewPartial", "SelfOnboarding")'>Back to Self Hire Registrations</button>
+        }
+    </div>
+
+@if (!showWizard)
+{
+    <div class="alert alert-warning">@noHireMsg</div>
+}
+else
+{
+    <div class="alert alert-info" id="soStatusBar">
+        Status: <strong>@statusDisplay</strong>
+        @if (!string.IsNullOrEmpty(hire.PositionTitle))
+        {
+            <span> | Position: @hire.PositionTitle</span>
+        }
+        @if (!string.IsNullOrEmpty(hire.FileNumber))
+        {
+            <span> | Badge: @hire.FileNumber</span>
+        }
+    </div>
+
+    if (showRejection)
+    {
+        <div class="alert alert-warning" id="soRejectionBanner">
+            <strong>Corrections required</strong>
+            @if (!string.IsNullOrEmpty(hire.RejectedFormName))
+            {
+                <div>Form(s): @hire.RejectedFormName</div>
+            }
+            @if (!string.IsNullOrEmpty(hire.RejectionReason))
+            {
+                <div>Reason: @hire.RejectionReason</div>
+            }
+        </div>
+    }
+
+    <ul class="nav nav-pills m-b-15" id="soStepNav" style="@stepNavStyle">
+        @if (!isHrReview)
+        {
+            <li class="active" data-step="1"><a href="javascript:void(0)">1. Get Started</a></li>
+        }
+        <li data-step="2"><a href="javascript:void(0)">@(isHrReview ? "Personal" : "2. Personal")</a></li>
+        <li data-step="3"><a href="javascript:void(0)">@(isHrReview ? "I-9" : "3. I-9")</a></li>
+        <li data-step="4"><a href="javascript:void(0)">@(isHrReview ? "Documents" : "4. Documents")</a></li>
+        <li data-step="5"><a href="javascript:void(0)">@(isHrReview ? "Tax Election" : "5. Tax Election")</a></li>
+        <li data-step="6"><a href="javascript:void(0)">@(isHrReview ? "Bank" : "6. Bank")</a></li>
+        <li class="@(isHrReview ? "active" : "")" data-step="7"><a href="javascript:void(0)">@(isHrReview ? "Review" : "7. Review")</a></li>
+    </ul>
+
+    if (!isHrReview)
+    {
+        <div class="card so-step" data-step="1">
+            <div class="card-block">
+                <h5>Welcome</h5>
+                <p>Complete your new hire documents. You can save progress and return later for any unfinished steps.</p>
+                <p><strong>@hire.FirstName @hire.LastName</strong> - @profileName</p>
+                <button type="button" class="btn btn-primary btn-so-next" @Html.Raw(readOnlyAttr)>Let's get started</button>
+            </div>
+        </div>
+    }
+
+    <div class="card so-step" data-step="2" style="display:none;">
+        <div class="card-block">
+            <h5>Personal Information</h5>
+            <div class="row">
+                <div class="col-md-2"><div class="form-group"><label>Salutation</label><select class="form-control" id="PrefixId"></select></div></div>
+                <div class="col-md-3"><div class="form-group"><label>First Name</label><input class="form-control" id="FirstName" value="@firstName" /></div></div>
+                <div class="col-md-2"><div class="form-group"><label>Middle</label><input class="form-control" id="MiddleName" value="@middleName" /></div></div>
+                <div class="col-md-3"><div class="form-group"><label>Last Name</label><input class="form-control" id="LastName" value="@lastName" /></div></div>
+                <div class="col-md-2"><div class="form-group"><label>Suffix</label><select class="form-control" id="SuffixId"></select></div></div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"><div class="form-group"><label>Work Email</label><input class="form-control" id="WorkEmail" value="@workEmail" /></div></div>
+                <div class="col-md-4"><div class="form-group"><label>Home Email</label><input class="form-control" id="HomeEmail" value="@homeEmail" /></div></div>
+                <div class="col-md-4"><div class="form-group"><label>Phone</label><input class="form-control" id="Phone" value="@phone" /></div></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><div class="form-group"><label>Marital Status</label><select class="form-control" id="MaritalStatusId"></select></div></div>
+                <div class="col-md-3"><div class="form-group"><label>Ethnicity / Race</label><select class="form-control" id="EthnicityId"></select></div></div>
+                <div class="col-md-3"><div class="form-group"><label>Gender</label><select class="form-control" id="GenderId"></select></div></div>
+                <div class="col-md-3"><div class="form-group"><label>License Country/Region</label><select class="form-control" id="LicenseCountryId"></select></div></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6"><div class="form-group"><label>Address</label><input class="form-control" id="Address1" value="@address1" /></div></div>
+                <div class="col-md-3"><div class="form-group"><label>City</label><input class="form-control" id="City" value="@city" /></div></div>
+                <div class="col-md-3"><div class="form-group"><label>State</label><select class="form-control" id="StateId"></select></div></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><div class="form-group"><label>Zip</label><input class="form-control" id="Zip" value="@zip" /></div></div>
+                <div class="col-md-3"><div class="form-group"><label>Country</label><select class="form-control" id="CountryId"></select></div></div>
+                <div class="col-md-3"><div class="form-group"><label>Emergency Contact</label><input class="form-control" id="EmergencyName" value="@emergencyName" /></div></div>
+                <div class="col-md-3"><div class="form-group"><label>Relationship</label><select class="form-control" id="RelationshipTypeId"></select></div></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><div class="form-group"><label>Emergency Phone</label><input class="form-control" id="EmergencyPhone" value="@emergencyPhone" /></div></div>
+            </div>
+            <button type="button" class="btn btn-default btn-so-prev">Back</button>
+            <button type="button" class="btn btn-primary btn-so-next" @Html.Raw(readOnlyAttr)>Save &amp; Continue</button>
+        </div>
+    </div>
+
+    <div class="card so-step" data-step="3" style="display:none;">
+        <div class="card-block">
+            <div style="border:1px solid #cacaca; background:#f3f6f9; padding:15px;">
+                <p class="text-right text-muted m-b-5"><span class="text-danger">*</span> indicates mandatory fields</p>
+                <p><strong>Form I-9 Employment Eligibility - This information is required by the U.S Government</strong></p>
+                <p>I attest under penalty of perjury, that I am (Select one of the following)</p>
+
+                <div class="radio">
+                    <label><input type="radio" name="i9CitizenStatus" id="rbtnCitizen" value="0" checked /> A Citizen or national of United States</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="i9CitizenStatus" id="rbtnLaw" value="1" /> A lawful permanent resident</label>
+                </div>
+                <div id="trLaw" class="m-l-20 m-b-10" style="display:none;">
+                    <div class="row">
+                        <div class="col-md-4"><div class="form-group"><label>Alien Number</label><input class="form-control" id="txtAlienNumber" maxlength="12" /></div></div>
+                        <div class="col-md-4"><div class="form-group"><label>Expiration Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="rdpLawExpiration" /></div></div>
+                        <div class="col-md-4"><div class="form-group"><label>Citizen of <span class="text-danger">*</span></label><select class="form-control" id="rcLawCitizenof"></select></div></div>
+                    </div>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="i9CitizenStatus" id="rbtnAlien" value="2" /> An Alien authorized to work until:</label>
+                </div>
+                <div id="trAlien" class="m-l-20 m-b-10" style="display:none;">
+                    <div class="row">
+                        <div class="col-md-4"><div class="form-group"><label>Expiration Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="rdpStartDate" /></div></div>
+                        <div class="col-md-4"><div class="form-group"><label>Citizen of <span class="text-danger">*</span></label><select class="form-control" id="rcAlienCitizenof"></select></div></div>
+                    </div>
+                </div>
+
+                <p class="m-t-15"><em>For aliens authorized to work, provide your Alien Registration Number/USCIS Number <strong>OR</strong> Form I-94 Admission Number</em></p>
+                <div class="form-group"><label>1. Alien Registration Number/USCIS Number</label><input class="form-control" id="txtAlienRegistration" maxlength="50" /></div>
+                <p class="text-center"><strong>OR</strong></p>
+                <div class="form-group"><label>Form I-94 Admission Number</label><input class="form-control" id="txtAdmissionNumber" maxlength="50" /></div>
+                <p class="text-muted">If you obtained your admission number from CBP in connection with your arrival in the United States:</p>
+                <div class="row">
+                    <div class="col-md-6"><div class="form-group"><label>Foreign Passport Number</label><input class="form-control" id="txtPassPortNumber" maxlength="50" /></div></div>
+                    <div class="col-md-6"><div class="form-group"><label>Country of Issuance</label><select class="form-control" id="rcCountryofIssuance"><option value="">--Select--</option></select></div></div>
+                </div>
+                <p class="text-muted small">Some aliens may write &quot;N/A&quot; on the Foreign Passport Number and Country of Issuance fields. (See Instructions)</p>
+
+                <p><strong>Preparer and/or Translator Certification (check one)</strong></p>
+                <div class="checkbox"><label><input type="checkbox" id="chkTranslatorNotUsed" checked /> I did not use a preparer or translator.</label></div>
+                <div class="checkbox"><label><input type="checkbox" id="chkTranslatorUsed" /> A preparer(s) and/or translator(s) assisted the employee in completing Section 1. (Fields below must be completed and signed when preparers and/or translators assist an employee in completing Section 1.)</label></div>
+
+                <div class="checkbox m-t-10">
+                    <label><input type="checkbox" id="btnChkfederal" /> I am aware the Federal Law provides for imprisonment and/or fines for false statements or use of false documents in connection with the completion of this form. <span class="text-danger">*</span></label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" id="btnchkSSN" /> Do not display my Social Security Number on my I-9 form.</label>
+                </div>
+
+                <div class="m-t-15">
+                    <button type="button" class="btn btn-default" id="btnSaveI9" @Html.Raw(readOnlyAttr)>Save I-9</button>
+                    <a class="btn btn-default btn-view-form" href="@(isHrReview ? Url.Action("DownloadSigned", "SelfOnboarding", new { documentKey = "I9", hireId = hire.HireId }) : Url.Action("DownloadSigned", "SelfOnboarding", new { documentKey = "I9" }))" target="_blank" rel="noopener" id="linkViewI9" style="display:none;">View signed PDF</a>
+                    <button type="button" class="btn btn-info" id="btnOpenI9" data-key="I9">View &amp; Sign I9</button>
+                    <span class="text-success m-l-10" id="i9SavedMsg" style="display:none;">Saved</span>
+                </div>
+            </div>
+            <div class="m-t-15">
+                <button type="button" class="btn btn-default btn-so-prev">Back</button>
+                <button type="button" class="btn btn-primary btn-so-next">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card so-step" data-step="4" style="display:none;">
+        <div class="card-block">
+            <h5>Onboarding Documents</h5>
+            <table class="table table-bordered" id="soDocsTable">
+                <thead>
+                    <tr><th>Document</th><th>Type</th><th>Status</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                @if (wizard.Documents != null)
+                {
+                    foreach (var d in wizard.Documents)
+                    {
+                        var uploadFlag = d.EnableUpload ? "1" : "0";
+                        var statusText = d.IsSigned ? "Signed" : "Pending";
+                        var signLabel = d.IsSigned ? "Unsign" : "Sign";
+                        var checkStyle = d.IsSigned ? empty : "display:none;";
+                        var hasFile = !string.IsNullOrEmpty(d.FilePath) || d.IsSigned;
+                        var viewUrl = isHrReview
+                            ? Url.Action("DownloadDocument", "SelfOnboarding", new { profileDocumentId = d.ProfileDocumentId, preferSigned = true, hireId = hire.HireId })
+                            : Url.Action("DownloadDocument", "SelfOnboarding", new { profileDocumentId = d.ProfileDocumentId, preferSigned = true });
+                        <tr data-doc="@d.ProfileDocumentId" data-enable-upload="@uploadFlag">
+                            <td>@d.DocumentName</td>
+                            <td>@d.DocumentTypeName</td>
+                            <td class="doc-status">@statusText</td>
+                            <td>
+                                @if (hasFile)
+                                {
+                                    <a class="btn btn-xs btn-default btn-view-pdf" href="@viewUrl" target="_blank" rel="noopener">View PDF</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No file</span>
+                                }
+                                @if (d.RequiresSignature)
+                                {
+                                    <button type="button" class="btn btn-xs btn-info btn-sign-doc" data-key="DOC" data-doc="@d.ProfileDocumentId">@signLabel</button>
+                                }
+                                @if (d.EnableUpload)
+                                {
+                                    <div class="m-t-5">
+                                        <input type="file" class="so-upload" data-doc="@d.ProfileDocumentId" accept=".pdf,application/pdf" />
+                                    </div>
+                                }
+                                <span class="text-success doc-check" style="@checkStyle">&#10004;</span>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-default btn-so-prev">Back</button>
+            <button type="button" class="btn btn-primary btn-so-next">Continue</button>
+        </div>
+    </div>
+
+    <div class="card so-step" data-step="5" style="display:none;">
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-primary">Federal Tax Election</h5>
+                    <div class="form-group">
+                        <label>Filing Status <span class="text-danger">*</span></label>
+                        <select class="form-control" id="FilingStatusId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Other Income Amount</label>
+                        <input class="form-control" id="OtherIncomeAmount" type="number" step="0.01" />
+                    </div>
+                    <div class="form-group">
+                        <label>Deductions Amount</label>
+                        <input class="form-control" id="DeductionsAmount" type="number" step="0.01" />
+                    </div>
+                    <div class="form-group">
+                        <label>Extra Withholding <span class="text-danger">*</span></label>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input class="form-control" id="ExtraWithholdingAmount" type="number" step="0.01" />
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="input-group">
+                                    <input class="form-control" id="ExtraWithholdingPercent" type="number" step="0.01" value="0" />
+                                    <span class="input-group-addon">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="FederalExempt" /> Federal Exempt for this tax</label>
+                    </div>
+                    <div class="alert alert-info m-t-10" style="font-size:12px;">
+                        <strong>Important Information:</strong> The IRS requires every employee to have a W-4 on file.
+                        Complete your federal tax election, save, then use <em>View and Sign W-4</em> to sign the form.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-primary">State Tax Election</h5>
+                    <div class="m-b-10">
+                        <a class="btn btn-default btn-view-form" href="@(isHrReview ? Url.Action("DownloadSigned", "SelfOnboarding", new { documentKey = "W4", hireId = hire.HireId }) : Url.Action("DownloadSigned", "SelfOnboarding", new { documentKey = "W4" }))" target="_blank" rel="noopener" id="linkViewW4" style="display:none;">View signed PDF</a>
+                        <button type="button" class="btn btn-info" id="btnOpenW4">View and Sign W-4</button>
+                        <span class="text-success m-l-10" id="taxSavedMsg" style="display:none;">Saved</span>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="CopyFromFederal" /> Copy From Federal Tax Election</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Work in Country <span class="text-danger">*</span></label>
+                        <select class="form-control" id="WorkingCountryId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Work in State <span class="text-danger">*</span></label>
+                        <select class="form-control" id="WorkingStateId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>State Taxes Withholding Status <span class="text-danger">*</span></label>
+                        <select class="form-control" id="StateTaxStatusId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>State Taxes Exemptions <span class="text-danger">*</span></label>
+                        <input class="form-control" id="StateExemptions" />
+                    </div>
+                    <div class="form-group">
+                        <label>State Taxes Additional Withholding <span class="text-danger">*</span></label>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input class="form-control" id="StateAdditionalWithholdingAmount" type="number" step="0.01" />
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="input-group">
+                                    <input class="form-control" id="StateAdditionalWithholdingPercent" type="number" step="0.01" value="0" />
+                                    <span class="input-group-addon">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="StateExempt" /> Exempt for this tax.</label>
+                    </div>
+                </div>
+            </div>
+            <div class="m-t-15">
+                <button type="button" class="btn btn-default" id="btnSaveTax" @Html.Raw(readOnlyAttr)>Save Tax Election</button>
+                <button type="button" class="btn btn-default btn-so-prev">Back</button>
+                <button type="button" class="btn btn-primary btn-so-next">Save &amp; Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card so-step" data-step="6" style="display:none;">
+        <div class="card-block">
+            <h5>Bank Accounts</h5>
+            <p class="text-muted">Enter account details and click <strong>Add Account</strong> (or Continue — pending details are saved automatically).</p>
+            <table class="table table-bordered" id="soBankTable">
+                <thead>
+                    <tr><th>Type</th><th>Bank</th><th>Routing</th><th>Account</th><th>Primary</th><th></th></tr>
+                </thead>
+                <tbody>
+                @if (wizard.BankAccounts != null)
+                {
+                    foreach (var b in wizard.BankAccounts)
+                    {
+                        var primaryText = b.IsPrimary ? "Yes" : empty;
+                        <tr data-id="@b.BankAccountId">
+                            <td>@b.AccountTypeName</td>
+                            <td>@b.BankName</td>
+                            <td>@b.RoutingNumber</td>
+                            <td>@b.AccountNumber</td>
+                            <td>@primaryText</td>
+                            <td><button type="button" class="btn btn-xs btn-danger btn-del-bank" data-id="@b.BankAccountId">Delete</button></td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+            <div class="row" id="bankForm">
+                <div class="col-md-3"><div class="form-group"><label>Account Type</label><select class="form-control" id="AccountTypeId"></select></div></div>
+                <div class="col-md-3"><div class="form-group"><label>Bank Name</label><input class="form-control" id="BankName" /></div></div>
+                <div class="col-md-2"><div class="form-group"><label>Routing</label><input class="form-control" id="RoutingNumber" /></div></div>
+                <div class="col-md-2"><div class="form-group"><label>Account #</label><input class="form-control" id="AccountNumber" /></div></div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div class="checkbox"><label><input type="checkbox" id="IsPrimary" /> Primary</label></div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-default" id="btnAddBank" @Html.Raw(readOnlyAttr)>Add Account</button>
+            <div class="m-t-15">
+                <button type="button" class="btn btn-default btn-so-prev">Back</button>
+                <button type="button" class="btn btn-primary btn-so-next">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card so-step" data-step="7" style="@reviewStepStyle">
+        <div class="card-block">
+            <h5>@(isHrReview ? "Review & Approve" : "Review & Submit")</h5>
+            <p>@(isHrReview
+                ? "Review the employee-submitted information. Approve to mark as Hired, or reject to request corrections."
+                : "Please review your information. After submit you will receive a confirmation with transaction ID.")</p>
+            <div id="soReviewSummary" class="m-b-15"></div>
+            <button type="button" class="btn btn-default btn-so-prev">Back</button>
+            @if (showHrApprove)
+            {
+                <button type="button" class="btn btn-success" id="btnHrApproveHire">Approve</button>
+                <button type="button" class="btn btn-link text-danger" id="btnHrRejectHire">Reject</button>
+            }
+            else if (isHrReview)
+            {
+                <span class="text-muted m-l-10">Status: @statusDisplay (approve/reject available when Submitted)</span>
+            }
+            else
+            {
+                <button type="button" class="btn btn-success" id="btnSubmitOnboarding" @Html.Raw(readOnlyAttr)>Submit</button>
+            }
+        </div>
+    </div>
+}
+
+</div>
+
+<div class="modal fade" id="soW4Modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title">Form W-4 - Employee's Withholding Certificate</h5>
+            </div>
+            <div class="modal-body" style="max-height:70vh; overflow:auto; background:#f8f8f8;">
+                <div id="w4FormPreview" style="background:#fff; border:1px solid #333; padding:20px;">
+                    <table width="100%" style="border-bottom:2px solid #000; margin-bottom:15px;">
+                        <tr>
+                            <td width="140"><strong>Form W-4</strong><br /><small>Department of the Treasury<br />Internal Revenue Service</small></td>
+                            <td align="center"><strong style="font-size:18px;">Employee's Withholding Certificate</strong><br /><small>Complete Form W-4 so that your employer can withhold the correct federal income tax from your pay.</small></td>
+                            <td width="120" align="center">OMB No. 1545-0074<br /><strong style="font-size:22px;">2026</strong></td>
+                        </tr>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-6"><p><strong>Name:</strong> <span id="w4EmpName"></span></p></div>
+                        <div class="col-md-6"><p><strong>File #:</strong> <span id="w4FileNumber"></span></p></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><p><strong>Home email:</strong> <span id="w4Email"></span></p></div>
+                        <div class="col-md-6"><p><strong>Address:</strong> <span id="w4Address"></span></p></div>
+                    </div>
+                    <hr />
+                    <p><strong>Step 1(c) Filing Status:</strong> <span id="w4FilingStatus"></span></p>
+                    <p><strong>Other Income:</strong> $<span id="w4OtherIncome">0</span>
+                        &nbsp;|&nbsp; <strong>Deductions:</strong> $<span id="w4Deductions">0</span></p>
+                    <p><strong>Extra Withholding:</strong> $<span id="w4ExtraAmt">0</span>
+                        / <span id="w4ExtraPct">0</span>%</p>
+                    <p><strong>Federal Exempt:</strong> <span id="w4FedExempt">No</span></p>
+                    <hr />
+                    <p><strong>Work State:</strong> <span id="w4WorkState"></span>
+                        &nbsp;|&nbsp; <strong>State Status:</strong> <span id="w4StateStatus"></span></p>
+                    <p><strong>State Exemptions:</strong> <span id="w4StateExempts"></span>
+                        &nbsp;|&nbsp; <strong>State Additional:</strong> $<span id="w4StateExtraAmt">0</span>
+                        / <span id="w4StateExtraPct">0</span>%</p>
+                    <hr />
+                    <p><strong>Electronic Signature</strong></p>
+                    <dl class="dl-horizontal">
+                        <dt>Name</dt><dd id="w4SigName"></dd>
+                        <dt>Date / Time</dt><dd id="w4SigWhen"></dd>
+                        <dt>IP / Txn</dt><dd>Captured when you confirm</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmSignW4">Sign W-4</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="soSignModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Electronic Signature</h5></div>
+            <div class="modal-body">
+                <p>Confirm signature details:</p>
+                <dl class="dl-horizontal">
+                    <dt>Name</dt><dd id="sigName"></dd>
+                    <dt>Date / Time</dt><dd id="sigWhen"></dd>
+                    <dt>IP</dt><dd id="sigIp">Captured on save</dd>
+                    <dt>Transaction ID</dt><dd id="sigTxn">Generated on save</dd>
+                </dl>
+                <input type="hidden" id="sigDocKey" />
+                <input type="hidden" id="sigDocId" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmSign">Save Signature</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="soDoneModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Congratulations!</h5></div>
+            <div class="modal-body">
+                <p id="soDoneMessage"></p>
+                <p><strong>Transaction ID:</strong> <span id="soDoneTxn"></span></p>
+                <p><strong>Confirmation Date:</strong> <span id="soDoneDate"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="soRejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title">Reject for Corrections</h5>
+            </div>
+            <div class="modal-body">
+                <p>Select the form(s) that need correction and enter a reason. The employee will receive a login email to update and resubmit.</p>
+                <div class="form-group">
+                    <label>Forms to correct</label>
+                    <div class="checkbox"><label><input type="checkbox" class="so-reject-form" value="Personal" /> Personal</label></div>
+                    <div class="checkbox"><label><input type="checkbox" class="so-reject-form" value="I-9" /> I-9</label></div>
+                    <div class="checkbox"><label><input type="checkbox" class="so-reject-form" value="Documents" /> Documents</label></div>
+                    <div class="checkbox"><label><input type="checkbox" class="so-reject-form" value="Tax Election" /> Tax Election</label></div>
+                    <div class="checkbox"><label><input type="checkbox" class="so-reject-form" value="Bank" /> Bank</label></div>
+                </div>
+                <div class="form-group">
+                    <label>Rejection reason</label>
+                    <textarea class="form-control" id="soRejectReason" rows="4" maxlength="1000" placeholder="Explain what needs to be corrected..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmRejectHire">Send Rejection Email</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="@Url.Content("~/Scripts/application/MySelfOnboarding.js")?v=20260806h"></script>

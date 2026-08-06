@@ -159,6 +159,16 @@
     <Compile Include="JobApplicationEmployment.cs" />
     <Compile Include="JobApplicationEducation.cs" />
     <Compile Include="JobApplicationSignature.cs" />
+    <Compile Include="OnboardingLookup.cs" />
+    <Compile Include="OnboardingProfile.cs" />
+    <Compile Include="OnboardingProfileDocument.cs" />
+    <Compile Include="SelfOnboardingHire.cs" />
+    <Compile Include="SelfOnboardingPersonal.cs" />
+    <Compile Include="SelfOnboardingI9.cs" />
+    <Compile Include="SelfOnboardingTax.cs" />
+    <Compile Include="SelfOnboardingSignature.cs" />
+    <Compile Include="SelfOnboardingBankAccount.cs" />
+    <Compile Include="SelfOnboardingUpload.cs" />
     <Compile Include="EmployeeRetroHours.cs" />
     <Compile Include="employeeSalaryComponents.cs" />
     <Compile Include="EmployeesAllowedTaken.cs" />

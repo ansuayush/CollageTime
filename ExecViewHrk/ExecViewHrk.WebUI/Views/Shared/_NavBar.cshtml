@@ -47,6 +47,9 @@
                                                                 <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("QuestionsPartial", "RecruitingSetup")'><i class="icon-arrow-right"></i> Recruiting Questions</a></li>
                                                                 <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("DocumentsPartial", "RecruitingSetup")'><i class="icon-arrow-right"></i> Recruiting Documents</a></li>
                                                                 <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("ConfigPartial", "RecruitingSetup")'><i class="icon-arrow-right"></i> Recruiting Config</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("ProfilesPartial", "OnboardingSetup")'><i class="icon-arrow-right"></i> Onboarding Profiles</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("RulesPartial", "SelfOnboarding")'><i class="icon-arrow-right"></i> Self Onboarding</a></li>
+                                                                <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("HireReviewPartial", "SelfOnboarding")'><i class="icon-arrow-right"></i> Self Hire Registrations</a></li>
                                                                 <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("PersonRelationshipsList", "PersonRelationships")'><i class="icon-arrow-right"></i> Relationship</a></li>
                                                                 <li><a class="waves-effect waves-dark" style="font-weight:bold" href="javascript:void(0)" onclick='LoadMenu("E_PositionsMatrixPartial", "E_Positions")'><i class="icon-arrow-right"></i> Employee Position</a></li>
                                                             </ul>
@@ -542,6 +545,34 @@
 
                 @if (User.IsInRole("ClientEmployees"))
                 {
+                    <li class="dropdown dropdown-megamenu">
+                        <a href="@Url.Action("Index", "SelfOnboarding")" class="f-bold">Self Onboarding</a>
+                    </li>
+                    <li class="dropdown dropdown-megamenu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Self Service<i class="icon-arrow-down"></i></a>
+                        <div class="dropdown-container">
+                            <ul class="mega-menu treeview-menu">
+                                <li class="row">
+                                    <ul>
+                                        <li class="col-md-12 p-0">
+                                            <div class="card-block mega-card p-t-0 p-b-0">
+                                                <ul class="mega-list mega-list-new row">
+                                                    <li class="col-xs-12 col-sm-12">
+                                                        <ul>
+                                                            <li>@Html.ActionLink("Employment Info", "ActionMatrix", "EmploymentInfo", new { RequestType = "IsSelfService" }, null)</li>
+                                                            <li><a href="javascript:void(0)" onclick='LoadMenu("MyDocumentsPartial", "EmployeeDocuments")'>My Documents</a></li>
+                                                            <li><a href="javascript:void(0)" onclick='LoadMenu("JobPortalPartial", "JobPortal")'>Job Portal</a></li>
+                                                            <li><a href="@Url.Action("Index", "SelfOnboarding")">Self Onboarding</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                     if (User.Identity.GetEmployeeTimeCardTypeCode().Equals("IO", StringComparison.InvariantCultureIgnoreCase))
                     {
                         <li class="dropdown dropdown-megamenu">
@@ -555,35 +586,8 @@
                             <a href="javascript:void(0)" class="f-bold"
                                onclick="LoadMenu('TimeCardsFastInOutMatrixPartial', 'TimeCards');">TimeCard Fast In Out</a>
                         </li>
-                        if (User.IsInRole("ClientAdministrators") || User.IsInRole("ClientEmployees"))
-                        {
-                            <li class="dropdown dropdown-megamenu">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Self Service<i class="icon-arrow-down"></i></a>
-                                <div class="dropdown-container">
-                                    <ul class="mega-menu treeview-menu">
-                                        <li class="row">
-                                            <ul>
-                                                <li class="col-md-12 p-0">
-                                                    <div class="card-block mega-card p-t-0 p-b-0">
-                                                        <ul class="mega-list mega-list-new row">
-                                                            <li class="col-xs-12 col-sm-12">
-                                                                <ul>
-                                                                    <li>@Html.ActionLink("Employment Info", "ActionMatrix", "EmploymentInfo", new { RequestType = "IsSelfService" }, null)</li>
-                                                                    <li><a href="javascript:void(0)" onclick='LoadMenu("MyDocumentsPartial", "EmployeeDocuments")'>My Documents</a></li>
-                                                                    <li><a href="javascript:void(0)" onclick='LoadMenu("JobPortalPartial", "JobPortal")'>Job Portal</a></li>
-                                                                </ul>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        }
                     }
-                    else if (User.Identity.GetEmployeeTimeCardTypeCode().Equals("DH", StringComparison.InvariantCultureIgnoreCase))
+                    else if (User.Identity.GetEmployeeTimeCardTypeCode().Equals("DH", StringComparison.OrdinalIgnoreCase))
                     {
                         <li class="dropdown dropdown-megamenu">
                             <a href="javascript:void(0)" class="f-bold"
@@ -597,7 +601,7 @@
                                onclick="LoadDetailView('TimeCardsMatrixPartial', 'TimeCardMatrix', { IsArchived: false });">TimeCard</a>
                         </li>
                     }
-                    <li class="dropdown dropdown-megamenu"><a class="f-bold" href="javascript:void(0)" )' onclick='LoadMenu("TimeCardsArchiveMatrixPartial", "TimeCardArchive")'> Time Card Archived</a></li>
+                    <li class="dropdown dropdown-megamenu"><a class="f-bold" href="javascript:void(0)" onclick='LoadMenu("TimeCardsArchiveMatrixPartial", "TimeCardArchive")'> Time Card Archived</a></li>
                 }
             </ul>
         </div>
