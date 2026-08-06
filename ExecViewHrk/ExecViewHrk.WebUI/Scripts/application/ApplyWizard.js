@@ -25,6 +25,22 @@
         return data;
     }
 
+    function validateRequired() {
+        var missing = [];
+        $r.find("input[name], select[name], textarea[name]").each(function () {
+            var $f = $(this);
+            var $label = $f.closest(".form-group").find("label").first();
+            if ($label.find("span").length && !$.trim($f.val())) {
+                missing.push($.trim($label.text().replace("*", "").replace(/:\s*$/, "")));
+            }
+        });
+        if (missing.length) {
+            alert("Please complete the required fields:\n• " + missing.join("\n• "));
+            return false;
+        }
+        return true;
+    }
+
     function saveThen(next) {
         $.ajax({
             url: $r.data("save-url"),
@@ -41,7 +57,15 @@
 
     $r.on("click", ".btn-next", function () {
         if (step === 1) { go(2); return; }
+        if (!validateRequired()) return;
         saveThen();
+    });
+
+    $r.on("click", ".btn-save-later", function () {
+        saveThen(function () {
+            alert("Your progress has been saved. You can sign in later to continue.");
+            window.location = "/Apply/Index?employerId=" + employerId;
+        });
     });
 
     $r.on("click", ".btn-prev", function () {

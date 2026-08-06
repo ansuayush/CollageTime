@@ -102,6 +102,7 @@ namespace ExecViewHrk.EfClient
         public virtual DbSet<JobApplicant> JobApplicants { get; set; }
         public virtual DbSet<JobApplication> JobApplications { get; set; }
         public virtual DbSet<JobApplicationAnswer> JobApplicationAnswers { get; set; }
+        public virtual DbSet<JobApplicationProfile> JobApplicationProfiles { get; set; }
         public virtual DbSet<JobApplicationFile> JobApplicationFiles { get; set; }
         public virtual DbSet<JobApplicationReference> JobApplicationReferences { get; set; }
         public virtual DbSet<JobApplicationEmployment> JobApplicationEmployments { get; set; }
@@ -1176,6 +1177,12 @@ namespace ExecViewHrk.EfClient
 
             modelBuilder.Entity<JobApplication>()
                 .HasMany(e => e.Educations)
+                .WithRequired(e => e.JobApplication)
+                .HasForeignKey(e => e.ApplicationId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasMany(e => e.Profiles)
                 .WithRequired(e => e.JobApplication)
                 .HasForeignKey(e => e.ApplicationId)
                 .WillCascadeOnDelete(true);

@@ -24,6 +24,7 @@
 
 <div class="apply-card">
     <h4>Open Positions</h4>
+    <p class="text-muted">Use this employer career portal to view all open jobs. You may apply to multiple positions with the same account.</p>
     @if (TempData["ApplyError"] != null)
     {
         <div class="alert alert-warning">@TempData["ApplyError"]</div>
@@ -45,11 +46,22 @@
                 }
                 @if (!string.IsNullOrEmpty(applicantName))
                 {
-                    using (Html.BeginForm("Start", "Apply", FormMethod.Post))
+                    if (job.AlreadyApplied && !string.Equals(job.ApplicationStatus, "Draft", StringComparison.OrdinalIgnoreCase))
                     {
-                        @Html.Hidden("employerId", employerId)
-                        @Html.Hidden("requisitionId", job.RequisitionId)
-                        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                        <span class="label label-success">@job.ApplicationStatus</span>
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("Start", "Apply", FormMethod.Post))
+                        {
+                            @Html.Hidden("employerId", employerId)
+                            @Html.Hidden("requisitionId", job.RequisitionId)
+                            <button type="submit" class="btn btn-primary btn-sm">@(job.AlreadyApplied ? "Continue application" : "Apply")</button>
+                            if (job.AlreadyApplied)
+                            {
+                                <span class="text-muted" style="margin-left:8px;">@job.ApplicationStatus</span>
+                            }
+                        }
                     }
                 }
                 else

@@ -42,6 +42,22 @@ namespace ExecViewHrk.WebUI.Controllers
                 var jobs = GetOpenJobs(db);
                 if (requisitionId.HasValue)
                     jobs = jobs.Where(j => j.RequisitionId == requisitionId.Value).ToList();
+
+                var applicantId = JobRecruitingSchemaHelper.GetApplyApplicantId();
+                if (applicantId.HasValue)
+                {
+                    var applications = db.JobApplications
+                        .Where(a => a.ApplicantId == applicantId.Value && a.Status != "Withdrawn")
+                        .ToList();
+                    foreach (var job in jobs)
+                    {
+                        var existing = applications.FirstOrDefault(a => a.RequisitionId == job.RequisitionId);
+                        if (existing == null) continue;
+                        job.AlreadyApplied = true;
+                        job.ExistingApplicationId = existing.ApplicationId;
+                        job.ApplicationStatus = existing.Status;
+                    }
+                }
                 return View(jobs);
             }
         }
@@ -263,7 +279,9 @@ namespace ExecViewHrk.WebUI.Controllers
                     ViewBag.Error = "You do not have access to this application.";
                     return View("ApplyError");
                 }
-                if (app.Status == "Submitted")
+                // Once HR receives the application, later HR workflow statuses
+                // (Candidate, Hire, Rejected) must remain read-only to the applicant.
+                if (app.Status != "Draft")
                     return RedirectToAction("Complete", new { employerId, applicationId });
 
                 step = Math.Min(10, Math.Max(1, step));
@@ -275,10 +293,18 @@ namespace ExecViewHrk.WebUI.Controllers
                 ViewBag.Config = cfg;
                 ViewBag.DefaultAttestation = DefaultAttestation;
 
-                if (step >= 2 && step <= 5)
+                if (step == 2)
                 {
+                    ViewBag.Profile = GetOrBuildProfile(db, app);
+                    ViewBag.Countries = db.DdlCountries.Where(c => c.Active)
+                        .OrderBy(c => c.Description).ToList();
+                    ViewBag.States = db.DdlStates.OrderBy(s => s.Title).ToList();
+                }
+                if (step >= 3 && step <= 6)
+                {
+                    // Page 2 questions are legacy (before step 2 became Personal Information).
                     ViewBag.Questions = db.RecruitingQuestions
-                        .Where(q => q.IsActive && q.WizardPage == step)
+                        .Where(q => q.IsActive && (q.WizardPage == step || (step == 3 && q.WizardPage == 2)))
                         .OrderBy(q => q.SortOrder).ToList();
                     ViewBag.Answers = db.JobApplicationAnswers.Where(a => a.ApplicationId == applicationId).ToList();
                 }
@@ -301,6 +327,7 @@ namespace ExecViewHrk.WebUI.Controllers
                 }
                 if (step == 10)
                 {
+                    ViewBag.Profile = db.JobApplicationProfiles.FirstOrDefault(p => p.ApplicationId == applicationId);
                     ViewBag.Answers = db.JobApplicationAnswers.Where(a => a.ApplicationId == applicationId).ToList();
                     ViewBag.AllQuestions = db.RecruitingQuestions.Where(q => q.IsActive).OrderBy(q => q.WizardPage).ThenBy(q => q.SortOrder).ToList();
                     ViewBag.References = db.JobApplicationReferences.Where(r => r.ApplicationId == applicationId).ToList();
@@ -329,7 +356,13 @@ namespace ExecViewHrk.WebUI.Controllers
                     if (app.Status == "Submitted")
                         return Json(new { success = false, message = "Already submitted." });
 
-                    if (step >= 2 && step <= 5)
+                    if (step == 2)
+                    {
+                        string error;
+                        if (!SavePersonalInformation(db, app, out error))
+                            return Json(new { success = false, message = error });
+                    }
+                    else if (step >= 3 && step <= 6)
                     {
                         var answers = ParseAnswers();
                         foreach (var item in answers)
@@ -550,6 +583,113 @@ namespace ExecViewHrk.WebUI.Controllers
             ViewBag.EmployerId = employerId;
             ViewBag.ApplicationId = applicationId;
             return View();
+        }
+
+        /// <summary>
+        /// Saved personal information for the application, or a prefilled draft from the
+        /// applicant account / employee person record when the step has not been completed yet.
+        /// </summary>
+        private JobApplicationProfile GetOrBuildProfile(ClientDbContext db, JobApplication app)
+        {
+            var profile = db.JobApplicationProfiles.FirstOrDefault(p => p.ApplicationId == app.ApplicationId);
+            if (profile != null) return profile;
+
+            profile = new JobApplicationProfile { ApplicationId = app.ApplicationId };
+
+            if (app.ApplicantId.HasValue)
+            {
+                var applicant = db.JobApplicants.FirstOrDefault(a => a.ApplicantId == app.ApplicantId.Value);
+                if (applicant != null)
+                {
+                    profile.FirstName = applicant.FirstName;
+                    profile.LastName = applicant.LastName;
+                    profile.Email = applicant.Email;
+                    profile.Phone = applicant.Phone;
+                }
+            }
+            else if (app.EmployeeId.HasValue)
+            {
+                var emp = db.Employees.Include("Person").FirstOrDefault(e => e.EmployeeId == app.EmployeeId.Value);
+                if (emp != null && emp.Person != null)
+                {
+                    profile.FirstName = emp.Person.Firstname;
+                    profile.LastName = emp.Person.Lastname;
+                    profile.MiddleName = emp.Person.MiddleName;
+                    profile.PreferredName = emp.Person.PreferredName;
+                    profile.Email = emp.Person.eMail;
+
+                    var address = db.PersonAddresses
+                        .Where(a => a.PersonId == emp.PersonId)
+                        .OrderBy(a => a.AddressTypeId)
+                        .FirstOrDefault();
+                    if (address != null)
+                    {
+                        profile.StreetAddress = address.AddressLineOne;
+                        profile.City = address.City;
+                        profile.ZipCode = address.ZipCode;
+                        profile.StateId = address.StateId;
+                        profile.CountryId = address.CountryId;
+                    }
+                }
+            }
+
+            return profile;
+        }
+
+        private bool SavePersonalInformation(ClientDbContext db, JobApplication app, out string error)
+        {
+            error = null;
+
+            string firstName = Truncate(Request.Form["pi_FirstName"], 100);
+            string lastName = Truncate(Request.Form["pi_LastName"], 100);
+            string preferredName = Truncate(Request.Form["pi_PreferredName"], 100);
+            string streetAddress = Truncate(Request.Form["pi_StreetAddress"], 250);
+            string city = Truncate(Request.Form["pi_City"], 100);
+            string zipCode = Truncate(Request.Form["pi_ZipCode"], 20);
+            string phone = Truncate(Request.Form["pi_Phone"], 50);
+            string email = Truncate(Request.Form["pi_Email"], 200);
+
+            int countryId, stateId;
+            int? country = int.TryParse(Request.Form["pi_CountryId"], out countryId) && countryId > 0 ? (int?)countryId : null;
+            int? state = int.TryParse(Request.Form["pi_StateId"], out stateId) && stateId > 0 ? (int?)stateId : null;
+
+            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName)
+                || string.IsNullOrWhiteSpace(preferredName) || string.IsNullOrWhiteSpace(streetAddress)
+                || string.IsNullOrWhiteSpace(city) || string.IsNullOrWhiteSpace(zipCode)
+                || string.IsNullOrWhiteSpace(phone) || string.IsNullOrWhiteSpace(email)
+                || !country.HasValue || !state.HasValue)
+            {
+                error = "Please complete all required personal information fields.";
+                return false;
+            }
+
+            var profile = db.JobApplicationProfiles.FirstOrDefault(p => p.ApplicationId == app.ApplicationId);
+            if (profile == null)
+            {
+                profile = new JobApplicationProfile { ApplicationId = app.ApplicationId };
+                db.JobApplicationProfiles.Add(profile);
+            }
+
+            profile.FirstName = firstName.Trim();
+            profile.LastName = lastName.Trim();
+            profile.MiddleName = Truncate(Request.Form["pi_MiddleName"], 100);
+            profile.PreferredName = preferredName.Trim();
+            profile.StreetAddress = streetAddress.Trim();
+            profile.City = city.Trim();
+            profile.ZipCode = zipCode.Trim();
+            profile.CountryId = country;
+            profile.StateId = state;
+            profile.Phone = phone.Trim();
+            profile.Email = email.Trim();
+
+            return true;
+        }
+
+        private static string Truncate(string value, int max)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            value = value.Trim();
+            return value.Length <= max ? value : value.Substring(0, max);
         }
 
         private bool EnsureSession(int employerId)

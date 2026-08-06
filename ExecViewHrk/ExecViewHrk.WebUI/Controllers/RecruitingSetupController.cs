@@ -58,7 +58,7 @@ namespace ExecViewHrk.WebUI.Controllers
                     entity.QuestionText = model.QuestionText.Trim();
                     entity.QuestionType = string.IsNullOrWhiteSpace(model.QuestionType) ? "Text" : model.QuestionType;
                     entity.Choices = model.Choices;
-                    entity.WizardPage = model.WizardPage < 2 ? 2 : (model.WizardPage > 5 ? 5 : model.WizardPage);
+                    entity.WizardPage = model.WizardPage < 3 ? 3 : (model.WizardPage > 6 ? 6 : model.WizardPage);
                     entity.SortOrder = model.SortOrder;
                     entity.IsRequired = model.IsRequired;
                     entity.IsActive = model.IsActive;

@@ -153,6 +153,7 @@
     <Compile Include="JobApplicant.cs" />
     <Compile Include="JobApplication.cs" />
     <Compile Include="JobApplicationAnswer.cs" />
+    <Compile Include="JobApplicationProfile.cs" />
     <Compile Include="JobApplicationFile.cs" />
     <Compile Include="JobApplicationReference.cs" />
     <Compile Include="JobApplicationEmployment.cs" />

@@ -8,6 +8,7 @@ BEGIN
         [Division]          NVARCHAR (100) NULL,
         [Department]        NVARCHAR (100) NULL,
         [PositionId]        INT            NULL,
+        [ReportToPositionId] INT           NULL,
         [Description]       NVARCHAR (MAX) NULL,
         [RequisitionDate]   DATETIME       NOT NULL,
         [OpenDate]          DATETIME       NULL,
@@ -22,6 +23,12 @@ BEGIN
         CONSTRAINT [PK_JobRequisitions] PRIMARY KEY CLUSTERED ([RequisitionId] ASC)
     );
     CREATE NONCLUSTERED INDEX [IX_JobRequisitions_Status] ON [dbo].[JobRequisitions]([Status] ASC);
+END
+GO
+
+IF OBJECT_ID(N'[dbo].[JobRequisitions]', N'U') IS NOT NULL AND COL_LENGTH(N'dbo.JobRequisitions', N'ReportToPositionId') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[JobRequisitions] ADD [ReportToPositionId] INT NULL;
 END
 GO
 
@@ -102,12 +109,24 @@ BEGIN
         [SubmittedDate]  DATETIME       NULL,
         [CreatedDate]    DATETIME       NOT NULL,
         [ModifiedDate]   DATETIME       NULL,
+        [AdminComment]   NVARCHAR (MAX) NULL,
+        [ReviewedBy]     NVARCHAR (100) NULL,
+        [ReviewedDate]   DATETIME       NULL,
         CONSTRAINT [PK_JobApplications] PRIMARY KEY CLUSTERED ([ApplicationId] ASC),
         CONSTRAINT [FK_JobApplications_JobRequisitions] FOREIGN KEY ([RequisitionId]) REFERENCES [dbo].[JobRequisitions] ([RequisitionId]),
         CONSTRAINT [FK_JobApplications_JobApplicants] FOREIGN KEY ([ApplicantId]) REFERENCES [dbo].[JobApplicants] ([ApplicantId]),
         CONSTRAINT [FK_JobApplications_Employees] FOREIGN KEY ([EmployeeId]) REFERENCES [dbo].[Employees] ([EmployeeId])
     );
     CREATE NONCLUSTERED INDEX [IX_JobApplications_RequisitionId] ON [dbo].[JobApplications]([RequisitionId] ASC);
+END
+GO
+
+IF OBJECT_ID(N'[dbo].[JobApplications]', N'U') IS NOT NULL AND COL_LENGTH(N'dbo.JobApplications', N'AdminComment') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[JobApplications] ADD
+        [AdminComment] NVARCHAR(MAX) NULL,
+        [ReviewedBy] NVARCHAR(100) NULL,
+        [ReviewedDate] DATETIME NULL;
 END
 GO
 
@@ -121,6 +140,30 @@ BEGIN
         CONSTRAINT [PK_JobApplicationAnswers] PRIMARY KEY CLUSTERED ([AnswerId] ASC),
         CONSTRAINT [FK_JobApplicationAnswers_Applications] FOREIGN KEY ([ApplicationId]) REFERENCES [dbo].[JobApplications] ([ApplicationId]) ON DELETE CASCADE
     );
+END
+GO
+
+IF OBJECT_ID(N'[dbo].[JobApplicationProfiles]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[JobApplicationProfiles] (
+        [ProfileId]     INT            IDENTITY (1, 1) NOT NULL,
+        [ApplicationId] INT            NOT NULL,
+        [FirstName]     NVARCHAR (100) NOT NULL,
+        [LastName]      NVARCHAR (100) NOT NULL,
+        [MiddleName]    NVARCHAR (100) NULL,
+        [PreferredName] NVARCHAR (100) NULL,
+        [StreetAddress] NVARCHAR (250) NULL,
+        [City]          NVARCHAR (100) NULL,
+        [ZipCode]       NVARCHAR (20)  NULL,
+        [CountryId]     INT            NULL,
+        [StateId]       INT            NULL,
+        [Phone]         NVARCHAR (50)  NULL,
+        [Email]         NVARCHAR (200) NULL,
+        CONSTRAINT [PK_JobApplicationProfiles] PRIMARY KEY CLUSTERED ([ProfileId] ASC),
+        CONSTRAINT [FK_JobApplicationProfiles_Applications] FOREIGN KEY ([ApplicationId]) REFERENCES [dbo].[JobApplications] ([ApplicationId]) ON DELETE CASCADE
+    );
+    CREATE UNIQUE NONCLUSTERED INDEX [UX_JobApplicationProfiles_ApplicationId]
+        ON [dbo].[JobApplicationProfiles]([ApplicationId] ASC);
 END
 GO
 

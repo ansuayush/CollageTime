@@ -16,6 +16,7 @@ namespace ExecViewHrk.EfClient
             Employments = new HashSet<JobApplicationEmployment>();
             Educations = new HashSet<JobApplicationEducation>();
             Signatures = new HashSet<JobApplicationSignature>();
+            Profiles = new HashSet<JobApplicationProfile>();
         }
 
         [Key]
@@ -39,6 +40,13 @@ namespace ExecViewHrk.EfClient
 
         public DateTime? ModifiedDate { get; set; }
 
+        public string AdminComment { get; set; }
+
+        [StringLength(100)]
+        public string ReviewedBy { get; set; }
+
+        public DateTime? ReviewedDate { get; set; }
+
         public virtual JobRequisition JobRequisition { get; set; }
 
         public virtual JobApplicant JobApplicant { get; set; }
@@ -56,5 +64,7 @@ namespace ExecViewHrk.EfClient
         public virtual ICollection<JobApplicationEducation> Educations { get; set; }
 
         public virtual ICollection<JobApplicationSignature> Signatures { get; set; }
+
+        public virtual ICollection<JobApplicationProfile> Profiles { get; set; }
     }
 }

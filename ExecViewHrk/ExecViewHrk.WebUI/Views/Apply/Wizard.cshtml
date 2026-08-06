@@ -38,7 +38,81 @@
         <p>You are applying for <strong>@(app.JobRequisition != null ? app.JobRequisition.PositionTitle : "")</strong>.</p>
         <button type="button" class="btn btn-primary btn-next">Continue</button>
     }
-    else if (step >= 2 && step <= 5)
+    else if (step == 2)
+    {
+        var profile = ViewBag.Profile as ExecViewHrk.EfClient.JobApplicationProfile ?? new ExecViewHrk.EfClient.JobApplicationProfile();
+        var countries = ViewBag.Countries as IEnumerable<ExecViewHrk.EfClient.DdlCountry> ?? Enumerable.Empty<ExecViewHrk.EfClient.DdlCountry>();
+        var states = ViewBag.States as IEnumerable<ExecViewHrk.EfClient.DdlState> ?? Enumerable.Empty<ExecViewHrk.EfClient.DdlState>();
+        <h5>Personal Information</h5>
+        <p class="text-muted">The correct personal information is vital to maintaining contact throughout the application process.</p>
+        <hr />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>First Name: <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="pi_FirstName" value="@profile.FirstName" />
+                </div>
+                <div class="form-group">
+                    <label>Last Name: <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="pi_LastName" value="@profile.LastName" />
+                </div>
+                <div class="form-group">
+                    <label>Middle Name:</label>
+                    <input type="text" class="form-control" name="pi_MiddleName" value="@profile.MiddleName" />
+                </div>
+                <div class="form-group">
+                    <label>Preferred Name: <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="pi_PreferredName" value="@profile.PreferredName" />
+                </div>
+                <div class="form-group">
+                    <label>Zip code: <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="pi_ZipCode" value="@profile.ZipCode" />
+                </div>
+                <div class="form-group">
+                    <label>Country/Region: <span style="color:red">*</span></label>
+                    <select class="form-control" name="pi_CountryId">
+                        <option value="">--Select--</option>
+                        @foreach (var c in countries)
+                        {
+                            <option value="@c.CountryId" @(profile.CountryId == c.CountryId ? "selected" : "")>@c.Description</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>State/Province: <span style="color:red">*</span></label>
+                    <select class="form-control" name="pi_StateId">
+                        <option value="">--Select--</option>
+                        @foreach (var s in states)
+                        {
+                            <option value="@s.StateId" @(profile.StateId == s.StateId ? "selected" : "")>@s.Title</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Street Address: <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="pi_StreetAddress" value="@profile.StreetAddress" />
+                </div>
+                <div class="form-group">
+                    <label>City: <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="pi_City" value="@profile.City" />
+                </div>
+                <div class="form-group">
+                    <label>Phone #: <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="pi_Phone" value="@profile.Phone" />
+                </div>
+                <div class="form-group">
+                    <label>Email: <span style="color:red">*</span></label>
+                    <input type="email" class="form-control" name="pi_Email" value="@profile.Email" />
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-default btn-prev">Previous</button>
+        <button type="button" class="btn btn-info btn-save-later">Save &amp; Come back later</button>
+        <button type="button" class="btn btn-primary btn-next">Next</button>
+    }
+    else if (step >= 3 && step <= 5)
     {
         var questions = ViewBag.Questions as IEnumerable<ExecViewHrk.EfClient.RecruitingQuestion> ?? Enumerable.Empty<ExecViewHrk.EfClient.RecruitingQuestion>();
         var answers = ViewBag.Answers as IEnumerable<ExecViewHrk.EfClient.JobApplicationAnswer> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationAnswer>();
@@ -52,7 +126,7 @@
             var ans = answers.FirstOrDefault(a => a.QuestionId == q.QuestionId);
             string val = ans != null ? ans.AnswerText : "";
             <div class="form-group">
-                <label>@q.QuestionText @(q.IsRequired ? "*" : "")</label>
+                <label>@q.QuestionText @if (q.IsRequired) { <span style="color:red">*</span> }</label>
                 @if (q.QuestionType == "YesNo")
                 {
                     <select class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId">
@@ -83,12 +157,56 @@
             </div>
         }
         <button type="button" class="btn btn-default btn-prev">Back</button>
+        <button type="button" class="btn btn-info btn-save-later">Save &amp; Come back later</button>
         <button type="button" class="btn btn-primary btn-next">Save &amp; Continue</button>
     }
     else if (step == 6)
     {
+        var questions = ViewBag.Questions as IEnumerable<ExecViewHrk.EfClient.RecruitingQuestion> ?? Enumerable.Empty<ExecViewHrk.EfClient.RecruitingQuestion>();
+        var answers = ViewBag.Answers as IEnumerable<ExecViewHrk.EfClient.JobApplicationAnswer> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationAnswer>();
         var docs = ViewBag.DocSetups as IEnumerable<ExecViewHrk.EfClient.RecruitingDocument> ?? Enumerable.Empty<ExecViewHrk.EfClient.RecruitingDocument>();
         var files = ViewBag.Files as IEnumerable<ExecViewHrk.EfClient.JobApplicationFile> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationFile>();
+        <h5>Questions (page 6)</h5>
+        if (!questions.Any())
+        {
+            <p class="text-muted">No questions configured for this page.</p>
+        }
+        foreach (var q in questions)
+        {
+            var ans = answers.FirstOrDefault(a => a.QuestionId == q.QuestionId);
+            string val = ans != null ? ans.AnswerText : "";
+            <div class="form-group">
+                <label>@q.QuestionText @if (q.IsRequired) { <span style="color:red">*</span> }</label>
+                @if (q.QuestionType == "YesNo")
+                {
+                    <select class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId">
+                        <option value="">Select</option>
+                        <option value="Yes" @(val == "Yes" ? "selected" : "")>Yes</option>
+                        <option value="No" @(val == "No" ? "selected" : "")>No</option>
+                    </select>
+                }
+                else if (q.QuestionType == "Choice")
+                {
+                    <select class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId">
+                        <option value="">Select</option>
+                        @foreach (var c in (q.Choices ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var choice = c.Trim();
+                            <option value="@choice" @(val == choice ? "selected" : "")>@choice</option>
+                        }
+                    </select>
+                }
+                else if (q.QuestionType == "TextArea")
+                {
+                    <textarea class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId" rows="3">@val</textarea>
+                }
+                else
+                {
+                    <input type="text" class="form-control" name="ans_@q.QuestionId" id="ans_@q.QuestionId" value="@val" />
+                }
+            </div>
+        }
+        <hr />
         <h5>Additional documents</h5>
         if (!docs.Any())
         {
@@ -117,7 +235,8 @@
             </div>
         }
         <button type="button" class="btn btn-default btn-prev">Back</button>
-        <button type="button" class="btn btn-primary btn-next">Continue</button>
+        <button type="button" class="btn btn-info btn-save-later">Save &amp; Come back later</button>
+        <button type="button" class="btn btn-primary btn-next">Save &amp; Continue</button>
     }
     else if (step == 7)
     {
@@ -223,8 +342,18 @@
             : (ViewBag.DefaultAttestation as string);
         var sigs = ViewBag.Signatures as IEnumerable<ExecViewHrk.EfClient.JobApplicationSignature> ?? Enumerable.Empty<ExecViewHrk.EfClient.JobApplicationSignature>();
         var attestSig = sigs.FirstOrDefault(s => s.SignatureType == "Attestation");
+        var reviewProfile = ViewBag.Profile as ExecViewHrk.EfClient.JobApplicationProfile;
         <h5>Attestation &amp; review</h5>
         @Html.Raw(cfg != null ? cfg.ReviewSubmitHtml : "")
+        if (reviewProfile != null)
+        {
+            <div style="border:1px solid #eee;padding:12px;margin-top:12px;">
+                <strong>Personal information</strong>
+                <div>@reviewProfile.FirstName @reviewProfile.MiddleName @reviewProfile.LastName @(string.IsNullOrEmpty(reviewProfile.PreferredName) ? "" : "(" + reviewProfile.PreferredName + ")")</div>
+                <div>@reviewProfile.StreetAddress @reviewProfile.City @reviewProfile.ZipCode</div>
+                <div>@reviewProfile.Phone · @reviewProfile.Email</div>
+            </div>
+        }
         <div style="background:#f8f9fa;padding:12px;margin:12px 0;">@Html.Raw(attestation)</div>
         <div class="form-group">
             <label>Type your full name to sign <span style="color:red">*</span></label>

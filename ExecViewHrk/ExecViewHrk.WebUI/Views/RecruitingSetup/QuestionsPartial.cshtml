@@ -73,8 +73,8 @@
                     <input type="text" id="qChoices" class="form-control" />
                 </div>
                 <div class="col-md-2">
-                    <label>Wizard page (2-5)</label>
-                    <input type="number" id="qPage" class="form-control" min="2" max="5" value="2" />
+                    <label>Wizard page (3-6)</label>
+                    <input type="number" id="qPage" class="form-control" min="3" max="6" value="3" />
                 </div>
                 <div class="col-md-2">
                     <label>Sort order</label>
@@ -102,7 +102,7 @@
     function reload() { LoadMenu("QuestionsPartial", "RecruitingSetup"); }
     $("#btnAddQ").click(function () {
         $("#qId").val(0); $("#qText").val(""); $("#qType").val("Text"); $("#qChoices").val("");
-        $("#qPage").val(2); $("#qOrder").val(0); $("#qRequired").prop("checked", true); $("#qActive").prop("checked", true);
+        $("#qPage").val(3); $("#qOrder").val(0); $("#qRequired").prop("checked", true); $("#qActive").prop("checked", true);
         $("#qEditTitle").text("Add Question"); $("#qEdit").show();
     });
     $("#btnCancelQ").click(function () { $("#qEdit").hide(); });
@@ -126,7 +126,7 @@
             QuestionText: $("#qText").val(),
             QuestionType: $("#qType").val(),
             Choices: $("#qChoices").val(),
-            WizardPage: parseInt($("#qPage").val(), 10) || 2,
+            WizardPage: parseInt($("#qPage").val(), 10) || 3,
             SortOrder: parseInt($("#qOrder").val(), 10) || 0,
             IsRequired: $("#qRequired").is(":checked"),
             IsActive: $("#qActive").is(":checked")

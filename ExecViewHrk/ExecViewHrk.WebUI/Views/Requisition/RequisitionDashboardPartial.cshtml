@@ -8,7 +8,11 @@
      data-save-url="@Url.Action("SaveRequisition", "Requisition")"
      data-delete-url="@Url.Action("DeleteRequisition", "Requisition")"
      data-applicants-url="@Url.Action("GetApplicants", "Requisition")"
-     data-quickapply-url="@Url.Action("GetQuickApplyUrl", "Requisition")">
+     data-applicant-details-url="@Url.Action("GetApplicantDetails", "Requisition")"
+     data-applicant-update-url="@Url.Action("UpdateApplicant", "Requisition")"
+     data-applicant-download-url="@Url.Action("DownloadApplicantFile", "Requisition")"
+     data-quickapply-url="@Url.Action("GetQuickApplyUrl", "Requisition")"
+     data-lookups-url="@Url.Action("GetFormLookups", "Requisition")">
     <div class="main-header portal-page-heading p-0">
         <div class="portal-page-heading__title">
             <h4>Job Requisition Dashboard</h4>
@@ -20,6 +24,7 @@
         <button type="button" class="btn btn-default m-l-10" onclick='LoadMenu("QuestionsPartial", "RecruitingSetup")'>Question Setup</button>
         <button type="button" class="btn btn-default m-l-5" onclick='LoadMenu("DocumentsPartial", "RecruitingSetup")'>Document Setup</button>
         <button type="button" class="btn btn-default m-l-5" onclick='LoadMenu("ConfigPartial", "RecruitingSetup")'>Recruiting Config</button>
+        <button type="button" class="btn btn-info m-l-5" id="btnEmployerCareerLink"><i class="fa fa-link"></i> Employer Career Portal Link</button>
     </div>
 
     <div class="card">
@@ -37,6 +42,7 @@
                         <th>Closed</th>
                         <th>Status</th>
                         <th>Applicants</th>
+                        <th>Candidates</th>
                         <th>Published</th>
                     </tr>
                 </thead>
@@ -47,7 +53,6 @@
                             <td>
                                 <a href="javascript:void(0)" class="btn-edit-req" title="Edit"><i class="fa fa-pencil txt-primary f-18"></i></a>
                                 <a href="javascript:void(0)" class="btn-apps-req m-l-5" title="Applicants"><i class="fa fa-users txt-primary f-18"></i></a>
-                                <a href="javascript:void(0)" class="btn-quick-req m-l-5" title="Quick Apply Link"><i class="fa fa-link txt-primary f-18"></i></a>
                                 <a href="javascript:void(0)" class="btn-del-req m-l-5" title="Delete"><i class="fa fa-trash-o txt-danger f-18"></i></a>
                             </td>
                             <td>@r.Division</td>
@@ -59,6 +64,7 @@
                             <td>@(r.ClosedDate.HasValue ? r.ClosedDate.Value.ToString("MM/dd/yyyy") : "")</td>
                             <td>@r.Status</td>
                             <td>@r.ApplicantCount</td>
+                            <td>@r.CandidateCount</td>
                             <td>@(r.IsPublished ? "Yes" : "No")</td>
                         </tr>
                     }
@@ -77,8 +83,10 @@
                     <input type="text" id="reqNumber" class="form-control" />
                 </div>
                 <div class="col-md-5">
-                    <label>Position Title <span style="color:red">*</span></label>
-                    <input type="text" id="reqTitle" class="form-control" />
+                    <label>Position <span style="color:red">*</span></label>
+                    <select id="reqPositionId" class="form-control">
+                        <option value="">Select position</option>
+                    </select>
                 </div>
                 <div class="col-md-2">
                     <label>Status</label>
@@ -100,27 +108,37 @@
             <div class="row m-t-10">
                 <div class="col-md-3">
                     <label>Division</label>
-                    <input type="text" id="reqDivision" class="form-control" />
+                    <select id="reqDivisionId" class="form-control">
+                        <option value="">Select division</option>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label>Department</label>
-                    <input type="text" id="reqDepartment" class="form-control" />
+                    <select id="reqDepartmentId" class="form-control">
+                        <option value="">Select department</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Report to Position</label>
+                    <select id="reqReportToPositionId" class="form-control">
+                        <option value="">Select report-to position</option>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label>Requisition Date</label>
                     <input type="date" id="reqDate" class="form-control" />
                 </div>
+            </div>
+            <div class="row m-t-10">
                 <div class="col-md-3">
                     <label>Open Date</label>
                     <input type="date" id="reqOpenDate" class="form-control" />
                 </div>
-            </div>
-            <div class="row m-t-10">
                 <div class="col-md-3">
                     <label>Closed Date</label>
                     <input type="date" id="reqClosedDate" class="form-control" />
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-6">
                     <label>Description</label>
                     <textarea id="reqDescription" class="form-control" rows="3"></textarea>
                 </div>
@@ -139,15 +157,27 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Status</th>
-                        <th>Step</th>
+                        <th>Click to Hire</th>
+                        <th>Type</th>
+                        <th>Job Qualifications</th>
                         <th>Created</th>
-                        <th>Submitted</th>
+                        <th>Job Score</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
             <button type="button" class="btn btn-default" id="btnCloseApps">Close</button>
+        </div>
+    </div>
+
+    <div id="applicantDetailPanel" class="card m-t-15" style="display:none;">
+        <div class="card-block">
+            <h5>Submitted Application Detail - <span id="applicantDetailName"></span></h5>
+            <div id="applicantDetailContent"></div>
+            <hr />
+            <button type="button" class="btn btn-default" id="btnCloseApplicantDetail">Close Detail</button>
         </div>
     </div>
 </div>

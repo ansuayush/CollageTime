@@ -56,9 +56,9 @@
                                 <td>@j.RequisitionNumber</td>
                                 <td>@(j.AlreadyApplied ? j.ApplicationStatus : "Open")</td>
                                 <td>
-                                    @if (j.AlreadyApplied && string.Equals(j.ApplicationStatus, "Submitted", System.StringComparison.OrdinalIgnoreCase))
+                                    @if (j.AlreadyApplied && !string.Equals(j.ApplicationStatus, "Draft", System.StringComparison.OrdinalIgnoreCase))
                                     {
-                                        <span class="text-success">Submitted</span>
+                                        <span class="text-success">@j.ApplicationStatus</span>
                                     }
                                     else
                                     {
@@ -104,7 +104,7 @@
                                 <td>@a.CreatedDate.ToString("MM/dd/yyyy")</td>
                                 <td>@(a.SubmittedDate.HasValue ? a.SubmittedDate.Value.ToString("MM/dd/yyyy") : "")</td>
                                 <td>
-                                    @if (!string.Equals(a.Status, "Submitted", System.StringComparison.OrdinalIgnoreCase))
+                                    @if (string.Equals(a.Status, "Draft", System.StringComparison.OrdinalIgnoreCase))
                                     {
                                         <a class="btn btn-default btn-sm" target="_blank"
                                            href="@Url.Action("Wizard", "Apply", new { employerId = employerId, applicationId = a.ApplicationId, step = a.CurrentStep })">Continue</a>

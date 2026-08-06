@@ -32,6 +32,8 @@ namespace ExecViewHrk.EfClient
 
         public int? PositionId { get; set; }
 
+        public int? ReportToPositionId { get; set; }
+
         public string Description { get; set; }
 
         public DateTime RequisitionDate { get; set; }

@@ -19,12 +19,16 @@ namespace ExecViewHrk.WebUI.Models
         public string Division { get; set; }
         public string Department { get; set; }
         public int? PositionId { get; set; }
+        public int? ReportToPositionId { get; set; }
+        public int? DepartmentId { get; set; }
+        public int? BusinessUnitId { get; set; }
         public string Description { get; set; }
         public DateTime RequisitionDate { get; set; }
         public DateTime? OpenDate { get; set; }
         public DateTime? ClosedDate { get; set; }
         public string Status { get; set; }
         public int ApplicantCount { get; set; }
+        public int CandidateCount { get; set; }
         public bool IsPublished { get; set; }
     }
 
