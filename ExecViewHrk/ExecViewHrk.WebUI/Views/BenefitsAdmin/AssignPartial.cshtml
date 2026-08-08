@@ -1,0 +1,154 @@
+@{
+    Layout = null;
+}
+<style>
+    #benAssignRoot .ben-assign-panel {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 16px 18px;
+        margin-bottom: 20px;
+    }
+    #benAssignRoot .ben-emp-picker {
+        position: relative;
+    }
+    #benAssignRoot .ben-emp-results {
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        z-index: 50;
+        max-height: 220px;
+        overflow-y: auto;
+        margin: 2px 0 0;
+        padding: 0;
+        list-style: none;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    }
+    #benAssignRoot .ben-emp-results li {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    #benAssignRoot .ben-emp-results li:hover,
+    #benAssignRoot .ben-emp-results li.active {
+        background: #f5f9f6;
+    }
+    #benAssignRoot .ben-emp-results li.disabled {
+        color: #999;
+        cursor: default;
+        background: #fafafa;
+    }
+    #benAssignRoot #benEmpSelected {
+        display: none;
+        margin-top: 8px;
+        min-height: 36px;
+        max-height: 140px;
+        overflow-y: auto;
+        padding: 6px 8px;
+        background: #f7f7f7;
+        border: 1px solid #e5e5e5;
+        border-radius: 3px;
+    }
+    #benAssignRoot .ben-emp-chip {
+        display: inline-block;
+        margin: 2px 4px 2px 0;
+        padding: 3px 8px;
+        background: #e8f2ea;
+        border: 1px solid #c5d9c9;
+        border-radius: 12px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+    #benAssignRoot .ben-emp-chip .ben-remove-emp {
+        margin-left: 6px;
+        border: 0;
+        background: transparent;
+        color: #666;
+        font-weight: bold;
+        padding: 0 2px;
+        cursor: pointer;
+    }
+    #benAssignRoot .ben-emp-chip .ben-remove-emp:hover {
+        color: #a00;
+    }
+    #benAssignRoot .ben-selected-count {
+        display: block;
+        margin-top: 4px;
+        color: #777;
+        font-size: 12px;
+    }
+    #benAssignRoot .ben-assign-actions {
+        margin-top: 24px;
+    }
+    #benAssignRoot #benAssignTable {
+        margin-top: 8px;
+        background: #fff;
+    }
+</style>
+<div class="container-fluid" id="benAssignRoot"
+     data-list-url="@Url.Action("GetEmployeeAssignments", "BenefitsAdmin")"
+     data-search-url="@Url.Action("SearchEmployees", "BenefitsAdmin")"
+     data-class-url="@Url.Action("GetClasses", "BenefitsAdmin")"
+     data-assign-url="@Url.Action("AssignBenefitClass", "BenefitsAdmin")">
+    <div class="main-header p-0 clearfix">
+        <h4 style="display:inline-block;margin-right:12px;">Assign Benefit Class</h4>
+        <button type="button" class="btn btn-default btn-sm pull-right" onclick='LoadMenu("SetupPartial", "BenefitsAdmin")'>Back to Setup</button>
+    </div>
+
+    <div class="ben-assign-panel">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group ben-emp-picker" style="margin-bottom:0;">
+                    <label>Employees <span class="text-muted">(add one or more)</span></label>
+                    <input type="text" class="form-control" id="benEmpSearch" placeholder="Type name or badge to search..." autocomplete="off" />
+                    <ul class="ben-emp-results" id="benEmpResults"></ul>
+                    <div id="benEmpSelected"></div>
+                    <span class="ben-selected-count" id="benEmpCount"></span>
+                    <div class="m-t-5">
+                        <button type="button" class="btn btn-xs btn-default" id="btnClearEmps" style="display:none;">Clear all</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Benefit Class</label>
+                    <select class="form-control" id="benClassId">
+                        <option value="">-- Select class --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Effective Date</label>
+                    <input type="date" class="form-control" id="benEffDate" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="ben-assign-actions">
+                    <button type="button" class="btn btn-primary btn-block" id="btnAssignClass">Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5>Current Assignments</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="benAssignTable">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Badge</th>
+                    <th>Benefit Class</th>
+                    <th>Effective</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script src="~/Scripts/application/BenefitsAdminAssign.js?v=20260807d"></script>

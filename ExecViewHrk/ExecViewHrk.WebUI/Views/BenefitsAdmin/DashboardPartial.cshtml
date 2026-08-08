@@ -1,0 +1,41 @@
+@model ExecViewHrk.WebUI.Models.BenDashboardVm
+@{
+    Layout = null;
+    var m = Model ?? new ExecViewHrk.WebUI.Models.BenDashboardVm { Recent = new List<ExecViewHrk.WebUI.Models.BenEnrollmentListVm>() };
+}
+<div class="container-fluid">
+    <div class="main-header p-0">
+        <h4>Benefits Enrollment Dashboard</h4>
+        <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("SetupPartial", "BenefitsAdmin")'>Setup</button>
+        <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("AssignPartial", "BenefitsAdmin")'>Assign Classes</button>
+        <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("EnrollmentsPartial", "BenefitsAdmin")'>Enrollments</button>
+    </div>
+    <div class="row">
+        <div class="col-md-2"><div class="card"><div class="card-block text-center"><h3>@m.TotalAssigned</h3><div>Assigned</div></div></div></div>
+        <div class="col-md-2"><div class="card"><div class="card-block text-center"><h3>@m.Completed</h3><div>Completed</div></div></div></div>
+        <div class="col-md-2"><div class="card"><div class="card-block text-center"><h3>@m.Pending</h3><div>Pending</div></div></div></div>
+        <div class="col-md-2"><div class="card"><div class="card-block text-center"><h3>@m.InProgress</h3><div>In Progress</div></div></div></div>
+        <div class="col-md-2"><div class="card"><div class="card-block text-center"><h3>@m.Waived</h3><div>Waived Elections</div></div></div></div>
+    </div>
+    <h5 class="m-t-20">Recent Enrollments</h5>
+    <table class="table table-bordered table-striped">
+        <thead><tr><th>Employee</th><th>Badge</th><th>Class</th><th>Period</th><th>Status</th><th>Submitted</th></tr></thead>
+        <tbody>
+        @foreach (var r in m.Recent ?? Enumerable.Empty<ExecViewHrk.WebUI.Models.BenEnrollmentListVm>())
+        {
+            <tr>
+                <td>@r.EmployeeName</td>
+                <td>@r.FileNumber</td>
+                <td>@r.BenefitClassName</td>
+                <td>@r.EnrollmentPeriodName</td>
+                <td>@r.Status</td>
+                <td>@(r.SubmittedDate.HasValue ? r.SubmittedDate.Value.ToString("MM/dd/yyyy") : "")</td>
+            </tr>
+        }
+        @if (m.Recent == null || !m.Recent.Any())
+        {
+            <tr><td colspan="6">No enrollments yet.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>

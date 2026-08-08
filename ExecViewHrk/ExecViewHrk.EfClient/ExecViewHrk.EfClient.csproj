@@ -163,6 +163,7 @@
     <Compile Include="OnboardingProfile.cs" />
     <Compile Include="OnboardingProfileDocument.cs" />
     <Compile Include="SelfOnboardingHire.cs" />
+    <Compile Include="BenefitsEnrollmentEntities.cs" />
     <Compile Include="SelfOnboardingPersonal.cs" />
     <Compile Include="SelfOnboardingI9.cs" />
     <Compile Include="SelfOnboardingTax.cs" />

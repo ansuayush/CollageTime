@@ -1,0 +1,73 @@
+@{
+    Layout = null;
+}
+<div class="container-fluid" id="benSetupRoot"
+     data-cat-url="@Url.Action("GetCategories", "BenefitsAdmin")"
+     data-cat-save="@Url.Action("SaveCategory", "BenefitsAdmin")"
+     data-wait-url="@Url.Action("GetWaitingPeriods", "BenefitsAdmin")"
+     data-wait-save="@Url.Action("SaveWaitingPeriod", "BenefitsAdmin")"
+     data-elig-url="@Url.Action("GetEligibilityRules", "BenefitsAdmin")"
+     data-elig-save="@Url.Action("SaveEligibilityRule", "BenefitsAdmin")"
+     data-plan-url="@Url.Action("GetPlans", "BenefitsAdmin")"
+     data-plan-save="@Url.Action("SavePlan", "BenefitsAdmin")"
+     data-class-url="@Url.Action("GetClasses", "BenefitsAdmin")"
+     data-class-save="@Url.Action("SaveClass", "BenefitsAdmin")"
+     data-oe-url="@Url.Action("GetEnrollmentPeriods", "BenefitsAdmin")"
+     data-oe-save="@Url.Action("SaveEnrollmentPeriod", "BenefitsAdmin")">
+    <div class="main-header p-0">
+        <h4>Benefits Administration</h4>
+        <p class="text-muted">Configure categories, plans, waiting periods, eligibility, benefit classes, and open enrollment.</p>
+        <div>
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("DashboardPartial", "BenefitsAdmin")'>Dashboard</button>
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("AssignPartial", "BenefitsAdmin")'>Assign Classes</button>
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("EnrollmentsPartial", "BenefitsAdmin")'>Enrollments</button>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs" id="benSetupTabs">
+        <li class="active"><a data-toggle="tab" href="#tabCats">Categories</a></li>
+        <li><a data-toggle="tab" href="#tabPlans">Plans</a></li>
+        <li><a data-toggle="tab" href="#tabWait">Waiting Periods</a></li>
+        <li><a data-toggle="tab" href="#tabElig">Eligibility</a></li>
+        <li><a data-toggle="tab" href="#tabClasses">Benefit Classes</a></li>
+        <li><a data-toggle="tab" href="#tabOe">Open Enrollment</a></li>
+    </ul>
+
+    <div class="tab-content m-t-15">
+        <div id="tabCats" class="tab-pane active">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewCat">Add Category</button>
+            <table class="table table-bordered table-striped" id="benCatTable"><thead><tr><th>Name</th><th>Order</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabPlans" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewPlan">Add Plan</button>
+            <table class="table table-bordered table-striped" id="benPlanTable"><thead><tr><th>Plan</th><th>Category</th><th>Carrier</th><th>EE Cost</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabWait" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewWait">Add Waiting Period</button>
+            <table class="table table-bordered table-striped" id="benWaitTable"><thead><tr><th>Name</th><th>Days</th><th>Type</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabElig" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewElig">Add Eligibility Rule</button>
+            <table class="table table-bordered table-striped" id="benEligTable"><thead><tr><th>Name</th><th>Min Days</th><th>Min Hours</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabClasses" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewClass">Add Benefit Class</button>
+            <table class="table table-bordered table-striped" id="benClassTable"><thead><tr><th>Class</th><th>Waiting</th><th>Eligibility</th><th>Plans</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabOe" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewOe">Add Open Enrollment</button>
+            <table class="table table-bordered table-striped" id="benOeTable"><thead><tr><th>Name</th><th>Start</th><th>End</th><th>Status</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="benModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h5 class="modal-title" id="benModalTitle">Edit</h5></div>
+    <div class="modal-body" id="benModalBody"></div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="benModalSave">Save</button>
+    </div>
+</div></div></div>
+
+<script src="~/Scripts/application/BenefitsAdminSetup.js?v=20260807e"></script>

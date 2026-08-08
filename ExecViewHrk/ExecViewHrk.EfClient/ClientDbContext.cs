@@ -118,6 +118,21 @@ namespace ExecViewHrk.EfClient
         public virtual DbSet<SelfOnboardingSignature> SelfOnboardingSignatures { get; set; }
         public virtual DbSet<SelfOnboardingBankAccount> SelfOnboardingBankAccounts { get; set; }
         public virtual DbSet<SelfOnboardingUpload> SelfOnboardingUploads { get; set; }
+        public virtual DbSet<BenCategory> BenCategories { get; set; }
+        public virtual DbSet<BenWaitingPeriod> BenWaitingPeriods { get; set; }
+        public virtual DbSet<BenEligibilityRule> BenEligibilityRules { get; set; }
+        public virtual DbSet<BenPlan> BenPlans { get; set; }
+        public virtual DbSet<BenCoverageOption> BenCoverageOptions { get; set; }
+        public virtual DbSet<BenClass> BenClasses { get; set; }
+        public virtual DbSet<BenClassPlan> BenClassPlans { get; set; }
+        public virtual DbSet<BenEnrollmentPeriod> BenEnrollmentPeriods { get; set; }
+        public virtual DbSet<BenEmployeeClass> BenEmployeeClasses { get; set; }
+        public virtual DbSet<BenEnrollment> BenEnrollments { get; set; }
+        public virtual DbSet<BenElection> BenElections { get; set; }
+        public virtual DbSet<BenDependent> BenDependents { get; set; }
+        public virtual DbSet<BenBeneficiary> BenBeneficiaries { get; set; }
+        public virtual DbSet<BenDocument> BenDocuments { get; set; }
+        public virtual DbSet<BenAudit> BenAudits { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<EmployeeActuals> EmployeeActuals { get; set; }
         //public virtual DbSet<hrBUSINESSLEVELS> hrBUSINESSLEVELS { get; set; }
@@ -238,6 +253,32 @@ namespace ExecViewHrk.EfClient
         {
 
             modelBuilder.Properties<DateTime>().Configure(c => c.HasColumnType("datetime2"));
+
+            // Benefits enrollment tables are created as SQL datetime (not datetime2).
+            modelBuilder.Entity<BenCategory>().Property(e => e.CreatedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenCategory>().Property(e => e.ModifiedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenPlan>().Property(e => e.EffectiveDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenPlan>().Property(e => e.ExpirationDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenPlan>().Property(e => e.CreatedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenPlan>().Property(e => e.ModifiedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenClass>().Property(e => e.CreatedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenClass>().Property(e => e.ModifiedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollmentPeriod>().Property(e => e.StartDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollmentPeriod>().Property(e => e.EndDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollmentPeriod>().Property(e => e.CoverageEffectiveDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollmentPeriod>().Property(e => e.AllowChangesUntil).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollmentPeriod>().Property(e => e.CreatedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollmentPeriod>().Property(e => e.ModifiedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEmployeeClass>().Property(e => e.EffectiveDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEmployeeClass>().Property(e => e.AssignedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollment>().Property(e => e.SubmittedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollment>().Property(e => e.ApprovedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollment>().Property(e => e.SignedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollment>().Property(e => e.CreatedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenEnrollment>().Property(e => e.ModifiedDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenElection>().Property(e => e.EffectiveDate).HasColumnType("datetime");
+            modelBuilder.Entity<BenDependent>().Property(e => e.DateOfBirth).HasColumnType("datetime");
+            modelBuilder.Entity<BenAudit>().Property(e => e.PerformedDate).HasColumnType("datetime");
             modelBuilder.Entity<ADPFieldMapping>()
                 .Property(e => e.ADPFieldMappingCode)
                 .IsUnicode(false);
@@ -1237,6 +1278,12 @@ namespace ExecViewHrk.EfClient
                 .HasMany(e => e.Uploads)
                 .WithRequired(e => e.SelfOnboardingHire)
                 .HasForeignKey(e => e.HireId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<BenPlan>()
+                .HasMany(e => e.CoverageOptions)
+                .WithRequired(e => e.Plan)
+                .HasForeignKey(e => e.PlanId)
                 .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Employee>()

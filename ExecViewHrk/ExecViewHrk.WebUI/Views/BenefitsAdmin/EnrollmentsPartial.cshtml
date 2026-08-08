@@ -1,0 +1,21 @@
+@{
+    Layout = null;
+}
+<div class="container-fluid" id="benEnrollRoot"
+     data-list-url="@Url.Action("GetEnrollments", "BenefitsAdmin")"
+     data-approve-url="@Url.Action("ApproveEnrollment", "BenefitsAdmin")">
+    <div class="main-header p-0">
+        <h4>Employee Benefit Enrollments</h4>
+        <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("SetupPartial", "BenefitsAdmin")'>Back to Setup</button>
+        <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("DashboardPartial", "BenefitsAdmin")'>Dashboard</button>
+    </div>
+    <table class="table table-bordered table-striped" id="benEnrollTable">
+        <thead>
+            <tr>
+                <th>Employee</th><th>Badge</th><th>Class</th><th>Period</th><th>Status</th><th>Confirmation</th><th>Submitted</th><th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script src="~/Scripts/application/BenefitsAdminEnrollments.js?v=20260807a"></script>
