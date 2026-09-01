@@ -90,6 +90,8 @@ namespace ExecViewHrk.Models
         public short SalaryGradeID { get; set; }
 
         public int? ReportsToID { get; set; }
+        public int? Manager2ID { get; set; }
+        public int? Manager3ID { get; set; }
         public int? AdpYear { get; set; }
         public bool? IsDeleted { get; set; }
         public string DeletedBy { get; set; }

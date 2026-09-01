@@ -1,0 +1,213 @@
+using ExecViewHrk.EfClient;
+using System;
+using System.Linq;
+
+namespace ExecViewHrk.WebUI.Helpers
+{
+    public static class PerformanceModuleSchemaHelper
+    {
+        public static void EnsureSchema(ClientDbContext db)
+        {
+            db.Database.ExecuteSqlCommand(@"
+IF OBJECT_ID(N'[dbo].[PR_ReviewScoreContent]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewScoreContent] (
+        [Id]         INT            IDENTITY (1, 1) NOT NULL,
+        [ItemName]   NVARCHAR (100) NULL,
+        [ItemValue]  FLOAT          NOT NULL CONSTRAINT [DF_PR_Score_Value] DEFAULT (0),
+        [SortOrder]  INT            NOT NULL CONSTRAINT [DF_PR_Score_Sort] DEFAULT (0),
+        [IsActive]   BIT            NOT NULL CONSTRAINT [DF_PR_Score_Active] DEFAULT (1),
+        CONSTRAINT [PK_PR_ReviewScoreContent] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewCriteriaType]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewCriteriaType] (
+        [ReviewCriteriaTypeId] INT            IDENTITY (1, 1) NOT NULL,
+        [Description]          NVARCHAR (200) NOT NULL,
+        [IsActive]             BIT            NOT NULL CONSTRAINT [DF_PR_CritType_Active] DEFAULT (1),
+        CONSTRAINT [PK_PR_ReviewCriteriaType] PRIMARY KEY CLUSTERED ([ReviewCriteriaTypeId] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_CriteriaSection]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_CriteriaSection] (
+        [SectionId]   INT            IDENTITY (1, 1) NOT NULL,
+        [SectionName] NVARCHAR (200) NOT NULL,
+        [Description] NVARCHAR (500) NULL,
+        [SortOrder]   INT            NOT NULL CONSTRAINT [DF_PR_Section_Sort] DEFAULT (0),
+        [IsActive]    BIT            NOT NULL CONSTRAINT [DF_PR_Section_Active] DEFAULT (1),
+        CONSTRAINT [PK_PR_CriteriaSection] PRIMARY KEY CLUSTERED ([SectionId] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewCriteria]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewCriteria] (
+        [ReviewCriteriaId]    INT             IDENTITY (1, 1) NOT NULL,
+        [CriteriaTypeId]      INT             NULL,
+        [SectionId]           INT             NULL,
+        [PositionId]          INT             NULL,
+        [Description]         NVARCHAR (1000) NOT NULL,
+        [ResponseTypeId]      INT             NOT NULL CONSTRAINT [DF_PR_Crit_Resp] DEFAULT (1),
+        [ScoreContentGroupId] INT             NULL,
+        [SequenceNumber]      INT             NOT NULL CONSTRAINT [DF_PR_Crit_Seq] DEFAULT (1),
+        [IsActive]            BIT             NOT NULL CONSTRAINT [DF_PR_Crit_Active] DEFAULT (1),
+        [Caption1]            NVARCHAR (200)  NULL,
+        CONSTRAINT [PK_PR_ReviewCriteria] PRIMARY KEY CLUSTERED ([ReviewCriteriaId] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_Review]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_Review] (
+        [ReviewId]     INT             IDENTITY (1, 1) NOT NULL,
+        [ReviewName]   NVARCHAR (200)  NOT NULL,
+        [RevieweeMode] NVARCHAR (50)   NULL,
+        [Status]       NVARCHAR (30)   NOT NULL CONSTRAINT [DF_PR_Review_Status] DEFAULT (N'Draft'),
+        [HrOwner]      NVARCHAR (100)  NULL,
+        [Notes]        NVARCHAR (1000) NULL,
+        [CreatedBy]    NVARCHAR (100)  NULL,
+        [CreatedDate]  DATETIME2       NOT NULL,
+        [ModifiedBy]   NVARCHAR (100)  NULL,
+        [ModifiedDate] DATETIME2       NULL,
+        CONSTRAINT [PK_PR_Review] PRIMARY KEY CLUSTERED ([ReviewId] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewSchedule]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewSchedule] (
+        [Id]             INT           IDENTITY (1, 1) NOT NULL,
+        [ReviewId]       INT           NOT NULL,
+        [IntervalType]   NVARCHAR (20) NULL,
+        [FromSchedule]   NVARCHAR (50) NULL,
+        [FromDate]       DATETIME2     NULL,
+        [DaysToComplete] INT           NOT NULL CONSTRAINT [DF_PR_Sched_Days] DEFAULT (14),
+        [RepeatDays]     INT           NOT NULL CONSTRAINT [DF_PR_Sched_Repeat] DEFAULT (0),
+        CONSTRAINT [PK_PR_ReviewSchedule] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewScoringRule]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewScoringRule] (
+        [Id]                             INT IDENTITY (1, 1) NOT NULL,
+        [ReviewId]                       INT NOT NULL,
+        [WeightedAverage]                BIT NOT NULL CONSTRAINT [DF_PR_ScoreRule_W] DEFAULT (0),
+        [IsSumOfAllQuestions]            BIT NOT NULL CONSTRAINT [DF_PR_ScoreRule_Sum] DEFAULT (0),
+        [IsAverageOfAllQuestions]        BIT NOT NULL CONSTRAINT [DF_PR_ScoreRule_Avg] DEFAULT (1),
+        [IsAverageOfSections]            BIT NOT NULL CONSTRAINT [DF_PR_ScoreRule_SecAvg] DEFAULT (0),
+        [IsSumOfAverageWithinSections]   BIT NOT NULL CONSTRAINT [DF_PR_ScoreRule_SumAvg] DEFAULT (0),
+        [IsCustomRule]                   BIT NOT NULL CONSTRAINT [DF_PR_ScoreRule_Custom] DEFAULT (0),
+        CONSTRAINT [PK_PR_ReviewScoringRule] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewEmployee]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewEmployee] (
+        [Id]          INT            IDENTITY (1, 1) NOT NULL,
+        [ReviewId]    INT            NOT NULL,
+        [EmployeeId]  INT            NOT NULL,
+        [PersonId]    INT            NULL,
+        [PositionId]  INT            NULL,
+        [CreatedBy]   NVARCHAR (100) NULL,
+        [CreatedDate] DATETIME2      NOT NULL,
+        CONSTRAINT [PK_PR_ReviewEmployee] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewNotificationStep]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewNotificationStep] (
+        [Id]                    INT           IDENTITY (1, 1) NOT NULL,
+        [ReviewId]              INT           NOT NULL,
+        [StepOrder]             INT           NOT NULL,
+        [ReviewerRole]          NVARCHAR (50) NOT NULL,
+        [OtherPersonId]         INT           NULL,
+        [IsViewPriorResponses]  BIT           NOT NULL CONSTRAINT [DF_PR_Step_ViewPrior] DEFAULT (1),
+        CONSTRAINT [PK_PR_ReviewNotificationStep] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewReviewerCriteria]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewReviewerCriteria] (
+        [Id]                  INT IDENTITY (1, 1) NOT NULL,
+        [ReviewId]            INT NOT NULL,
+        [NotificationStepId]  INT NOT NULL,
+        [ReviewCriteriaId]    INT NOT NULL,
+        CONSTRAINT [PK_PR_ReviewReviewerCriteria] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewReviewerEmployee]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewReviewerEmployee] (
+        [Id]                    INT             IDENTITY (1, 1) NOT NULL,
+        [ReviewId]              INT             NOT NULL,
+        [ReviewEmployeeId]      INT             NOT NULL,
+        [EmployeeId]            INT             NOT NULL,
+        [NotificationStepId]    INT             NOT NULL,
+        [StepOrder]             INT             NOT NULL,
+        [ReviewerRole]          NVARCHAR (50)   NULL,
+        [AssignedPersonId]      INT             NULL,
+        [Status]                NVARCHAR (30)   NOT NULL CONSTRAINT [DF_PR_RRE_Status] DEFAULT (N'Pending'),
+        [Score]                 FLOAT           NULL,
+        [DueDate]               DATETIME2       NULL,
+        [SubmittedDate]         DATETIME2       NULL,
+        [Comments]              NVARCHAR (1000) NULL,
+        [CreatedDate]           DATETIME2       NOT NULL,
+        CONSTRAINT [PK_PR_ReviewReviewerEmployee] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_ReviewScoreDetails]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_ReviewScoreDetails] (
+        [Id]                         INT             IDENTITY (1, 1) NOT NULL,
+        [ReviewReviewerEmployeeId]   INT             NOT NULL,
+        [ReviewCriteriaId]           INT             NOT NULL,
+        [Answer]                     NVARCHAR (1000) NULL,
+        [Comments]                   NVARCHAR (2000) NULL,
+        CONSTRAINT [PK_PR_ReviewScoreDetails] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+IF OBJECT_ID(N'[dbo].[PR_Notification]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[PR_Notification] (
+        [Id]                         INT             IDENTITY (1, 1) NOT NULL,
+        [PersonId]                   INT             NULL,
+        [UserName]                   NVARCHAR (256)  NULL,
+        [ReviewId]                   INT             NULL,
+        [ReviewReviewerEmployeeId]   INT             NULL,
+        [EventName]                  NVARCHAR (50)   NOT NULL,
+        [Contents]                   NVARCHAR (1000) NULL,
+        [ReceivedOn]                 DATETIME2       NOT NULL,
+        [IsRead]                     BIT             NOT NULL CONSTRAINT [DF_PR_Notif_Read] DEFAULT (0),
+        [IsHidden]                   BIT             NOT NULL CONSTRAINT [DF_PR_Notif_Hidden] DEFAULT (0),
+        CONSTRAINT [PK_PR_Notification] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END
+");
+            SeedDefaults(db);
+        }
+
+        private static void SeedDefaults(ClientDbContext db)
+        {
+            if (!db.PrReviewScoreContents.Any())
+            {
+                db.PrReviewScoreContents.Add(new PrReviewScoreContent { ItemName = "Does Not Meet", ItemValue = 1, SortOrder = 1, IsActive = true });
+                db.PrReviewScoreContents.Add(new PrReviewScoreContent { ItemName = "Needs Improvement", ItemValue = 2, SortOrder = 2, IsActive = true });
+                db.PrReviewScoreContents.Add(new PrReviewScoreContent { ItemName = "Meets Expectations", ItemValue = 3, SortOrder = 3, IsActive = true });
+                db.PrReviewScoreContents.Add(new PrReviewScoreContent { ItemName = "Exceeds Expectations", ItemValue = 4, SortOrder = 4, IsActive = true });
+                db.PrReviewScoreContents.Add(new PrReviewScoreContent { ItemName = "Outstanding", ItemValue = 5, SortOrder = 5, IsActive = true });
+            }
+            if (!db.PrReviewCriteriaTypes.Any())
+            {
+                db.PrReviewCriteriaTypes.Add(new PrReviewCriteriaType { Description = "Accountabilities", IsActive = true });
+                db.PrReviewCriteriaTypes.Add(new PrReviewCriteriaType { Description = "Competencies", IsActive = true });
+                db.PrReviewCriteriaTypes.Add(new PrReviewCriteriaType { Description = "Goals", IsActive = true });
+                db.PrReviewCriteriaTypes.Add(new PrReviewCriteriaType { Description = "Questions", IsActive = true });
+            }
+            if (!db.PrCriteriaSections.Any())
+            {
+                db.PrCriteriaSections.Add(new PrCriteriaSection { SectionName = "General", Description = "General performance criteria", SortOrder = 1, IsActive = true });
+                db.PrCriteriaSections.Add(new PrCriteriaSection { SectionName = "Job Specific", Description = "Role-specific criteria", SortOrder = 2, IsActive = true });
+            }
+            db.SaveChanges();
+        }
+    }
+}

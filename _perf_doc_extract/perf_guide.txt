@@ -1,0 +1,872 @@
+﻿
+Screenshots are positioned with the workflow steps they illustrate.
+Structured guide based on the supplied specification, database design, workflow rules, and application screenshots.
+Implementation, Configuration & Approval Workflow Guide
+Performance Management Module
+
+
+Screenshot – Performance Management Module
+
+
+Screenshot – Performance Management Module
+
+CREATE TABLE [dbo].[Review_Score_Content](
+[ID] [int] IDENTITY(1,1) NOT NULL,
+[Item_Name] [varchar](50) NULL,
+[Item_Value] [float] NULL,
+[Review_Score_ID] [int] NULL,
+[Company] [int] NULL,
+ CONSTRAINT [PK_Review_Score_Content] PRIMARY KEY CLUSTERED 
+(
+[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+1. Rating Scale Setup
+
+
+Screenshot – 1. Rating Scale Setup
+CREATE TABLE [dbo].[PR_ReviewCriteriaType](
+[ReviewCriteriaTypeID] [int] IDENTITY(1,1) NOT NULL,
+[Description] [varchar](max) NULL,
+[IsActive] [bit] NULL,
+[CompanyID] [int] NULL,
+ CONSTRAINT [PK__PR_Revie__D0CA538D34BA25F0] PRIMARY KEY CLUSTERED 
+(
+[ReviewCriteriaTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ__PR_Revie__D0CA538C28544F0B] UNIQUE NONCLUSTERED 
+(
+[ReviewCriteriaTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+2. Review Criteria Type Setup
+
+
+Screenshot – 2. Review Criteria Type Setup
+
+
+Screenshot – 2. Review Criteria Type Setup
+
+CREATE TABLE [dbo].[PR_ReviewCriteriaType](
+[ReviewCriteriaTypeID] [int] IDENTITY(1,1) NOT NULL,
+[Description] [varchar](max) NULL,
+[IsActive] [bit] NULL,
+[CompanyID] [int] NULL,
+ CONSTRAINT [PK__PR_Revie__D0CA538D34BA25F0] PRIMARY KEY CLUSTERED 
+(
+[ReviewCriteriaTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ__PR_Revie__D0CA538C28544F0B] UNIQUE NONCLUSTERED 
+(
+[ReviewCriteriaTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+3. Review Criteria Setup
+
+
+Screenshot – 3. Review Criteria Setup
+
+
+
+
+
+
+
+
+
+Screenshot – 3. Review Criteria Setup
+
+
+CREATE TABLE [dbo].[HTABLES](
+[ID] [int] IDENTITY(1,1) NOT NULL,
+[HTABLES_TABLE] [varchar](20) NULL,
+[CODE] [varchar](100) NULL,
+[HTABLES_DESC] [nvarchar](1000) NULL,
+[CompanyID] [int] NULL,
+[IsActive] [bit] NULL,
+ CONSTRAINT [PK_HTABLES_1] PRIMARY KEY CLUSTERED 
+(
+[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+4. Review Criteria Section Setup
+
+Screenshot – 4. Review Criteria Section Setup
+
+
+
+Screenshot – 4. Review Criteria Section Setup
+
+Rule : 
+     1. Job Classification is dropdown binding from Job Classification,
+     2.Postion is dropdown binding from position 
+     3. Review Criteria Type is dropdown and binding above Review Criteria Type
+    4. Review Criteria sections is dropdown list binding from drop above screen 
+     5. Criteria Category is dropdown binding from Criteria Category setup screen
+
+
+CREATE TABLE [dbo].[PR_ReviewCriteria](
+[ReviewCriteriaID] [int] IDENTITY(1,1) NOT NULL,
+[CompanyID] [int] NULL,
+[CriteriaTypeID] [int] NULL,
+[JobTitleID] [int] NULL,
+[PositionID] [int] NULL,
+[CategoryID] [int] NULL,
+[Description] [varchar](max) NULL,
+[ResponseTypeID] [int] NULL,
+[IsActive] [bit] NULL,
+[ScoreID] [int] NULL,
+[Comments] [varchar](max) NULL,
+[ResponseTypeId2] [int] NULL,
+[ScoreId2] [int] NULL,
+[Caption1] [varchar](200) NULL,
+[Caption2] [varchar](200) NULL,
+[SectionHeaderId] [int] NULL,
+[SequenceNumber] [int] NOT NULL,
+[ResponseTypeId3] [int] NULL,
+[ScoreId3] [int] NULL,
+[Caption3] [varchar](200) NUL
+)
+
+
+
+
+Screenshot – )
+
+Rule :
+1. when will click Add button below screen need to show 
+
+Screenshot – 1. when will click Add button below screen need to show
+
+Screenshot – 1. when will click Add button below screen need to show
+
+Rule : 
+5.1 Review Master Configuration
+
+Screenshot – 5.1 Review Master Configuration
+1.Reviewee: this fields a dropdown values (Employee, Position, Department, Review By supervisor)
+2. Once select Employee next drop down binding the all employees in company with multiple selections.
+3.After Scheduler dropdown binding the (Day,Week,Month)
+4.Next dropdown binding the (Hire Date, Custom Date)
+5. Once custom date select need to show calendar control select date 
+6.Drop down Repeat binding values (30 days, 90 days,180 days, Annually)
+7. Admin can select drop down Approver1, Approver2,Other employee, Employee)
+
+Screenshot – 7. Admin can select drop down Approver1, Approver2,Other employee, Employee)
+8 Saved the Reviewreviewer – table  (example ReviewerMasterID is approveer1, approver 2 ids etc ..  
+
+Screenshot – 8 Saved the Reviewreviewer – table (example ReviewerMasterID is approveer1, approver 2 ids etc 
+Rule : 
+1. steps 7 insert into ReviewNotificationStep table 
+
+ 
+Column
+Data Type
+Null
+Key
+Purpose
+Id
+INT IDENTITY(1,1)
+No
+PK
+Unique notification-step ID
+CompanyId
+INT
+Yes
+FK*
+Company associated with the review
+ReviewId
+INT
+Yes
+FK*
+Review associated with the notification
+StepId
+INT
+Yes
+FK*
+Review workflow/notification step
+ReviewerId
+INT
+Yes
+FK*
+Reviewer associated with the step
+IsViewPriorResponses
+BIT
+Yes
+
+Determines whether the reviewer can view prior responses
+CreatedBy
+UNIQUEIDENTIFIER
+No
+
+User who created the record
+CreatedOn
+DATETIME
+No
+
+Record creation date/time
+ModifiedBy
+UNIQUEIDENTIFIER
+Yes
+
+User who last modified the record
+ModifiedOn
+DATETIME
+Yes
+
+Last modification date/time
+
+2. Steps 3-4 can save this table and screen 
+
+Screenshot – 2. Steps 3-4 can save this table and screen
+5.3 Review Schedule
+Column
+Data Type
+Nullable
+Key
+Description
+ID
+INT
+No
+PK*
+Unique schedule record ID
+ScheduleValue
+INT
+Yes
+
+Numeric schedule value
+Company
+INT
+Yes
+FK*
+Company associated with the schedule
+IntervalType
+CHAR(10)
+Yes
+
+Schedule interval type
+FromSchedule
+VARCHAR(MAX)
+Yes
+
+Schedule starting/reference value
+FromDate
+DATETIME
+no
+
+Schedule start date
+Days_To_Complete
+INT
+no
+
+Number of days allowed to complete the review
+ReviewID
+INT
+Yes
+FK*
+Review associated with this schedule
+Repeat
+INT
+No
+
+Repeat interval/count
+
+5.4 Scoring Rule Configuration
+
+
+Screenshot – 5.4 Scoring Rule Configuration
+
+CREATE TABLE [dbo].[ReviewScoringRule]
+(
+    [ID] INT IDENTITY(1,1) NOT NULL,
+    [Question] FLOAT NULL,
+    [Accountability] FLOAT NULL,
+    [Competency] FLOAT NULL,
+    [Goal] FLOAT NULL,
+    [Review_ID] INT NULL,
+    [Company] INT NULL,
+    [WeightedAverage] BIT NULL,
+    [IsSumofallquestions] BIT NOT NULL,
+    [IsAverageofallquestions] BIT NOT NULL,
+    [IsAverageofsections] BIT NOT NULL,
+    [IsSumofaveragewithinsections] BIT NOT NULL,
+    [IsCustomRule] BIT NOT NULL,
+
+    CONSTRAINT [PK_ReviewScoringRule]
+        PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+3. Steps 1-2 can save this table and screen ,
+
+
+Screenshot – 3. Steps 1-2 can save this table and screen ,
+
+5.5 Review Employee Details
+Column
+Data Type
+Nullable
+Key
+Description
+Id
+INT
+No
+PK*
+Unique record ID
+CompanyId
+INT
+No
+FK*
+Company associated with the review
+ReviewId
+INT
+No
+FK*
+Review associated with the employee
+PositionId
+INT
+Yes
+FK*
+Employee's position
+EmployeeId
+UNIQUEIDENTIFIER
+Yes
+FK*
+Employee/user identifier
+DepartmentId
+INT
+Yes
+FK*
+Employee's department
+JobTitleId
+INT
+Yes
+FK*
+Employee's job title
+Createdby , createdon
+
+
+
+
+Modifyedon , modifiedby
+
+3. based on selection of Reviewee next dropdown binding (example if select employee then binding employee next dropdown with multiple selection employee.
+
+
+6. Configure Review and Assign Criteria
+2. Steps 7 select values binding dynamic this approver1, approver2, apprver3, other employee, employee.
+3.When will click bule Add criteria button then open this Review Criteria page list , admin can select the review critriya for the approver 1 , approver 2 whichever the select on steps 7.
+4. admin can select the appropriate questions from this screen and save .
+5. select HR dropdown for particular performance 
+
+
+
+
+
+
+
+
+
+
+
+
+Screenshot – 5. select HR dropdown for particular performance
+
+Screenshot – 5. select HR dropdown for particular performance
+
+
+
+Screenshot – 5. select HR dropdown for particular performance
+
+
+Screenshot – 5. select HR dropdown for particular performance
+6.1 Save Reviewer Criteria
+ 
+Screenshot – 6.1 Save Reviewer Criteria
+
+
+  
+
+
+Screenshot – 6.1 Save Reviewer Criteria
+6.2 Scoring Section Setup
+Column
+Data Type
+Nullable
+Key
+Description
+Id
+INT IDENTITY(1,1)
+No
+PK
+Unique scoring section ID
+ReviewId
+INT
+Yes
+FK*
+Review associated with the scoring section
+SectionHeaderId
+INT
+Yes
+FK*
+Section header associated with the score
+Scorepercentage
+DECIMAL(18,2)
+Yes
+
+Percentage/weight assigned to the section
+CompanyId
+INT
+Yes
+FK*
+Company associated with the review
+CreatedBy
+UNIQUEIDENTIFIER
+Yes
+
+User who created the record
+CreatedOn
+DATETIME
+Yes
+
+Creation date/time
+ModifiedBy
+UNIQUEIDENTIFIER
+Yes
+
+User who last modified the record
+ModifiedOn
+DATETIME
+Yes
+
+Last modification date/time
+
+
+Screenshot – 6.2 Scoring Section Setup
+7. Start Review / Send to First Approver
+Below screen and checked. rule is custom date matched with system current date and scheduler is 0.
+
+Screenshot – Below screen and checked. rule is custom date matched with system current date and scheduler is
+
+
+
+Screenshot – Below screen and checked. rule is custom date matched with system current date and scheduler is
+
+Saved the default Records into this ReviewReviewerEmployee  table .
+And  notification table insert. And approver 1 = Equal to Report to Positon  from employee positon screen and same Approver 2 = Manager 2 and Approver 3 = Manager3  getting from employee position screen .
+
+7.1 Notification Record and Email
+
+CREATE TABLE [dbo].[notificatoninfo] ( [ID] INT NOT NULL, [UserID] UNIQUEIDENTIFIER NOT NULL, [CompanyId] INT NULL, [Event] VARCHAR(50) NOT NULL, [EventID] VARCHAR(100) NULL, [ReceivedOn] DATETIME NULL, [Contents] NVARCHAR(MAX) NULL, [BinaryData] IMAGE NULL, [ConfirmationNo] VARCHAR(8) NULL, [ConfirmedOn] DATETIME NULL, [HTable] VARCHAR(25) NULL );
+
+
+Screenshot – CREATE TABLE [dbo].[notificatoninfo] ( [ID] INT NOT NULL, [UserID] UNIQUEIDENTIFIER NOT NULL, [
+
+Send notification email to approver 
+
+Screenshot – Send notification email to approver
+For future scalability, approval-level information should preferably be moved into a separate ReviewApproval table rather than adding Manager4, Manager5, and additional manager-specific columns.
+
+8. Approval Workflow
+
+
+Screenshot – 8. Approval Workflow
+
+8.1 Approver Notification and Task List
+Notification getting from notificatoninfo table.
+
+
+Screenshot – Notification getting from notificatoninfo table.
+
+
+8.2 Performance Approval Screen
+       
+
+Screenshot – 8.2 Performance Approval Screen
+
+Screenshot – 8.2 Performance Approval Screen
+This screen binding from base on approver 1 setup Review Criteria setup done setup screen 
+Admin can select review and add comments and each question and add reviewer comments if any attachment then and submit.
+Once submit then send to next approver to email and insert into notification tables 
+Once save then just save the information admin can again back and submit as per his convince.
+
+Screenshot – Once save then just save the information admin can again back and submit as per his convince.
+8.3 Save Ratings and Reviewer Comments
+
+CREATE TABLE [dbo].[PRReviewReviewerScoreDetails] ( [ID] INT IDENTITY(1,1) NOT NULL, [CompanyID] INT NULL, [ReviewReviewerEmployeeID] INT NULL, [ReviewCriteriaID] INT NULL, [Answers] VARCHAR(MAX) NULL, [ReviewReviewerID] INT NULL, [Answer2] VARCHAR(MAX) NULL, [Answer3] VARCHAR(MAX) NULL, [Manager2Answer1] VARCHAR(MAX) NULL, [Manager2Answer2] VARCHAR(MAX) NULL, [Manager2Answer3] VARCHAR(MAX) NULL, CONSTRAINT [PK_ReviewReviewerAnswers] PRIMARY KEY CLUSTERED ([ID] ASC) );
+
+
+Screenshot – CREATE TABLE [dbo].[PRReviewReviewerScoreDetails] ( [ID] INT IDENTITY(1,1) NOT NULL, [CompanyID
+
+
+
+ base on rating selection sun/avg based selection on setup screen  calculate the total score by this Reviewer and once approved then hide the notification table to approver.
+
+8.5 Reviewer Score Calculation Procedure
+
+
+ALTER PROC [dbo].[PRCalculateReviewerScore] @CompanyID INT
+,@ReviewReviewerID INT
+,@ReviewReviewerEmployeeID INT
+,@EmployeeId VARCHAR(50)
+AS
+BEGIN
+--Declare @CompanyID                INT=375, 
+--@ReviewReviewerID         INT=2469,
+--@ReviewReviewerEmployeeID INT =2735 
+DECLARE @ResponseTypeID INT
+,@ResponseTypeId2 INT
+,@ResponseTypeId3 INT
+,@ReviewCriteriaID INT
+,@ReviewId INT
+,@IsWeightedAvg BIT = 0
+DECLARE @TblResponseTypeID TABLE (
+id INT IDENTITY(1, 1)
+,responsetypeid INT
+,responsetypeid2 INT
+,responseTypeId3 INT
+,reviewcriteriaid DECIMAL(8, 2)
+)
+DECLARE @TblReviewerScore TABLE (
+id INT IDENTITY(1, 1)
+,reviewerscore DECIMAL(8, 2)
+)
+
+SELECT @IsWeightedAvg = weightedaverage
+,@ReviewId = a.id
+FROM review a
+INNER JOIN reviewreviewer b ON b.reviewid = a.id
+INNER JOIN review_type_score c ON c.review_id = a.id
+WHERE b.id = @ReviewReviewerID
+
+--select @IsWeightedAvg
+IF @IsWeightedAvg = 1
+BEGIN
+INSERT INTO @TblReviewerScore (reviewerscore)
+EXEC [Prcalculatereviewscorebyweightedavg] @ReviewId
+,@CompanyID
+,@ReviewReviewerEmployeeID
+END
+ELSE
+BEGIN
+INSERT INTO @TblResponseTypeID (
+reviewcriteriaid
+,responsetypeid
+,responsetypeid2
+,responseTypeId3
+)
+SELECT DISTINCT C.reviewcriteriaid
+,C.responsetypeid
+,C.responsetypeid2
+,C.ResponseTypeId3
+FROM reviewreviewer A
+INNER JOIN reviewreviewercriteria B ON A.id = B.reviewreviewerid AND B.RevSUserID = @EmployeeId
+INNER JOIN pr_reviewcriteria C ON C.reviewcriteriaid = B.reviewcriteriaid
+LEFT OUTER JOIN jduties D ON C.description = CONVERT(VARCHAR(200), D.id)
+WHERE A.id = @ReviewReviewerID and A.ReviewID = @ReviewId
+
+DECLARE @RowCount INT
+DECLARE @I INT
+
+SET @RowCount = (
+SELECT Count(*)
+FROM @TblResponseTypeID
+)
+SET @I = 1
+
+WHILE (@I <= @RowCount)
+BEGIN
+(
+SELECT @ResponseTypeID = responsetypeid
+,@ReviewCriteriaID = reviewcriteriaid
+,@ResponseTypeId2 = responsetypeid2
+,@ResponseTypeId3 = responsetypeid3
+FROM @TblResponseTypeID
+WHERE id = @I
+)
+
+IF (
+@ResponseTypeID = 1
+OR @ResponseTypeId2 = 1
+OR @ResponseTypeId3 = 1
+)
+BEGIN
+INSERT INTO @TblReviewerScore (reviewerscore)
+SELECT Isnull(Avg(I.item_value), 0) + Isnull(Avg(K.item_value), 0) + Isnull(Avg(L.item_value), 0) AS ReviewerScore
+FROM prreviewreviewerscoredetails A
+LEFT OUTER JOIN review_score_content I ON CONVERT(VARCHAR(100), I.id) = CONVERT(VARCHAR(100), A.answers)
+LEFT OUTER JOIN review_score_content K ON CONVERT(VARCHAR(100), K.id) = CONVERT(VARCHAR(100), A.answer2)
+LEFT OUTER JOIN review_score_content L ON CONVERT(VARCHAR(100), L.id) = CONVERT(VARCHAR(100), A.answer3)
+WHERE A.reviewreviewerid = @ReviewReviewerID
+AND A.companyid = @CompanyID
+AND A.reviewrevieweremployeeid = @ReviewReviewerEmployeeID
+AND A.reviewcriteriaid = @ReviewCriteriaID
+END
+
+IF (
+@ResponseTypeID = 3
+OR @ResponseTypeID2 = 3
+OR @ResponseTypeID3 = 3
+)
+BEGIN
+INSERT INTO @TblReviewerScore (reviewerscore)
+SELECT CASE 
+WHEN B.responsetypeid = 3
+THEN CONVERT(DECIMAL(8, 2), A.answers)
+ELSE 0.0
+END + CASE 
+WHEN B.responsetypeid2 = 3
+THEN CONVERT(DECIMAL(8, 2), A.Answer2)
+ELSE 0
+END + CASE 
+WHEN B.responsetypeid3 = 3
+THEN CONVERT(DECIMAL(8, 2), A.Answer3)
+ELSE 0
+END AS REVIEWSCORE
+FROM prreviewreviewerscoredetails A
+INNER JOIN pr_reviewcriteria B ON A.reviewcriteriaid = B.reviewcriteriaid
+WHERE A.reviewreviewerid = @ReviewReviewerID
+AND A.companyid = @CompanyID
+AND A.reviewrevieweremployeeid = @ReviewReviewerEmployeeID
+--AND B.responsetypeid = 3
+AND B.reviewcriteriaid = @ReviewCriteriaID
+END
+
+SET @I = @I + 1
+END
+END
+
+SELECT Sum(reviewerscore) AS ReviewerScore
+FROM @TblReviewerScore
+END
+ALTER PROC [dbo].[PRCalculateReviewScoreByWeightedAvg] @ReviewId INT
+,@CompanyID INT
+,@ReviewReviewerEmployeeID INT
+AS
+BEGIN
+--DECLARE @ReviewId int = 2571,
+--@CompanyID int = 375,
+--@ReviewReviewerEmployeeID int = 2735
+DECLARE @ResponseTypeID INT
+DECLARE @ReviewCriteriaID INT
+DECLARE @ResponseTypeID2 INT
+DECLARE @ResponseTypeID3 INT
+DECLARE @TblResponseTypeID TABLE (
+ID INT IDENTITY(1, 1)
+,ReviewCriteriaID INT
+,ResponseTypeID INT
+,responsetypeid2 INT
+,responseTypeId3 INT
+)
+DECLARE @TblReviewScore TABLE (
+ID INT IDENTITY(1, 1)
+,ReviewScore DECIMAL(18, 2)
+)
+
+INSERT INTO @TblResponseTypeID (
+ReviewCriteriaID
+,ResponseTypeID
+,responsetypeid2
+,responseTypeId3
+)
+SELECT C.ReviewCriteriaID
+,C.ResponseTypeID
+,C.ResponseTypeId2
+,C.ResponseTypeId3
+FROM ReviewReviewerEmployee RRE
+INNER JOIN ReviewReviewer A ON RRE.ReviewReviewerID = A.ID
+INNER JOIN ReviewReviewerCriteria B ON A.ID = B.ReviewReviewerID AND B.RevSUserID = RRE.UserID
+INNER JOIN PR_ReviewCriteria C ON C.ReviewCriteriaID = B.ReviewCriteriaID
+LEFT OUTER JOIN JDuties D ON C.Description = CONVERT(VARCHAR(200), D.ID)
+WHERE A.ReviewID = @ReviewId
+AND RRE.ID = @ReviewReviewerEmployeeID
+GROUP BY C.ReviewCriteriaID
+,C.ResponseTypeID
+,C.ResponseTypeId2
+,C.ResponseTypeId3
+
+DECLARE @RowCount INT
+DECLARE @I INT
+
+SET @RowCount = (
+SELECT COUNT(*)
+FROM @TblResponseTypeID
+)
+SET @I = 1
+
+WHILE (@I <= @RowCount)
+BEGIN
+(
+SELECT @ResponseTypeID = ResponseTypeID
+,@ReviewCriteriaID = ReviewCriteriaID
+,@ResponseTypeID2 = responsetypeid2
+,@ResponseTypeID3 = responseTypeId3
+FROM @TblResponseTypeID
+WHERE ID = @I
+)
+
+IF (@ResponseTypeID = 1
+OR @ResponseTypeID2 = 1
+OR @ResponseTypeID3 = 1)
+BEGIN
+INSERT INTO @TblReviewScore (ReviewScore)
+SELECT ReviewScore = (
+CASE 
+WHEN G.Description = 'Accountabilities'
+THEN SUM(H.Item_Value + CONVERT(DECIMAL(10, 4), ISNULL(NULLIF(J.Item_Value, ''), '0')) + CONVERT(DECIMAL(10, 4), ISNULL(NULLIF(K.Item_Value, ''), '0'))) * AVG(I.Accountability)
+ELSE SUM(H.ITEM_VALUE + CONVERT(DECIMAL(10, 4), ISNULL(NULLIF(J.Item_Value, ''), '0')) + CONVERT(DECIMAL(10, 4), ISNULL(NULLIF(K.Item_Value, ''), '0'))) * AVG(I.Question)
+END
+) / 100
+FROM ReviewReviewerEmployee A
+INNER JOIN ReviewReviewerEmployee D ON D.UserID = A.UserID
+AND A.ID = D.ID
+INNER JOIN ReviewReviewer B ON D.ReviewReviewerID = B.ID
+INNER JOIN Review C ON B.ReviewID = C.ID
+INNER JOIN PRReviewReviewerScoreDetails E ON E.ReviewReviewerEmployeeID = D.ID
+INNER JOIN PR_ReviewCriteria F ON F.ReviewCriteriaID = E.ReviewCriteriaID
+INNER JOIN PR_ReviewCriteriaType G ON F.CriteriaTypeID = G.ReviewCriteriaTypeID
+INNER JOIN Review_Score_Content H ON CONVERT(VARCHAR(max), H.ID) = E.Answers
+LEFT OUTER JOIN Review_Score_Content J ON CONVERT(VARCHAR(max), J.ID) = E.Answer2
+LEFT OUTER JOIN Review_Score_Content K ON CONVERT(VARCHAR(max), K.ID) = E.Answer3
+INNER JOIN Review_Type_Score I ON I.Review_ID = C.ID
+WHERE C.ID = @ReviewId
+AND C.Company = @CompanyID
+AND A.ID = @ReviewReviewerEmployeeID
+AND F.ReviewCriteriaID = @ReviewCriteriaID
+GROUP BY G.Description
+END
+
+IF (
+@ResponseTypeID = 3
+OR @ResponseTypeID2 = 3
+OR @ResponseTypeID3 = 3
+)
+BEGIN
+INSERT INTO @TblReviewScore (ReviewScore)
+SELECT ReviewScore = (
+CASE 
+WHEN G.Description = 'Accountabilities'
+THEN (
+CASE 
+WHEN B.responsetypeid = 3
+THEN CONVERT(DECIMAL(8, 2), A.answers)
+ELSE 0.0
+END + CASE 
+WHEN B.responsetypeid2 = 3
+THEN CONVERT(DECIMAL(8, 2), A.Answer2)
+ELSE 0
+END + CASE 
+WHEN B.responsetypeid3 = 3
+THEN CONVERT(DECIMAL(8, 2), A.Answer3)
+ELSE 0
+END
+) * AVG(I.Accountability)
+ELSE (
+CASE 
+WHEN B.responsetypeid = 3
+THEN CONVERT(DECIMAL(8, 2), A.answers)
+ELSE 0.0
+END + CASE 
+WHEN B.responsetypeid2 = 3
+THEN CONVERT(DECIMAL(8, 2), A.Answer2)
+ELSE 0
+END + CASE 
+WHEN B.responsetypeid3 = 3
+THEN CONVERT(DECIMAL(8, 2), A.Answer3)
+ELSE 0
+END
+) * AVG(I.Question)
+END
+) / 100
+FROM PRReviewReviewerScoreDetails A
+INNER JOIN PR_ReviewCriteria B ON A.ReviewCriteriaID = B.ReviewCriteriaID
+INNER JOIN PR_ReviewCriteriaType G ON B.CriteriaTypeID = G.ReviewCriteriaTypeID
+INNER JOIN Review_Type_Score I ON I.Review_ID = @ReviewId
+WHERE A.CompanyID = @CompanyID
+AND A.ReviewReviewerEmployeeID = @ReviewReviewerEmployeeID
+--AND B.ResponseTypeID = 3
+AND B.ReviewCriteriaID = @ReviewCriteriaID
+GROUP BY G.Description
+,A.Answers
+,A.Answer2
+,A.Answer3
+,B.responsetypeid
+,B.responsetypeid2
+,B.responsetypeid3
+END
+
+SET @I = @I + 1
+END
+
+SELECT Sum(ReviewScore) AS ReviewScore
+FROM @TblReviewScore
+END
+
+9. Second Approver Workflow
+
+Getting the second approver 2 and login and see the task and approved again.
+Note: this example approver 1 and approver2 .
+
+
+
+Screenshot – Note: this example approver 1 and approver2 .
+
+
+Screenshot – Note: this example approver 1 and approver2 .
+
+Screenshot – Note: this example approver 1 and approver2 .
+
+
+Screenshot – Note: this example approver 1 and approver2 .
+10. HR Final Review
+
+
+Screenshot – 10. HR Final Review
+
+
+Screenshot – 10. HR Final Review
+
+
+10.1 HR Final Approval
+
+Screenshot – 10.1 HR Final Approval
+
+
+Screenshot – 10.1 HR Final Approval
+
+Screenshot – 10.1 HR Final Approval
+
+
+Screenshot – 10.1 HR Final Approval
+
+Screenshot – 10.1 HR Final Approval
+
+
+Screenshot – 10.1 HR Final Approval
+
+11. Employee Performance Report and E-Sign
+
+Screenshot – 11. Employee Performance Report and E-Sign
+Attached all view form can you download by employee and admin.
+In grid on open Sign , Manager login can sent employee to final sign the documents 
+
+Screenshot – In grid on open Sign , Manager login can sent employee to final sign the documents
+
+12. Final Approval Notification
+
+
+Screenshot – 12. Final Approval Notification
+
+
+
+
+
+ 
+
+
+
+
+
+

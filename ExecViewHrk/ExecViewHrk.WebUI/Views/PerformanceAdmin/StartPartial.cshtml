@@ -1,0 +1,17 @@
+@{
+    Layout = null;
+}
+<div class="container-fluid" id="prStartRoot"
+     data-list-url="@Url.Action("GetInProgressReviews", "PerformanceAdmin")"
+     data-start-url="@Url.Action("StartReview", "PerformanceAdmin")">
+    <div class="main-header p-0 clearfix">
+        <h4 style="display:inline-block;">Start Reviews</h4>
+        <button type="button" class="btn btn-default btn-sm pull-right" onclick='LoadMenu("SetupPartial", "PerformanceAdmin")'>Back to Setup</button>
+        <p class="text-muted">Start a configured review when the custom date is today or earlier (or leave blank). Approver1/2/3 resolve from the employee position Report To / Manager 2 / Manager 3.</p>
+    </div>
+    <table class="table table-bordered table-striped" id="prStartTable">
+        <thead><tr><th>Review</th><th>Status</th><th>Start Date</th><th>Employees</th><th></th></tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script src="~/Scripts/application/PerformanceAdminStart.js?v=20260829a"></script>

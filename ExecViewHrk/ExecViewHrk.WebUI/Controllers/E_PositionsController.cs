@@ -337,6 +337,8 @@ namespace ExecViewHrk.WebUI.Controllers
                        ModifiedDate = x.ModifiedDate,
                        Notes = x.Notes,
                        ReportsToID = x.ReportsToID,
+                       Manager2ID = x.Manager2ID,
+                       Manager3ID = x.Manager3ID,
                        AdpYear = x.AdpYear,
                        AdpWSLimit = x.AdpWSLimit,
                        CostNumber = x.CostNumber,
@@ -729,6 +731,8 @@ namespace ExecViewHrk.WebUI.Controllers
                 e_Position.PayGroupId = ePositionVm.PayGroupId;
                 e_Position.salary = TempData["Salary"] == null ? null : (Decimal?)(TempData["Salary"]);
                 e_Position.ReportsToID = ePositionVm.ReportsToID;
+                e_Position.Manager2ID = ePositionVm.Manager2ID;
+                e_Position.Manager3ID = ePositionVm.Manager3ID;
                 e_Position.AdpYear = ePositionVm.AdpYear;
                 e_Position.AdpWSLimit = ePositionVm.AdpWSLimit;
                 e_Position.DepartmentId = clientDbContext.Departments.Where(x => x.DepartmentDescription == ePositionVm.BusinessLevel && x.IsDeleted == false && x.CompanyCodeId == empCompanyCodeId).Select(r => r.DepartmentId).FirstOrDefault();

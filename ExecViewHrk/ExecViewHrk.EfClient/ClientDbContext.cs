@@ -133,6 +133,20 @@ namespace ExecViewHrk.EfClient
         public virtual DbSet<BenBeneficiary> BenBeneficiaries { get; set; }
         public virtual DbSet<BenDocument> BenDocuments { get; set; }
         public virtual DbSet<BenAudit> BenAudits { get; set; }
+        public virtual DbSet<PrReviewScoreContent> PrReviewScoreContents { get; set; }
+        public virtual DbSet<PrReviewCriteriaType> PrReviewCriteriaTypes { get; set; }
+        public virtual DbSet<PrResponseType> PrResponseTypes { get; set; }
+        public virtual DbSet<PrCriteriaSection> PrCriteriaSections { get; set; }
+        public virtual DbSet<PrReviewCriteria> PrReviewCriterias { get; set; }
+        public virtual DbSet<PrReview> PrReviews { get; set; }
+        public virtual DbSet<PrReviewSchedule> PrReviewSchedules { get; set; }
+        public virtual DbSet<PrReviewScoringRule> PrReviewScoringRules { get; set; }
+        public virtual DbSet<PrReviewEmployee> PrReviewEmployees { get; set; }
+        public virtual DbSet<PrReviewNotificationStep> PrReviewNotificationSteps { get; set; }
+        public virtual DbSet<PrReviewReviewerCriteria> PrReviewReviewerCriterias { get; set; }
+        public virtual DbSet<PrReviewReviewerEmployee> PrReviewReviewerEmployees { get; set; }
+        public virtual DbSet<PrReviewScoreDetail> PrReviewScoreDetails { get; set; }
+        public virtual DbSet<PrNotification> PrNotifications { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<EmployeeActuals> EmployeeActuals { get; set; }
         //public virtual DbSet<hrBUSINESSLEVELS> hrBUSINESSLEVELS { get; set; }

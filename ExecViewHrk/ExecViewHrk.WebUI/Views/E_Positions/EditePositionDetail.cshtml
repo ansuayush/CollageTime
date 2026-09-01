@@ -212,6 +212,24 @@ new SelectList(Model.PayGroupDropDownList, "keyvalue", "keydescription", Model.P
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Manager 2</label>
+                                            <div class="input-group">
+                                                @Html.DropDownListFor(model => model.Manager2ID,
+                  new SelectList(Model.ReportsToIdDropDownList, "keyvalue", "keydescription", Model.Manager2ID), "Select", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group ">
+                                            <label>Manager 3</label>
+                                            <div class="input-group">
+                                                @Html.DropDownListFor(model => model.Manager3ID,
+                  new SelectList(Model.ReportsToIdDropDownList, "keyvalue", "keydescription", Model.Manager3ID), "Select", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
                                       <div class="col-sm-3">
                                           <div class="form-group">
                                               <label>Adp Year</label>

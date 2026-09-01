@@ -1,0 +1,63 @@
+@{
+    Layout = null;
+    bool isSelfService = ViewBag.IsSelfService == true;
+    int? employeeId = ViewBag.EmployeeId as int?;
+    string identityMessage = ViewBag.IdentityMessage as string;
+}
+
+<link rel="stylesheet" href="~/Content/performance-review.css?v=20260902j" />
+
+<div class="container-fluid" id="prCompletedRoot"
+     data-employee-id="@(employeeId.HasValue ? employeeId.Value.ToString() : "")"
+     data-list-url="@Url.Action("GetCompletedReviews", "PerformanceReview")"
+     data-detail-url="@Url.Action("GetCompletedReviewDetail", "PerformanceReview")">
+
+    <div class="main-header p-0">
+        <h4>@(isSelfService ? "My Performance" : "Employee Performance")</h4>
+        <p class="text-muted">
+            @(isSelfService
+                ? "View your performance reviews and approvals from Approver 1, Approver 2, Approver 3, and HR."
+                : "Performance reviews for the employee selected on Personal Profile. Shows approvals by Approver 1, Approver 2, Approver 3, and HR.")
+        </p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(identityMessage))
+    {
+        <div class="alert alert-warning">@identityMessage</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="prCompletedTable">
+                <thead>
+                    <tr>
+                        <th>View</th>
+                        <th>Name</th>
+                        <th>Review Type</th>
+                        <th>Initiated Date</th>
+                        <th>Reviewer</th>
+                        <th>Completion Date</th>
+                        <th>Status</th>
+                        <th>Score</th>
+                        <th>Approvals</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@if (string.IsNullOrEmpty(identityMessage))
+{
+    <div class="modal fade pr-review-modal" id="prCompletedModal" tabindex="-1">
+        <div class="modal-dialog modal-lg pr-completed-modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body p-0" id="prCompletedModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Scripts/application/PerformanceReviewForm.js?v=20260902j"></script>
+    <script src="~/Scripts/application/PerformanceEmployeeCompleted.js?v=20260902j"></script>
+}

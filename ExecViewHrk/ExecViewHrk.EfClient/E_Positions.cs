@@ -25,6 +25,10 @@ namespace ExecViewHrk.EfClient
 
         public int? ReportsToID { get; set; }
 
+        public int? Manager2ID { get; set; }
+
+        public int? Manager3ID { get; set; }
+
         public int? RateTypeId { get; set; }
 
         public string FileNumber { get; set; }

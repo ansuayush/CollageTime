@@ -1,0 +1,499 @@
+.pr-review-modal .modal-dialog {
+    width: 96%;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.pr-review-modal .modal-content {
+    border: 0;
+    border-radius: 0;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.pr-review-screen {
+    background: #fff;
+    color: #222;
+    font-size: 13px;
+}
+
+.pr-review-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #4a4a4a;
+    color: #fff;
+    padding: 10px 16px;
+}
+
+.pr-review-topbar-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.pr-review-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pr-review-topbar-actions a,
+.pr-review-topbar-actions button.close {
+    color: #fff;
+    opacity: 1;
+    font-size: 18px;
+    line-height: 1;
+    text-shadow: none;
+}
+
+.pr-review-toolbar {
+    text-align: right;
+    padding: 10px 16px 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.pr-review-toolbar .btn {
+    min-width: 90px;
+    margin-left: 8px;
+    font-weight: 600;
+}
+
+.pr-review-toolbar .btn-pr-submit {
+    background: #2f6fed;
+    border-color: #2f6fed;
+    color: #fff;
+}
+
+.pr-review-toolbar .btn-pr-save {
+    background: #7b4bb7;
+    border-color: #7b4bb7;
+    color: #fff;
+}
+
+.pr-review-toolbar .btn-pr-reject {
+    background: #d9534f;
+    border-color: #d9534f;
+    color: #fff;
+}
+
+.pr-review-view-previous-bar {
+    margin: 0 16px 12px;
+    text-align: right;
+}
+
+.pr-review-prior-wrap.pr-review-prior-collapsed {
+    display: none;
+}
+
+.pr-review-rework-banner {
+    margin: 16px;
+    padding: 12px 16px;
+    background: #fff3cd;
+    border: 1px solid #f0e0b2;
+    border-left: 4px solid #f0ad4e;
+}
+
+.pr-review-hr-comments-section {
+    margin: 0 16px 20px;
+    border: 1px solid #d0d0d0;
+}
+
+.pr-review-hr-comments-header {
+    background: #e8e8e8;
+    padding: 8px 14px;
+    font-weight: 700;
+    font-size: 14px;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.pr-review-hr-comments-body {
+    background: #f3f3f3;
+    padding: 14px;
+}
+
+.pr-review-hr-comments-input {
+    background: #fff;
+    resize: vertical;
+}
+
+/* Reject overlay — custom dialog always on top of the review modal */
+.pr-reject-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100000;
+    background: rgba(0, 0, 0, 0.45);
+    overflow-y: auto;
+    padding: 40px 15px;
+}
+
+.pr-reject-panel {
+    position: relative;
+    margin: 8vh auto 30px;
+    max-width: 500px;
+    width: 100%;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.pr-reject-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.pr-reject-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.pr-reject-header .close {
+    float: none;
+    font-size: 24px;
+    opacity: 0.6;
+}
+
+.pr-reject-body {
+    padding: 16px;
+}
+
+.pr-reject-footer {
+    padding: 12px 16px 16px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+
+.pr-reject-footer .btn {
+    margin-left: 8px;
+    min-width: 90px;
+    font-weight: 600;
+}
+
+.pr-review-toolbar .btn-pr-cancel {
+    background: #5bc0de;
+    border-color: #5bc0de;
+    color: #fff;
+}
+
+.pr-review-summary {
+    margin: 16px;
+    border: 1px solid #d8d8d8;
+    background: #fafafa;
+}
+
+.pr-review-summary-head {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+}
+
+.pr-review-summary-body {
+    padding: 14px 16px 18px;
+}
+
+.pr-review-meta div {
+    margin-bottom: 6px;
+}
+
+.pr-review-score-tile {
+    text-align: center;
+}
+
+.pr-review-score-value {
+    background: #3d8f3d;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 700;
+    padding: 18px 12px;
+    margin-bottom: 8px;
+}
+
+.pr-review-score-label {
+    font-size: 12px;
+    color: #555;
+}
+
+.pr-review-hr-box {
+    border: 1px solid #d0d0d0;
+    background: #fff;
+    min-height: 110px;
+    padding: 10px 12px;
+}
+
+.pr-review-hr-box label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.pr-review-hr-box textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    resize: vertical;
+    min-height: 70px;
+}
+
+.pr-review-hr-placeholder {
+    color: #666;
+    font-style: italic;
+    padding-top: 24px;
+    text-align: center;
+}
+
+.pr-review-prior {
+    margin: 0 16px 16px;
+}
+
+.pr-review-prior-block {
+    margin: 0 16px 20px;
+    border: 2px solid #c5d9c5;
+    background: #f9fcf9;
+}
+
+.pr-review-prior-block-header {
+    background: #e2efe2;
+    padding: 10px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    border-bottom: 1px solid #c5d9c5;
+}
+
+.pr-review-prior-summary {
+    margin: 16px;
+}
+
+.pr-review-prior-summary .pr-prior-score {
+    background: #3d8f3d;
+}
+
+.pr-readonly .pr-readonly-field,
+.pr-criteria-readonly .pr-readonly-field {
+    background: #f5f5f5 !important;
+    cursor: not-allowed;
+}
+
+.pr-review-current-block {
+    margin: 0 16px 20px;
+    border: 2px solid #b8cce8;
+    background: #fff;
+}
+
+.pr-review-current-header {
+    background: #dce8f7;
+    padding: 10px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    border-bottom: 1px solid #b8cce8;
+}
+
+.pr-review-toolbar-bottom {
+    border-top: 1px solid #e5e5e5;
+    border-bottom: none;
+    padding: 14px 16px 18px;
+    margin-top: 8px;
+}
+
+@media print {
+    .pr-review-toolbar,
+    .pr-review-toolbar-bottom,
+    .pr-review-topbar-actions,
+    .pr-review-reviewer-attach-col,
+    .modal-backdrop {
+        display: none !important;
+    }
+
+    .pr-review-modal .modal-dialog {
+        width: 100%;
+        margin: 0;
+    }
+}
+
+.pr-review-section {
+    margin: 0 16px 20px;
+}
+
+.pr-review-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #ddd;
+}
+
+.pr-review-subsection-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 14px 0 10px;
+}
+
+.pr-criteria-row {
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 1px solid #ececec;
+    padding: 14px 0;
+    gap: 12px;
+}
+
+.pr-criteria-desc {
+    flex: 1 1 45%;
+    min-width: 280px;
+    line-height: 1.45;
+    padding-right: 12px;
+}
+
+.pr-criteria-rating,
+.pr-criteria-comments {
+    flex: 0 0 180px;
+}
+
+.pr-criteria-comments {
+    flex: 1 1 220px;
+}
+
+.pr-criteria-rating label,
+.pr-criteria-comments label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.pr-criteria-rating select,
+.pr-criteria-comments textarea,
+.pr-criteria-rating input {
+    width: 100%;
+}
+
+.pr-criteria-comments textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.pr-review-empty {
+    margin: 16px;
+    padding: 16px;
+    background: #fff8e5;
+    border: 1px solid #f0e0b2;
+}
+
+.pr-review-reviewer-section {
+    margin: 0 16px 20px;
+    border: 1px solid #d0d0d0;
+}
+
+.pr-review-reviewer-header {
+    background: #e8e8e8;
+    padding: 8px 14px;
+    font-weight: 700;
+    font-size: 14px;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.pr-review-reviewer-body {
+    background: #f3f3f3;
+    padding: 14px;
+}
+
+.pr-review-reviewer-textarea {
+    min-height: 160px;
+    resize: vertical;
+    background: #fff;
+}
+
+.pr-review-attach-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 4px;
+}
+
+.pr-review-attach-btn {
+    align-self: flex-start;
+    background: #e0e0e0;
+    border-color: #ccc;
+    font-weight: 600;
+}
+
+.pr-review-attachments-panel {
+    border: 1px solid #ccc;
+    background: #fff;
+    min-height: 160px;
+}
+
+.pr-review-attachments-title {
+    background: #e0e0e0;
+    padding: 6px 10px;
+    font-weight: 600;
+    border-bottom: 1px solid #ccc;
+}
+
+.pr-review-attachments-list {
+    padding: 10px;
+    min-height: 120px;
+    font-size: 12px;
+}
+
+.pr-review-attachment-item {
+    padding: 6px 8px;
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    margin-bottom: 6px;
+}
+
+.pr-completed-modal-dialog {
+    width: 95%;
+    max-width: 1100px;
+}
+
+.pr-completed-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.pr-approvals-col .pr-step-badge {
+    display: inline-block;
+    margin: 2px 4px 2px 0;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+.pr-completed-view .pr-review-prior-block {
+    margin: 0 16px 16px;
+}
+
+.pr-completed-final-score {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: #fff9c4;
+    border: 2px solid #f5c518;
+    border-radius: 4px;
+    max-width: 320px;
+}
+
+.pr-completed-final-score-label {
+    font-weight: 700;
+    font-size: 14px;
+    color: #5d4e00;
+    margin-bottom: 4px;
+}
+
+.pr-completed-final-score-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2e7d32;
+    line-height: 1.1;
+}
+
+.pr-completed-final-score-hint {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #6b5b00;
+}

@@ -1,0 +1,76 @@
+@{
+    Layout = null;
+}
+<div class="container-fluid" id="prSetupRoot"
+     data-score-url="@Url.Action("GetScoreContents", "PerformanceAdmin")"
+     data-score-save="@Url.Action("SaveScoreContent", "PerformanceAdmin")"
+     data-type-url="@Url.Action("GetCriteriaTypes", "PerformanceAdmin")"
+     data-type-save="@Url.Action("SaveCriteriaType", "PerformanceAdmin")"
+     data-resp-url="@Url.Action("GetResponseTypes", "PerformanceAdmin")"
+     data-resp-save="@Url.Action("SaveResponseType", "PerformanceAdmin")"
+     data-section-url="@Url.Action("GetSections", "PerformanceAdmin")"
+     data-section-save="@Url.Action("SaveSection", "PerformanceAdmin")"
+     data-crit-url="@Url.Action("GetCriteria", "PerformanceAdmin")"
+     data-crit-save="@Url.Action("SaveCriteria", "PerformanceAdmin")"
+     data-review-url="@Url.Action("GetReviews", "PerformanceAdmin")"
+     data-review-save="@Url.Action("SaveReview", "PerformanceAdmin")"
+     data-search-url="@Url.Action("SearchEmployees", "PerformanceAdmin")"
+     data-emps-url="@Url.Action("ListEmployees", "PerformanceAdmin")">
+    <div class="main-header p-0 clearfix">
+        <h4 style="display:inline-block;">Performance Administration</h4>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("DashboardPartial", "PerformanceAdmin")'>Dashboard</button>
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("StartPartial", "PerformanceAdmin")'>Start Reviews</button>
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("ApprovalsPartial", "PerformanceAdmin")'>HR Approvals</button>
+        </div>
+        <p class="text-muted">Configure rating scales, criteria, and review masters. Then start reviews for employees.</p>
+    </div>
+
+    <ul class="nav nav-tabs" id="prSetupTabs">
+        <li class="active"><a data-toggle="tab" href="#tabScores">Rating Scales</a></li>
+        <li><a data-toggle="tab" href="#tabTypes">Criteria Types</a></li>
+        <li><a data-toggle="tab" href="#tabResp">Response Types</a></li>
+        <li><a data-toggle="tab" href="#tabSections">Sections</a></li>
+        <li><a data-toggle="tab" href="#tabCriteria">Criteria</a></li>
+        <li><a data-toggle="tab" href="#tabReviews">Reviews</a></li>
+    </ul>
+
+    <div class="tab-content m-t-15">
+        <div id="tabScores" class="tab-pane active">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewScore">Add Scale Item</button>
+            <table class="table table-bordered table-striped" id="prScoreTable"><thead><tr><th>Name</th><th>Value</th><th>Order</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabTypes" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewType">Add Type</button>
+            <table class="table table-bordered table-striped" id="prTypeTable"><thead><tr><th>Description</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabResp" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewResp">Add Response Type</button>
+            <p class="text-muted small">Lookup values for the Criteria &quot;Response&quot; dropdown. Defaults include Rating and Text.</p>
+            <table class="table table-bordered table-striped" id="prRespTable"><thead><tr><th>Code</th><th>Description</th><th>Order</th><th>Default</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabSections" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewSection">Add Section</button>
+            <table class="table table-bordered table-striped" id="prSectionTable"><thead><tr><th>Name</th><th>Order</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabCriteria" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewCrit">Add Criteria</button>
+            <table class="table table-bordered table-striped" id="prCritTable"><thead><tr><th>Description</th><th>Type</th><th>Section</th><th>Response</th><th>Seq</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="tabReviews" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewReview">Add Review</button>
+            <table class="table table-bordered table-striped" id="prReviewTable"><thead><tr><th>Name</th><th>Mode</th><th>Status</th><th>Employees</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="prModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h5 class="modal-title" id="prModalTitle">Edit</h5></div>
+    <div class="modal-body" id="prModalBody"></div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="prModalSave">Save</button>
+    </div>
+</div></div></div>
+
+<script src="~/Scripts/application/PerformanceAdminSetup.js?v=20260901d"></script>

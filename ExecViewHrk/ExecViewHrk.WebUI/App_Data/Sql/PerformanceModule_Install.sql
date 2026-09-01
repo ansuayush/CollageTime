@@ -1,0 +1,4 @@
+﻿-- See PerformanceModuleSchemaHelper.EnsureSchema for full DDL + seed.
+-- Tables: PR_ReviewScoreContent, PR_ReviewCriteriaType, PR_CriteriaSection, PR_ReviewCriteria,
+-- PR_Review, PR_ReviewSchedule, PR_ReviewScoringRule, PR_ReviewEmployee, PR_ReviewNotificationStep,
+-- PR_ReviewReviewerCriteria, PR_ReviewReviewerEmployee, PR_ReviewScoreDetails, PR_Notification

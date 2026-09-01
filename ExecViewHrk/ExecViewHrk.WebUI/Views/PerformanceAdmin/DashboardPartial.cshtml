@@ -1,0 +1,33 @@
+@{
+    Layout = null;
+}
+<div class="container-fluid" id="prDashRoot" data-dash-url="@Url.Action("GetDashboard", "PerformanceAdmin")">
+    <div class="main-header p-0 clearfix">
+        <h4 style="display:inline-block;">Performance Dashboard</h4>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("SetupPartial", "PerformanceAdmin")'>Setup</button>
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("StartPartial", "PerformanceAdmin")'>Start Reviews</button>
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("ApprovalsPartial", "PerformanceAdmin")'>HR Approvals</button>
+        </div>
+    </div>
+    <div class="row" id="prDashCards" style="margin-top:20px;">
+        <div class="col-md-3"><div class="panel panel-default"><div class="panel-body text-center"><h3 id="dDraft">-</h3><div>Draft Reviews</div></div></div></div>
+        <div class="col-md-3"><div class="panel panel-default"><div class="panel-body text-center"><h3 id="dProg">-</h3><div>In Progress</div></div></div></div>
+        <div class="col-md-3"><div class="panel panel-default"><div class="panel-body text-center"><h3 id="dHr">-</h3><div>Awaiting HR</div></div></div></div>
+        <div class="col-md-3"><div class="panel panel-default"><div class="panel-body text-center"><h3 id="dDone">-</h3><div>Completed</div></div></div></div>
+    </div>
+    <p class="text-muted">Open tasks for you: <strong id="dMine">-</strong></p>
+</div>
+<script>
+(function () {
+    var u = $("#prDashRoot").attr("data-dash-url");
+    $.getJSON(u, function (r) {
+        var d = (r && r.data) || {};
+        $("#dDraft").text(d.DraftReviews != null ? d.DraftReviews : 0);
+        $("#dProg").text(d.InProgress != null ? d.InProgress : 0);
+        $("#dHr").text(d.AwaitingHr != null ? d.AwaitingHr : 0);
+        $("#dDone").text(d.Completed != null ? d.Completed : 0);
+        $("#dMine").text(d.MyOpenTasks != null ? d.MyOpenTasks : 0);
+    });
+})();
+</script>

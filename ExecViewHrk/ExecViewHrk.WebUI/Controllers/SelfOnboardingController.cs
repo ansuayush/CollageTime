@@ -454,47 +454,11 @@ namespace ExecViewHrk.WebUI.Controllers
         }
 
         /// <summary>
-        /// Sends via Web.config system.net/mailSettings with explicit SMTP authentication.
-        /// Gmail requires an App Password (not the normal Gmail password) when 2FA is on.
+        /// Sends via shared MailSettingsEmailHelper (Web.config system.net/mailSettings).
         /// </summary>
         private static void SendHireNoticeEmail(string to, string subject, string htmlBody)
         {
-            var section = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
-            if (section == null || section.Network == null)
-                throw new InvalidOperationException("system.net/mailSettings/smtp is missing in Web.config.");
-
-            string host = section.Network.Host;
-            int port = section.Network.Port > 0 ? section.Network.Port : 587;
-            string userName = section.Network.UserName;
-            string password = section.Network.Password;
-            bool enableSsl = section.Network.EnableSsl;
-
-            if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
-                throw new InvalidOperationException("SMTP host, userName, and password must be set in Web.config mailSettings.");
-
-            string from = userName;
-            if (string.IsNullOrWhiteSpace(from))
-                from = ConfigurationManager.AppSettings["FromEmailAddressTraining"];
-
-            using (var mail = new MailMessage())
-            {
-                mail.From = new MailAddress(from.Trim());
-                mail.To.Add(to.Trim());
-                mail.Subject = subject;
-                mail.Body = htmlBody;
-                mail.IsBodyHtml = true;
-
-                using (var smtp = new SmtpClient(host, port))
-                {
-                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtp.EnableSsl = enableSsl || port == 587 || port == 465;
-                    // Must be false or Gmail returns 5.7.0 Authentication Required
-                    smtp.UseDefaultCredentials = false;
-                    smtp.Credentials = new NetworkCredential(userName.Trim(), password);
-                    smtp.Timeout = 60000;
-                    smtp.Send(mail);
-                }
-            }
+            MailSettingsEmailHelper.Send(to, subject, htmlBody);
         }
 
         private static string BuildHireNoticeEmail(string first, string last, string userName, string password, string loginUrl)

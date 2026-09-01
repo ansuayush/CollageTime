@@ -1,0 +1,70 @@
+@{
+
+    Layout = null;
+
+}
+
+<link rel="stylesheet" href="~/Content/performance-review.css?v=20260902h" />
+
+<div class="container-fluid" id="prTasksRoot"
+
+     data-list-url="@Url.Action("GetNotifications", "PerformanceReview")"
+
+     data-task-url="@Url.Action("GetTask", "PerformanceReview")"
+
+     data-save-url="@Url.Action("SaveTask", "PerformanceReview")"
+
+     data-reject-url="@Url.Action("RejectTask", "PerformanceReview")"
+
+     data-dismiss-url="@Url.Action("DismissNotification", "PerformanceReview")">
+
+    <div class="main-header p-0">
+
+        <h4>Tasks</h4>
+
+        <p class="text-muted">Performance review actions assigned to you. Open a task to provide feedback and submit to the next approver.</p>
+
+    </div>
+
+    <table class="table table-bordered table-striped" id="prTasksTable">
+
+        <thead>
+
+            <tr>
+
+                <th>Employee Name</th>
+
+                <th>Description</th>
+
+                <th>Received On</th>
+
+                <th style="width:60px;">Clear</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody></tbody>
+
+    </table>
+
+</div>
+
+<div class="modal fade pr-review-modal" id="prTasksModal" tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-body p-0" id="prTasksModalBody"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="~/Scripts/application/PerformanceReviewForm.js?v=20260902h"></script>
+
+<script src="~/Scripts/application/PerformanceTasks.js?v=20260902h"></script>
+

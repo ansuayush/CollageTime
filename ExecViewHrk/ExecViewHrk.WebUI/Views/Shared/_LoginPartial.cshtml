@@ -25,6 +25,17 @@
                 <li class="pc-rheader-submenu"> <a href="#!" class="drop icon-circle"> <i class="fa fa-calendar"></i> </a> </li>
 
                 <li class="pc-rheader-submenu"> <a href="Login.html" class="drop icon-circle"> <i class="fa fa-sign-out"></i> </a> </li>*@
+            <li class="pc-rheader-submenu" id="prNotifBell"
+                data-count-url="@Url.Action("GetNotificationCount", "PerformanceReview")"
+                data-tasks-view="TasksPartial"
+                data-tasks-controller="PerformanceReview"
+                data-poll-ms="60000"
+                title="Performance review tasks">
+                <a href="javascript:void(0)" class="drop icon-circle" style="position:relative;">
+                    <i class="fa fa-bell"></i>
+                    <span id="prNotifBadge" class="label label-danger" style="display:none;position:absolute;top:2px;right:2px;padding:2px 5px;font-size:10px;border-radius:10px;"></span>
+                </a>
+            </li>
             <li class="dropdown">
                 <a href="#!" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
                    class="dropdown-toggle drop icon-circle drop-image"><span>@User.Identity.GetUserName() <i class="icofont icofont-simple-down"></i></span></a>
@@ -48,3 +59,4 @@
         </ul>
     </div>
 </nav>
+<script src="~/Scripts/application/PerformanceNotifications.js?v=20260901a"></script>
