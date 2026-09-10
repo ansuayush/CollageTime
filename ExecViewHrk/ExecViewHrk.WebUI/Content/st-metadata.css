@@ -1,0 +1,31 @@
+.st-meta-filters label {
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.st-meta-editor {
+    border: 1px solid #d0d0d0;
+    background: #fafafa;
+    padding: 16px;
+    min-height: 280px;
+}
+
+.st-meta-editor h5 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+
+#stFieldTable tbody tr.st-field-row {
+    cursor: pointer;
+}
+
+#stFieldTable tbody tr.st-field-row.active,
+#stFieldTable tbody tr.st-field-row:hover {
+    background: #fff9c4;
+}
+
+.st-meta-editor .checkbox {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}

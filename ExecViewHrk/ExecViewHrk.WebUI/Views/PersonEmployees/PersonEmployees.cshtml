@@ -1,4 +1,5 @@
 ﻿@model ExecViewHrk.Models.PersonEmployeeVm
+@using ExecViewHrk.WebUI.Helpers
 <div class="card p-15">
     <div class="card-header">
         <h5 class="card-header-text">Employee</h5>
@@ -12,7 +13,7 @@
 
         <div class="col-sm-3">
             <div class="form-group">
-                <label><span style="color:red">*</span>Employee</label>
+                <label>@Html.StFieldLabel("PersonId", "Employee", true)</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.PersonId,
                                new SelectList(Model.PersonsList, "keyvalue", "keydescription", Model.PersonId), new { @class = "form-control", disabled = "disabled" })
@@ -24,7 +25,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label><span style="color:red"> *</span> Company Code</label>
+                <label>@Html.StFieldLabel("CompanyCodeId", "Company Code", true)</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.CompanyCodeId,
                                new SelectList(Model.CompanyCodeList, "keyvalue", "keydescription"), new { @class = "form-control", @id = "CompanyCodeId" })
@@ -36,7 +37,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label><span style="color:red"> *</span> BusinessLevel Code</label>
+                <label>@Html.StFieldLabel("BusinessLevelNbr", "BusinessLevel Code", true)</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.BusinessLevelNbr,
                                new SelectList(Model.BusinessLevelCodeList, "keyvalue", "keydescription"), new { @class = "form-control",@id= "BusinessLevelId" })
@@ -48,28 +49,28 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group ">
-                <label><span style="color:red">*</span> File Number</label>
+                <label>@Html.StFieldLabel("FileNumber", "File Number", true)</label>
                 @Html.TextBoxFor(x => x.FileNumber, new { @class = "form-control", @style = "height:30px;", @type = "number" })
                 @Html.ValidationMessageFor(x => x.FileNumber)
             </div>
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group ">
-                <label> Rate</label>
+                <label>@Html.StFieldLabel("Rate", "Rate")</label>
                 @Html.TextBoxFor(x => x.Rate, "{0:N}", new { @class = "form-control txtprice", @style = "height:30px;" })
                 @Html.ValidationMessageFor(x => x.Rate)
             </div>
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group ">
-                <label><span style="color:red">*</span>Employment Number</label>
+                <label>@Html.StFieldLabel("EmploymentNumber", "Employment Number", true)</label>
                 @Html.TextBoxFor(x => x.EmploymentNumber, new { @class = "form-control", disabled = "disabled" })
                 @Html.ValidationMessageFor(x => x.EmploymentNumber)
             </div>
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label><span style="color:red">*</span>Employee Status</label>
+                <label>@Html.StFieldLabel("EmploymentStatusId", "Employee Status", true)</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.code,
                                new SelectList(Model.EmploymentStatusList, "keyvalue", "keydescription", Model.code), new { @id = "testEmpStatusId", @class = "form-control" })
@@ -87,7 +88,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label>Employee Type</label>
+                <label>@Html.StFieldLabel("EmployeeTypeID", "Employee Type")</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.EmployeeTypeID,
                                new SelectList(Model.EmployeeTypeList, "keyvalue", "keydescription", Model.EmployeeTypeID), new { @class = "form-control" })
@@ -105,7 +106,7 @@
         </div>
         <div class="col-sm-3">
             <div class="form-group">
-                <label><span style="color:red"> *</span>Hire Date </label>
+                <label>@Html.StFieldLabel("HireDate", "Hire Date", true)</label>
                 @Html.TextBoxFor(model => model.HireDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
                 <div>
                     @Html.ValidationMessageFor(x => x.HireDate)
@@ -114,7 +115,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label>Termination Date</label>
+                <label>@Html.StFieldLabel("TerminationDate", "Termination Date")</label>
                 @Html.TextBoxFor(model => model.TerminationDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
                 <div>
                     @Html.ValidationMessageFor(x => x.TerminationDate)
@@ -124,7 +125,7 @@
 
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label><span style="color:red">*</span>Pay Frequency</label>
+                <label>@Html.StFieldLabel("PayFrequencyId", "Pay Frequency", true)</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.PayFrequencyId,
                                new SelectList(Model.PayFrequencyList, "keyvalue", "keydescription", Model.PayFrequencyId), new { @class = "form-control" })
@@ -143,7 +144,7 @@
 
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group ">
-                <label> Fed Exemptions</label>
+                <label>@Html.StFieldLabel("FedExemptions", "Fed Exemptions")</label>
                 @Html.TextBoxFor(x => x.FedExemptions, new { @class = "form-control", @style = "height:30px;" })
                 @Html.ValidationMessageFor(x => x.FedExemptions)
             </div>
@@ -151,7 +152,7 @@
 
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label>Marital Status</label>
+                <label>@Html.StFieldLabel("MaritalStatusID", "Marital Status")</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.MaritalStatusID,
                                new SelectList(Model.MaritalStatusList, "keyvalue", "keydescription", Model.MaritalStatusID), new { @class = "form-control" })
@@ -169,7 +170,7 @@
         </div>
         <div class="col-sm-3">
             <div class="form-group">
-                <label>Worked State Tax Code</label>
+                <label>@Html.StFieldLabel("WorkedStateTaxCodeId", "Worked State Tax Code")</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.WorkedStateTaxCodeId,
                                new SelectList(Model.WorkedStateCodeList, "keyvalue", "keydescription", Model.WorkedStateTaxCodeId), new { @class = "form-control" })
@@ -182,7 +183,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group ">
-                <label>Hours</label>
+                <label>@Html.StFieldLabel("Hours", "Hours")</label>
                 @Html.TextBoxFor(x => x.Hours, new { @class = "form-control", @style = "height:30px;" })
                 @Html.ValidationMessageFor(x => x.Hours)
             </div>
@@ -190,7 +191,7 @@
 
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label>Actual Service Start Date</label>
+                <label>@Html.StFieldLabel("ActualServiceStartDate", "Actual Service Start Date")</label>
                 @Html.TextBoxFor(model => model.ActualServiceStartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
                 <div>
                     @Html.ValidationMessageFor(x => x.ActualServiceStartDate)
@@ -199,7 +200,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label>Planned Service Start Date</label>
+                <label>@Html.StFieldLabel("PlannedServiceStartDate", "Planned Service Start Date")</label>
                 @Html.TextBoxFor(model => model.PlannedServiceStartDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
                 <div>
                     @Html.ValidationMessageFor(x => x.PlannedServiceStartDate)
@@ -209,7 +210,7 @@
 
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label>Probation End Date</label>
+                <label>@Html.StFieldLabel("ProbationEndDate", "Probation End Date")</label>
                 @Html.TextBoxFor(model => model.ProbationEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
                 <div>
                     @Html.ValidationMessageFor(x => x.ProbationEndDate)
@@ -218,7 +219,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label>Training End Date</label>
+                <label>@Html.StFieldLabel("TrainingEndDate", "Training End Date")</label>
                 @Html.TextBoxFor(model => model.TrainingEndDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
                 <div>
                     @Html.ValidationMessageFor(x => x.TrainingEndDate)
@@ -227,7 +228,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label> Seniority Date</label>
+                <label>@Html.StFieldLabel("SeniorityDate", "Seniority Date")</label>
                 @Html.TextBoxFor(model => model.SeniorityDate, "{0:MM/dd/yyyy}", new { @class = "datepicker form-control" })
                 <div>
                     @Html.ValidationMessageFor(x => x.SeniorityDate)
@@ -236,7 +237,7 @@
         </div>
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label><span style="color:red">*</span>Time Card Type</label>
+                <label>@Html.StFieldLabel("TimeCardTypeId", "Time Card Type", true)</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.TimeCardTypeId,
                            new SelectList(Model.TimeCardTypeList, "keyvalue", "keydescription", Model.TimeCardTypeId), new { @class = "form-control" })
@@ -260,7 +261,7 @@
         </div>*@
         <div class="col-sm-3" style="display:@(ViewBag.isEdit?"inline":"none")">
             <div class="form-group">
-                <label>Earning Code </label>
+                <label>@Html.StFieldLabel("EarningsCodeId", "Earning Code")</label>
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.EarningsCodeId,
                            new SelectList(Model.EarningsCodeList, "keyvalue", "keydescription", Model.EarningsCodeId), new { @class = "form-control", @id = "ddlEarningsCodeId" })
@@ -276,20 +277,20 @@
         </div>*@
         <div class="col-sm-3">
             <div class="form-group ">
-                <label>Remaining Amount</label>
+                <label>@Html.StFieldLabel("Amount", "Remaining Amount")</label>
                 @Html.TextBoxFor(x => x.Amount, new { @class = "form-control", id = "txtAmount",@readonly="readonly" })
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group ">
-                <label>Treaty Limit </label>
+                <label>@Html.StFieldLabel("TreatyLimit", "Treaty Limit")</label>
                 @Html.TextBoxFor(x => x.TreatyLimit, new { @class = "form-control", id = "txtTreatyLimit" })
             </div>
             @*@Html.HiddenFor(r => r.EarningTreatyCode, new { @id = "hdnEarningsCodeTreaty" })*@
         </div>
          <div class="col-sm-3">
             <div class="form-group ">
-                <label>Used Amount</label>
+                <label>@Html.StFieldLabel("UsedAmount", "Used Amount")</label>
                 @Html.TextBoxFor(x => x.UsedAmount, new { @class = "form-control", id = "txtUsedAmount", @readonly="readonly"})
             </div>
         </div>
@@ -323,7 +324,7 @@ else
 {
          <input id="@Html.NameFor(x => x.IsStudent)" type="checkbox" value="@Model.IsStudent">
 }
-                     @Html.LabelFor(x => x.IsStudent, new { @style = "color: #333;" })
+                     <label for="@Html.NameFor(x => x.IsStudent)" style="color: #333;">@Html.StLabel("IsStudent", "IsStudent")</label>
                      @Html.HiddenFor(x => x.IsStudent)
                  </div>
              </div>

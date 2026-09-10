@@ -147,6 +147,15 @@ namespace ExecViewHrk.EfClient
         public virtual DbSet<PrReviewReviewerEmployee> PrReviewReviewerEmployees { get; set; }
         public virtual DbSet<PrReviewScoreDetail> PrReviewScoreDetails { get; set; }
         public virtual DbSet<PrNotification> PrNotifications { get; set; }
+        public virtual DbSet<StModule> StModules { get; set; }
+        public virtual DbSet<StForm> StForms { get; set; }
+        public virtual DbSet<StFormSection> StFormSections { get; set; }
+        public virtual DbSet<StMetaTable> StMetaTables { get; set; }
+        public virtual DbSet<StMetaData> StMetaDatas { get; set; }
+        public virtual DbSet<StModuleSecurity> StModuleSecurities { get; set; }
+        public virtual DbSet<StFormSecurity> StFormSecurities { get; set; }
+        public virtual DbSet<StSectionSecurity> StSectionSecurities { get; set; }
+        public virtual DbSet<StFieldSecurity> StFieldSecurities { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<EmployeeActuals> EmployeeActuals { get; set; }
         //public virtual DbSet<hrBUSINESSLEVELS> hrBUSINESSLEVELS { get; set; }

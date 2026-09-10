@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -165,6 +165,7 @@
     <Compile Include="SelfOnboardingHire.cs" />
     <Compile Include="BenefitsEnrollmentEntities.cs" />
     <Compile Include="PerformanceModuleEntities.cs" />
+    <Compile Include="StFormMetadataEntities.cs" />
     <Compile Include="SelfOnboardingPersonal.cs" />
     <Compile Include="SelfOnboardingI9.cs" />
     <Compile Include="SelfOnboardingTax.cs" />

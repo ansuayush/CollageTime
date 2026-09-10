@@ -715,6 +715,12 @@ namespace ExecViewHrk.WebUI.Controllers
                     personEmployeeVm.EarningsCodeId = emp.EarningsCodeId;
                 }
             }
+            try
+            {
+                int? companyId = personEmployeeVm.CompanyCodeId > 0 ? personEmployeeVm.CompanyCodeId : (int?)null;
+                StLabelService.LoadEmploymentFieldMeta(clientDbContext, ViewBag, companyId);
+            }
+            catch { /* metadata optional until tables exist */ }
             return personEmployeeVm;
         }
         public JsonResult GetRateTypes(string text)

@@ -1,0 +1,168 @@
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/Content/st-metadata.css?v=20260903a" />
+
+<div class="container-fluid" id="stMetaRoot"
+     data-modules-url="@Url.Action("GetModules", "MetadataManagement")"
+     data-forms-url="@Url.Action("GetForms", "MetadataManagement")"
+     data-sections-url="@Url.Action("GetSections", "MetadataManagement")"
+     data-fields-url="@Url.Action("GetFields", "MetadataManagement")"
+     data-field-url="@Url.Action("GetField", "MetadataManagement")"
+     data-save-label-url="@Url.Action("SaveFieldLabel", "MetadataManagement")"
+     data-companies-url="@Url.Action("GetCompanies", "MetadataManagement")"
+     data-roles-url="@Url.Action("GetRoles", "MetadataManagement")"
+     data-form-sec-url="@Url.Action("GetFormSecurity", "MetadataManagement")"
+     data-save-form-sec-url="@Url.Action("SaveFormSecurity", "MetadataManagement")"
+     data-save-module-url="@Url.Action("SaveModule", "MetadataManagement")"
+     data-save-form-url="@Url.Action("SaveForm", "MetadataManagement")"
+     data-save-section-url="@Url.Action("SaveSection", "MetadataManagement")"
+     data-save-meta-url="@Url.Action("SaveMetaField", "MetadataManagement")">
+
+    <div class="main-header p-0">
+        <h4>Metadata Management</h4>
+        <p class="text-muted">System Configuration - manage modules, forms, sections, field labels, and form-level security by role.</p>
+    </div>
+
+    <ul class="nav nav-tabs" id="stMetaTabs">
+        <li class="active"><a data-toggle="tab" href="#tabLabels">Field Labels</a></li>
+        <li><a data-toggle="tab" href="#tabSecurity">Form Security</a></li>
+        <li><a data-toggle="tab" href="#tabStructure">Modules / Forms / Sections</a></li>
+    </ul>
+
+    <div class="tab-content m-t-15">
+        <div id="tabLabels" class="tab-pane active">
+            <div class="row st-meta-filters">
+                <div class="col-md-3">
+                    <label>Module</label>
+                    <select id="stModule" class="form-control"></select>
+                </div>
+                <div class="col-md-3">
+                    <label>Form</label>
+                    <select id="stForm" class="form-control"></select>
+                </div>
+                <div class="col-md-3">
+                    <label>Section</label>
+                    <select id="stSection" class="form-control"></select>
+                </div>
+                <div class="col-md-3">
+                    <label>Company (optional label override)</label>
+                    <select id="stCompany" class="form-control">
+                        <option value="">— Default labels —</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row m-t-15">
+                <div class="col-md-7">
+                    <table class="table table-bordered table-striped table-hover" id="stFieldTable">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Default Label</th>
+                                <th>Effective Label</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    <div class="st-meta-editor" id="stFieldEditor">
+                        <h5>Selected Field: <span id="stSelectedFieldName">-</span></h5>
+                        <input type="hidden" id="stEditFieldId" value="" />
+                        <div class="form-group">
+                            <label>Display Label</label>
+                            <input type="text" class="form-control" id="stEditLabel" />
+                        </div>
+                        <div class="checkbox"><label><input type="checkbox" id="stEditRequired" /> Required</label></div>
+                        <div class="checkbox"><label><input type="checkbox" id="stEditVisible" /> Visible</label></div>
+                        <div class="checkbox"><label><input type="checkbox" id="stEditReadOnly" /> Read only</label></div>
+                        <div class="checkbox"><label><input type="checkbox" id="stEditAllowAdd" checked /> Allow Add</label></div>
+                        <div class="checkbox"><label><input type="checkbox" id="stEditAllowEdit" checked /> Allow Edit</label></div>
+                        <div class="m-t-10">
+                            <button type="button" class="btn btn-primary" id="stSaveLabel">Save</button>
+                            <button type="button" class="btn btn-default" id="stResetLabel">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabSecurity" class="tab-pane">
+            <div class="row st-meta-filters">
+                <div class="col-md-4">
+                    <label>Form</label>
+                    <select id="stSecForm" class="form-control"></select>
+                </div>
+                <div class="col-md-4">
+                    <label>Role</label>
+                    <select id="stSecRole" class="form-control"></select>
+                </div>
+                <div class="col-md-4" style="padding-top:24px;">
+                    <button type="button" class="btn btn-sm btn-primary" id="stAddFormSec">Add / Update Form Security</button>
+                </div>
+            </div>
+            <div class="row m-t-10">
+                <div class="col-md-12">
+                    <label class="m-r-15"><input type="checkbox" id="stSecView" checked /> View</label>
+                    <label class="m-r-15"><input type="checkbox" id="stSecAdd" /> Add</label>
+                    <label class="m-r-15"><input type="checkbox" id="stSecEdit" /> Edit</label>
+                    <label class="m-r-15"><input type="checkbox" id="stSecDelete" /> Delete</label>
+                    <label class="m-r-15"><input type="checkbox" id="stSecExport" /> Export</label>
+                    <label class="m-r-15"><input type="checkbox" id="stSecActive" checked /> Active</label>
+                </div>
+            </div>
+            <table class="table table-bordered table-striped m-t-15" id="stFormSecTable">
+                <thead>
+                    <tr>
+                        <th>Form</th>
+                        <th>Role</th>
+                        <th>View</th>
+                        <th>Add</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                        <th>Export</th>
+                        <th>Active</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="tabStructure" class="tab-pane">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Add Module</h5>
+                    <input type="text" class="form-control m-b-5" id="stNewModuleName" placeholder="Module name" />
+                    <input type="text" class="form-control m-b-5" id="stNewModuleControl" placeholder="ControlId e.g. iEmployee" />
+                    <button type="button" class="btn btn-sm btn-primary" id="stSaveModule">Save Module</button>
+                </div>
+                <div class="col-md-4">
+                    <h5>Add Form</h5>
+                    <select id="stNewFormModule" class="form-control m-b-5"></select>
+                    <input type="text" class="form-control m-b-5" id="stNewFormName" placeholder="Form name" />
+                    <input type="text" class="form-control m-b-5" id="stNewFormControl" placeholder="ControlId" />
+                    <input type="text" class="form-control m-b-5" id="stNewFormTable" placeholder="TableName" />
+                    <button type="button" class="btn btn-sm btn-primary" id="stSaveForm">Save Form</button>
+                </div>
+                <div class="col-md-4">
+                    <h5>Add Section / Field</h5>
+                    <select id="stNewSectionForm" class="form-control m-b-5"></select>
+                    <input type="text" class="form-control m-b-5" id="stNewSectionName" placeholder="Section name" />
+                    <input type="number" class="form-control m-b-5" id="stNewSectionSort" placeholder="Sort" value="1" />
+                    <button type="button" class="btn btn-sm btn-primary m-b-15" id="stSaveSection">Save Section</button>
+                    <hr />
+                    <select id="stNewFieldSection" class="form-control m-b-5"></select>
+                    <input type="text" class="form-control m-b-5" id="stNewFieldKey" placeholder="Field key e.g. FirstName" />
+                    <input type="text" class="form-control m-b-5" id="stNewFieldType" placeholder="Type e.g. varchar" value="varchar" />
+                    <input type="text" class="form-control m-b-5" id="stNewFieldLabel" placeholder="Display name" />
+                    <button type="button" class="btn btn-sm btn-primary" id="stSaveMetaField">Save Field</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/application/MetadataManagement.js?v=20260903a"></script>
