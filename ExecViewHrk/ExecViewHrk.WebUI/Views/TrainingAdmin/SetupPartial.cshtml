@@ -1,0 +1,117 @@
+@{
+    Layout = null;
+}
+<link rel="stylesheet" href="~/Content/training-module.css?v=20260910c" />
+
+<div class="container-fluid" id="trAdminRoot"
+     data-codes-url="@Url.Action("GetCourseCodes", "TrainingAdmin")"
+     data-codes-save="@Url.Action("SaveCourseCode", "TrainingAdmin")"
+     data-cats-url="@Url.Action("GetCourseCategories", "TrainingAdmin")"
+     data-cats-save="@Url.Action("SaveCourseCategory", "TrainingAdmin")"
+     data-types-url="@Url.Action("GetTrainingTypes", "TrainingAdmin")"
+     data-types-save="@Url.Action("SaveTrainingType", "TrainingAdmin")"
+     data-status-url="@Url.Action("GetStatuses", "TrainingAdmin")"
+     data-status-save="@Url.Action("SaveStatus", "TrainingAdmin")"
+     data-classes-url="@Url.Action("GetClasses", "TrainingAdmin")"
+     data-class-url="@Url.Action("GetClass", "TrainingAdmin")"
+     data-class-save="@Url.Action("SaveClass", "TrainingAdmin")"
+     data-class-del="@Url.Action("DeleteClasses", "TrainingAdmin")"
+     data-tracks-url="@Url.Action("GetTracks", "TrainingAdmin")"
+     data-track-save="@Url.Action("SaveTrack", "TrainingAdmin")"
+     data-track-del="@Url.Action("DeleteTracks", "TrainingAdmin")"
+     data-track-copy="@Url.Action("CopyTrack", "TrainingAdmin")"
+     data-sched-url="@Url.Action("GetSchedules", "TrainingAdmin")"
+     data-sched-save="@Url.Action("SaveSchedule", "TrainingAdmin")"
+     data-sched-del="@Url.Action("DeleteSchedules", "TrainingAdmin")"
+     data-assign-url="@Url.Action("AssignPartial", "TrainingEnrollment")">
+
+    <div class="main-header p-0 clearfix">
+        <h4 style="display:inline-block;">Training Administration</h4>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" onclick='LoadMenu("AssignPartial", "TrainingEnrollment")'>Assign Employees</button>
+        </div>
+        <p class="text-muted">Manage course lookups, classes, tracks, and schedules. Then assign employees to training.</p>
+    </div>
+
+    @if (ViewBag.SchemaError != null)
+    {
+        <div class="alert alert-danger">Training setup error: @ViewBag.SchemaError</div>
+    }
+
+    <ul class="nav nav-tabs" id="trAdminTabs">
+        <li class="active"><a data-toggle="tab" href="#tabTrClasses">Manage Classes</a></li>
+        <li><a data-toggle="tab" href="#tabTrTracks">Training Tracks</a></li>
+        <li><a data-toggle="tab" href="#tabTrSched">Class Schedules</a></li>
+        <li><a data-toggle="tab" href="#tabTrLookups">Lookups</a></li>
+    </ul>
+
+    <div class="tab-content m-t-15">
+        <div id="tabTrClasses" class="tab-pane active">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewClass">Add</button>
+            <button type="button" class="btn btn-sm btn-danger m-b-10" id="btnDelClass">Delete</button>
+            <table class="table table-bordered table-striped" id="trClassTable">
+                <thead><tr><th><input type="checkbox" id="trClassCheckAll" /></th><th>Name</th><th>Description</th><th>Cost</th><th>Hours</th><th>Course Code</th><th>Category</th><th>Active</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="tabTrTracks" class="tab-pane">
+            <button type="button" class="btn btn-sm btn-primary m-b-10" id="btnNewTrack">Add</button>
+            <button type="button" class="btn btn-sm btn-danger m-b-10" id="btnDelTrack">Delete</button>
+            <table class="table table-bordered table-striped" id="trTrackTable">
+                <thead><tr><th><input type="checkbox" id="trTrackCheckAll" /></th><th></th><th>Track Name</th><th>Total Hours</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="tabTrSched" class="tab-pane">
+            <div class="row m-b-10">
+                <div class="col-md-4">
+                    <select id="trSchedClassFilter" class="form-control"></select>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-sm btn-primary" id="btnNewSched">Add Schedule</button>
+                    <button type="button" class="btn btn-sm btn-danger" id="btnDelSched">Delete</button>
+                </div>
+            </div>
+            <table class="table table-bordered table-striped" id="trSchedTable">
+                <thead><tr><th><input type="checkbox" id="trSchedCheckAll" /></th><th>Class</th><th>Schedule</th><th>Start</th><th>End</th><th>Location</th><th>Active</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="tabTrLookups" class="tab-pane">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Course Codes <button class="btn btn-xs btn-primary" id="btnNewCode">Add</button></h5>
+                    <table class="table table-bordered table-condensed" id="trCodeTable"><thead><tr><th>Code</th><th>Description</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+                </div>
+                <div class="col-md-6">
+                    <h5>Course Categories <button class="btn btn-xs btn-primary" id="btnNewCat">Add</button></h5>
+                    <table class="table table-bordered table-condensed" id="trCatTable"><thead><tr><th>Name</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+                </div>
+            </div>
+            <div class="row m-t-15">
+                <div class="col-md-6">
+                    <h5>Training Types <button class="btn btn-xs btn-primary" id="btnNewType">Add</button></h5>
+                    <table class="table table-bordered table-condensed" id="trTypeTable"><thead><tr><th>Name</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+                </div>
+                <div class="col-md-6">
+                    <h5>Statuses <button class="btn btn-xs btn-primary" id="btnNewStatus">Add</button></h5>
+                    <table class="table table-bordered table-condensed" id="trStatusTable"><thead><tr><th>Name</th><th>Order</th><th>Active</th><th></th></tr></thead><tbody></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="trModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h5 class="modal-title" id="trModalTitle">Edit</h5></div>
+    <div class="modal-body" id="trModalBody"></div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="trModalSave">Save</button>
+    </div>
+</div></div></div>
+
+<script src="~/Scripts/application/TrainingAdmin.js?v=20260910c"></script>

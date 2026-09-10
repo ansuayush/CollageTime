@@ -2083,6 +2083,16 @@
     <Compile Include="Helpers\PerformanceModuleSchemaHelper.cs" />
     <Compile Include="Helpers\StFormMetadataSchemaHelper.cs" />
     <Compile Include="Helpers\StLabelService.cs" />
+    <Compile Include="Helpers\TrainingModuleSchemaHelper.cs" />
+    <Compile Include="Controllers\TrainingAdminController.cs" />
+    <Compile Include="Controllers\TrainingEnrollmentController.cs" />
+    <Compile Include="Models\TrainingModuleVms.cs" />
+    <Content Include="Views\TrainingAdmin\SetupPartial.cshtml" />
+    <Content Include="Views\TrainingEnrollment\EnrollmentPartial.cshtml" />
+    <Content Include="Scripts\application\TrainingAdmin.js" />
+    <Content Include="Scripts\application\TrainingEnrollment.js" />
+    <Content Include="Content\training-module.css" />
+    <Content Include="App_Data\Sql\TrainingModule_Install.sql" />
     <Compile Include="Helpers\StMetaHtmlExtensions.cs" />
     <Compile Include="Helpers\MailSettingsEmailHelper.cs" />
     <Compile Include="Helpers\PerformanceReviewEmailHelper.cs" />

@@ -166,6 +166,7 @@
     <Compile Include="BenefitsEnrollmentEntities.cs" />
     <Compile Include="PerformanceModuleEntities.cs" />
     <Compile Include="StFormMetadataEntities.cs" />
+    <Compile Include="TrainingModuleEntities.cs" />
     <Compile Include="SelfOnboardingPersonal.cs" />
     <Compile Include="SelfOnboardingI9.cs" />
     <Compile Include="SelfOnboardingTax.cs" />

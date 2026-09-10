@@ -156,6 +156,15 @@ namespace ExecViewHrk.EfClient
         public virtual DbSet<StFormSecurity> StFormSecurities { get; set; }
         public virtual DbSet<StSectionSecurity> StSectionSecurities { get; set; }
         public virtual DbSet<StFieldSecurity> StFieldSecurities { get; set; }
+        public virtual DbSet<TrainingCourseCode> TrainingCourseCodes { get; set; }
+        public virtual DbSet<TrainingCourseCategory> TrainingCourseCategories { get; set; }
+        public virtual DbSet<TrainingType> TrainingTypes { get; set; }
+        public virtual DbSet<TrainingStatus> TrainingStatuses { get; set; }
+        public virtual DbSet<TrainingClass> TrainingClasses { get; set; }
+        public virtual DbSet<TrainingTrack> TrainingTracks { get; set; }
+        public virtual DbSet<TrainingTrackClass> TrainingTrackClasses { get; set; }
+        public virtual DbSet<TrainingClassSchedule> TrainingClassSchedules { get; set; }
+        public virtual DbSet<TrainingEmployee> TrainingEmployees { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<EmployeeActuals> EmployeeActuals { get; set; }
         //public virtual DbSet<hrBUSINESSLEVELS> hrBUSINESSLEVELS { get; set; }

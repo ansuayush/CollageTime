@@ -1,0 +1,37 @@
+.tr-track-classes {
+    border: 1px solid #ccc;
+    background: #f7f7f7;
+    padding: 0;
+}
+
+.tr-track-classes-head {
+    background: #555;
+    color: #fff;
+    padding: 4px 8px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.tr-track-classes > div:not(.tr-track-classes-head) {
+    padding: 4px 8px;
+    border-top: 1px solid #e5e5e5;
+    background: #fff;
+}
+
+.tr-track-classes > div:nth-child(even):not(.tr-track-classes-head) {
+    background: #fafafa;
+}
+
+.tr-track-class-list {
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 8px;
+    background: #fff;
+}
+
+#trEnrollTable .label {
+    display: inline-block;
+    min-width: 36px;
+    text-align: center;
+}
