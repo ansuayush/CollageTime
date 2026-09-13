@@ -1,6 +1,7 @@
 using ExecViewHrk.EfClient;
 using ExecViewHrk.WebUI.Helpers;
 using ExecViewHrk.WebUI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -12,7 +13,14 @@ namespace ExecViewHrk.WebUI.Controllers
     {
         public PartialViewResult IndexPartial()
         {
-            Ensure();
+            try
+            {
+                Ensure();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.SchemaError = ex.GetBaseException().Message;
+            }
             return PartialView();
         }
 

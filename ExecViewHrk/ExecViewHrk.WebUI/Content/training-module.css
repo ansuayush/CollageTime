@@ -35,3 +35,8 @@
     min-width: 36px;
     text-align: center;
 }
+
+#trEnrollTable .tr-toggle-enroll {
+    text-decoration: none;
+    cursor: pointer;
+}

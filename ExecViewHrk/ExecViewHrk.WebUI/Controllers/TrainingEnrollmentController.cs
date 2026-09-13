@@ -26,6 +26,10 @@ namespace ExecViewHrk.WebUI.Controllers
             try { Ensure(); }
             catch (Exception ex) { ViewBag.SchemaError = ex.GetBaseException().Message; }
             ViewBag.IsSelfService = true;
+            using (var db = OpenDb())
+            {
+                ViewBag.CurrentEmployeeId = ResolveTargetEmployeeId(db, forceSelf: true);
+            }
             return PartialView("EnrollmentPartial");
         }
 
@@ -34,7 +38,7 @@ namespace ExecViewHrk.WebUI.Controllers
         {
             using (var db = OpenDb())
             {
-                int? currentEmployeeId = ResolveTargetEmployeeId(db, forceSelf: User.Identity.GetRequestType() == "IsSelfService");
+                int? currentEmployeeId = ResolveTargetEmployeeId(db, forceSelf: IsSelfServiceRequest());
                 string currentEmployeeName = null;
                 if (currentEmployeeId.HasValue)
                 {
@@ -154,6 +158,8 @@ namespace ExecViewHrk.WebUI.Controllers
         [HttpGet]
         public JsonResult SearchEmployees(string q)
         {
+            if (IsSelfServiceRequest())
+                return Json(new { success = true, data = new object[0] }, JsonRequestBehavior.AllowGet);
             using (var db = OpenDb())
             {
                 q = (q ?? "").Trim();
@@ -196,7 +202,7 @@ namespace ExecViewHrk.WebUI.Controllers
         {
             using (var db = OpenDb())
             {
-                bool isSelf = User.Identity.GetRequestType() == "IsSelfService" || Request["self"] == "1";
+                bool isSelf = IsSelfServiceRequest();
                 int? targetEmployeeId = ResolveTargetEmployeeId(db, forceSelf: isSelf);
                 if (isSelf)
                     employeeId = targetEmployeeId;
@@ -233,22 +239,67 @@ namespace ExecViewHrk.WebUI.Controllers
         }
 
         [HttpPost]
+        public JsonResult ToggleEnrollment(int id)
+        {
+            using (var db = OpenDb())
+            {
+                var row = db.TrainingEmployees.FirstOrDefault(x => x.Id == id);
+                if (row == null) return Json(new { success = false, message = "Not found." });
+                if (!CanAccessEnrollment(db, row)) return Json(new { success = false, message = "Not authorized." });
+
+                var statuses = db.TrainingStatuses.Where(s => s.IsActive).ToList();
+                string currentName = row.StatusId.HasValue
+                    ? (statuses.Where(s => s.Id == row.StatusId.Value).Select(s => s.Name).FirstOrDefault() ?? "")
+                    : "";
+                bool currentlyEnrolled = IsEnrolledStatusName(currentName);
+
+                var enrolledStatus = statuses.FirstOrDefault(s => IsEnrolledStatusName(s.Name));
+                var notEnrolledStatus = statuses.FirstOrDefault(s =>
+                    !string.IsNullOrEmpty(s.Name) &&
+                    s.Name.IndexOf("Not", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    s.Name.IndexOf("Enroll", StringComparison.OrdinalIgnoreCase) >= 0);
+
+                if (currentlyEnrolled)
+                {
+                    if (notEnrolledStatus == null)
+                        return Json(new { success = false, message = "Not Enrolled status is missing." });
+                    row.StatusId = notEnrolledStatus.Id;
+                }
+                else
+                {
+                    if (enrolledStatus == null)
+                        return Json(new { success = false, message = "Enrolled status is missing." });
+                    row.StatusId = enrolledStatus.Id;
+                    if (!row.EnrollmentDate.HasValue) row.EnrollmentDate = DateTime.Today;
+                }
+
+                row.ModifiedBy = User.Identity.Name;
+                row.ModifiedOn = DateTime.Now;
+                db.SaveChanges();
+                return Json(new { success = true });
+            }
+        }
+
+        [HttpPost]
         public JsonResult SaveEnrollment(TrainingEnrollmentSaveVm model)
         {
-            if (model == null || model.EmployeeId <= 0)
-                return Json(new { success = false, message = "Employee is required." });
+            if (model == null)
+                return Json(new { success = false, message = "Invalid request." });
             if (!model.TrainingClassId.HasValue || model.TrainingClassId.Value <= 0)
                 return Json(new { success = false, message = "Class is required." });
 
             using (var db = OpenDb())
             {
-                bool isSelf = User.Identity.GetRequestType() == "IsSelfService";
+                bool isSelf = IsSelfServiceRequest();
                 int? selfEmp = ResolveTargetEmployeeId(db, forceSelf: true);
                 if (isSelf)
                 {
-                    if (!selfEmp.HasValue || selfEmp.Value != model.EmployeeId)
-                        return Json(new { success = false, message = "You can only enroll yourself." });
+                    if (!selfEmp.HasValue)
+                        return Json(new { success = false, message = "Your employee record was not found for this login." });
+                    model.EmployeeId = selfEmp.Value;
                 }
+                if (model.EmployeeId <= 0)
+                    return Json(new { success = false, message = "Employee is required." });
 
                 var cls = db.TrainingClasses.FirstOrDefault(c => c.Id == model.TrainingClassId.Value);
                 if (cls == null) return Json(new { success = false, message = "Class not found." });
@@ -360,9 +411,7 @@ namespace ExecViewHrk.WebUI.Controllers
             return rows.Select(r =>
             {
                 string statusName = r.StatusId.HasValue && statuses.ContainsKey(r.StatusId.Value) ? statuses[r.StatusId.Value] : null;
-                bool enrolled = !string.IsNullOrEmpty(statusName) &&
-                    (statusName.IndexOf("Enroll", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                     statusName.IndexOf("Complete", StringComparison.OrdinalIgnoreCase) >= 0);
+                bool enrolled = IsEnrolledStatusName(statusName);
                 bool completed = !string.IsNullOrEmpty(statusName) &&
                     statusName.IndexOf("Complete", StringComparison.OrdinalIgnoreCase) >= 0;
 
@@ -405,6 +454,16 @@ namespace ExecViewHrk.WebUI.Controllers
             }).ToList();
         }
 
+        private bool IsSelfServiceRequest()
+        {
+            if (User.Identity.GetRequestType() == "IsSelfService") return true;
+            if (string.Equals(Request["self"], "1", StringComparison.OrdinalIgnoreCase)) return true;
+            return User.IsInRole("ClientEmployees")
+                && !User.IsInRole("HrkAdministrators")
+                && !User.IsInRole("ClientAdministrators")
+                && !User.IsInRole("ClientManagers");
+        }
+
         private bool CanAccessEnrollment(ClientDbContext db, TrainingEmployee row)
         {
             if (User.IsInRole("HrkAdministrators") || User.IsInRole("ClientAdministrators")
@@ -417,16 +476,9 @@ namespace ExecViewHrk.WebUI.Controllers
         private int? ResolveTargetEmployeeId(ClientDbContext db, bool forceSelf)
         {
             int? personId = null;
-            if (forceSelf || User.Identity.GetRequestType() == "IsSelfService")
+            if (forceSelf || IsSelfServiceRequest())
             {
-                string userName = User.Identity.Name ?? "";
-                var byUser = db.UserNamesPersons.FirstOrDefault(u => u.UserName == userName);
-                if (byUser != null) personId = byUser.PersonID;
-                else
-                {
-                    var person = db.Persons.FirstOrDefault(p => p.eMail == userName);
-                    if (person != null) personId = person.PersonId;
-                }
+                personId = ResolveLoginPersonId(db);
             }
             else
             {
@@ -441,6 +493,48 @@ namespace ExecViewHrk.WebUI.Controllers
             var emp = db.Employees.Where(e => e.PersonId == personId.Value)
                 .OrderByDescending(e => e.EmploymentNumber).FirstOrDefault();
             return emp != null ? emp.EmployeeId : (int?)null;
+        }
+
+        private int? ResolveLoginPersonId(ClientDbContext db)
+        {
+            var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                var claim = claimsIdentity.FindFirst(SessionStateKeys.LOGIN_PERSON_ID.ToString());
+                int claimId;
+                if (claim != null && int.TryParse(claim.Value, out claimId) && claimId > 0)
+                    return claimId;
+            }
+
+            string login = (User.Identity.Name ?? "").Trim();
+            if (string.IsNullOrEmpty(login)) return null;
+
+            var byUser = db.UserNamesPersons.FirstOrDefault(u => u.UserName == login);
+            if (byUser != null && byUser.PersonID > 0) return byUser.PersonID;
+
+            var byEmail = db.Persons.FirstOrDefault(p => p.eMail == login);
+            if (byEmail != null) return byEmail.PersonId;
+
+            try
+            {
+                var aspEmail = db.AspNetUsers.Where(u => u.UserName == login).Select(u => u.Email).FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(aspEmail))
+                {
+                    var byAsp = db.Persons.FirstOrDefault(p => p.eMail == aspEmail);
+                    if (byAsp != null) return byAsp.PersonId;
+                }
+            }
+            catch { }
+
+            return null;
+        }
+
+        private static bool IsEnrolledStatusName(string statusName)
+        {
+            if (string.IsNullOrWhiteSpace(statusName)) return false;
+            if (statusName.IndexOf("Not", StringComparison.OrdinalIgnoreCase) >= 0) return false;
+            return statusName.IndexOf("Enrolled", StringComparison.OrdinalIgnoreCase) >= 0
+                && statusName.IndexOf("Complete", StringComparison.OrdinalIgnoreCase) < 0;
         }
 
         private static string Fmt(DateTime? d)

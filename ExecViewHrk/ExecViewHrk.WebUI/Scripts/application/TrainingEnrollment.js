@@ -4,6 +4,9 @@
 
     function url(n) { return $root.attr("data-" + n) || ""; }
     function isSelf() { return $root.attr("data-self") === "1"; }
+    function loggedInEmployeeId() {
+        return selfEmployeeId || $root.attr("data-employee-id") || "";
+    }
     function esc(s) {
         return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
@@ -34,7 +37,7 @@
     }
 
     function loadLookups(done) {
-        $.getJSON(url("lookups-url"), function (r) {
+        $.getJSON(url("lookups-url"), { self: isSelf() ? "1" : "0" }, function (r) {
             if (!r || !r.success) return;
             lookups.types = r.types || [];
             lookups.statuses = r.statuses || [];
@@ -43,6 +46,7 @@
             lookups.courseCodes = r.courseCodes || [];
             lookups.courseCategories = r.courseCategories || [];
             if (r.currentEmployeeId) selfEmployeeId = r.currentEmployeeId;
+            if (!selfEmployeeId) selfEmployeeId = $root.attr("data-employee-id") || null;
             window._trCurrentEmployeeName = r.currentEmployeeName || "You";
             if (done) done();
         });
@@ -64,7 +68,7 @@
                     "<td>" + esc(row.ClassName || "") + "</td>" +
                     "<td>" + esc(row.CourseCode || "") + "</td>" +
                     "<td>" + esc(row.Status || "") + "</td>" +
-                    "<td><span class='label " + (row.IsEnrolled ? "label-success" : "label-default") + "'>" + (row.IsEnrolled ? "Yes" : "No") + "</span></td>" +
+                    "<td><a href='javascript:void(0)' class='tr-toggle-enroll' data-id='" + row.Id + "' title='" + (row.IsEnrolled ? "Click to unenroll" : "Click to enroll") + "'><span class='label " + (row.IsEnrolled ? "label-success" : "label-danger") + "'>" + (row.IsEnrolled ? "Yes" : "No") + "</span></a></td>" +
                     "<td><span class='label " + (row.IsCompleted ? "label-success" : "label-danger") + "'>" + (row.IsCompleted ? "Yes" : "No") + "</span></td>" +
                     "<td>" + esc(row.StartDate || "") + "</td>" +
                     "<td>" + esc(row.EndDate || "") + "</td>" +
@@ -78,8 +82,7 @@
         d = d || {};
         var empField;
         if (isSelf()) {
-            empField = "<input type='hidden' id='trEmpId' value='" + (d.EmployeeId || selfEmployeeId || "") + "'/>" +
-                "<div class='form-group'><label>Employee</label><input class='form-control' readonly value='" + esc(d.EmployeeName || "You") + "'/></div>";
+            empField = "<input type='hidden' id='trEmpId' value='" + (d.EmployeeId || loggedInEmployeeId()) + "'/>";
         } else {
             empField = "<div class='form-group'><label>Select Employee(s)</label>" +
                 "<select class='form-control' id='trEmpId'><option value='" + (d.EmployeeId || "") + "'>" + esc(d.EmployeeName || "--Select--") + "</option></select>" +
@@ -157,7 +160,7 @@
         loadLookups(function () {
             var enrolledStatus = (lookups.statuses.filter(function (s) { return /enrolled/i.test(s.Name) && !/not/i.test(s.Name); })[0] || {}).Id;
             openForm({
-                EmployeeId: selfEmployeeId,
+                EmployeeId: loggedInEmployeeId(),
                 EmployeeName: window._trCurrentEmployeeName,
                 StatusId: enrolledStatus,
                 EnrollmentDate: (function () {
@@ -166,6 +169,13 @@
                 })()
             });
         });
+    });
+    $(document).on("click.trEnroll", ".tr-toggle-enroll", function () {
+        var id = $(this).attr("data-id");
+        $.post(url("toggle-url"), { id: id }, function (res) {
+            if (!res || !res.success) { alert((res && res.message) || "Unable to update enrollment"); return; }
+            loadGrid();
+        }).fail(function () { alert("Unable to update enrollment"); });
     });
     $(document).on("click.trEnroll", ".tr-view-enroll", function () {
         var id = $(this).attr("data-id");
@@ -214,7 +224,8 @@
     $(document).on("click.trEnroll", "#trEnrollSave", function () {
         var payload = {
             Id: editId,
-            EmployeeId: $("#trEmpId").val(),
+            EmployeeId: isSelf() ? loggedInEmployeeId() : $("#trEmpId").val(),
+            self: isSelf() ? "1" : "0",
             TrainingTypeId: $("#trType").val() || null,
             TrainingClassId: $("#trClass").val() || null,
             TrainingClassScheduleId: $("#trSchedule").val() || null,
